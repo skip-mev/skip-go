@@ -31,13 +31,13 @@ export type TransactionDetails = {
 };
 
 type SimpleRoute = {
-  amountIn: Route["amountIn"];
-  amountOut: Route["amountOut"];
-  sourceAssetDenom: Route["sourceAssetDenom"];
-  sourceAssetChainId: Route["sourceAssetChainId"];
-  destAssetDenom: Route["destAssetDenom"];
-  destAssetChainId: Route["destAssetChainId"];
-  estimatedRouteDurationSeconds: Route["estimatedRouteDurationSeconds"];
+  amountIn?: Route["amountIn"];
+  amountOut?: Route["amountOut"];
+  sourceAssetDenom?: Route["sourceAssetDenom"];
+  sourceAssetChainId?: Route["sourceAssetChainId"];
+  destAssetDenom?: Route["destAssetDenom"];
+  destAssetChainId?: Route["destAssetChainId"];
+  estimatedRouteDurationSeconds?: Route["estimatedRouteDurationSeconds"];
 }
 
 export type RouteDetails = {
@@ -91,7 +91,6 @@ export type subscribeToRouteStatusProps = {
 export type executeAndSubscribeToRouteStatusProps = {
   routeDetails?: RouteDetails;
   transactionDetails?: TransactionDetails[];
-  txsRequired: number;
   trackTxPollingOptions?: ExecuteRouteOptions["trackTxPollingOptions"];
   onRouteStatusUpdated?: ExecuteRouteOptions["onRouteStatusUpdated"];
   executeTransaction?: (index: number) => Promise<TxResult>;
@@ -107,11 +106,12 @@ let currentRouteDetails = {
   transferEvents: [] as ClientTransferEvent[],
 } as RouteDetails;
 
-const resetCurrentRouteDetails = () => {
+const resetCurrentRouteDetails = (options?: ExecuteRouteOptions) => {
   currentRouteDetails = {
     status: "unconfirmed" as RouteStatus,
     id: uuidv4(),
     timestamp: Date.now(),
+    txsRequired: options?.route?.txsRequired,
     txsSigned: 0,
     transactionDetails: [] as TransactionDetails[],
     transferEvents: [] as ClientTransferEvent[],
@@ -119,17 +119,11 @@ const resetCurrentRouteDetails = () => {
 }
 
 export const subscribeToRouteStatus = async (props: subscribeToRouteStatusProps) => {
-  const { routeDetails, onRouteStatusUpdated } = props;
-  return executeAndSubscribeToRouteStatus({
-    transactionDetails: routeDetails?.transactionDetails,
-    txsRequired: routeDetails?.txsRequired ?? 1,
-    onRouteStatusUpdated
-  });
+  return executeAndSubscribeToRouteStatus(props);
 };
 
 export const executeAndSubscribeToRouteStatus = async ({
   transactionDetails,
-  txsRequired,
   executeTransaction,
   trackTxPollingOptions,
   onTransactionTracked,
@@ -138,7 +132,6 @@ export const executeAndSubscribeToRouteStatus = async ({
   options,
 }: executeAndSubscribeToRouteStatusProps) => {
   transactionDetails ??= routeDetails?.transactionDetails ?? currentRouteDetails?.transactionDetails;
-  txsRequired ??= routeDetails?.txsRequired ?? currentRouteDetails?.txsRequired;
 
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
     if (executeTransaction && !transaction.txHash) {
@@ -164,7 +157,6 @@ export const executeAndSubscribeToRouteStatus = async ({
     if (isFinalTransactionStatus(transaction.status) || isFinalState(transaction.statusResponse?.state)) {
       updateRouteDetails({
         transactionDetails,
-        txsRequired,
         options
       });
       continue;
@@ -181,7 +173,6 @@ export const executeAndSubscribeToRouteStatus = async ({
 
         updateRouteDetails({
           transactionDetails,
-          txsRequired,
           options
         });
 
@@ -205,28 +196,25 @@ export const executeAndSubscribeToRouteStatus = async ({
 type updateRouteDetailsProps = {
   routeDetails?: RouteDetails;
   transactionDetails?: TransactionDetails[];
-  txsRequired?: number;
-  options?: Partial<ExecuteRouteOptions>;
+  options?: ExecuteRouteOptions;
   status?: RouteStatus;
   initialize?: boolean;
 }
 
 export const updateRouteDetails = ({
   transactionDetails,
-  txsRequired,
   routeDetails,
   options,
   status,
   initialize,
 }: updateRouteDetailsProps): RouteDetails => {
+  if (initialize) {
+    resetCurrentRouteDetails(options);
+  }
 
   transactionDetails ??= routeDetails?.transactionDetails ?? currentRouteDetails?.transactionDetails;
-  txsRequired ??= routeDetails?.txsRequired ?? currentRouteDetails?.txsRequired;
+  const txsRequired = routeDetails?.txsRequired ?? options?.route?.txsRequired ?? Infinity;
 
-  if (initialize) {
-    resetCurrentRouteDetails();
-    transactionDetails = currentRouteDetails.transactionDetails;
-  }
   if (currentRouteDetails.status === "signing" && status === "pending") {
     currentRouteDetails.txsSigned += 1;
   }
@@ -242,7 +230,6 @@ export const updateRouteDetails = ({
     (tx) => tx.statusResponse && isFinalState(tx.statusResponse?.state),
   );
 
-
   const isAllSettled = allTransactionsHaveDetails && allKnownDetailsHaveFinalStatus;
 
   const someTxSucceeded = validStatuses.some(
@@ -253,16 +240,18 @@ export const updateRouteDetails = ({
     (status) => isFinalState(status.state) && status.state !== "STATE_COMPLETED_SUCCESS",
   );
 
-  let routeStatus: RouteStatus = status ?? currentRouteDetails?.status;
-
-  if (isAllSettled) {
-    if (!someTxFailed) {
-      routeStatus = "completed";
-    } else if (someTxSucceeded && someTxFailed) {
-      routeStatus = "incomplete";
-    } else if (someTxFailed) {
-      routeStatus = "failed";
+  const getRouteStatus = () => {
+    if (status) return status;
+    if (isAllSettled) {
+      if (!someTxFailed) {
+        return "completed";
+      } else if (someTxSucceeded && someTxFailed) {
+        return "incomplete";
+      } else if (someTxFailed) {
+        return "failed";
+      }
     }
+    return currentRouteDetails?.status;
   }
 
   const transferAssetRelease = validStatuses?.at(-1)?.transferAssetRelease;
@@ -273,8 +262,8 @@ export const updateRouteDetails = ({
   const newRouteDetails: RouteDetails = {
     id: routeDetails?.id ?? currentRouteDetails.id,
     timestamp: routeDetails?.timestamp ?? currentRouteDetails.timestamp,
-    status: routeStatus,
-    route: routeDetails?.route ?? options?.route as SimpleRoute,
+    status: getRouteStatus(),
+    route: getSimpleRoute(routeDetails?.route ?? options?.route),
     txsRequired,
     transactionDetails,
     transferEvents,
@@ -284,27 +273,9 @@ export const updateRouteDetails = ({
     txsSigned: routeDetails?.txsSigned ?? currentRouteDetails.txsSigned,
   };
 
-  const newRouteStatus = {
-    ...newRouteDetails,
-    transactionDetails: transactionDetails.map(txDetails => {
-      const { statusResponse, ...rest } = txDetails;
-      return {
-        ...rest,
-        status: getTransactionStatus(txDetails.statusResponse?.state),
-      }
-    })
-  };
+  const newRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(newRouteDetails)
 
-  const previousRouteStatus = {
-    ...currentRouteDetails,
-    transactionDetails: transactionDetails.map(txDetails => {
-      const { statusResponse, ...rest } = txDetails;
-      return {
-        ...rest,
-        status: getTransactionStatus(txDetails.statusResponse?.state),
-      }
-    })
-  }
+  const previousRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(currentRouteDetails)
 
   if (options?.onRouteStatusUpdated && JSON.stringify(newRouteStatus) !== JSON.stringify(previousRouteStatus)) {
     options?.onRouteStatusUpdated?.(newRouteStatus);
@@ -314,3 +285,28 @@ export const updateRouteDetails = ({
 
   return newRouteDetails;
 };
+
+const getSimpleRoute = (route?: Route | SimpleRoute): SimpleRoute => {
+  return {
+    amountIn: route?.amountIn,
+    amountOut: route?.amountOut,
+    sourceAssetDenom: route?.sourceAssetDenom,
+    sourceAssetChainId: route?.sourceAssetChainId,
+    destAssetDenom: route?.destAssetDenom,
+    destAssetChainId: route?.destAssetChainId,
+    estimatedRouteDurationSeconds: route?.estimatedRouteDurationSeconds,
+  }
+}
+
+const getRouteDetailsWithSimpleTransactionDetailsStatus = (routeDetails: RouteDetails) => {
+  return {
+    ...routeDetails,
+    transactionDetails: routeDetails.transactionDetails.map(txDetails => {
+      const { statusResponse, ...rest } = txDetails;
+      return {
+        ...rest,
+        status: getTransactionStatus(txDetails.statusResponse?.state),
+      }
+    })
+  };
+}

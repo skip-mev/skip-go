@@ -84,7 +84,6 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
   const { route, userAddresses, beforeMsg, afterMsg, timeoutSeconds } = options;
 
   updateRouteDetails({
-    txsRequired: route.txsRequired,
     status: "unconfirmed",
     initialize: true,
     options
