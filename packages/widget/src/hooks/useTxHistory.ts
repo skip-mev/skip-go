@@ -1,7 +1,7 @@
 import { setTransactionHistoryAtom } from "@/state/history";
 import { RouteDetails, subscribeToRouteStatus } from "@skip-go/client";
 import { useSetAtom } from "jotai";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type useTxHistoryProps = {
   txHistoryItem?: RouteDetails;
@@ -9,15 +9,20 @@ type useTxHistoryProps = {
 
 export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
   const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
+  const [subscribed, setSubscribed] = useState(false);
 
   useEffect(() => {
-    subscribeToRouteStatus({
-      routeDetails: txHistoryItem,
-      onRouteStatusUpdated: (routeStatus) => {
-        setTransactionHistory(routeStatus);
-      },
-    });
-  }, []);
+    if (txHistoryItem && !subscribed) {
+      subscribeToRouteStatus({
+        routeDetails: txHistoryItem,
+        onRouteStatusUpdated: (routeStatus) => {
+          console.log(routeStatus);
+          setTransactionHistory(routeStatus);
+        },
+      });
+      setSubscribed(true);
+    }
+  }, [setTransactionHistory, subscribed, txHistoryItem]);
 
   return txHistoryItem;
 };
