@@ -1,5 +1,14 @@
 ## 0.0.15
 
+## 3.12.8
+
+### Patch Changes
+
+- fabdf0b: Track general unexpected error event in amplitude.
+- a96b623: fix chains endpoint
+- Updated dependencies [a96b623]
+  - @skip-go/client@1.3.5
+
 ## 3.12.7
 
 ### Patch Changes
