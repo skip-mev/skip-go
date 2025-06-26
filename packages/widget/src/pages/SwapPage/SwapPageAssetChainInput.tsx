@@ -33,6 +33,8 @@ export type AssetChainInputProps = {
   isWaitingToUpdateInputValue?: boolean;
   badPriceWarning?: boolean;
   disabled?: boolean;
+  feeAmountUsd?: string;
+  feeWarning?: boolean;
 };
 
 export const SwapPageAssetChainInput = ({
@@ -46,6 +48,8 @@ export const SwapPageAssetChainInput = ({
   isWaitingToUpdateInputValue,
   badPriceWarning,
   disabled,
+  feeAmountUsd,
+  feeWarning,
 }: AssetChainInputProps) => {
   const theme = useTheme();
   const [_showPriceChangePercentage, setShowPriceChangePercentage] = useState(false);
@@ -154,6 +158,8 @@ export const SwapPageAssetChainInput = ({
     return theme.error.text;
   }, [priceChangePercentage, theme.error.text, theme.primary.text.normal, theme.success.text]);
 
+  const feeColor = feeWarning ? theme.error.text : theme.primary.text.lowContrast;
+
   const displayedValue = formatNumberWithCommas(value || "");
   const isLargeNumber = shouldReduceFontSize(value);
 
@@ -181,7 +187,7 @@ export const SwapPageAssetChainInput = ({
           onMouseEnter={() => setIsAssetButtonHovered(true)}
           onMouseLeave={() => setIsAssetButtonHovered(false)}
         >
-          {assetDetails?.assetImage && assetDetails.symbol ? (
+          {assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
               <Text useWindowsTextHack>{assetDetails.symbol}</Text>
@@ -222,28 +228,34 @@ export const SwapPageAssetChainInput = ({
         </StyledAssetButton>
       </Row>
       <Row justify="space-between" align="center">
-        {priceChangePercentage ? (
-          <Row align="center" gap={6}>
-            <SmallTextButton
-              color={priceChangeColor}
-              onMouseEnter={() => setShowPriceChangePercentage(true)}
-              onMouseLeave={() => setShowPriceChangePercentage(false)}
-            >
-              {usdValue && formatUSD(usdValue)}
-            </SmallTextButton>
-            <TinyTriangleIcon
-              color={priceChangeColor}
-              direction={(priceChangePercentage ?? 0) > 0 ? "up" : "down"}
-              style={{ scale: showPriceChangePercentage ? "1" : "0.7" }}
-            />
+        <Row align="center" gap={8}>
+          {priceChangePercentage ? (
+            <Row align="center" gap={6}>
+              <SmallTextButton
+                onMouseEnter={() => setShowPriceChangePercentage(true)}
+                onMouseLeave={() => setShowPriceChangePercentage(false)}
+              >
+                {usdValue && formatUSD(usdValue)}
+              </SmallTextButton>
+              <TinyTriangleIcon
+                color={priceChangeColor}
+                direction={(priceChangePercentage ?? 0) > 0 ? "up" : "down"}
+                style={{ scale: showPriceChangePercentage ? "1" : "0.7" }}
+              />
 
-            {showPriceChangePercentage && (
-              <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
-            )}
-          </Row>
-        ) : (
-          <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>
-        )}
+              {showPriceChangePercentage && (
+                <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
+              )}
+            </Row>
+          ) : (
+            <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>
+          )}
+          {feeAmountUsd && (
+            <Row align="center" gap={4}>
+              <SmallText color={feeColor}>{feeAmountUsd} in fees</SmallText>
+            </Row>
+          )}
+        </Row>
         {assetDetails?.chainName ? (
           <StyledOnChainGhostButton
             disabled={disabled}

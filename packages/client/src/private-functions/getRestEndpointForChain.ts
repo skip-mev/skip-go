@@ -14,7 +14,7 @@ export const getRestEndpointForChain = async (chainId: string) => {
     }
   }
 
-  const chain = chains().find((chain) => chain.chain_id === chainId);
+  const chain = chains().find((chain) => chain.chainId === chainId);
   if (!chain) {
     throw new Error(
       `getRestEndpointForChain error: failed to find chain id '${chainId}' in registry`,

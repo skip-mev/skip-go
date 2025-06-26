@@ -11,7 +11,8 @@ import { GAS_STATION_CHAIN_IDS } from "src/constants/constants";
 import { venues } from "src/api/getVenues";
 import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
 import { signSvmTransaction } from "./svm/signSvmTransaction";
-import { submit } from "src/api/postSubmit";
+import { submitTransaction } from "src/api/postSubmitTransaction";
+import { trackTransaction } from "src/api/postTrackTransaction";
 
 export const executeTransactions = async (
   options: ExecuteRouteOptions & { txs?: Tx[] }
@@ -128,7 +129,7 @@ export const executeTransactions = async (
       }
       if ("svmTx" in tx) {
         await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
-        const signedTx = await signSvmTransaction({ tx, options });
+        const signedTx = await signSvmTransaction({ tx, options, index: i });
         if (!signedTx) {
           throw new Error(`executeRoute error: signedTx is undefined`);
         }
@@ -153,13 +154,14 @@ export const executeTransactions = async (
     // If batchSignTxs is true, we will use the signed transactions from the array
     const txSigned = signedTxs.find((item) => item.index === i);
     if (txSigned) {
-      const txResponse = await submit({
+      const txResponse = await submitTransaction({
         chainId: txSigned.chainId,
         tx: txSigned.tx,
       });
       txResult = {
         chainId: txSigned.chainId,
         txHash: txResponse?.txHash ?? "",
+        explorerLink: txResponse?.explorerLink ?? '',
       };
       // If the tx not signed we will execute the transaction normally
     } else {
@@ -172,14 +174,14 @@ export const executeTransactions = async (
         });
       } else if ("evmTx" in tx) {
         await validateEnabledChainIds(tx.evmTx?.chainId ?? "");
-        const txResponse = await executeEvmTransaction(tx, options);
+        const txResponse = await executeEvmTransaction(tx, options, i);
         txResult = {
           chainId: tx?.evmTx?.chainId ?? "",
           txHash: txResponse.transactionHash,
         };
       } else if ("svmTx" in tx) {
         await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
-        txResult = await executeSvmTransaction(tx, options);
+        txResult = await executeSvmTransaction(tx, options, i);
       } else {
         throw new Error("executeRoute error: invalid message type");
       }

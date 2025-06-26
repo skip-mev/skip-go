@@ -7,7 +7,7 @@ import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { Fragment, useMemo } from "react";
-import { getFeeList } from "@/utils/route";
+import { getFeeList } from "@/utils/fees";
 import SlippageSelector from "@/pages/SwapPage/SlippageSelector";
 import RoutePreferenceSelector from "@/pages/SwapPage/RoutePreferenceSelector";
 import NiceModal from "@ebay/nice-modal-react";

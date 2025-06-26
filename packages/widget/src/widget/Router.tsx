@@ -8,6 +8,7 @@ import { useAtom } from "jotai";
 import { ErrorBoundary } from "react-error-boundary";
 import { useKeepWalletStateSynced } from "@/hooks/useKeepWalletStateSynced";
 import { track } from "@amplitude/analytics-browser";
+import { Suspense } from "react";
 
 export const Router = () => {
   useKeepWalletStateSynced();
@@ -21,41 +22,47 @@ export const Router = () => {
   switch (currentPage) {
     case Routes.SwapPage:
       return (
-        <ErrorBoundary
-          fallback={null}
-          onError={(error) => {
-            track("unexpected error page: unexpected error from swap page", { error });
-            setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error });
-          }}
-        >
-          <SwapPage />
-        </ErrorBoundary>
+        <Suspense fallback={null}>
+          <ErrorBoundary
+            fallback={null}
+            onError={(error) => {
+              track("unexpected error page: unexpected error from swap page", { error });
+              setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error });
+            }}
+          >
+            <SwapPage />
+          </ErrorBoundary>
+        </Suspense>
       );
     case Routes.SwapExecutionPage:
       return (
-        <ErrorBoundary
-          fallback={null}
-          onError={(error) => {
-            track("unexpected error page: unexpected error from execution page", { error });
-            setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error });
-          }}
-        >
-          <SwapExecutionPage />
-        </ErrorBoundary>
+        <Suspense fallback={null}>
+          <ErrorBoundary
+            fallback={null}
+            onError={(error) => {
+              track("unexpected error page: unexpected error from execution page", { error });
+              setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error });
+            }}
+          >
+            <SwapExecutionPage />
+          </ErrorBoundary>
+        </Suspense>
       );
     case Routes.TransactionHistoryPage:
       return (
-        <ErrorBoundary
-          fallback={null}
-          onError={(error) => {
-            track("unexpected error page: unexpected error from transaction history page", {
-              error,
-            });
-            setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error });
-          }}
-        >
-          <TransactionHistoryPage />
-        </ErrorBoundary>
+        <Suspense fallback={null}>
+          <ErrorBoundary
+            fallback={null}
+            onError={(error) => {
+              track("unexpected error page: unexpected error from transaction history page", {
+                error,
+              });
+              setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error });
+            }}
+          >
+            <TransactionHistoryPage />
+          </ErrorBoundary>
+        </Suspense>
       );
   }
 };

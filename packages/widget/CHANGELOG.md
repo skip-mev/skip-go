@@ -1,5 +1,53 @@
 ## 0.0.15
 
+## 3.12.7
+
+### Patch Changes
+
+- Updated dependencies [f2852b6]
+  - @skip-go/client@1.3.4
+
+## 3.12.6
+
+### Patch Changes
+
+- 069bed8: Move fee display from footer to destination input and show warning when output value is 90% or less of input.
+- Updated dependencies [5e2f94c]
+- Updated dependencies [cadc8cc]
+  - @skip-go/client@1.3.3
+
+## 3.12.5
+
+### Patch Changes
+
+- c3838d0: Add LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE state map to pending
+
+## 3.12.4
+
+### Patch Changes
+
+- 43663de: Enable auto-reconnect for cosmos
+- 9beee7c: Refactor fees code to get data from estimated_fees, Include missing bridge types
+- ce78bcf: Fix flickering of select asset button when changing assets
+- Updated dependencies [c7bc3b8]
+  - @skip-go/client@1.3.2
+
+## 3.12.3
+
+### Patch Changes
+
+- 9396ecb: Fix react error 426 by wrapping page transition with startTransition and ensuring setCurrentPage is the last step
+
+## 3.12.2
+
+### Patch Changes
+
+- fd0e0dd: Revert indexedDb back to localStorage, add transactionHistoryVersion
+- fd0e0dd: added onTransactionSignRequested callback
+- Updated dependencies [fd0e0dd]
+- Updated dependencies [fd0e0dd]
+  - @skip-go/client@1.3.1
+
 ## 3.12.1
 
 ### Patch Changes

@@ -12,6 +12,7 @@ export const filterMessagesRequest = (request: MessagesRequest) => {
     operations: request.operations,
     estimatedAmountOut: request.estimatedAmountOut,
     slippageTolerancePercent: request.slippageTolerancePercent,
+    feePayerAddress: request.feePayerAddress,
     timeoutSeconds: request.timeoutSeconds,
     postRouteHandler: request.postRouteHandler,
     chainIdsToAffiliates: request.chainIdsToAffiliates,
