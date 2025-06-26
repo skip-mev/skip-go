@@ -4,7 +4,11 @@ import { atom } from "jotai";
 import { TxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
 import { RouteResponse } from "@skip-go/client";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
-import { atomWithIndexedDBStorage } from "@/utils/storage";
+import { atomWithStorage } from "jotai/utils";
+
+export enum HISTORY_VERSION {
+  "camelCase",
+}
 
 export type TransactionHistoryItem = {
   route: RouteResponse;
@@ -14,19 +18,24 @@ export type TransactionHistoryItem = {
   signatures: number;
 } & Partial<TxsStatus>;
 
-export const transactionHistoryAtom = atomWithIndexedDBStorage<TransactionHistoryItem[]>(
+export const transactionHistoryVersionAtom = atomWithStorage<number | undefined>(
+  LOCAL_STORAGE_KEYS.transactionHistoryVersion,
+  undefined,
+);
+
+export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
   LOCAL_STORAGE_KEYS.transactionHistory,
   [],
 );
 
 export const setTransactionHistoryAtom = atom(
   null,
-  async (
+  (
     get,
     set,
     historyItem: Partial<TransactionHistoryItem> & Pick<TransactionHistoryItem, "timestamp">,
   ) => {
-    const history = await get(transactionHistoryAtom);
+    const history = get(transactionHistoryAtom);
 
     const index = history.findIndex((item) => item.timestamp === historyItem.timestamp);
 
@@ -43,8 +52,8 @@ export const setTransactionHistoryAtom = atom(
   },
 );
 
-export const lastTransactionInTimeAtom = atom(async (get) => {
-  const history = await get(transactionHistoryAtom);
+export const lastTransactionInTimeAtom = atom((get) => {
+  const history = get(transactionHistoryAtom);
   if (history.length === 0) return;
 
   const sorted = [...history].sort((a, b) => b.timestamp - a.timestamp);
@@ -58,8 +67,8 @@ export const lastTransactionInTimeAtom = atom(async (get) => {
   };
 });
 
-export const removeTransactionHistoryItemAtom = atom(null, async (get, set, timestamp: number) => {
-  const history = await get(transactionHistoryAtom);
+export const removeTransactionHistoryItemAtom = atom(null, (get, set, timestamp: number) => {
+  const history = get(transactionHistoryAtom);
   if (!history || isNaN(timestamp)) return;
 
   const newHistory = history.filter((item) => item.timestamp !== timestamp);

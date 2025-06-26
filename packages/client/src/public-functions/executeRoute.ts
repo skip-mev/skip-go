@@ -76,7 +76,21 @@ export type ExecuteRouteOptions = SignerGetters &
      * If `cosmosPriorityFeeDenom` is provided, it will be used to set the priority fee for Cosmos transactions.
      * It should be a function that takes a chainId and returns the denom for the priority fee.
      */
-    getCosmosPriorityFeeDenom?: (chainId: string) => Promise<string | undefined>
+    getCosmosPriorityFeeDenom?: (
+      chainId: string
+    ) => Promise<string | undefined>;
+    /**
+     * SVM Fee Payer
+     *
+     * This is used to pay for the transaction fees on SVM chains.
+     * It should be an object with the following properties:
+     * `address`: The address of the fee payer.
+     * `signTransaction`: A function that takes the data to sign and returns a Promise that resolves to the signed transaction.
+     */
+    svmFeePayer?: {
+      address: string;
+      signTransaction: (dataToSign: Buffer) => Promise<Uint8Array>;
+    };
   };
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {
@@ -122,6 +136,7 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     slippageTolerancePercent: options.slippageTolerancePercent || "1",
     chainIdsToAffiliates: ApiState.chainIdsToAffiliates,
     postRouteHandler: options.postRouteHandler,
+    feePayerAddress: options.svmFeePayer?.address,
   });
 
   if (beforeMsg && (response?.txs?.length ?? 0) > 0) {

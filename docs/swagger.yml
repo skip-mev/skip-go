@@ -2862,6 +2862,7 @@ components:
         * `OPINIT` - Opinit Bridge
         * `GO_FAST` - Go Fast Bridge
         * `STARGATE` - Stargate Bridge
+        * `LAYER_ZERO` - Layerzero Bridge
         * `EUREKA` - IBC Eureka Bridge
       enum:
         - IBC
@@ -2871,6 +2872,7 @@ components:
         - OPINIT
         - GO_FAST
         - STARGATE
+        - LAYER_ZERO
         - EUREKA
     Chain:
       properties:
@@ -4138,7 +4140,7 @@ components:
           description: Denom of the output asset of the transfer
           type: string
           required: true
-        source_oft_cntract_address:
+        source_oft_contract_address:
           type: string
           required: true
         destination_endpoint_id:

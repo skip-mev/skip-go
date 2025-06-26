@@ -143,6 +143,10 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   });
 
   set(submitSwapExecutionCallbacksAtom, {
+    onTransactionSignRequested: async (props) => {
+      track("execute route: transaction sign requested", { props });
+      callbacks?.onTransactionSignRequested?.(props);
+    },
     onTransactionUpdated: (txInfo) => {
       track("execute route: transaction updated", { txInfo });
       if (txInfo.status?.status !== "STATE_COMPLETED") {

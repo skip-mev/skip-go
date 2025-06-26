@@ -94,7 +94,11 @@ export const signCosmosTransaction = async ({
       chainId,
     },
   };
-
+  options.onTransactionSignRequested?.({
+    chainId,
+    txIndex: index,
+    signerAddress: currentUserAddress,
+  })
   if (isOfflineDirectSigner(signer)) {
     rawTx = await signCosmosMessageDirect({
       ...commonRawTxBody,
