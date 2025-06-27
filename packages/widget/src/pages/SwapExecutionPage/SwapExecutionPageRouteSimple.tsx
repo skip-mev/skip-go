@@ -4,20 +4,20 @@ import { useAtomValue } from "jotai";
 import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleRow";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
-import { ClientOperation, SimpleStatus } from "@/utils/clientType";
+import { ClientOperation } from "@/utils/clientType";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
-import { TxsStatus } from "./useBroadcastedTxs";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { useMemo } from "react";
 import { convertToPxValue } from "@/utils/style";
+import { RouteDetails, RouteStatus } from "@skip-go/client";
 
 export type SwapExecutionPageRouteProps = {
   operations: ClientOperation[];
   onClickEditDestinationWallet?: () => void;
-  statusData?: TxsStatus;
+  statusData?: RouteDetails;
   swapExecutionState?: SwapExecutionState;
-  firstOperationStatus?: SimpleStatus | undefined;
-  secondOperationStatus?: SimpleStatus | undefined;
+  firstOperationStatus?: RouteStatus | undefined;
+  secondOperationStatus?: RouteStatus | undefined;
 };
 
 export const SwapExecutionPageRouteSimple = ({

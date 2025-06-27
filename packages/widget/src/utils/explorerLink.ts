@@ -1,7 +1,6 @@
 import { explorers } from "@/constants/chains";
 import { config } from "@/constants/wagmi";
-import { TransactionDetails } from "@/state/swapExecutionPage";
-import { ChainType } from "@skip-go/client";
+import { ChainType, TransactionDetails } from "@skip-go/client";
 import { jotaiStore } from "@/widget/Widget";
 import { onlyTestnetsAtom } from "@/state/skipClient";
 
@@ -36,7 +35,8 @@ export const createExplorerLink = ({
   }
 };
 
-export const createSkipExplorerLink = (transactionDetails: TransactionDetails[]) => {
+export const createSkipExplorerLink = (transactionDetails?: TransactionDetails[]) => {
+  if (!transactionDetails) return "";
   const { get } = jotaiStore;
 
   const txHashCommaSeperatedList = transactionDetails

@@ -8,7 +8,7 @@ import { track } from "@amplitude/analytics-browser";
 import { PageHeader } from "@/components/PageHeader";
 
 export type ExpectedErrorPageAuthFailedProps = {
-  onClickBack: () => void;
+  onClickBack?: () => void;
 };
 
 export const ExpectedErrorPageAuthFailed = ({ onClickBack }: ExpectedErrorPageAuthFailedProps) => {

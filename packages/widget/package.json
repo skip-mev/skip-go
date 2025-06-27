@@ -139,6 +139,7 @@
     "react-error-boundary": "^4.0.13",
     "react-shadow-scope": "^1.0.5",
     "styled-components": "^6.1.13",
+    "uuid": "^11.1.0",
     "yarn": "^1.22.22",
     "zod": "^3.23.8"
   },
