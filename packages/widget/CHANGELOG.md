@@ -1,5 +1,15 @@
 ## 0.0.15
 
+## 3.12.9
+
+### Patch Changes
+
+- bf26d8e: fix cannot sign on fresh address
+- 84d3267: fix client side error when filter denoms null
+- ce8f9a4: Prioritize exact asset symbol matches in the search modal.
+- Updated dependencies [bf26d8e]
+  - @skip-go/client@1.3.6
+
 ## 3.12.8
 
 ### Patch Changes

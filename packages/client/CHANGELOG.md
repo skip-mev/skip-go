@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.3.6
+
+### Patch Changes
+
+- bf26d8e: fix cannot sign on fresh address
+
 ## 1.3.5
 
 ### Patch Changes
