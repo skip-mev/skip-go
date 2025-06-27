@@ -1,5 +1,17 @@
 # @skip-go/client
 
+## 1.3.6
+
+### Patch Changes
+
+- bf26d8e: fix cannot sign on fresh address
+
+## 1.3.5
+
+### Patch Changes
+
+- a96b623: fix chains endpoint
+
 ## 1.3.4
 
 ### Patch Changes
