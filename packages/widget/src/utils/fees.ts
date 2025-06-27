@@ -78,6 +78,6 @@ export function getTotalFees(fees: LabeledFee[]): FeeDetail | undefined {
   return {
     assetAmount: totalAsset,
     formattedAssetAmount: `${totalAsset.toFixed(6)} ${symbol}`,
-    formattedUsdAmount: totalUsd > 0 ? formatUSD(totalUsd.toString()) : undefined,
+    formattedUsdAmount: totalUsd > 0 ? formatUSD(totalUsd.toString()) : "< $0.01",
   };
 }
