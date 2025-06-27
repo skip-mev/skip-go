@@ -33,7 +33,7 @@ export type AssetChainInputProps = {
   isWaitingToUpdateInputValue?: boolean;
   badPriceWarning?: boolean;
   disabled?: boolean;
-  feeAmountUsd?: string;
+  feeLabel?: string;
   feeWarning?: boolean;
 };
 
@@ -48,7 +48,7 @@ export const SwapPageAssetChainInput = ({
   isWaitingToUpdateInputValue,
   badPriceWarning,
   disabled,
-  feeAmountUsd,
+  feeLabel,
   feeWarning,
 }: AssetChainInputProps) => {
   const theme = useTheme();
@@ -250,9 +250,9 @@ export const SwapPageAssetChainInput = ({
           ) : (
             <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>
           )}
-          {feeAmountUsd && (
+          {displayedValue && feeLabel && (
             <Row align="center" gap={4}>
-              <SmallText color={feeColor}>{feeAmountUsd} in fees</SmallText>
+              <SmallText color={feeColor}>{feeLabel}</SmallText>
             </Row>
           )}
         </Row>
