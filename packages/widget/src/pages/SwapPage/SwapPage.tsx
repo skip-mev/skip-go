@@ -203,7 +203,14 @@ export const SwapPage = () => {
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   const fees = useMemo(() => (route ? getFeeList(route) : []), [route]);
-  const totalFeeUsd = getTotalFees(fees)?.formattedUsdAmount;
+  const feeLabel = useMemo(() => {
+    const formattedUsdAmount = getTotalFees(fees)?.formattedUsdAmount;
+    if (formattedUsdAmount) {
+      return `${formattedUsdAmount} in fees`;
+    }
+
+    return "no fees";
+  }, [fees]);
 
   const feeWarning = useMemo(() => {
     if (!route?.usdAmountIn || !route?.usdAmountOut) return false;
@@ -436,7 +443,7 @@ export const SwapPage = () => {
           value={destinationAsset?.amount}
           priceChangePercentage={Number(priceChangePercentage)}
           badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
-          feeAmountUsd={totalFeeUsd}
+          feeLabel={feeLabel}
           feeWarning={feeWarning}
           onChangeValue={(v) => {
             track("swap page: destination asset amount input - changed", { amount: v });

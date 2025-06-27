@@ -32,7 +32,7 @@ export const useGroupedAssetByRecommendedSymbol = ({
           if (denoms) {
             return (
               chainId === asset.chainId &&
-              denoms.map((x) => x.toLowerCase()).includes(asset.denom?.toLowerCase())
+              denoms.map((x) => x?.toLowerCase()).includes(asset.denom?.toLowerCase())
             );
           } else {
             return chainId === asset.chainId;
@@ -45,7 +45,7 @@ export const useGroupedAssetByRecommendedSymbol = ({
           if (denoms) {
             return (
               chainId === asset.chainId &&
-              denoms.map((x) => x.toLowerCase()).includes(asset.denom?.toLowerCase())
+              denoms.map((x) => x?.toLowerCase()).includes(asset.denom?.toLowerCase())
             );
           } else {
             return chainId === asset.chainId;
@@ -61,7 +61,7 @@ export const useGroupedAssetByRecommendedSymbol = ({
           if (denoms) {
             return (
               chainId === asset.chainId &&
-              denoms.map((x) => x.toLowerCase()).includes(asset.denom.toLowerCase())
+              denoms.map((x) => x?.toLowerCase()).includes(asset.denom.toLowerCase())
             );
           } else {
             return chainId === asset.chainId;

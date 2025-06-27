@@ -12,6 +12,7 @@ import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
 import { signSvmTransaction } from "./svm/signSvmTransaction";
 import { executeAndSubscribeToRouteStatus, updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
 import { submitTransaction } from "src/api/postSubmitTransaction";
+import { getAccountNumberAndSequence } from "./getAccountNumberAndSequence";
 
 export const executeTransactions = async (
   options: ExecuteRouteOptions & { txs?: Tx[] }
@@ -132,6 +133,26 @@ export const executeTransactions = async (
 
       if ("cosmosTx" in tx) {
         await validateEnabledChainIds(tx.cosmosTx?.chainId ?? "");
+        const isAllowedToBatchSignTxsUpfront = await (async () => {
+          try {
+            const currentUserAddress = options.userAddresses.find((x) => x.chainId === tx.cosmosTx?.chainId)?.address;
+            if (!currentUserAddress) {
+              return false;
+            }
+            const { accountNumber } = await getAccountNumberAndSequence(currentUserAddress, tx.cosmosTx?.chainId)
+            if (accountNumber) {
+              return true;
+            }
+            return false
+          } catch (_error) {
+            return false;
+          }
+        })()
+
+        if (!isAllowedToBatchSignTxsUpfront) {
+          continue;
+        }
+
         const signedTx = await signCosmosTransaction({
           tx,
           options,
