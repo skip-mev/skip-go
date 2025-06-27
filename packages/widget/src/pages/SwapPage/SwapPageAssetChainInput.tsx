@@ -250,7 +250,7 @@ export const SwapPageAssetChainInput = ({
           ) : (
             <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>
           )}
-          {displayedValue && feeLabel && (
+          {usdValue && feeLabel && (
             <Row align="center" gap={4}>
               <SmallText color={feeColor}>{feeLabel}</SmallText>
             </Row>
