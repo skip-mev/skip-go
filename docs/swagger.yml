@@ -3939,34 +3939,34 @@ components:
         Indicates whether the fee is deducted from the transfer amount or charged additionally.
         - FEE_BEHAVIOR_DEDUCTED: Fee is subtracted from the transfer amount (default, typical for Cosmos chains)
         - FEE_BEHAVIOR_ADDITIONAL: Fee is charged on top of the transfer amount (typical for EVM chains with native tokens)
-  Fee:
-      properties:
-        fee_type:
-          $ref: '#/components/schemas/FeeType'
-        bridge_id:
-          $ref: '#/components/schemas/BridgeType'
-        amount:
-          description: Amount of the fee asset to be paid
-          type: string
-        usd_amount:
-          description: The value of the fee in USD
-          type: string
-        origin_asset:
-          $ref: '#/components/schemas/Asset'
-          required: true
-        chain_id:
-          description: Chain ID of the chain where fees are collected
-          type: string
-        tx_index:
-          description: The index of the transaction in the list of transactions required to execute the transfer where fees are paid
-          type: integer
-        operation_index:
-          description: The index of the operation in the returned operations list which incurs the fee
-          type: integer
-          nullable: true
-        fee_behavior:
-          $ref: '#/components/schemas/FeeBehavior'
-          description: Indicates whether this fee is deducted from the transfer amount or charged additionally
+    Fee:
+        properties:
+          fee_type:
+            $ref: '#/components/schemas/FeeType'
+          bridge_id:
+            $ref: '#/components/schemas/BridgeType'
+          amount:
+            description: Amount of the fee asset to be paid
+            type: string
+          usd_amount:
+            description: The value of the fee in USD
+            type: string
+          origin_asset:
+            $ref: '#/components/schemas/Asset'
+            required: true
+          chain_id:
+            description: Chain ID of the chain where fees are collected
+            type: string
+          tx_index:
+            description: The index of the transaction in the list of transactions required to execute the transfer where fees are paid
+            type: integer
+          operation_index:
+            description: The index of the operation in the returned operations list which incurs the fee
+            type: integer
+            nullable: true
+          fee_behavior:
+            $ref: '#/components/schemas/FeeBehavior'
+            description: Indicates whether this fee is deducted from the transfer amount or charged additionally
 
     BalancesRequest:
       type: object
