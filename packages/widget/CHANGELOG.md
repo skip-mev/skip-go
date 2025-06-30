@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.12.11
+
+### Patch Changes
+
+- f00f585: Add showing "< $0.01 in fees" and "no fees"
+
 ## 3.12.10
 
 ### Patch Changes
