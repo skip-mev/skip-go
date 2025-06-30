@@ -1,21 +1,21 @@
 import type { SvmTx } from "src/types/swaggerTypes";
 import { Connection, Transaction } from "@solana/web3.js";
 import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
-import { submitTransaction } from "src/api/postSubmitTransaction";
 import { wait } from "src/utils/timer";
-import { ClientState } from "src/state/clientState";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 import { signSvmTransaction } from "./signSvmTransaction";
+import { submitTransaction } from "src/api/postSubmitTransaction";
 
 export const executeSvmTransaction = async (
-  tx?: { svmTx?: SvmTx },
-  options?: ExecuteRouteOptions
+  tx: { svmTx?: SvmTx },
+  options: ExecuteRouteOptions,
+  index: number,
 ) => {
   const svmTx = tx?.svmTx;
   if (!svmTx?.chainId) {
     throw new Error("executeSvmTransaction error: chainId not found in svmTx");
   }
-  const signedTx = await signSvmTransaction({ tx, options });
+  const signedTx = await signSvmTransaction({ tx, options, index });
   if (!signedTx) {
     throw new Error("executeSvmTransaction error: signedTx is undefined");
   }
@@ -25,12 +25,12 @@ export const executeSvmTransaction = async (
 
   let signature: string | undefined;
 
-  await submitTransaction({
+  const submitTxResponse = await submitTransaction({
     chainId: svmTx.chainId,
     tx: signedTx.toString("base64"),
-  }).then((res) => {
-    signature = res?.txHash;
-  });
+  })
+
+  signature = submitTxResponse?.txHash;
 
   const rpcSig = await connection.sendRawTransaction(signedTx, {
     preflightCommitment: "confirmed",
@@ -56,6 +56,7 @@ export const executeSvmTransaction = async (
         return {
           chainId: svmTx.chainId,
           txHash: signature,
+          explorerLink: submitTxResponse?.explorerLink ?? '',
         };
       }
 

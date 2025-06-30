@@ -1,5 +1,43 @@
 # @skip-go/client
 
+## 1.3.6
+
+### Patch Changes
+
+- bf26d8e: fix cannot sign on fresh address
+
+## 1.3.5
+
+### Patch Changes
+
+- a96b623: fix chains endpoint
+
+## 1.3.4
+
+### Patch Changes
+
+- f2852b6: Add svmPayer object param in executeRoute
+
+## 1.3.3
+
+### Patch Changes
+
+- 5e2f94c: Remove redundant submit function (use submitTransaction instead), remove track call for non-evm txs, increase default maxRetries to 10
+- cadc8cc: Add calling track back for svm/evm
+
+## 1.3.2
+
+### Patch Changes
+
+- c7bc3b8: Fix typo in LayerZeroTransfer, Add layerzero as bridge type
+
+## 1.3.1
+
+### Patch Changes
+
+- fd0e0dd: added onTransactionSignRequested callback
+- fd0e0dd: Add cjs version at /cjs
+
 ## 1.3.0
 
 ### Minor Changes

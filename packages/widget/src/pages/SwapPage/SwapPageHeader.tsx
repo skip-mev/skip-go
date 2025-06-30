@@ -90,15 +90,15 @@ export const TrackLatestTxHistoryItemStatus = memo(() => {
   return null;
 });
 
-const noHistoryItemsAtom = atom(async (get) => {
-  const txHistoryItems = await get(transactionHistoryAtom);
+const noHistoryItemsAtom = atom((get) => {
+  const txHistoryItems = get(transactionHistoryAtom);
 
   return txHistoryItems?.length === 0;
 });
 
-const isFetchingLastTransactionStatusAtom = atom(async (get) => {
+const isFetchingLastTransactionStatusAtom = atom((get) => {
   const { overallStatus, route, transactionsSigned } = get(swapExecutionStateAtom);
-  const lastTxHistoryItemInTime = await get(lastTransactionInTimeAtom);
+  const lastTxHistoryItemInTime = get(lastTransactionInTimeAtom);
 
   return (
     (overallStatus === "pending" && transactionsSigned === route?.txsRequired) ||

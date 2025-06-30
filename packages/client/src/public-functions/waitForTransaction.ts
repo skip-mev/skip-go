@@ -1,24 +1,33 @@
-import { trackTransaction, type TrackTxRequest } from "../api/postTrackTransaction";
+import type { TransactionCallbacks } from "src/types/callbacks";
 import { transactionStatus } from "../api/postTransactionStatus";
-import type { TransactionCallbacks } from "../types/callbacks";
 import { wait } from "../utils/timer";
+import { trackTransaction } from "src/api/postTrackTransaction";
+import type { TxResult } from "src/types/client-types";
 
-export type WaitForTransactionProps = TrackTxRequest & {
+export type WaitForTransactionProps = TxResult & {
   onTransactionTracked?: TransactionCallbacks["onTransactionTracked"];
 };
 
 export const waitForTransaction = async ({
   chainId,
   txHash,
+  explorerLink,
   onTransactionTracked,
   ...trackTxPollingOptions
 }: WaitForTransactionProps) => {
-  const { explorerLink } = await trackTransaction({
-    chainId,
-    txHash,
-    ...trackTxPollingOptions,
-  });
-  await onTransactionTracked?.({ txHash, chainId, explorerLink });
+  try {
+    if (!explorerLink) {
+      const response = await trackTransaction({
+        chainId: chainId,
+        txHash: txHash,
+        ...trackTxPollingOptions,
+      });
+      explorerLink = response.explorerLink;
+    }
+    await onTransactionTracked?.({ txHash, chainId, explorerLink });
+  } catch (error) {
+    console.warn(`track failed for txHash:${txHash}, chainId: ${chainId}`);
+  }
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -30,6 +39,7 @@ export const waitForTransaction = async ({
     if (txStatusResponse.state === "STATE_COMPLETED_SUCCESS") {
       return txStatusResponse;
     }
+
     if (txStatusResponse.state === "STATE_COMPLETED_ERROR") {
       throw new Error(`${txStatusResponse.error?.type}: ${txStatusResponse.error?.message}`);
     }
@@ -39,4 +49,5 @@ export const waitForTransaction = async ({
 
     await wait(1000);
   }
+
 };

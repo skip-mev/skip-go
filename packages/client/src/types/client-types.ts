@@ -74,4 +74,5 @@ export type SignCosmosMessageAminoOptions = SignCosmosMessageOptionsBase & {
 export type TxResult = {
   txHash: string;
   chainId: string;
+  explorerLink?: string;
 };

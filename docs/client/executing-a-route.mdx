@@ -66,14 +66,20 @@ await executeRoute({
   ```
 
 
-## Lifecycle callbacks
+## Callbacks
 You can optionally provide the following callbacks:
+
+```onTransactionSignRequested``` Called when a transaction is ready to be signed on the wallet.
 
 ```onTransactionBroadcast``` Called after each transaction is broadcasted.
 
 ```onTransactionCompleted``` Called after each transaction is confirmed.
 
 ```onTransactionTracked``` Called during confirmation polling, useful for progress tracking uis.
+
+```onValidateGasBalance``` Called while the transaction is calculating the gas and balance validation
+
+```onApproveAllownace``` Called when the allowance tx is being executed (only in evm txs).
 
 ```ts
 await executeRoute({
@@ -95,6 +101,12 @@ await executeRoute({
   },
   onTransactionCompleted: ({ chainId, txHash, status }) => {
     console.log(`Completed on ${chainId}: ${txHash} (Status: ${status})`);
+  },
+  onTransactionTracked: ({ chainId, txHash, status }) => {
+    console.log(`Tracking ${chainId}: ${txHash} (Status: ${status})`);
+  },
+  onTransactionSignRequested: ({ chainId, signerAddress }) => {
+    console.log(`Sign requested for ${chainId}`, signerAddress);
   },
 });
 ```

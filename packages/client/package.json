@@ -1,21 +1,33 @@
 {
   "name": "@skip-go/client",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "1.3.0",
+  "version": "1.3.6",
   "repository": "https://github.com/skip-mev/skip-go",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/esm/index.js",
+      "types": "./dist/esm/index.d.ts"
+    },
+    "./cjs": {
+      "require": "./dist/cjs/index.cjs",
+      "import": "./dist/cjs/index.cjs",
+      "types": "./dist/esm/index.d.ts"
     },
     "./package.json": "./package.json"
   },
+  "typesVersions": {
+    "*": {
+      "cjs": [
+        "./dist/esm/index.d.ts"
+      ]
+    }
+  },
   "files": [
-    "dist/*",
+    "dist",
     "*.js",
     "*.d.ts"
   ],
@@ -45,7 +57,7 @@
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",
     "@types/keccak": "3.0.4",
-    "chain-registry": "^2.0.5",
+    "chain-registry": "^2.0.11",
     "eslint-plugin-esm": "^0.8.1",
     "eslint-plugin-import": "^2.31.0",
     "minimatch": "^9.0.3",

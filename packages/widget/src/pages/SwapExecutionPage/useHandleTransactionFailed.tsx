@@ -37,6 +37,9 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
   const explorerLink = createSkipExplorerLink(transactionDetailsArray);
 
   const handleTransactionFailed = useCallback(() => {
+    // Track a high level error event for overall monitoring
+    track("unexpected error page: error occurred", { error, route });
+
     const sourceClientAsset = getClientAsset(
       statusData?.transferAssetRelease?.denom,
       statusData?.transferAssetRelease?.chainId,

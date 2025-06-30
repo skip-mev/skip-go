@@ -2414,10 +2414,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "@chain-registry/types@npm:2.0.5"
-  checksum: c033854a85407ae0f43e23d543b0a70882bb5ea4b7e9b169725224a919f6e7e697e9d22eb3fb68042128a5686ff8e7d5082a016050ccb257a544f908c7d9f8f1
+"@chain-registry/types@npm:^2.0.11":
+  version: 2.0.11
+  resolution: "@chain-registry/types@npm:2.0.11"
+  checksum: 01626b22258612aa455f51f6648cd1b5e846f8482b01e4a2bf5d2adc481f143ff868182a03e9c5bc30b078c5ca68c57ccac92cf8767ac57b2745a9de9aae6ae3
   languageName: node
   linkType: hard
 
@@ -8408,7 +8408,7 @@ __metadata:
     "@solana/wallet-adapter-base": ^0.9.23
     "@types/keccak": 3.0.4
     bech32: ^2.0.0
-    chain-registry: ^2.0.5
+    chain-registry: ^2.0.11
     cosmjs-types: ^0.9.0
     eslint-plugin-esm: ^0.8.1
     eslint-plugin-import: ^2.31.0
@@ -8486,7 +8486,7 @@ __metadata:
     add: ^2.0.6
     bech32: ^2.0.0
     buffer: ^6.0.3
-    chain-registry: ^2.0.5
+    chain-registry: ^2.0.11
     download: ^8.0.0
     eslint: ^9.9.0
     eslint-config-prettier: ^9.1.0
@@ -10789,10 +10789,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.81.2":
+  version: 5.81.2
+  resolution: "@tanstack/query-core@npm:5.81.2"
+  checksum: 375ab5cad3ddd571f24fc0be173349622366ef1fdc69a9222933028bc9ab3694b09251e0e9089d4a8146470d9fee91c95f93b6ddccb1e7e6d320bcea8e149748
+  languageName: node
+  linkType: hard
+
 "@tanstack/query-core@npm:^5.51.21":
   version: 5.56.2
   resolution: "@tanstack/query-core@npm:5.56.2"
   checksum: e78430464de89fd2543155449391415983c7cdcd1ff2bb86da019414204b6800e2405e341db88000b36a101d3619ee7e94e90da1fa5497b2e021c5765924a64c
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:5.81.2":
+  version: 5.81.2
+  resolution: "@tanstack/react-query@npm:5.81.2"
+  dependencies:
+    "@tanstack/query-core": 5.81.2
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 69191bc6dc57c4c6a6620948ea10dbfaa39f46a73a46df6f28c8c82f94a17d1f513b59595a6b5a77d9215c6619c6b380deb28bc7c17e3076ab0fb5ef7039212e
   languageName: node
   linkType: hard
 
@@ -16032,12 +16050,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "chain-registry@npm:2.0.5"
+"chain-registry@npm:^2.0.11":
+  version: 2.0.11
+  resolution: "chain-registry@npm:2.0.11"
   dependencies:
-    "@chain-registry/types": ^2.0.5
-  checksum: 1e01796699a891977a808e2da1364d926a7ac54d42da079b001aed033497601f0e8eb4623d250e26aeba41d8da39ef3d060be07aa35c2f86938ff05e09f18bf9
+    "@chain-registry/types": ^2.0.11
+  checksum: 79a10661775f5a93808524d9a4c96a32e3f03dccb3c63f1e5821c23a9c25ba70e2563b35f49f21d21b6672c381eb48ed5fd71a62ce148f95f4071e841c064696
   languageName: node
   linkType: hard
 
@@ -25214,6 +25232,7 @@ __metadata:
   resolution: "nextjs@workspace:examples/nextjs"
   dependencies:
     "@skip-go/widget": "workspace:^"
+    "@tanstack/react-query": 5.81.2
     "@types/node": ^20
     "@types/react": ^18
     "@types/react-dom": ^18
