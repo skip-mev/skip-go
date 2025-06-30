@@ -70,33 +70,39 @@ curl -X 'POST' \
   "dest_asset_denom": "uatom",
   "dest_asset_chain_id": "cosmoshub-4",
   "cumulative_affiliate_fee_bps": "0",
-  "allow_multi_tx": true,
-  "client_id": "skip-api-docs"
+  "allow_multi_tx": true
 }'
 
 ```
 
 ### Via `@skip-go/client`
 
-For users of the `@skip-go/client` TypeScript package, the `apiKey` can be included in the `SkipClientOptions` object when constructing a `SkipClient`. After you include it in construction, the `SkipClient` will handle passing it in the `authorization` header of all requests.
+For users of the `@skip-go/client` TypeScript package (v1.0.0+), you can configure your API key using either `setApiOptions` or `setClientOptions` at initialization. The library will automatically include it in the `authorization` header of all requests.
 
 For example:
 
 ```typescript
-import { SkipClient, SKIP_API_URL } from "@skip-go/client";
+import { setApiOptions, setClientOptions } from "@skip-go/client";
 
-const client = new SkipClient({
+// Option 1: For basic API calls
+setApiOptions({
 	apiKey: <YOUR API KEY>,
 });
+
+// Option 2: For executeRoute functionality
+setClientOptions({
+	apiKey: <YOUR API KEY>,
+	// ... other options like endpointOptions, aminoTypes, etc.
+});
 ```
+
+Note: The `SkipClient` class has been removed in v1.0.0. Instead, you import and use individual functions directly after setting the API options. Also note that `apiURL` has been renamed to `apiUrl` to follow camelCase conventions.
 
 ### Setup a Proxy to Receive Skip Go API Requests and Add the API Key
 
 To keep your API key secure and private, we recommend that you proxy the API requests from the frontend to your own backend--where you can add your API key in the header before forwarding the request to the Skip Go API.
 
 The snippets below show you how to use Next.js/Vercel for this kind of proxying. It only takes a moment to set up.
-
-pages/api/skip/handler.tsnext.config.js@skip-router.env
 
 ```typescript
 // This handler runs server-side in Vercel and receive requests from the frontend
@@ -149,9 +155,9 @@ export default async function handler(req: NextApiRequest) {
 ```
 
 ```typescript
-// This configures your router to make requests to your proxy service instead of
+// This configures your client to make requests to your proxy service instead of
 // the standard Skip Go API backend directly
-import { SkipClient } from '@skip-go/client';
+import { setApiOptions, setClientOptions } from '@skip-go/client';
 
 const appUrl =
   process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview' ||
@@ -161,9 +167,17 @@ const appUrl =
       : process.env.NEXT_PUBLIC_VERCEL_URL
     : 'https://<YOUR APP URL>';
 
-const client = new SkipClient({
+// Option 1: For basic API calls
+setApiOptions({
   // you don't need to pass apiKey since you already have it in your proxy handler
-  apiURL: `${appUrl}/api/skip`,
+  apiUrl: `${appUrl}/api/skip`,
+});
+
+// Option 2: For executeRoute functionality
+setClientOptions({
+  // you don't need to pass apiKey since you already have it in your proxy handler
+  apiUrl: `${appUrl}/api/skip`,
+  // ... other options if needed
 });
 ```
 
