@@ -39,7 +39,7 @@ export const ExpectedErrorPageRelayFeeQuoteExpired = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("error page: relay fee quote expired - header back button clicked");
+            track("expected error page: relay fee quote expired - header back button clicked");
             setErrorAtom(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
@@ -57,7 +57,7 @@ export const ExpectedErrorPageRelayFeeQuoteExpired = ({
         label="Retry"
         icon={ICONS.rightArrow}
         onClick={() => {
-          track("error page: relay fee quote expired - retry button clicked");
+          track("expected error page: relay fee quote expired - retry button clicked");
           onClickRetry();
         }}
         backgroundColor={theme.error.text}
