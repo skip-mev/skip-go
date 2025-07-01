@@ -1,6 +1,5 @@
 import { Modals } from "@/modals/registerModals";
 import { SwapPageFooter, SwapPageFooterItemsProps } from "@/pages/SwapPage/SwapPageFooter";
-import { skipRouteAtom } from "@/state/route";
 import { settingsDrawerAtom } from "@/state/settingsDrawer";
 import { goFastWarningAtom, isWaitingForNewRouteAtom } from "@/state/swapPage";
 import { track } from "@amplitude/analytics-browser";
@@ -11,7 +10,6 @@ import React, { useState } from "react";
 export const useSettingsDrawer = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const settingsDrawer = useAtomValue(settingsDrawerAtom);
-  const { isError: isRouteError, data: route } = useAtomValue(skipRouteAtom);
   const isWaitingForNewRoute = useAtomValue(isWaitingForNewRouteAtom);
   const setShowGoFastErrorAtom = useSetAtom(goFastWarningAtom);
 

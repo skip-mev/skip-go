@@ -53,14 +53,12 @@ const RoutePreferenceLabel = ({ preference }: { preference: RoutePreference }) =
 
 export type SwapPageFooterItemsProps = {
   content?: React.ReactNode;
-  showRouteInfo?: boolean;
   showEstimatedTime?: boolean;
   highlightSettings?: boolean;
 };
 
 export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   content,
-  showRouteInfo = false,
   showEstimatedTime = false,
   highlightSettings = false,
 }) => {
