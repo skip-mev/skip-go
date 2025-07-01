@@ -122,6 +122,226 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
   if (!isUserAddressesValid) {
     throw new Error("executeRoute error: invalid user addresses");
   }
+  console.log(addressList)
+
+  const gasOps = [
+    {
+        "transfer": {
+            "port": "transfer",
+            "channel": "channel-1266",
+            "fromChainId": "cosmoshub-4",
+            "toChainId": "elys-1",
+            "pfmEnabled": true,
+            "supportsMemo": true,
+            "denomIn": "uatom",
+            "denomOut": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+            "bridgeId": "IBC",
+            "smartRelay": false,
+            "chainId": "cosmoshub-4",
+            "destDenom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
+        },
+        "txIndex": 0,
+        "amountIn": "100000",
+        "amountOut": "100000"
+    },
+    {
+        "swap": {
+            "swapIn": {
+                "swapVenue": {
+                    "name": "elys-native",
+                    "chainId": "elys-1",
+                    "logoUri": "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/elys/logo.svg"
+                },
+                "swapOperations": [
+                    {
+                        "pool": "1",
+                        "denomIn": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+                        "denomOut": "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349"
+                    },
+                    {
+                        "pool": "10",
+                        "denomIn": "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349",
+                        "denomOut": "ibc/646315E3B0461F5FA4C5C8968A88FC45D4D5D04A45B98F1B8294DD82F386DD85"
+                    }
+                ],
+                "swapAmountIn": "100000",
+                "estimatedAmountOut": "2904733"
+            },
+            "estimatedAffiliateFee": "0ibc/646315E3B0461F5FA4C5C8968A88FC45D4D5D04A45B98F1B8294DD82F386DD85",
+            "fromChainId": "elys-1",
+            "chainId": "elys-1",
+            "denomIn": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+            "denomOut": "ibc/646315E3B0461F5FA4C5C8968A88FC45D4D5D04A45B98F1B8294DD82F386DD85",
+            "swapVenues": [
+                {
+                    "name": "elys-native",
+                    "chainId": "elys-1",
+                    "logoUri": "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/elys/logo.svg"
+                }
+            ]
+        },
+        "txIndex": 0,
+        "amountIn": "100000",
+        "amountOut": "2904733"
+    },
+    {
+        "transfer": {
+            "port": "transfer",
+            "channel": "channel-6",
+            "fromChainId": "elys-1",
+            "toChainId": "osmosis-1",
+            "pfmEnabled": true,
+            "supportsMemo": true,
+            "denomIn": "ibc/646315E3B0461F5FA4C5C8968A88FC45D4D5D04A45B98F1B8294DD82F386DD85",
+            "denomOut": "uosmo",
+            "bridgeId": "IBC",
+            "smartRelay": false,
+            "chainId": "elys-1",
+            "destDenom": "uosmo"
+        },
+        "txIndex": 0,
+        "amountIn": "2904733",
+        "amountOut": "2904733"
+    }
+]
+
+  const addressGasList = [
+    "cosmos1g3jjhgkyf36pjhe7u5cw8j9u6cgl8x929ej430",
+    "elys1g3jjhgkyf36pjhe7u5cw8j9u6cgl8x929etjud",
+    "ab"
+  ]
+
+  const gasRoute = {
+    "sourceAssetDenom": "uatom",
+    "sourceAssetChainId": "cosmoshub-4",
+    "destAssetDenom": "uosmo",
+    "destAssetChainId": "osmosis-1",
+    "amountIn": "100000",
+    "amountOut": "2901947",
+    "operations": [
+        {
+            "transfer": {
+                "port": "transfer",
+                "channel": "channel-1266",
+                "fromChainId": "cosmoshub-4",
+                "toChainId": "elys-1",
+                "pfmEnabled": true,
+                "supportsMemo": true,
+                "denomIn": "uatom",
+                "denomOut": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+                "bridgeId": "IBC",
+                "smartRelay": false,
+                "chainId": "cosmoshub-4",
+                "destDenom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9"
+            },
+            "txIndex": 0,
+            "amountIn": "100000",
+            "amountOut": "100000"
+        },
+        {
+            "swap": {
+                "swapIn": {
+                    "swapVenue": {
+                        "name": "elys-native",
+                        "chainId": "elys-1",
+                        "logoUri": "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/elys/logo.svg"
+                    },
+                    "swapOperations": [
+                        {
+                            "pool": "1",
+                            "denomIn": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+                            "denomOut": "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349"
+                        },
+                        {
+                            "pool": "10",
+                            "denomIn": "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349",
+                            "denomOut": "ibc/646315E3B0461F5FA4C5C8968A88FC45D4D5D04A45B98F1B8294DD82F386DD85"
+                        }
+                    ],
+                    "swapAmountIn": "100000",
+                    "estimatedAmountOut": "2901947"
+                },
+                "estimatedAffiliateFee": "0ibc/646315E3B0461F5FA4C5C8968A88FC45D4D5D04A45B98F1B8294DD82F386DD85",
+                "fromChainId": "elys-1",
+                "chainId": "elys-1",
+                "denomIn": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+                "denomOut": "ibc/646315E3B0461F5FA4C5C8968A88FC45D4D5D04A45B98F1B8294DD82F386DD85",
+                "swapVenues": [
+                    {
+                        "name": "elys-native",
+                        "chainId": "elys-1",
+                        "logoUri": "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/elys/logo.svg"
+                    }
+                ]
+            },
+            "txIndex": 0,
+            "amountIn": "100000",
+            "amountOut": "2901947"
+        },
+        {
+            "transfer": {
+                "port": "transfer",
+                "channel": "channel-6",
+                "fromChainId": "elys-1",
+                "toChainId": "osmosis-1",
+                "pfmEnabled": true,
+                "supportsMemo": true,
+                "denomIn": "ibc/646315E3B0461F5FA4C5C8968A88FC45D4D5D04A45B98F1B8294DD82F386DD85",
+                "denomOut": "uosmo",
+                "bridgeId": "IBC",
+                "smartRelay": false,
+                "chainId": "elys-1",
+                "destDenom": "uosmo"
+            },
+            "txIndex": 0,
+            "amountIn": "2901947",
+            "amountOut": "2901947"
+        }
+    ],
+    "chainIds": [
+        "cosmoshub-4",
+        "elys-1",
+        "osmosis-1"
+    ],
+    "doesSwap": true,
+    "estimatedAmountOut": "2901947",
+    "swapVenues": [
+        {
+            "name": "elys-native",
+            "chainId": "elys-1",
+            "logoUri": "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/elys/logo.svg"
+        }
+    ],
+    "txsRequired": 1,
+    "usdAmountIn": "0.41",
+    "usdAmountOut": "0.41",
+    "estimatedFees": [],
+    "requiredChainAddresses": [
+        "cosmoshub-4",
+        "elys-1",
+        "osmosis-1"
+    ],
+    "estimatedRouteDurationSeconds": 60,
+    "swapVenue": {
+        "name": "elys-native",
+        "chainId": "elys-1",
+        "logoUri": "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/elys/logo.svg"
+    }
+}
+
+  const gasMsg = await messages({
+    timeoutSeconds,
+    amountIn: gasRoute?.amountIn,
+    amountOut: gasRoute?.amountOut || "0",
+    sourceAssetChainId: gasRoute?.sourceAssetChainId,
+    sourceAssetDenom: gasRoute?.sourceAssetDenom,
+    destAssetChainId: gasRoute?.destAssetChainId,
+    destAssetDenom: gasRoute?.destAssetDenom,
+    operations: gasOps,
+    addressList: addressGasList,
+    slippageTolerancePercent: "0.000000001",
+    chainIdsToAffiliates: ApiState.chainIdsToAffiliates,
+  })
 
   const response = await messages({
     timeoutSeconds,
@@ -139,6 +359,12 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     feePayerAddress: options.svmFeePayer?.address,
   });
 
+  const firstTx = response?.txs?.[0];
+  if (firstTx && "cosmosTx" in firstTx) {
+      // @ts-ignore
+      firstTx.cosmosTx?.msgs?.unshift(gasMsg?.txs?.[0]?.cosmosTx?.msgs?.[0]);
+    }
+
   if (beforeMsg && (response?.txs?.length ?? 0) > 0) {
     const firstTx = response?.txs?.[0];
     if (firstTx && "cosmosTx" in firstTx) {
@@ -152,6 +378,7 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
       lastTx.cosmosTx?.msgs?.push(afterMsg);
     }
   }
+  console.log("response ",response)
 
   await executeTransactions({ ...options, txs: response?.txs });
 };

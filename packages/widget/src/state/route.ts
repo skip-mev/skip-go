@@ -135,6 +135,7 @@ export const _skipRouteAtom: ReturnType<
           goFast: swapSettings.routePreference === RoutePreference.FASTEST,
           abortDuplicateRequests: true,
         });
+        console.log("ops", response, response?.operations);
         return response;
       } catch (error) {
         return {
