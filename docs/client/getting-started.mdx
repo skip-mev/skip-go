@@ -222,10 +222,10 @@ import { route } from "@skip-go/client";
 const routeResult = await route({
   amountIn: "1000000", // Desired amount in smallest denomination (e.g., uatom)
   sourceAssetDenom: "uatom",
-  sourceAssetChainID: "cosmoshub-4",
+  sourceAssetChainId: "cosmoshub-4",
   destAssetDenom: "uosmo",
-  destAssetChainID: "osmosis-1",
-  cumulativeAffiliateFeeBPS: '0',
+  destAssetChainId: "osmosis-1",
+  cumulativeAffiliateFeeBps: '0',
 });
 ```
 ```ts Swap ETH for TIA Example
@@ -234,9 +234,9 @@ import { route } from "@skip-go/client";
 const routeResult = await route({
   amountOut: "1000000", // Desired amount out
   sourceAssetDenom: "ethereum-native",
-  sourceAssetChainID: "1", // Ethereum mainnet chain ID
+  sourceAssetChainId: "1", // Ethereum mainnet chain ID
   destAssetDenom: "utia",
-  destAssetChainID: "celestia",
+  destAssetChainId: "celestia",
   smartRelay: true,
   smartSwapOptions: {
     splitRoutes: true,
@@ -249,9 +249,9 @@ import { route } from "@skip-go/client";
 
 const routeResult = await route({
   sourceAssetDenom: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  sourceAssetChainID: "solana",
+  sourceAssetChainId: "solana",
   destAssetDenom: "uusdc",
-  destAssetChainID: "noble-1",
+  destAssetChainId: "noble-1",
   amountIn: "1000000",
   smartRelay: true
 });
