@@ -179,15 +179,6 @@ export default function Home() {
                 </div>
               ))}
           </div>
-          <button
-            onClick={() => {
-              setSwapVenues((prev) =>
-                prev?.length === 0 ? swapVenuesQuery.data : []
-              );
-            }}
-          >
-            {swapVenues?.length === 0 ? "Select " : "Deselect "} all
-          </button>
         </div>
         <div
           style={{
@@ -236,14 +227,6 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <button
-
-            onClick={() => {
-             setBridges((prev) => prev?.length === 0 ? bridgesQuery.data : []);
-            }}
-          >{
-bridges?.length === 0 ? "Select " : "Deselect "
-          } all</button>
         </div>
       </div>
       <div
