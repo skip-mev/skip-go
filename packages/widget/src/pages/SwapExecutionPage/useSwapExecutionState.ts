@@ -36,9 +36,6 @@ export function useSwapExecutionState({
     }
 
     if (currentTransaction?.status === "pending") {
-      if (signaturesRemaining > 0) {
-        return SwapExecutionState.signaturesRemaining;
-      }
       return SwapExecutionState.pending;
     }
 
@@ -51,6 +48,9 @@ export function useSwapExecutionState({
     }
 
     if (currentTransaction?.status === "signing") {
+      if (signaturesRemaining > 0) {
+        return SwapExecutionState.signaturesRemaining;
+      }
       return SwapExecutionState.waitingForSigning;
     }
 
