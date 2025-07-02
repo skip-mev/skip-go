@@ -53,14 +53,12 @@ const RoutePreferenceLabel = ({ preference }: { preference: RoutePreference }) =
 
 export type SwapPageFooterItemsProps = {
   content?: React.ReactNode;
-  showRouteInfo?: boolean;
   showEstimatedTime?: boolean;
   highlightSettings?: boolean;
 };
 
 export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   content,
-  showRouteInfo = false,
   showEstimatedTime = false,
   highlightSettings = false,
 }) => {
@@ -75,7 +73,7 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
 
   const leftContent = () => {
     if (content) return content;
-    if (isLoading || !showRouteInfo || !route) return null;
+    if (isLoading) return null;
 
     return (
       <Row align="flex-end" gap={10} height={isMobile ? undefined : 13}>
