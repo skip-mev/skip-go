@@ -161,8 +161,7 @@ export default function Home() {
                     id={venue.name}
                     type="checkbox"
                     checked={
-                      swapVenues?.map((v) => v.name).includes(venue.name) ??
-                      true
+                      swapVenues?.map((v) => v.name).includes(venue.name)
                     }
                     onChange={(e) => {
                       if (e.currentTarget.checked) {
@@ -210,7 +209,7 @@ export default function Home() {
                   id={bridge.id}
                   type="checkbox"
                   checked={
-                    bridges?.map((b) => b.id).includes(bridge.id) ?? true
+                    bridges?.map((b) => b.id).includes(bridge.id)
                   }
                   onChange={(e) => {
                     if (e.currentTarget.checked) {
