@@ -102,17 +102,6 @@ export default function Home() {
     refetchOnWindowFocus: false,
   });
 
-  useEffect(() => {
-    if (swapVenuesQuery.data) {
-      setSwapVenues(swapVenuesQuery.data);
-    }
-  }, [swapVenuesQuery.data]);
-  useEffect(() => {
-    if (bridgesQuery.data) {
-      setBridges(bridgesQuery.data);
-    }
-  }, [bridgesQuery.data]);
-
   return (
     <div
       style={{
