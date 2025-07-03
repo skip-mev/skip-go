@@ -136,6 +136,7 @@ export function chains(): Chain[] {
 
 export const getIsEthermint = (chainId: string) => {
   const chain = chains().find((c) => c.chainId === chainId);
+  if(chain?.chainId?.includes("injective")) return true;
   if (!chain) return false;
   const keyAlgos = chain.keyAlgos;
   const extraCodecs = chain.extraCodecs;
@@ -163,14 +164,11 @@ export async function findFirstWorkingEndpoint(
       const url = (() => {
         switch (type) {
           case "rpc": {
-            const rpc = new URL("health", endpoint);
+            const rpc = new URL(endpoint);
             return rpc.toString();
           }
           case "rest": {
-            const url = new URL(
-              "cosmos/base/tendermint/v1beta1/node_info",
-              endpoint,
-            );
+            const url = new URL(endpoint);
             return url.toString();
           }
           default:
