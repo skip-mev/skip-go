@@ -32,6 +32,7 @@ export const SwapSettingsDrawer = createModal(() => {
   return (
     <StyledSwapPageSettings gap={15}>
       <Column gap={10}>
+       {route && (
         <Row justify="space-between" align="center">
           <SwapDetailText>Route</SwapDetailText>
           <Row align="center" gap={5}>
@@ -51,6 +52,7 @@ export const SwapSettingsDrawer = createModal(() => {
             ))}
           </Row>
         </Row>
+        )}
         {Boolean(route?.swapPriceImpactPercent) && (
           <Row justify="space-between" align="center">
             <SwapDetailText>Price Impact</SwapDetailText>

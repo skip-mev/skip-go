@@ -198,7 +198,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           });
         }
       } else if ((error as Error)?.message?.toLowerCase().includes("relay fee quote has expired")) {
-        track("error page: relay fee quote has expired");
+        track("expected error page: relay fee quote has expired");
         set(errorWarningAtom, {
           errorWarningType: ErrorWarningType.ExpiredRelayFeeQuote,
           error: error as Error,

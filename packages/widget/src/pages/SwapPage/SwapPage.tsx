@@ -214,7 +214,7 @@ export const SwapPage = () => {
 
   const feeWarning = useMemo(() => {
     if (!route?.usdAmountIn || !route?.usdAmountOut) return false;
-    return parseFloat(route.usdAmountOut) <= parseFloat(route.usdAmountIn) * 0.9;
+    return parseFloat(route.usdAmountOut) < parseFloat(route.usdAmountIn) * 0.9;
   }, [route?.usdAmountIn, route?.usdAmountOut]);
 
   const swapButton = useMemo(() => {
