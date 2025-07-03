@@ -47,10 +47,11 @@ export const SwapExecutionPage = () => {
 
   const { mutate: submitExecuteRouteMutation, error } = useAtomValue(skipSubmitSwapExecutionAtom);
 
-  const shouldDisplaySignaturesRemaining = route?.txsRequired && route.txsRequired > 1;
-  const signaturesRemaining = shouldDisplaySignaturesRemaining
-    ? route.txsRequired - (currentTransaction?.txsSigned ?? 0)
-    : 0;
+  const signaturesRemaining = useMemo(() => {
+    if (!currentTransaction) return 0;
+
+    return currentTransaction.txsRequired - currentTransaction.txsSigned;
+  }, [currentTransaction]);
 
   const lastTransaction = currentTransaction?.transactionDetails.at(-1);
   const lastTxHash = lastTransaction?.txHash;

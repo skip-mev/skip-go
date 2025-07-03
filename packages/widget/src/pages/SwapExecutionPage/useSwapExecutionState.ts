@@ -17,8 +17,19 @@ export function useSwapExecutionState({
   isLoading,
 }: UseSwapExecutionStateParams): SwapExecutionState {
   const currentTransaction = useAtomValue(currentTransactionAtom);
-  const signaturesRemaining =
-    (currentTransaction?.txsRequired ?? 0) - (currentTransaction?.txsSigned ?? 0);
+
+  const showSignaturesRemaining = useMemo(() => {
+    if (!currentTransaction) return false;
+    if (
+      currentTransaction?.txsRequired >= 2 &&
+      currentTransaction?.txsSigned !== currentTransaction?.txsRequired
+    ) {
+      return true;
+    }
+
+    return false;
+  }, [currentTransaction]);
+
   return useMemo(() => {
     if (isLoading) return SwapExecutionState.pendingGettingAddresses;
     if (!chainAddresses) return SwapExecutionState.destinationAddressUnset;
@@ -48,7 +59,7 @@ export function useSwapExecutionState({
     }
 
     if (currentTransaction?.status === "signing") {
-      if (signaturesRemaining > 0) {
+      if (showSignaturesRemaining) {
         return SwapExecutionState.signaturesRemaining;
       }
       return SwapExecutionState.waitingForSigning;
@@ -67,7 +78,7 @@ export function useSwapExecutionState({
     isLoading,
     chainAddresses,
     route?.requiredChainAddresses,
-    currentTransaction,
-    signaturesRemaining,
+    currentTransaction?.status,
+    showSignaturesRemaining,
   ]);
 }
