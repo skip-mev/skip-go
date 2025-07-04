@@ -1,27 +1,29 @@
 import { useCallback, useEffect } from "react";
-import { setOverallStatusAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { setCurrentTransactionIdAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { track } from "@amplitude/analytics-browser";
-import { TxsStatus } from "./useBroadcastedTxs";
 import { Routes, currentPageAtom } from "@/state/router";
 import { debouncedSourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
 import { skipAssetsAtom } from "@/state/skipClient";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
+import { RouteDetails } from "@skip-go/client";
+import { currentTransactionAtom } from "@/state/history";
 
 const DELAY_EXPECTING_TRANSFER_ASSET_RELEASE = 15_000;
 
-export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus) => {
+export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetails) => {
   const setErrorWarning = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
+  const setCurrentTransactionId = useSetAtom(setCurrentTransactionIdAtom);
   const setDebouncedSourceAssetAmount = useSetAtom(debouncedSourceAssetAmountAtom);
-  const setOverallStatus = useSetAtom(setOverallStatusAtom);
+  const currentTransaction = useAtomValue(currentTransactionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
 
-  const { transactionDetailsArray, route } = useAtomValue(swapExecutionStateAtom);
+  const { route } = useAtomValue(swapExecutionStateAtom);
 
-  const lastTransaction = transactionDetailsArray.at(-1);
+  const lastTransaction = currentTransaction?.transactionDetails.at(-1);
   const lastTxHash = lastTransaction?.txHash;
 
   const getClientAsset = useCallback(
@@ -34,7 +36,7 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
     [assets],
   );
 
-  const explorerLink = createSkipExplorerLink(transactionDetailsArray);
+  const explorerLink = createSkipExplorerLink(currentTransaction?.transactionDetails);
 
   const handleTransactionFailed = useCallback(() => {
     // Track a high level error event for overall monitoring
@@ -50,7 +52,7 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
         transferAssetRelease: statusData?.transferAssetRelease,
         lastTransaction,
         error,
-        route
+        route,
       });
       setErrorWarning({
         errorWarningType: ErrorWarningType.TransactionReverted,
@@ -78,7 +80,9 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
       setErrorWarning({
         errorWarningType: ErrorWarningType.Unexpected,
         error,
-        onClickBack: () => setOverallStatus("unconfirmed"),
+        onClickBack: () => {
+          setCurrentTransactionId();
+        },
       });
     }
   }, [
@@ -89,30 +93,24 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
     lastTxHash,
     route,
     setCurrentPage,
+    setCurrentTransactionId,
     setDebouncedSourceAssetAmount,
     setErrorWarning,
-    setOverallStatus,
     setSourceAsset,
     statusData?.transferAssetRelease,
   ]);
 
   useEffect(() => {
-    if (statusData?.isSuccess || !statusData?.isSettled) return;
+    if (statusData?.status === "failed" || statusData?.status === "incomplete") {
+      const timeout = setTimeout(() => {
+        handleTransactionFailed();
+      }, DELAY_EXPECTING_TRANSFER_ASSET_RELEASE);
 
-    const timeout = setTimeout(() => {
-      handleTransactionFailed();
-    }, DELAY_EXPECTING_TRANSFER_ASSET_RELEASE);
-
-    if (statusData.transferAssetRelease) {
-      clearTimeout(timeout);
-      handleTransactionFailed();
+      if (statusData?.transferAssetRelease) {
+        clearTimeout(timeout);
+        handleTransactionFailed();
+      }
+      return () => clearTimeout(timeout);
     }
-
-    return () => clearTimeout(timeout);
-  }, [
-    statusData?.isSettled,
-    statusData?.isSuccess,
-    statusData?.transferAssetRelease,
-    handleTransactionFailed,
-  ]);
+  }, [statusData?.transferAssetRelease, handleTransactionFailed, statusData?.status, statusData]);
 };

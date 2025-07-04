@@ -11,12 +11,14 @@ type ExecuteCosmosTransactionProps = {
   };
   options: ExecuteRouteOptions;
   index: number;
+  routeId: string;
 };
 
 export const executeCosmosTransaction = async ({
   tx,
   options,
   index,
+  routeId,
 }: ExecuteCosmosTransactionProps) => {
   if (tx === undefined) {
     throw new Error("executeCosmosTransaction error: tx is undefined");
@@ -25,6 +27,7 @@ export const executeCosmosTransaction = async ({
     tx,
     options,
     index,
+    routeId,
   });
   const chainId = tx.cosmosTx?.chainId;
 

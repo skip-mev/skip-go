@@ -8,6 +8,7 @@ import { isOfflineDirectSigner } from "@cosmjs/proto-signing";
 import { signCosmosMessageDirect } from "./signCosmosMessageDirect";
 import { signCosmosMessageAmino } from "./signCosmosMessageAmino";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
+import { updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
 
 type SignCosmosTransactionProps = {
   tx?: {
@@ -16,12 +17,14 @@ type SignCosmosTransactionProps = {
   };
   options: ExecuteRouteOptions;
   index: number;
+  routeId: string;
 };
 
 export const signCosmosTransaction = async ({
   tx,
   options,
   index,
+  routeId,
 }: SignCosmosTransactionProps) => {
   const { userAddresses } = options;
 
@@ -99,6 +102,13 @@ export const signCosmosTransaction = async ({
     txIndex: index,
     signerAddress: currentUserAddress,
   })
+
+  updateRouteDetails({
+    status: "signing",
+    routeId,
+    options
+  });
+  
   if (isOfflineDirectSigner(signer)) {
     rawTx = await signCosmosMessageDirect({
       ...commonRawTxBody,
@@ -110,6 +120,12 @@ export const signCosmosTransaction = async ({
 
   options?.onTransactionSigned?.({
     chainId,
+  });
+
+  updateRouteDetails({
+    status: "pending",
+    routeId,
+    options
   });
 
   const txBytes = TxRaw.encode(rawTx).finish();

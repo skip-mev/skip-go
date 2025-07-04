@@ -3,11 +3,13 @@ import { ClientState } from "src/state/clientState";
 import { maxUint256, publicActions } from "viem";
 import { erc20ABI } from "src/constants/abis";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
+import { updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
 
 export const executeEvmTransaction = async (
   message: { evmTx?: EvmTx },
   options: ExecuteRouteOptions,
   index: number,
+  routeId: string,
 ) => {
   const gasArray = ClientState.validateGasResults;
 
@@ -68,6 +70,12 @@ export const executeEvmTransaction = async (
         allowance: requiredApproval,
       });
 
+      updateRouteDetails({
+        status: "allowance",
+        routeId,
+        options
+      });
+      
       const txHash = await extendedSigner.writeContract({
         account: evmSigner.account,
         address: requiredApproval.tokenContract as `0x${string}`,
@@ -96,11 +104,18 @@ export const executeEvmTransaction = async (
     });
   }
 
-    options?.onTransactionSignRequested?.({
+  options?.onTransactionSignRequested?.({
     chainId: evmTx.chainId,
     signerAddress: evmSigner.account.address as `0x${string}`,
     txIndex: index
   });
+
+  updateRouteDetails({
+    status: "signing",
+    routeId,
+    options
+  });
+
   // Execute the transaction
   const txHash = await extendedSigner.sendTransaction({
     account: evmSigner.account,
@@ -108,6 +123,12 @@ export const executeEvmTransaction = async (
     data: `0x${evmTx.data}`,
     chain: evmSigner.chain,
     value: evmTx.value === "" ? undefined : BigInt(evmTx.value),
+  });
+
+  updateRouteDetails({
+    status: "pending",
+    routeId,
+    options
   });
 
   onTransactionSigned?.({

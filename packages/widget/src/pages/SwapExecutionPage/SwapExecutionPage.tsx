@@ -13,9 +13,7 @@ import {
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
 import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
-import { useBroadcastedTxsStatus } from "./useBroadcastedTxs";
 import { useHandleTransactionTimeout } from "./useHandleTransactionTimeout";
-import { useSyncTxStatus } from "./useSyncTxStatus";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { useSwapExecutionState } from "./useSwapExecutionState";
@@ -24,7 +22,7 @@ import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
 import { track } from "@amplitude/analytics-browser";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { usePreventPageUnload } from "@/hooks/usePreventPageUnload";
-import { lastTransactionInTimeAtom } from "@/state/history";
+import { currentTransactionAtom } from "@/state/history";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -41,52 +39,33 @@ export enum SwapExecutionState {
 
 export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const {
-    route,
-    clientOperations,
-    overallStatus,
-    transactionDetailsArray,
-    isValidatingGasBalance,
-    transactionsSigned,
-  } = useAtomValue(swapExecutionStateAtom);
-  const lastTransactionInTime = useAtomValue(lastTransactionInTimeAtom);
+  const { route, clientOperations } = useAtomValue(swapExecutionStateAtom);
+  const currentTransaction = useAtomValue(currentTransactionAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains, isLoading } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
 
   const { mutate: submitExecuteRouteMutation, error } = useAtomValue(skipSubmitSwapExecutionAtom);
 
-  const shouldDisplaySignaturesRemaining = route?.txsRequired && route.txsRequired > 1;
-  const signaturesRemaining = shouldDisplaySignaturesRemaining
-    ? route.txsRequired - transactionsSigned
-    : 0;
+  const signaturesRemaining = useMemo(() => {
+    if (!currentTransaction) return 0;
 
-  const { data: statusData } = useBroadcastedTxsStatus({
-    txsRequired: route?.txsRequired,
-    transactionDetails: transactionDetailsArray,
-  });
+    return currentTransaction.txsRequired - currentTransaction.txsSigned;
+  }, [currentTransaction]);
 
-  const lastTransaction = transactionDetailsArray.at(-1);
+  const lastTransaction = currentTransaction?.transactionDetails.at(-1);
   const lastTxHash = lastTransaction?.txHash;
   const lastTxChainId = lastTransaction?.chainId;
-
-  useSyncTxStatus({
-    statusData,
-    timestamp: lastTransactionInTime?.transactionHistoryItem?.timestamp,
-  });
 
   const lastOperation = clientOperations[clientOperations.length - 1];
 
   const swapExecutionState = useSwapExecutionState({
     chainAddresses,
     route,
-    overallStatus,
-    isValidatingGasBalance,
-    signaturesRemaining,
     isLoading,
   });
 
-  const isSafeToleave = route?.txsRequired === transactionDetailsArray.length;
+  const isSafeToleave = route?.txsRequired === currentTransaction?.transactionDetails.length;
 
   usePreventPageUnload(
     swapExecutionState === SwapExecutionState.signaturesRemaining ||
@@ -96,7 +75,7 @@ export const SwapExecutionPage = () => {
       !isSafeToleave,
   );
 
-  useHandleTransactionFailed(error as Error, statusData);
+  useHandleTransactionFailed(error as Error, currentTransaction);
   useHandleTransactionTimeout(swapExecutionState);
 
   const firstOperationStatus = useMemo(() => {
@@ -110,7 +89,7 @@ export const SwapExecutionPage = () => {
   }, [swapExecutionState]);
 
   const secondOperationStatus = useMemo(() => {
-    const status = statusData?.transferEvents;
+    const status = currentTransaction?.transferEvents;
 
     if (swapExecutionState === SwapExecutionState.confirmed) {
       return "completed";
@@ -126,7 +105,7 @@ export const SwapExecutionPage = () => {
     ) {
       return "pending";
     }
-  }, [statusData, swapExecutionState]);
+  }, [currentTransaction?.transferEvents, swapExecutionState]);
 
   const onClickEditDestinationWallet = useMemo(() => {
     track("swap execution page: edit destination address button - clicked");
@@ -157,7 +136,9 @@ export const SwapExecutionPage = () => {
     : SwapExecutionPageRouteDetailed;
 
   const shouldRenderTrackProgressButton =
-    lastTxHash && lastTxChainId && route?.txsRequired === transactionDetailsArray.length;
+    lastTxHash &&
+    lastTxChainId &&
+    route?.txsRequired === currentTransaction?.transactionDetails.length;
 
   return (
     <Column gap={5}>
@@ -179,7 +160,10 @@ export const SwapExecutionPage = () => {
             ? {
                 label: "Track progress",
                 onClick: () => {
-                  window.open(createSkipExplorerLink(transactionDetailsArray), "_blank");
+                  window.open(
+                    createSkipExplorerLink(currentTransaction?.transactionDetails),
+                    "_blank",
+                  );
                   track("swap execution page: track progress button - clicked", {
                     txHash: lastTxHash,
                   });
@@ -201,7 +185,7 @@ export const SwapExecutionPage = () => {
       <SwapExecutionPageRoute
         onClickEditDestinationWallet={onClickEditDestinationWallet}
         operations={clientOperations}
-        statusData={statusData}
+        statusData={currentTransaction}
         swapExecutionState={swapExecutionState}
         firstOperationStatus={firstOperationStatus}
         secondOperationStatus={secondOperationStatus}
@@ -214,7 +198,7 @@ export const SwapExecutionPage = () => {
         connectRequiredChains={connectRequiredChains}
         submitExecuteRouteMutation={submitExecuteRouteMutation}
       />
-      <SwapPageFooter showRouteInfo={overallStatus === "unconfirmed"} />
+      <SwapPageFooter />
     </Column>
   );
 };

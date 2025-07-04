@@ -2,15 +2,18 @@ import type { SvmTx } from "src/types/swaggerTypes";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { ClientState } from "src/state/clientState";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
+import { updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
 
 export const signSvmTransaction = async ({
   tx,
   options,
   index,
+  routeId,
 }: {
   index: number;
   tx?: { svmTx?: SvmTx };
   options?: ExecuteRouteOptions;
+  routeId: string;
 }) => {
   const gasArray = ClientState.validateGasResults;
 
@@ -57,9 +60,21 @@ export const signSvmTransaction = async ({
     txIndex: index,
   });
 
+  updateRouteDetails({
+    status: "signing",
+    routeId,
+    options
+  });
+
   const signedTx = await signer.signTransaction(transaction);
 
   options?.onTransactionSigned?.({ chainId: svmTx.chainId });
+
+  updateRouteDetails({
+    status: "pending",
+    routeId,
+    options
+  });
 
   const serializedTx = signedTx.serialize();
   return serializedTx;

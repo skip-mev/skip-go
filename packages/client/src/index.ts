@@ -42,6 +42,10 @@ export { getCosmosGasAmountForMessage } from "./public-functions/getCosmosGasAmo
 export { getEVMGasAmountForMessage } from "./public-functions/getEvmGasAmountForMessage";
 export { validateCosmosGasBalance } from "./public-functions/validateCosmosGasBalance";
 
+export { subscribeToRouteStatus } from "./public-functions/subscribeToRouteStatus";
+export type { RouteDetails, TransactionDetails, RouteStatus } from "./public-functions/subscribeToRouteStatus";
+export type { TransferEventStatus } from "./utils/clientType"
+
 export type { SkipClientOptions } from "./state/clientState";
 
 export { GAS_STATION_CHAIN_IDS } from "./constants/constants";
