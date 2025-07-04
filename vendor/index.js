@@ -10,6 +10,8 @@ const protoDirs = [
   path.resolve(__dirname, 'noble-cctp/proto'),
   path.resolve(__dirname, '../local_vendor/initia/proto'),
   path.resolve(__dirname, '../local_vendor/OPinit/proto'),
+  path.resolve(__dirname, '../local_vendor/injective/proto'),
+  path.resolve(__dirname, '../local_vendor/cosmwasm/proto'),
 ];
 
 module.exports = protoDirs;

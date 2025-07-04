@@ -26,7 +26,6 @@ const EstimatedDuration = ({ seconds }: { seconds?: number }) => {
   ) : null;
 };
 
-
 const SettingsButton = ({ highlight, changed }: { highlight?: boolean; changed: boolean }) => (
   <StyledSettingsContainer align="flex-end" gap={3} highlightSettings={highlight}>
     <CogIconWrapper>
