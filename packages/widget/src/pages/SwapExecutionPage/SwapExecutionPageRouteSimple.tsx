@@ -9,15 +9,15 @@ import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { useMemo } from "react";
 import { convertToPxValue } from "@/utils/style";
-import { RouteDetails, RouteStatus } from "@skip-go/client";
+import { RouteDetails, TransferEventStatus } from "@skip-go/client";
 
 export type SwapExecutionPageRouteProps = {
   operations: ClientOperation[];
   onClickEditDestinationWallet?: () => void;
   statusData?: RouteDetails;
   swapExecutionState?: SwapExecutionState;
-  firstOperationStatus?: RouteStatus | undefined;
-  secondOperationStatus?: RouteStatus | undefined;
+  firstOperationStatus?: TransferEventStatus | undefined;
+  secondOperationStatus?: TransferEventStatus | undefined;
 };
 
 export const SwapExecutionPageRouteSimple = ({

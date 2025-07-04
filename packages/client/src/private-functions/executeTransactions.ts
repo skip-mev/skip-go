@@ -233,7 +233,6 @@ export const executeTransactions = async (
 
   await executeAndSubscribeToRouteStatus({
     transactionDetails: transactionDetails,
-    txsRequired: txs.length,
     executeTransaction,
     options
   });

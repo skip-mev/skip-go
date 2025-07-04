@@ -120,6 +120,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     transactionDetailsArray: [],
     route,
     clientOperations: getClientOperations(route.operations),
+    currentTransactionId: undefined,
   });
 
   set(submitSwapExecutionCallbacksAtom, {

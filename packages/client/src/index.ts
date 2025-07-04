@@ -44,6 +44,7 @@ export { validateCosmosGasBalance } from "./public-functions/validateCosmosGasBa
 
 export { subscribeToRouteStatus } from "./public-functions/subscribeToRouteStatus";
 export type { RouteDetails, TransactionDetails, RouteStatus } from "./public-functions/subscribeToRouteStatus";
+export type { TransferEventStatus } from "./utils/clientType"
 
 export type { SkipClientOptions } from "./state/clientState";
 

@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
 import { Button, PillButton, Link, PillButtonLink } from "@/components/Button";
-import { ChainTransaction, RouteDetails, RouteStatus } from "@skip-go/client";
+import { ChainTransaction, RouteDetails, TransferEventStatus } from "@skip-go/client";
 import { ClientOperation } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useAtomValue } from "jotai";
@@ -26,7 +26,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
   chainId: ClientOperation["fromChainId"] | ClientOperation["chainId"];
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
-  status?: RouteStatus;
+  status?: TransferEventStatus;
   isSignRequired?: boolean;
   index: number;
   context: "source" | "destination" | "intermediary";
@@ -267,7 +267,7 @@ export const StyledAnimatedBorder = ({
   width: number;
   height: number;
   borderSize?: number;
-  status?: RouteStatus;
+  status?: TransferEventStatus;
 }) => (
   <StyledLoadingContainer
     align="center"
@@ -294,7 +294,7 @@ const StyledLoadingContainer = styled(Row)<{
   height: number;
   width: number;
   borderSize: number;
-  status?: RouteStatus;
+  status?: TransferEventStatus;
   backgroundColor?: string;
 }>`
   flex-shrink: 0;

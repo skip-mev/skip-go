@@ -4,7 +4,7 @@ import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { useMemo } from "react";
-import { ChainTransaction, RouteStatus } from "@skip-go/client";
+import { ChainTransaction, TransferEventStatus } from "@skip-go/client";
 import { StyledAnimatedBorder } from "./SwapExecutionPageRouteDetailedRow";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
@@ -29,7 +29,7 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   chainId: ClientOperation["fromChainId"] | ClientOperation["chainId"];
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
-  status?: RouteStatus;
+  status?: TransferEventStatus;
   icon?: ICONS;
   context: "source" | "destination";
 };

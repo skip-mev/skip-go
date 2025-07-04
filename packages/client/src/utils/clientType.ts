@@ -388,7 +388,7 @@ export function getSimpleStatus(
     | GoFastTransferState
     | StargateTransferState
     | LayerZeroTransferState
-): SimpleStatus {
+): TransferEventStatus {
   switch (state) {
     case "TRANSFER_PENDING":
     case "TRANSFER_RECEIVED":
@@ -441,7 +441,7 @@ export enum TransferType {
   layerZeroTransfer = "layerZeroTransfer",
 }
 
-export type SimpleStatus =
+export type TransferEventStatus =
   | "unconfirmed"
   | "signing"
   | "pending"
@@ -462,7 +462,7 @@ export type ClientTransferEvent = {
     | GoFastTransferState
     | StargateTransferState
     | LayerZeroTransferState;
-  status?: SimpleStatus;
+  status?: TransferEventStatus;
   fromExplorerLink?: string;
   toExplorerLink?: string;
   explorerLink?: string;
