@@ -14,6 +14,7 @@ import { signSvmTransaction } from "./svm/signSvmTransaction";
 import { submitTransaction } from "src/api/postSubmitTransaction";
 import { trackTransaction } from "src/api/postTrackTransaction";
 import { getAccountNumberAndSequence } from "./getAccountNumberAndSequence";
+import { getChainIdsFromTxs } from "./getChainIdsFromTxs";
 
 export const executeTransactions = async (
   options: ExecuteRouteOptions & { txs?: Tx[] }
@@ -38,33 +39,12 @@ export const executeTransactions = async (
     );
   }
 
-  const chainIds = txs.map((tx) => {
-    if ("cosmosTx" in tx) {
-      return {
-        chainType: "cosmos",
-        chainId: tx.cosmosTx?.chainId,
-      };
-    }
-
-    if ("svmTx" in tx) {
-      return {
-        chainType: "svm",
-        chainId: tx.svmTx?.chainId,
-      };
-    }
-
-    if ("evmTx" in tx) {
-      return {
-        chainType: "evm",
-        chainId: tx.evmTx?.chainId,
-      };
-    }
-  });
+  const chainIds = getChainIdsFromTxs(txs);
 
   const isGasStationSourceEVM = chainIds.find((item, i, array) => {
     return (
       GAS_STATION_CHAIN_IDS.includes(item?.chainId ?? "") &&
-      array[i - 1]?.chainType === "evm"
+      array[i - 1]?.chainType === ChainType.Evm
     );
   });
 
