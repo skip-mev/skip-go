@@ -9,6 +9,7 @@ export const executeEvmTransaction = async (
   message: { evmTx?: EvmTx },
   options: ExecuteRouteOptions,
   index: number,
+  routeId: string,
 ) => {
   const gasArray = ClientState.validateGasResults;
 
@@ -71,6 +72,7 @@ export const executeEvmTransaction = async (
 
       updateRouteDetails({
         status: "allowance",
+        routeId,
         options
       });
       
@@ -110,6 +112,7 @@ export const executeEvmTransaction = async (
 
   updateRouteDetails({
     status: "signing",
+    routeId,
     options
   });
 
@@ -124,6 +127,7 @@ export const executeEvmTransaction = async (
 
   updateRouteDetails({
     status: "pending",
+    routeId,
     options
   });
 

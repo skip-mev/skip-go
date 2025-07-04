@@ -97,9 +97,8 @@ export type ExecuteRouteOptions = SignerGetters &
 export const executeRoute = async (options: ExecuteRouteOptions) => {
   const { route, userAddresses, beforeMsg, afterMsg, timeoutSeconds } = options;
 
-  updateRouteDetails({
+  const { id: routeId } = updateRouteDetails({
     status: "unconfirmed",
-    initialize: true,
     options
   });
 
@@ -160,7 +159,7 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     }
   }
 
-  await executeTransactions({ ...options, txs: response?.txs });
+  await executeTransactions({ ...options, routeId, txs: response?.txs });
 };
 
 const validateUserAddresses = async (userAddresses: UserAddress[]) => {

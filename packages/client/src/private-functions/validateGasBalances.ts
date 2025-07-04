@@ -22,6 +22,7 @@ export type ValidateGasBalancesProps = {
   // run gas validation for specific chainId
   enabledChainIds?: string[];
   useUnlimitedApproval?: boolean;
+  routeId: string;
   options: ExecuteRouteOptions;
 } & Pick<SignerGetters, "getCosmosSigner" | "getEvmSigner">;
 
@@ -36,6 +37,7 @@ export const validateGasBalances = async ({
   enabledChainIds,
   useUnlimitedApproval,
   getCosmosPriorityFeeDenom,
+  routeId,
   options
 }: ValidateGasBalancesProps) => {
   const validateResult = await Promise.all(
@@ -54,6 +56,7 @@ export const validateGasBalances = async ({
         });
         updateRouteDetails({
           status: "validating",
+          routeId,
           options
         });
         if (!tx?.cosmosTx?.msgs) {
@@ -94,6 +97,7 @@ export const validateGasBalances = async ({
         });
         updateRouteDetails({
           status: "validating",
+          routeId,
           options
         });
         const signer = await getEvmSigner?.(tx?.evmTx?.chainId ?? "");
@@ -131,6 +135,7 @@ export const validateGasBalances = async ({
         });
         updateRouteDetails({
           status: "validating",
+          routeId,
           options
         });
         try {

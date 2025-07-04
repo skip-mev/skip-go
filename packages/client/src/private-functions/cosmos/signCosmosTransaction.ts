@@ -17,12 +17,14 @@ type SignCosmosTransactionProps = {
   };
   options: ExecuteRouteOptions;
   index: number;
+  routeId: string;
 };
 
 export const signCosmosTransaction = async ({
   tx,
   options,
   index,
+  routeId,
 }: SignCosmosTransactionProps) => {
   const { userAddresses } = options;
 
@@ -103,6 +105,7 @@ export const signCosmosTransaction = async ({
 
   updateRouteDetails({
     status: "signing",
+    routeId,
     options
   });
   
@@ -121,6 +124,7 @@ export const signCosmosTransaction = async ({
 
   updateRouteDetails({
     status: "pending",
+    routeId,
     options
   });
 

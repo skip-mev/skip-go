@@ -8,10 +8,12 @@ export const signSvmTransaction = async ({
   tx,
   options,
   index,
+  routeId,
 }: {
   index: number;
   tx?: { svmTx?: SvmTx };
   options?: ExecuteRouteOptions;
+  routeId: string;
 }) => {
   const gasArray = ClientState.validateGasResults;
 
@@ -60,6 +62,7 @@ export const signSvmTransaction = async ({
 
   updateRouteDetails({
     status: "signing",
+    routeId,
     options
   });
 
@@ -69,6 +72,7 @@ export const signSvmTransaction = async ({
 
   updateRouteDetails({
     status: "pending",
+    routeId,
     options
   });
 
