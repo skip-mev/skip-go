@@ -8493,7 +8493,7 @@ __metadata:
     eslint-plugin-prettier: ^5.2.1
     eslint-plugin-react-hooks: ^4.6.2
     fs-extra: ^11.3.0
-    graz: 0.3.2
+    graz: 0.3.3
     jotai: ^2.10.1
     jotai-effect: ^1.0.2
     jotai-tanstack-query: ^0.8.6
@@ -21178,6 +21178,37 @@ __metadata:
   bin:
     graz: dist/cli.js
   checksum: e94da798f712a001817c871582abcd7779b23f32d6e57dcf25c3f49ca47a49a68d34adb8e25f3ac3534362d8a9a15c24e21ebb72d31c41a055805e58107a11e6
+  languageName: node
+  linkType: hard
+
+"graz@npm:0.3.3":
+  version: 0.3.3
+  resolution: "graz@npm:0.3.3"
+  dependencies:
+    "@cosmsnap/snapper": 0.2.7
+    "@dao-dao/cosmiframe": 1.0.0
+    "@keplr-wallet/cosmos": 0.12.156
+    "@keplr-wallet/types": 0.12.156
+    "@metamask/providers": 12.0.0
+    "@vectis/extension-client": ^0.7.2
+    "@walletconnect/modal": 2.7.0
+    "@walletconnect/sign-client": 2.20.2
+    "@walletconnect/types": 2.20.2
+    "@walletconnect/utils": 2.20.2
+    cosmos-directory-client: 0.0.6
+    long: 4
+    zustand: 5.0.4
+  peerDependencies:
+    "@cosmjs/amino": ">=0.32.4"
+    "@cosmjs/cosmwasm-stargate": ">=0.32.4"
+    "@cosmjs/encoding": ">=0.32.4"
+    "@cosmjs/proto-signing": ">=0.32.4"
+    "@cosmjs/stargate": ">=0.32.4"
+    "@tanstack/react-query": ">=5.62.0"
+    react: ">=17"
+  bin:
+    graz: dist/cli.js
+  checksum: 26b0e00824d1853025695b57c1a71d676a4e06bba4c354baee44c24090c790786fb5d7010b4919aa6671af761acfea81229b7701f4a3b810171fd78333cffe99
   languageName: node
   linkType: hard
 
