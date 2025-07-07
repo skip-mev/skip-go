@@ -143,6 +143,8 @@ export const executeAndSubscribeToRouteStatus = async ({
   options,
   routeId,
 }: executeAndSubscribeToRouteStatusProps) => {
+  removeCompletedRoutes();
+
   routeId ??= routeDetails?.id;
   const currentRouteDetails = routeDetailsMap.get(routeId ?? '');
   transactionDetails ??= routeDetails?.transactionDetails ?? currentRouteDetails?.transactionDetails ?? [];
@@ -193,7 +195,7 @@ export const executeAndSubscribeToRouteStatus = async ({
             txHash: transaction.txHash,
             status: statusResponse as TransferStatus,
           });
-
+          
           break;
         }
       } catch (error) {
@@ -321,3 +323,11 @@ const getRouteDetailsWithSimpleTransactionDetailsStatus = (routeDetails: RouteDe
     })
   };
 }
+
+const removeCompletedRoutes = () => {
+  routeDetailsMap.forEach((routeDetails, routeId) => {
+    if (routeDetails.status === "completed") {
+      routeDetailsMap.delete(routeId);
+    }
+  });
+};
