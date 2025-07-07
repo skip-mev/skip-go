@@ -30,15 +30,16 @@ export type TransactionDetails = {
   explorerLink?: string;
 };
 
-type SimpleRoute = {
-  amountIn?: Route["amountIn"];
-  amountOut?: Route["amountOut"];
-  sourceAssetDenom?: Route["sourceAssetDenom"];
-  sourceAssetChainId?: Route["sourceAssetChainId"];
-  destAssetDenom?: Route["destAssetDenom"];
-  destAssetChainId?: Route["destAssetChainId"];
-  estimatedRouteDurationSeconds?: Route["estimatedRouteDurationSeconds"];
-}
+type SimpleRoute = Partial<Pick<
+  Route,
+  | "amountIn"
+  | "amountOut"
+  | "sourceAssetDenom"
+  | "sourceAssetChainId"
+  | "destAssetDenom"
+  | "destAssetChainId"
+  | "estimatedRouteDurationSeconds"
+>>;
 
 export type RouteDetails = {
   id: string;
