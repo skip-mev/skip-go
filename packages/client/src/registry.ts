@@ -6,7 +6,7 @@ import { decodePubkey } from "@cosmjs/proto-signing";
 import { BaseAccount } from "cosmjs-types/cosmos/auth/v1beta1/auth.js";
 import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys.js";
 import { encodeSecp256k1Pubkey } from "@cosmjs/amino";
-import { EthAccount } from "src/codegen/injective/types/v1beta1/account.js";
+import { EthAccount } from "src/codegen/injective/types/v1beta1/account";
 
 export const accountParser: AccountParser = (acc) => {
   switch (acc.typeUrl) {
