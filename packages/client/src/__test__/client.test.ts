@@ -920,6 +920,7 @@ describe("client", () => {
       const response = await trackTransaction({
         chainId: "cosmoshub-4",
         txHash: "tx_hash123",
+        apiUrl: "https://api.skip.build",
       });
 
       expect(response).toEqual({
