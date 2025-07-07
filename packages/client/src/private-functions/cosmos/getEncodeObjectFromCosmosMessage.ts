@@ -1,10 +1,5 @@
 import { toUtf8 } from "@cosmjs/encoding";
 import type { EncodeObject } from "@cosmjs/proto-signing";
-import {
-  MsgTransfer as MsgTransferInjective,
-  MsgExecuteContractCompat as MsgExecuteContractInjective,
-} from "@injectivelabs/sdk-ts";
-import type { Msgs } from "@injectivelabs/sdk-ts";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx.js";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx.js";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx.js";
@@ -109,35 +104,9 @@ export function getEncodeObjectFromCosmosMessage(message: CosmosMsg): EncodeObje
     };
   }
 
+
   return {
     typeUrl: message.msgTypeUrl ?? "",
     value: msgJson,
   };
-}
-
-export function getEncodeObjectFromCosmosMessageInjective(message: CosmosMsg): Msgs {
-  const msgJson = JSON.parse(message.msg ?? "");
-
-  if (message.msgTypeUrl === "/ibc.applications.transfer.v1.MsgTransfer") {
-    return MsgTransferInjective.fromJSON({
-      port: msgJson.source_port,
-      channelId: msgJson.source_channel,
-      amount: msgJson.token,
-      sender: msgJson.sender,
-      receiver: msgJson.receiver,
-      timeout: msgJson.timeout_timestamp,
-      memo: msgJson.memo,
-    });
-  }
-
-  if (message.msgTypeUrl === "/cosmwasm.wasm.v1.MsgExecuteContract") {
-    return MsgExecuteContractInjective.fromJSON({
-      sender: msgJson.sender,
-      contractAddress: msgJson.contract,
-      msg: msgJson.msg,
-      funds: msgJson.funds,
-    });
-  }
-
-  throw new Error("Unsupported message type");
 }

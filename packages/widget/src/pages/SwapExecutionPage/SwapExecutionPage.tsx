@@ -214,7 +214,7 @@ export const SwapExecutionPage = () => {
         connectRequiredChains={connectRequiredChains}
         submitExecuteRouteMutation={submitExecuteRouteMutation}
       />
-      <SwapPageFooter showRouteInfo={overallStatus === "unconfirmed"} />
+      <SwapPageFooter />
     </Column>
   );
 };
