@@ -1,10 +1,12 @@
+import type { SkipApiOptions } from "src/state/apiState";
 import { pollingApi } from "../utils/generateApi";
 import type {
   ApiRequest,
   PollingProps,
 } from "../utils/generateApi";
 
-export type TrackTxRequest = ApiRequest<"status"> & TrackTxPollingProps;
+export type TrackTxRequest = ApiRequest<"status"> & TrackTxPollingProps & SkipApiOptions;
+
 export type TrackTxPollingProps = Omit<PollingProps<"status">, "isSuccess" | "onError" | "onSuccess">;
 
 export const trackTransaction = ({
