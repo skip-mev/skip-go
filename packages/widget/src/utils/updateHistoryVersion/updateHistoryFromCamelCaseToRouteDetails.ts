@@ -11,10 +11,10 @@ export const updateHistoryFromCamelCaseToRouteDetails = () => {
 
   try {
     const transactionHistoryVersion: number = JSON.parse(
-      localStorage.getItem(LOCAL_STORAGE_KEYS.transactionHistoryVersion) ?? "",
+      localStorage.getItem(LOCAL_STORAGE_KEYS.transactionHistoryVersion) ?? "0",
     );
     const transactionHistory: TransactionHistoryItem[] = JSON.parse(
-      localStorage.getItem(LOCAL_STORAGE_KEYS.transactionHistory) ?? "",
+      localStorage.getItem(LOCAL_STORAGE_KEYS.transactionHistory) ?? "[]",
     );
     if (!transactionHistory) {
       throw new Error("transactionHistory not found in localStorage");
