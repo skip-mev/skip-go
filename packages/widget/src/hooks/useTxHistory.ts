@@ -12,13 +12,18 @@ export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
   const [subscribed, setSubscribed] = useState(false);
 
   useEffect(() => {
-    if (txHistoryItem && !subscribed) {
-      subscribeToRouteStatus({
-        routeDetails: txHistoryItem,
-        onRouteStatusUpdated: (routeStatus) => setTransactionHistory(routeStatus),
-      });
-      setSubscribed(true);
-    }
+    if (!txHistoryItem || subscribed) return;
+
+    const unsubscribe = subscribeToRouteStatus({
+      routeDetails: txHistoryItem,
+      onRouteStatusUpdated: (routeStatus) => setTransactionHistory(routeStatus),
+    });
+
+    setSubscribed(true);
+
+    return () => {
+      unsubscribe();
+    };
   }, [setTransactionHistory, subscribed, txHistoryItem]);
 
   return txHistoryItem;

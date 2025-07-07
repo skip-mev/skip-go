@@ -94,6 +94,7 @@ const isSuccessState = (transaction?: TransactionDetails): boolean => {
 export type subscribeToRouteStatusProps = {
   routeDetails?: RouteDetails;
   onRouteStatusUpdated?: ExecuteRouteOptions["onRouteStatusUpdated"];
+  unsubscribe?: () => void;
 };
 
 export type executeAndSubscribeToRouteStatusProps = {
@@ -106,6 +107,7 @@ export type executeAndSubscribeToRouteStatusProps = {
   onTransactionCompleted?: ExecuteRouteOptions["onTransactionCompleted"];
   options?: ExecuteRouteOptions;
   routeId?: string;
+  isCancelled?: () => boolean;
 };
 
 const routeDetailsMap = new Map<string, RouteDetails>();
@@ -128,8 +130,19 @@ const initializeNewRouteDetails = (options?: Partial<ExecuteRouteOptions>) => {
   return newRouteDetails;
 }
 
-export const subscribeToRouteStatus = async (props: subscribeToRouteStatusProps) => {
-  return executeAndSubscribeToRouteStatus(props);
+export const subscribeToRouteStatus = (props: subscribeToRouteStatusProps) => {
+  let cancelled = false;
+
+  const unsubscribe = () => {
+    cancelled = true;
+  };
+
+  executeAndSubscribeToRouteStatus({
+    ...props,
+    isCancelled: () => cancelled,
+  });
+
+  return unsubscribe;
 };
 
 export const executeAndSubscribeToRouteStatus = async ({
@@ -142,6 +155,7 @@ export const executeAndSubscribeToRouteStatus = async ({
   onRouteStatusUpdated,
   options,
   routeId,
+  isCancelled,
 }: executeAndSubscribeToRouteStatusProps) => {
   removeCompletedRoutes();
 
@@ -171,6 +185,10 @@ export const executeAndSubscribeToRouteStatus = async ({
     }
 
     while (!isFinalState(transaction)) {
+      if (isCancelled?.()) {
+        console.info(`Polling cancelled for route ${routeId}`);
+        return;
+      }
       try {
         const statusResponse = await transactionStatus({
           chainId: transaction.chainId,
