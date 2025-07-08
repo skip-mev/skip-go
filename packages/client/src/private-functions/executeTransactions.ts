@@ -30,11 +30,18 @@ export const executeTransactions = async (
     trackTxPollingOptions,
     batchSignTxs = true,
     routeId,
+    singleTxNoTrackingMode = false,
   } = options;
 
   if (txs === undefined) {
     throw new Error(
       "executeTransactions error: txs is undefined in executeTransactions"
+    );
+  }
+
+  if (singleTxNoTrackingMode && txs.length > 1) {
+    throw new Error(
+      "executeTransactions error: singleTxNoTrackingMode is not supported for multiple transactions"
     );
   }
 
