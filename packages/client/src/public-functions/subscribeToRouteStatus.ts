@@ -353,7 +353,7 @@ const getRouteDetailsWithSimpleTransactionDetailsStatus = (routeDetails: RouteDe
       const { statusResponse, ...rest } = txDetails;
       return {
         ...rest,
-        status: getTransactionStatus(txDetails.statusResponse?.state),
+        status: txDetails?.status ?? getTransactionStatus(txDetails.statusResponse?.state),
       }
     })
   };
