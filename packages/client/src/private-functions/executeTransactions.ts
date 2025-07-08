@@ -30,11 +30,18 @@ export const executeTransactions = async (
     onValidateGasBalance,
     trackTxPollingOptions,
     batchSignTxs = true,
+    singleTxNoWaitMode = false,
   } = options;
 
   if (txs === undefined) {
     throw new Error(
       "executeTransactions error: txs is undefined in executeTransactions"
+    );
+  }
+
+  if (singleTxNoWaitMode && txs.length > 1) {
+    throw new Error(
+      "executeTransactions error: singleTxNoWaitMode is not supported for multiple transactions"
     );
   }
 
@@ -209,6 +216,10 @@ export const executeTransactions = async (
     }
 
     await onTransactionBroadcast?.({ ...txResult });
+
+    if (singleTxNoWaitMode) {
+      continue;
+    }
 
     const txStatusResponse = await waitForTransaction({
       ...txResult,

@@ -91,6 +91,11 @@ export type ExecuteRouteOptions = SignerGetters &
       address: string;
       signTransaction: (dataToSign: Buffer) => Promise<Uint8Array>;
     };
+     /**
+      * If `singleTxNoWaitMode` is set to `true`, it will execute a single transaction route without waiting for the transaction to be confirmed.
+      * This is useful for scenarios where users may want more granular control tx state management. 
+      */
+    singleTxNoWaitMode?: boolean;
   };
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {
