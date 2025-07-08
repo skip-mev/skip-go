@@ -34,6 +34,7 @@ export const useSettingsDrawer = () => {
     return (
       <SwapPageFooter
         disabled={isWaitingForNewRoute}
+        showRouteInfo
         showEstimatedTime
         onClick={openSettingsDrawer}
         {...props}
