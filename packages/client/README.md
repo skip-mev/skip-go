@@ -4,9 +4,9 @@
 
 # `@skip-go/client`
 
-TypeScript library that streamlines interaction with the Skip Go API, enabling cross-chain swaps and transfers across multiple ecosystems.
+TypeScript library for interacting with the Skip API. It enables cross-chain swaps and transfers across multiple ecosystems.
 
-## Install
+## Installation
 
 ```bash
 npm install @skip-go/client
@@ -16,8 +16,15 @@ npm install @skip-go/client
 yarn add @skip-go/client
 ```
 
-## Usage
+## Quick Example
 
-Follow the [Getting Started](https://docs.skip.build/go/client/getting-started) guide to begin your integration.
+```ts
+import { SkipClient } from "@skip-go/client";
 
-Example: [Skip go client example](https://github.com/skip-mev/skip-go-example)
+const client = new SkipClient();
+const route = await client.getRoute({ /* params */ });
+```
+
+See the [Getting Started guide](https://docs.skip.build/go/client/getting-started) for a full walkthrough.
+
+Example implementation: [skip-go-example](https://github.com/skip-mev/skip-go-example)
