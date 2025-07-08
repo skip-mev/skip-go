@@ -41,7 +41,7 @@ export const executeTransactions = async (
 
   if (singleTxNoTrackingMode && txs.length > 1) {
     throw new Error(
-      "executeTransactions error: singleTxNoWaitMode is not supported for multiple transactions"
+      "executeTransactions error: singleTxNoTrackingMode is not supported for multiple transactions"
     );
   }
 
