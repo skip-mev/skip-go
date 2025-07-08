@@ -7,18 +7,18 @@ import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useBroadcastedTxsStatus } from "../../SwapExecutionPage/useBroadcastedTxs";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useEffect } from "react";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
 import { track } from "@amplitude/analytics-browser";
 import { errorWarningAtom } from "@/state/errorWarning";
 import { PageHeader } from "@/components/PageHeader";
+import { lastTransactionInTimeAtom } from "@/state/history";
 
 export type UnexpectedErrorPageTimeoutProps = {
   txHash: string;
   explorerLink?: string;
-  onClickBack: () => void;
+  onClickBack?: () => void;
 };
 
 export const UnexpectedErrorPageTimeout = ({
@@ -29,20 +29,16 @@ export const UnexpectedErrorPageTimeout = ({
   const theme = useTheme();
   const [errorWarning, setErrorWarning] = useAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+  const { route } = useAtomValue(swapExecutionStateAtom);
   const isGoFast = useIsGoFast(route);
-
-  const { data } = useBroadcastedTxsStatus({
-    txsRequired: route?.txsRequired,
-    transactionDetails: transactionDetailsArray,
-  });
+  const lastTransactionInTime = useAtomValue(lastTransactionInTimeAtom);
 
   useEffect(() => {
-    if (errorWarning && data?.isSettled) {
+    if (errorWarning && lastTransactionInTime?.status !== "pending") {
       track("unexpected error page: transaction timeover - transaction settled");
       setErrorWarning(undefined);
     }
-  }, [data?.isSettled, errorWarning, setErrorWarning]);
+  }, [errorWarning, lastTransactionInTime?.status, setErrorWarning]);
 
   return (
     <>

@@ -18,10 +18,12 @@ import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
 import { ChainType } from "@skip-go/client";
 import { getCosmosWalletInfo } from "@/constants/graz";
 import { WalletType } from "graz";
+import { currentTransactionAtom } from "@/state/history";
 
 export const useAutoSetAddress = () => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
-  const { route, overallStatus } = useAtomValue(swapExecutionStateAtom);
+  const { route } = useAtomValue(swapExecutionStateAtom);
+  const currentTransaction = useAtomValue(currentTransactionAtom);
   const requiredChainAddresses = route?.requiredChainAddresses;
   const { data: chains } = useAtomValue(skipChainsAtom);
   const sourceWallet = useAtomValue(walletsAtom);
@@ -115,13 +117,13 @@ export const useAutoSetAddress = () => {
                 source: isInjectedWallet ? WalletSource.Injected : WalletSource.Wallet,
                 wallet: wallet
                   ? {
-                    walletName: wallet?.walletName,
-                    walletPrettyName: wallet?.walletPrettyName,
-                    walletChainType: chainType,
-                    walletInfo: {
-                      logo: getLogo(),
-                    },
-                  }
+                      walletName: wallet?.walletName,
+                      walletPrettyName: wallet?.walletPrettyName,
+                      walletChainType: chainType,
+                      walletInfo: {
+                        logo: getLogo(),
+                      },
+                    }
                   : undefined,
               },
             };
@@ -150,7 +152,7 @@ export const useAutoSetAddress = () => {
   );
 
   useEffect(() => {
-    if (overallStatus !== "unconfirmed") {
+    if (currentTransaction && currentTransaction?.status !== "unconfirmed") {
       setIsLoading(false);
       return;
     }
@@ -168,8 +170,9 @@ export const useAutoSetAddress = () => {
     currentSourceWallets?.cosmos?.id,
     currentSourceWallets?.evm?.id,
     currentSourceWallets?.svm?.id,
+    currentTransaction,
+    currentTransaction?.status,
     isLoading,
-    overallStatus,
     requiredChainAddresses,
     sourceWallet,
   ]);
