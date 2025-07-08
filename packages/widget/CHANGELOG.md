@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.12.10
+
+### Patch Changes
+
+- 3bc90be: fix injective and evmos direct signing
+- Updated dependencies [3bc90be]
+  - @skip-go/client@1.3.7
+
 ## 3.12.9
 
 ### Patch Changes
