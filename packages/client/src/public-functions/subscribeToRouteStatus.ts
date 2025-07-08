@@ -158,7 +158,7 @@ export const executeAndSubscribeToRouteStatus = async ({
   routeId,
   isCancelled,
 }: executeAndSubscribeToRouteStatusProps) => {
-  removeCompletedRoutes();
+  removeRoutesWithFinalStatus();
 
   routeId ??= routeDetails?.id;
   const currentRouteDetails = routeDetailsMap.get(routeId ?? '');
@@ -343,9 +343,9 @@ const getRouteDetailsWithSimpleTransactionDetailsStatus = (routeDetails: RouteDe
   };
 }
 
-const removeCompletedRoutes = () => {
+const removeRoutesWithFinalStatus = () => {
   routeDetailsMap.forEach((routeDetails, routeId) => {
-    if (routeDetails.status === "completed") {
+    if (routeDetails.status === "completed" || routeDetails.status === "failed" || routeDetails.status === "incomplete") {
       routeDetailsMap.delete(routeId);
     }
   });
