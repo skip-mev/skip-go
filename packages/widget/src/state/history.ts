@@ -22,7 +22,10 @@ export const transactionHistoryAtom = atomWithStorage<RouteDetails[]>(
 export const sortedHistoryItemsAtom = atom((get): RouteDetails[] => {
   const history = get(transactionHistoryAtom);
   return history
-    .filter((historyItem) => historyItem.txsSigned > 0)
+    .filter(
+      (historyItem) =>
+        historyItem.txsSigned > 0 && historyItem.transactionDetails.some((tx) => tx.txHash),
+    )
     .sort((a, b) => b.timestamp - a.timestamp);
 });
 

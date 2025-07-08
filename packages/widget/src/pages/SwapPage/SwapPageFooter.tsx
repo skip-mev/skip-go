@@ -16,6 +16,7 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
 
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
+import { currentTransactionAtom } from "@/state/history";
 
 const EstimatedDuration = ({ seconds }: { seconds?: number }) => {
   const formatted = seconds ? convertSecondsToMinutesOrHours(seconds) : null;
@@ -25,7 +26,6 @@ const EstimatedDuration = ({ seconds }: { seconds?: number }) => {
     </Row>
   ) : null;
 };
-
 
 const SettingsButton = ({ highlight, changed }: { highlight?: boolean; changed: boolean }) => (
   <StyledSettingsContainer align="flex-end" gap={3} highlightSettings={highlight}>
@@ -67,9 +67,10 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   const settingsChanged = useSettingsChanged();
   const isMobile = useIsMobileScreenSize();
   const isGoFast = useIsGoFast(route);
+  const currentTransaction = useAtomValue(currentTransactionAtom);
 
   const estimatedSeconds = route?.estimatedRouteDurationSeconds;
-  const signaturesRequired = route?.txsRequired ?? 1;
+  const signaturesRequired = route ? route?.txsRequired - (currentTransaction?.txsSigned ?? 0) : 0;
 
   const leftContent = () => {
     if (content) return content;

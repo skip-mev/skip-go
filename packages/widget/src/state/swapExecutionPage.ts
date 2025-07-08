@@ -133,8 +133,27 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     onApproveAllowance: async ({ status, allowance }) => {
       track("execute route: approve allowance", { status, allowance });
     },
-    onTransactionSigned: async () => {
+    onTransactionSigned: async (txInfo) => {
       track("execute route: transaction signed");
+
+      set(swapExecutionStateAtom, (prev) => {
+        const clientOperations = prev.clientOperations;
+        const signRequiredIndex = clientOperations.findIndex((operation) => {
+          return (
+            operation.signRequired &&
+            (operation.chainId === txInfo.chainId || operation.fromChainId === txInfo.chainId)
+          );
+        });
+
+        if (signRequiredIndex >= 0) {
+          clientOperations[signRequiredIndex].signRequired = false;
+        }
+
+        return {
+          ...prev,
+          clientOperations: clientOperations,
+        };
+      });
     },
     onTransactionBroadcast: async (txInfo) => {
       track("execute route: transaction broadcasted", { txInfo });
