@@ -92,6 +92,11 @@ export type ExecuteRouteOptions = SignerGetters &
       address: string;
       signTransaction: (dataToSign: Buffer) => Promise<Uint8Array>;
     };
+    /**
+     * If `singleTxNoTrackingMode` is set to `true`, it will execute a single transaction route without tracking the transaction success/failure.
+     * This is useful for scenarios where users may want more granular control of tx state management with separation between execution and tracking.
+     */
+    singleTxNoTrackingMode?: boolean;
   };
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {

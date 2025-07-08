@@ -168,6 +168,12 @@ export const executeAndSubscribeToRouteStatus = async ({
     if (executeTransaction && !transaction.txHash) {
       let { txHash, explorerLink } = await executeTransaction?.(transactionIndex);
       transaction.txHash = txHash;
+
+      // Skip tracking + status polling for no-tracking mode
+      if (options?.singleTxNoTrackingMode) {
+        continue;
+      }
+
       if (!explorerLink) {
         const trackResponse = await trackTransaction({
           chainId: transaction.chainId,
