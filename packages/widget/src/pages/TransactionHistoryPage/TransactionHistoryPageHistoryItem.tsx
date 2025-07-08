@@ -7,7 +7,7 @@ import { forwardRef, useMemo } from "react";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { TransactionHistoryPageHistoryItemDetails } from "./TransactionHistoryPageHistoryItemDetails";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-import { removeTransactionHistoryItemAtom, TransactionHistoryItem } from "@/state/history";
+import { removeTransactionHistoryItemAtom } from "@/state/history";
 import { useSetAtom } from "jotai";
 import { formatDistanceStrict } from "date-fns";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
@@ -19,10 +19,11 @@ import { ThinArrowIcon } from "@/icons/ThinArrowIcon";
 import { Tooltip } from "@/components/Tooltip";
 import { CircleSkeletonElement } from "@/components/Skeleton";
 import { convertToPxValue } from "@/utils/style";
+import { RouteDetails } from "@skip-go/client";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
-  txHistoryItem: TransactionHistoryItem;
+  txHistoryItem: RouteDetails;
   showDetails?: boolean;
   onClickRow?: () => void;
   onClickDelete?: () => void;
@@ -58,7 +59,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
         sourceAssetChainId,
         destAssetDenom,
         destAssetChainId,
-      } = {},
+      },
       timestamp,
       transactionDetails,
     } = txHistoryItem;

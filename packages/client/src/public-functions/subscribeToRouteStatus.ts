@@ -223,7 +223,7 @@ export const executeAndSubscribeToRouteStatus = async ({
             txHash: transaction.txHash,
             status: statusResponse as TransferStatus,
           });
-          
+
           break;
         }
       } catch (error) {
@@ -300,7 +300,7 @@ export const updateRouteDetails = ({
     return currentRouteDetails?.status;
   }
 
-  const transferAssetRelease = transactionDetails?.at(-1)?.statusResponse?.transferAssetRelease;
+  const transferAssetRelease = transactionDetails?.findLast(i => i.statusResponse?.transferAssetRelease)?.statusResponse?.transferAssetRelease;
 
   const senderAddress = options?.userAddresses?.at(0);
   const receiverAddress = options?.userAddresses?.at(-1);
