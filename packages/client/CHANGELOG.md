@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.3.7
+
+### Patch Changes
+
+- 3bc90be: fix injective and evmos direct signing
+
 ## 1.3.6
 
 ### Patch Changes
