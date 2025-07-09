@@ -1,7 +1,6 @@
 import { Column } from "@/components/Layout";
 import { styled, useTheme } from "styled-components";
 import { PageHeader } from "@/components/PageHeader";
-import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { ICONS } from "@/icons";
 import { VirtualList } from "@/components/VirtualList";
 import { useState } from "react";
@@ -63,7 +62,6 @@ export const TransactionHistoryPage = () => {
           }
         />
       </StyledContainer>
-      <SwapPageFooter />
     </Column>
   );
 };

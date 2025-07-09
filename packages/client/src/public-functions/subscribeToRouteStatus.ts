@@ -182,7 +182,16 @@ export const executeAndSubscribeToRouteStatus = async ({
     }
 
     if (transaction.txHash === undefined) {
-      throw new Error("subscribeToRouteStatus error: txHash is undefined");
+      updateRouteDetails({
+        routeId,
+        routeDetails,
+        transactionDetails,
+        options: {
+          onRouteStatusUpdated,
+          ...options,
+        }
+      });
+      return;
     }
 
     while (!isFinalState(transaction)) {
@@ -214,7 +223,7 @@ export const executeAndSubscribeToRouteStatus = async ({
             txHash: transaction.txHash,
             status: statusResponse as TransferStatus,
           });
-          
+
           break;
         }
       } catch (error) {
@@ -242,14 +251,17 @@ export const updateRouteDetails = ({
   routeId,
 }: updateRouteDetailsProps): RouteDetails => {
   routeId ??= routeDetails?.id ?? '';
-  let currentRouteDetails = routeDetailsMap.get(routeId);
-  if (currentRouteDetails == undefined) {
+  let currentRouteDetails = routeDetails ?? routeDetailsMap.get(routeId);
+  if (!routeId && currentRouteDetails == undefined) {
     currentRouteDetails = initializeNewRouteDetails(options);
-    routeId = currentRouteDetails.id;
+    routeId = currentRouteDetails?.id;
+  }
+  if (currentRouteDetails === undefined) {
+    throw new Error ("No route details found")
   }
 
-  transactionDetails ??= routeDetails?.transactionDetails ?? currentRouteDetails?.transactionDetails ?? [];
-  const txsRequired = routeDetails?.txsRequired ?? options?.route?.txsRequired ?? 1;
+  transactionDetails ??= currentRouteDetails?.transactionDetails ?? [];
+  const txsRequired = currentRouteDetails?.txsRequired ?? options?.route?.txsRequired ?? 1;
 
   if (currentRouteDetails?.status === "signing" && status === "pending") {
     currentRouteDetails.txsSigned += 1;
@@ -259,19 +271,23 @@ export const updateRouteDetails = ({
     .map((tx) => tx.statusResponse)
     .filter((status): status is TxStatusResponse => status !== undefined));
 
-  const allTransactionsHaveDetails = transactionDetails.length === txsRequired;
+  const allExpectedTxsStarted =
+    transactionDetails.every(
+      (tx) =>
+        tx.txHash || tx.status === undefined
+    );
   const allKnownDetailsHaveFinalStatus = transactionDetails.every(
     (transaction) => isFinalState(transaction),
   );
 
-  const isAllSettled = allTransactionsHaveDetails && allKnownDetailsHaveFinalStatus;
+  const isAllSettled = allExpectedTxsStarted && allKnownDetailsHaveFinalStatus;
 
   const someTxSucceeded = transactionDetails.some(tx => isSuccessState(tx));
   const someTxFailed = transactionDetails.some(tx => !isSuccessState(tx));
 
   const getRouteStatus= () => {
     if (status) return status;
-    if (someTxSucceeded && !allTransactionsHaveDetails) return "incomplete";
+    if (someTxSucceeded && !allExpectedTxsStarted) return "incomplete";
     if (isAllSettled) {
       if (!someTxFailed) {
         return "completed";
@@ -284,28 +300,28 @@ export const updateRouteDetails = ({
     return currentRouteDetails?.status;
   }
 
-  const transferAssetRelease = transactionDetails?.at(-1)?.statusResponse?.transferAssetRelease;
+  const transferAssetRelease = transactionDetails?.findLast(i => i.statusResponse?.transferAssetRelease)?.statusResponse?.transferAssetRelease;
 
   const senderAddress = options?.userAddresses?.at(0);
   const receiverAddress = options?.userAddresses?.at(-1);
 
   const newRouteDetails: RouteDetails = {
     id: routeId,
-    timestamp: routeDetails?.timestamp ?? currentRouteDetails?.timestamp,
+    timestamp: currentRouteDetails.timestamp,
     status: getRouteStatus() as RouteStatus,
-    route: getSimpleRoute(routeDetails?.route ?? options?.route),
+    route: getSimpleRoute(currentRouteDetails?.route ?? options?.route),
     txsRequired,
     transactionDetails,
     transferEvents,
     transferAssetRelease,
-    senderAddress: routeDetails?.senderAddress ?? senderAddress?.address ?? '',
-    receiverAddress: routeDetails?.receiverAddress ?? receiverAddress?.address ?? '',
-    txsSigned: routeDetails?.txsSigned ?? currentRouteDetails?.txsSigned,
+    senderAddress: currentRouteDetails?.senderAddress ?? senderAddress?.address ?? '',
+    receiverAddress: currentRouteDetails?.receiverAddress ?? receiverAddress?.address ?? '',
+    txsSigned: currentRouteDetails?.txsSigned,
   };
 
   const newRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(newRouteDetails);
 
-  const previousRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(routeDetails ?? currentRouteDetails);
+  const previousRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(currentRouteDetails);
 
   if ((options?.onRouteStatusUpdated) && JSON.stringify(newRouteStatus) !== JSON.stringify(previousRouteStatus)) {
     options?.onRouteStatusUpdated?.(newRouteStatus);
@@ -337,7 +353,7 @@ const getRouteDetailsWithSimpleTransactionDetailsStatus = (routeDetails: RouteDe
       const { statusResponse, ...rest } = txDetails;
       return {
         ...rest,
-        status: getTransactionStatus(txDetails.statusResponse?.state),
+        status: txDetails?.status ?? getTransactionStatus(txDetails.statusResponse?.state),
       }
     })
   };
