@@ -10,6 +10,7 @@ export type ModalRowItemProps = {
   onClick?: () => void;
   style?: React.CSSProperties;
   eureka?: boolean;
+  as?: "button" | "div";
 };
 
 export const ModalRowItem = ({
@@ -18,10 +19,11 @@ export const ModalRowItem = ({
   onClick,
   style,
   eureka,
+  as = "button",
 }: ModalRowItemProps) => {
   return (
     <StyledModalRowItemContainer
-      as="button"
+      as={as}
       align="center"
       justify="space-between"
       onClick={onClick}
@@ -35,7 +37,30 @@ export const ModalRowItem = ({
   );
 };
 
-const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void; eureka?: boolean }>`
+type ModalRowFunctionalProps = {
+  onClick?: () => void;
+  as?: "button" | "div";
+};
+
+type ModalRowStyleProps = ModalRowFunctionalProps & {
+  eureka?: boolean;
+};
+
+const StyledModalRowItemContainer = styled(Row).attrs<ModalRowFunctionalProps>(
+  ({ onClick, as }) => ({
+    ...(as === "div" &&
+      !!onClick && {
+        role: "button",
+        tabIndex: 0,
+        onKeyDown: (e: React.KeyboardEvent) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            onClick();
+          }
+        },
+      }),
+  }),
+)<ModalRowStyleProps>`
   ${removeButtonStyles};
   position: relative;
   width: 100%;

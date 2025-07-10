@@ -25,7 +25,7 @@ import { ChainType } from "@skip-go/client";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
 import { SkeletonElement } from "@/components/Skeleton";
 
-const ITEM_HEIGHT = 60;
+const ITEM_WIDTH = "-webkit-fill-available";
 const ITEM_GAP = 5;
 const STANDARD_ICON_SIZE = 35;
 
@@ -157,7 +157,8 @@ export const ConnectEcoRow = ({
 
   return (
     <ModalRowItem
-      style={{ marginTop: ITEM_GAP, minHeight: `${ITEM_HEIGHT}px` }}
+      as="div"
+      style={{ marginTop: ITEM_GAP, width: ITEM_WIDTH }}
       onClick={handleConnectClick}
       leftContent={
         account ? (
