@@ -4,12 +4,12 @@ import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { useMemo } from "react";
-import { ChainTransaction } from "@skip-go/client";
+import { ChainTransaction, TransferEventStatus } from "@skip-go/client";
 import { StyledAnimatedBorder } from "./SwapExecutionPageRouteDetailedRow";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-import { ClientOperation, SimpleStatus } from "@/utils/clientType";
+import { ClientOperation } from "@/utils/clientType";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useAtomValue } from "jotai";
 import { getTruncatedAddress } from "@/utils/crypto";
@@ -29,7 +29,7 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   chainId: ClientOperation["fromChainId"] | ClientOperation["chainId"];
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
-  status?: SimpleStatus;
+  status?: TransferEventStatus;
   icon?: ICONS;
   context: "source" | "destination";
 };
@@ -64,6 +64,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
       case "source": {
         const selected = chainAddressArray[0];
         return {
+          source: selected?.source,
           address: selected?.address,
           image: (selected?.source === "wallet" && selected?.wallet?.walletInfo.logo) || undefined,
         };
@@ -71,6 +72,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
       case "destination": {
         const selected = chainAddressArray[chainAddressArray.length - 1];
         return {
+          source: selected?.source,
           address: selected?.address,
           image: (selected?.source === "wallet" && selected?.wallet?.walletInfo.logo) || undefined,
         };
@@ -81,11 +83,12 @@ export const SwapExecutionPageRouteSimpleRow = ({
   const walletImage = useCroppedImage(source.image);
 
   const renderWalletImage = useMemo(() => {
+    if (source.source === "injected") return;
     if (!source.address) return;
     if (walletImage) return <img height={12} width={12} src={walletImage} />;
 
     return <SkeletonElement height={12} width={12} />;
-  }, [source.address, walletImage]);
+  }, [source.address, source.source, walletImage]);
 
   const renderExplorerLink = useMemo(() => {
     if (!explorerLink) return;

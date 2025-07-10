@@ -8111,6 +8111,7 @@ __metadata:
     minimatch: ^9.0.3
     proxy-from-env: ^1.1.0
     swagger-typescript-api: ^13.0.28
+    uuid: ^11.1.0
     vitest: ^1.2.2
   peerDependencies:
     "@solana/web3.js": ^1.95.8
@@ -8215,6 +8216,7 @@ __metadata:
     typescript: ^5.5.4
     typescript-eslint: ^8.2.0
     url-loader: ^4.1.1
+    uuid: ^11.1.0
     vite: ^5.3.4
     vite-plugin-dts: ^4.0.0-beta.1
     vite-plugin-node-polyfills: ^0.22.0
@@ -32418,6 +32420,15 @@ __metadata:
   bin:
     uuid: dist/bin/uuid
   checksum: 5575a8a75c13120e2f10e6ddc801b2c7ed7d8f3c8ac22c7ed0c7b2ba6383ec0abda88c905085d630e251719e0777045ae3236f04c812184b7c765f63a70e58df
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^11.1.0":
+  version: 11.1.0
+  resolution: "uuid@npm:11.1.0"
+  bin:
+    uuid: dist/esm/bin/uuid
+  checksum: 840f19758543c4631e58a29439e51b5b669d5f34b4dd2700b6a1d15c5708c7a6e0c3e2c8c4a2eae761a3a7caa7e9884d00c86c02622ba91137bd3deade6b4b4a
   languageName: node
   linkType: hard
 
