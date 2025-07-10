@@ -52,11 +52,11 @@ On a cross-chain swapping and transferring frontend, integrators typically:
 
 1. Use the `info` methods to populate the list of potential starting & ending chains & assets
 
-   <Frame>![](/images/ca61685-CleanShot_2024-05-23_at_15.28.242x.png)</Frame>
+   <Frame>![](/images\FE_route_selection.png)</Frame>
 
 2. Use `/fungible/route` (`route()`) to get a quote when the user selects all their chains & tokens and inputs one of their amounts
 
-   <Frame>![](/images/78d8d3f-CleanShot_2024-05-23_at_15.33.182x.png)</Frame>
+   <Frame>![](/images/Fungible_route.png)</Frame>
 
 3. Use `/fungible/msgs` (`messages()`) to get a transaction for the user to sign after they've locked in the route & begun the transaction creation process
 
@@ -65,4 +65,4 @@ On a cross-chain swapping and transferring frontend, integrators typically:
 4. Use `/tx/track` (`trackTransaction()`) to register the transaction for tracking (or `/tx/submit` to register and submit it on-chain)
 
 5. Use `/tx/status` (`transactionStatus()`) to get the real-time status of the transaction as it progresses across bridges and/or chains.
-   <Frame>![](/images/a83beaf-CleanShot_2024-05-23_at_15.59.452x.png)</Frame>
+   <Frame>![](/images/FE_track_details.png)</Frame>

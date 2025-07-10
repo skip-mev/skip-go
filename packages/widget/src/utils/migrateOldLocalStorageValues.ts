@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  TransactionHistoryItem,
-  transactionHistoryVersionAtom,
-  HISTORY_VERSION,
-} from "@/state/history";
+import { transactionHistoryVersionAtom, HISTORY_VERSION } from "@/state/history";
 import { LOCAL_STORAGE_KEYS } from "@/state/localStorageKeys";
 import { jotaiStore } from "@/widget/Widget";
+import {
+  updateHistoryFromCamelCaseToRouteDetails,
+  TransactionHistoryItem,
+} from "./updateHistoryVersion/updateHistoryFromCamelCaseToRouteDetails";
 
 export const migrateOldLocalStorageValues = () => {
   if (typeof window === "undefined") return;
@@ -52,6 +52,8 @@ export const migrateOldLocalStorageValues = () => {
       console.warn(`Failed to migrate localStorage key "${key}":`, err);
     }
   });
+
+  updateHistoryFromCamelCaseToRouteDetails();
 };
 
 export function toCamelCase<T extends object>(obj: T) {
