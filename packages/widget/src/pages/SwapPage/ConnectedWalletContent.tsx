@@ -56,11 +56,13 @@ export const ConnectedWalletContent = () => {
         align="center"
         gap={8}
       >
-        {walletImage ? (
-          <img style={{ objectFit: "cover" }} src={walletImage} height={16} width={16} />
-        ) : (
-          <SkeletonElement height={16} width={16} />
-        )}
+        {sourceAccount.wallet.name !== "injected" &&
+          (walletImage ? (
+            <img style={{ objectFit: "cover" }} src={walletImage} height={16} width={16} />
+          ) : (
+            <SkeletonElement height={16} width={16} />
+          ))}
+
         {isLoading ? (
           <div
             style={{
@@ -82,7 +84,6 @@ export const ConnectedWalletContent = () => {
           formattedBalance
         )}
       </GhostButton>
-
       <GhostButton
         disabled={
           !sourceBalance || sourceBalance?.amount === "0" || maxAmountTokenMinusFees === "0"
