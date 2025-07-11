@@ -307,9 +307,8 @@ export const updateRouteDetails = ({
       } else if (someTxFailed) {
         return "failed";
       }
-    } else {
-      return "pending"
     }
+    return currentRouteDetails?.status;
   }
 
   const transferAssetRelease = transactionDetails?.findLast(i => i.statusResponse?.transferAssetRelease)?.statusResponse?.transferAssetRelease;
