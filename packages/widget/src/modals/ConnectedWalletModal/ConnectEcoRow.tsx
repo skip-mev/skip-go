@@ -158,9 +158,7 @@ export const ConnectEcoRow = ({
   return (
     <ModalRowItem
       as="div"
-      style={{
-        marginTop: ITEM_GAP, minHeight: `${ITEM_HEIGHT}px`,
-      }}
+      style={{ marginTop: ITEM_GAP, minHeight: `${ITEM_HEIGHT}px` }}
       onClick={handleConnectClick}
       leftContent={
         account ? (
