@@ -70,6 +70,13 @@ export function getTransactionStatus(state?: TransactionState): TransactionStatu
   }
 }
 
+const isFinalRouteStatus = (routeDetails: RouteDetails) => {
+  if (routeDetails.status === "completed" || routeDetails.status === "failed" || routeDetails.status === "incomplete") {
+    return true;
+  }
+  return false;
+}
+
 const isFinalState = (transaction?: TransactionDetails): boolean => {
   const transactionState = transaction?.statusResponse?.state;
   const transactionStatus = transaction?.status;
@@ -163,6 +170,10 @@ export const executeAndSubscribeToRouteStatus = async ({
   routeId ??= routeDetails?.id;
   const currentRouteDetails = routeDetailsMap.get(routeId ?? '');
   transactionDetails ??= routeDetails?.transactionDetails ?? currentRouteDetails?.transactionDetails ?? [];
+
+  if (routeDetails && isFinalRouteStatus(routeDetails)) {
+    return;
+  }
 
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
     if (executeTransaction && !transaction.txHash) {
@@ -296,8 +307,9 @@ export const updateRouteDetails = ({
       } else if (someTxFailed) {
         return "failed";
       }
+    } else {
+      return "pending"
     }
-    return currentRouteDetails?.status;
   }
 
   const transferAssetRelease = transactionDetails?.findLast(i => i.statusResponse?.transferAssetRelease)?.statusResponse?.transferAssetRelease;
