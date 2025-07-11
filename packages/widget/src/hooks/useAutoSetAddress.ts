@@ -31,6 +31,8 @@ export const useAutoSetAddress = () => {
   const [walletHasChanged, setWalletHasChanged] = useState(false);
 
   const [currentSourceWallets, setCurrentSourceWallets] = useState<typeof sourceWallet>();
+  const [currentConnectedAddress, setCurrentConnectedAddress] =
+    useState<Record<string, string | undefined>>();
 
   const { createCosmosWallets } = useCreateCosmosWallets();
   const { createEvmWallets } = useCreateEvmWallets();
@@ -59,9 +61,8 @@ export const useAutoSetAddress = () => {
       if (!requiredChainAddresses) return;
       requiredChainAddresses.forEach(async (chainId, index) => {
         const chain = chains?.find((c) => c.chainId === chainId);
-        if (!chain) {
-          return;
-        }
+        if (!chain) return;
+        const chainType = chain.chainType;
         const showSetAddressModal = () => {
           const isSignRequired = signRequiredChains?.includes(chainId);
           NiceModal.show(Modals.SetAddressModal, {
@@ -70,22 +71,48 @@ export const useAutoSetAddress = () => {
             chainAddressIndex: index,
           });
         };
+
         // If already set by manual entry do not auto set
         if (chainAddresses[index].source === WalletSource.Input) return;
 
+        const isInjectedWallet = connectedAddress?.[chainId];
+        if (isInjectedWallet) {
+          setChainAddresses((prev) => {
+            return {
+              ...prev,
+              [index]: {
+                chainId,
+                address: connectedAddress?.[chainId],
+                chainType: chainType,
+                source: WalletSource.Injected,
+                wallet: {
+                  walletName: "injected",
+                  walletPrettyName: "injected",
+                  walletChainType: chainType,
+                  walletInfo: {
+                    logo: undefined,
+                  },
+                },
+              },
+            };
+          });
+          setIsLoading(false);
+          return;
+        }
+
         try {
-          const chainType = chain.chainType;
           const wallets = createWallets[chainType](chainId);
           const walletName = sourceWallet[chainType]?.walletName;
           const wallet = wallets.find((w) => w.walletName === walletName);
           const isSignRequired = signRequiredChains?.includes(chainId);
 
-          const response = await wallet?.getAddress?.({ signRequired: isSignRequired });
+          const response = await wallet?.getAddress?.({
+            signRequired: isSignRequired,
+          });
 
           const isInjectedWallet = connectedAddress?.[chainId];
 
           const address = connectedAddress?.[chainId] ?? response?.address;
-
           if (!address) {
             throw new Error(
               "Address not found in connected wallets. \n Opening modal for user to enter address",
@@ -156,10 +183,19 @@ export const useAutoSetAddress = () => {
       setIsLoading(false);
       return;
     }
+
     const hasWalletChanged =
       sourceWallet.cosmos?.id !== currentSourceWallets?.cosmos?.id ||
       sourceWallet.evm?.id !== currentSourceWallets?.evm?.id ||
       sourceWallet.svm?.id !== currentSourceWallets?.svm?.id;
+
+    const hasConnectedAddressChanged =
+      JSON.stringify(connectedAddress) !== JSON.stringify(currentConnectedAddress);
+
+    if (hasConnectedAddressChanged) {
+      setCurrentConnectedAddress(connectedAddress);
+      setWalletHasChanged(true);
+    }
 
     if (hasWalletChanged) {
       setCurrentSourceWallets(sourceWallet);
@@ -167,6 +203,8 @@ export const useAutoSetAddress = () => {
     }
   }, [
     connectRequiredChains,
+    connectedAddress,
+    currentConnectedAddress,
     currentSourceWallets?.cosmos?.id,
     currentSourceWallets?.evm?.id,
     currentSourceWallets?.svm?.id,
