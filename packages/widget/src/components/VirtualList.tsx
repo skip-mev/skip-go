@@ -59,6 +59,7 @@ export const VirtualList = <T,>({
 }: VirtualListProps<T>) => {
   const theme = useTheme();
   const [currentlyFocusedElement, setCurrentlyFocusedElement] = useState<HTMLElement>();
+  const [currentlyFocusedItemKey, setCurrentlyFocusedItemKey] = useState<string>();
   const listHeight = useListHeight(itemHeight);
 
   const listRef = useRef<ListRef>(null);
@@ -109,10 +110,12 @@ export const VirtualList = <T,>({
     if (!listRef.current || expandedItemKey == null) return;
 
     const index = listItems.findIndex((item) => itemKey(item) === expandedItemKey);
-    if (index !== -1) {
+
+    if (index !== -1 && currentlyFocusedItemKey !== expandedItemKey) {
       listRef.current.scrollTo({ index, align: "top" });
+      setCurrentlyFocusedItemKey(expandedItemKey);
     }
-  }, [expandedItemKey, listItems, itemKey]);
+  }, [expandedItemKey, listItems, itemKey, currentlyFocusedElement, currentlyFocusedItemKey]);
 
   if (listItems.length === 0) {
     return (

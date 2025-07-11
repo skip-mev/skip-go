@@ -57,7 +57,7 @@
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",
     "@types/keccak": "3.0.4",
-    "chain-registry": "^2.0.11",
+    "chain-registry": "^2.0.18",
     "eslint-plugin-esm": "^0.8.1",
     "eslint-plugin-import": "^2.31.0",
     "minimatch": "^9.0.3",
@@ -76,12 +76,12 @@
     "@cosmjs/math": "0.33.1",
     "@cosmjs/proto-signing": "0.33.1",
     "@cosmjs/stargate": "0.33.1",
-    "@injectivelabs/sdk-ts": "1.15.3",
     "@keplr-wallet/unit": "^0.12.143",
     "@solana/wallet-adapter-base": "^0.9.23",
     "bech32": "^2.0.0",
     "cosmjs-types": "^0.9.0",
-    "keccak": "3.0.4"
+    "keccak": "3.0.4",
+    "uuid": "^11.1.0"
   },
   "publishConfig": {
     "access": "public"
