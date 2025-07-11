@@ -20,9 +20,6 @@ import {
 import { WidgetProps } from "./Widget";
 import { callbacksAtom } from "@/state/callbacks";
 import { getBrandButtonTextColor } from "@/utils/colors";
-import { initSentry } from "./initSentry";
-import { version } from "../../package.json";
-import { setTag } from "@sentry/react";
 import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 import { batchSignTxsAtom, simulateTxAtom } from "@/state/swapExecutionPage";
 import { initAmplitude } from "./initAmplitude";
@@ -33,13 +30,9 @@ import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnles
 import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
 
 export const useInitWidget = (props: WidgetProps) => {
-  if (props.enableSentrySessionReplays) {
-    initSentry();
-  }
   if (props.enableAmplitudeAnalytics) {
     initAmplitude();
   }
-  setTag("widget_version", version);
   useInitDefaultRoute(props.defaultRoute);
   useInitGetSigners(props);
   useMobileRouteConfig();
