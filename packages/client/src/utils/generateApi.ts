@@ -32,7 +32,13 @@ export const createRequestClient = ({ apiUrl, apiKey, apiHeaders }: SkipApiOptio
     if (!response.ok) {
       const message =
         typeof body === "object" && body?.message ? body.message : response.statusText;
-      throw new Error(message);
+
+      const error = new Error(message);
+
+      if (body?.code) {
+        (error as any).code = body.code;
+      }
+      throw error;
     }
 
     return body;
