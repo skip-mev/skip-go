@@ -36,7 +36,6 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { useIsGoFast, useIsSwapOperation } from "@/hooks/useIsGoFast";
 import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
-import { setUser, getReplay } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
 import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
@@ -307,12 +306,6 @@ export const SwapPage = () => {
           setError(undefined);
           setChainAddresses({});
           setSwapExecutionState();
-
-          setUser({ username: sourceAccount?.address });
-          if (sourceAccount?.address) {
-            const replay = getReplay();
-            replay?.start();
-          }
           setCurrentPage(Routes.SwapExecutionPage);
         });
       };
