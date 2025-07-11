@@ -63,10 +63,10 @@ const StyledModalRowItemContainer = styled(Row).attrs<ModalRowFunctionalProps>(
 )<ModalRowStyleProps>`
   ${removeButtonStyles};
   position: relative;
-  width: 100%;
+  width: ${({ as }) => (as === "div" ? "-webkit-fill-available" : "100%")};
   height: 60px;
   border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.rowItem)};
-  padding: 12px 15px;
+  padding: ${({ as }) => (as === "div" ? "0 15px" : "12px 15px")};
   margin-top: 5px;
 
   z-index: 0;
