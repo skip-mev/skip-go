@@ -22,6 +22,7 @@ import { Adapter } from "@solana/wallet-adapter-base";
 import { MutateFunction } from "jotai-tanstack-query";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { svmWalletAtom } from "@/state/wallets";
+import { chainAddressesAtom } from "@/state/swapExecutionPage";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -51,6 +52,8 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     estimatedRouteDurationSeconds: route?.estimatedRouteDurationSeconds,
     enabled: swapExecutionState === SwapExecutionState.pending,
   });
+
+  const chainAddresses = useAtomValue(chainAddressesAtom);
 
   const { wallets: solanaWallets } = useWallet();
   const svmWallet = useAtomValue(svmWalletAtom);
@@ -128,6 +131,16 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
             signaturesRequired: route.txsRequired,
           });
           return;
+        }
+
+        const destinationWalletSource =
+          route?.requiredChainAddresses?.length &&
+          chainAddresses[route?.requiredChainAddresses?.length - 1]?.source;
+
+        if (destinationWalletSource) {
+          track("destination wallet source", {
+            destinationWalletSource,
+          });
         }
         submitExecuteRouteMutation({
           getSvmSigner: async () => {
