@@ -83,7 +83,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
   const walletImage = useCroppedImage(source.image);
 
   const renderWalletImage = useMemo(() => {
-    if (source.source === "injected") return;
+    if (source.source === "injected" || source.source === "input") return;
     if (!source.address) return;
     if (walletImage) return <img height={12} width={12} src={walletImage} />;
 
