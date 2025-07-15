@@ -110,7 +110,11 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
         />
       );
     case SwapExecutionState.ready: {
-      track("swap execution page: confirm button - clicked", { route });
+      const destinationWalletSource =
+        route?.requiredChainAddresses?.length &&
+        chainAddresses[route?.requiredChainAddresses?.length - 1]?.source;
+
+      track("swap execution page: confirm button - clicked", { ...route, destinationWalletSource });
       const onClickConfirmSwap = () => {
         if (route?.txsRequired && route.txsRequired > 1) {
           track("warning page: additional signing required", { route });
@@ -133,15 +137,6 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           return;
         }
 
-        const destinationWalletSource =
-          route?.requiredChainAddresses?.length &&
-          chainAddresses[route?.requiredChainAddresses?.length - 1]?.source;
-
-        if (destinationWalletSource) {
-          track("destination wallet source", {
-            destinationWalletSource,
-          });
-        }
         submitExecuteRouteMutation({
           getSvmSigner: async () => {
             const wallet = solanaWallets.find((w) => w.adapter.name === svmWallet?.walletName);
