@@ -78,7 +78,7 @@ const isFinalRouteStatus = (routeDetails: RouteDetails) => {
 }
 
 const isFinalState = (transaction?: TransactionDetails): boolean => {
-  const transactionState = transaction?.statusResponse?.state;
+  const transactionState = transaction?.statusResponse?.transfers?.[0]?.state;
   const transactionStatus = transaction?.status;
 
   return (
@@ -91,7 +91,7 @@ const isFinalState = (transaction?: TransactionDetails): boolean => {
 };
 
 const isSuccessState = (transaction?: TransactionDetails): boolean => {
-  const transactionState = transaction?.statusResponse?.state;
+  const transactionState = transaction?.statusResponse?.transfers?.[0]?.state;
   const transactionStatus = transaction?.status;
   return (
     transactionState === "STATE_COMPLETED_SUCCESS" ||
