@@ -18,7 +18,6 @@ import { isUserRejectedRequestError } from "@/utils/error";
 import { sourceAssetAtom, swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
-import { setUser, setTag } from "@sentry/react";
 import { track } from "@amplitude/analytics-browser";
 import {
   ChainType,
@@ -157,7 +156,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     },
     onTransactionBroadcast: async (txInfo) => {
       track("execute route: transaction broadcasted", { txInfo });
-      setUser({ id: txInfo?.txHash });
       const chain = chains?.find((chain) => chain.chainId === txInfo.chainId);
       const explorerLink = createExplorerLink({
         chainId: txInfo.chainId,
@@ -183,7 +181,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         txHash,
         status,
       });
-      setTag("txCompleted", true);
       const chain = chains?.find((chain) => chain.chainId === chainId);
       const explorerLink = createExplorerLink({
         chainId: chainId,
@@ -221,7 +218,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         track("expected error page: relay fee quote has expired");
         set(errorWarningAtom, {
           errorWarningType: ErrorWarningType.ExpiredRelayFeeQuote,
-          error: error as Error,
         });
       } else if (
         (error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")

@@ -362,7 +362,7 @@ export default function Home() {
               disableShadowDom={disableShadowDom}
               onlyTestnet={testnet}
               routeConfig={{
-                experimentalFeatures: ["eureka"],
+                experimentalFeatures: ["eureka", "layer_zero", "stargate", "hyperlane"],
                 swapVenues: swapVenues,
                 bridges: bridges?.map(i => i.id as BridgeType),
               }}
