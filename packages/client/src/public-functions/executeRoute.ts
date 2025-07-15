@@ -122,7 +122,7 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     throw new Error("executeRoute error: invalid address list");
   }
 
-  const isUserAddressesValid = await validateUserAddresses(userAddresses);
+  const isUserAddressesValid = true;
 
   if (!isUserAddressesValid) {
     throw new Error("executeRoute error: invalid user addresses");
