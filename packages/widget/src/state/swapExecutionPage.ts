@@ -26,6 +26,7 @@ import {
   TransactionCallbacks,
   UserAddress,
   TransactionDetails,
+  executeMultipleRoutes,
 } from "@skip-go/client";
 import { currentPageAtom, Routes } from "./router";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
@@ -307,11 +308,146 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
     gcTime: Infinity,
     mutationFn: async ({ getSvmSigner }: { getSvmSigner: () => Promise<Adapter> }) => {
       if (!route) return;
+      console.log("Executing route", route);
       if (!userAddresses.length) return;
+
+      const secondRoute = {
+        sourceAssetDenom: "uusdc",
+        sourceAssetChainId: "noble-1",
+        destAssetDenom: "uosmo",
+        destAssetChainId: "osmosis-1",
+        amountIn: "500000",
+        amountOut: "3166267",
+        operations: [
+          {
+            transfer: {
+              port: "transfer",
+              channel: "channel-79",
+              fromChainId: "noble-1",
+              toChainId: "pryzm-1",
+              pfmEnabled: true,
+              supportsMemo: true,
+              denomIn: "uusdc",
+              denomOut: "ibc/BFAAB7870A9AAABF64A7366DAAA0B8E5065EAA1FCE762F45677DC24BE796EF65",
+              bridgeId: "IBC",
+              smartRelay: false,
+              chainId: "noble-1",
+              destDenom: "ibc/BFAAB7870A9AAABF64A7366DAAA0B8E5065EAA1FCE762F45677DC24BE796EF65",
+            },
+            txIndex: 0,
+            amountIn: "500000",
+            amountOut: "500000",
+          },
+          {
+            swap: {
+              swapIn: {
+                swapVenue: {
+                  name: "pryzm-native",
+                  chainId: "pryzm-1",
+                  logoUri:
+                    "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/pryzm/logo.png",
+                },
+                swapOperations: [
+                  {
+                    pool: "amm:11",
+                    denomIn: "ibc/BFAAB7870A9AAABF64A7366DAAA0B8E5065EAA1FCE762F45677DC24BE796EF65",
+                    denomOut:
+                      "ibc/13B2C536BB057AC79D5616B8EA1B9540EC1F2170718CAFF6F0083C966FFFED0B",
+                  },
+                ],
+                swapAmountIn: "500000",
+                priceImpactPercent: "6.8367",
+                estimatedAmountOut: "3166267",
+              },
+              estimatedAffiliateFee:
+                "0ibc/13B2C536BB057AC79D5616B8EA1B9540EC1F2170718CAFF6F0083C966FFFED0B",
+              fromChainId: "pryzm-1",
+              chainId: "pryzm-1",
+              denomIn: "ibc/BFAAB7870A9AAABF64A7366DAAA0B8E5065EAA1FCE762F45677DC24BE796EF65",
+              denomOut: "ibc/13B2C536BB057AC79D5616B8EA1B9540EC1F2170718CAFF6F0083C966FFFED0B",
+              swapVenues: [
+                {
+                  name: "pryzm-native",
+                  chainId: "pryzm-1",
+                  logoUri:
+                    "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/pryzm/logo.png",
+                },
+              ],
+            },
+            txIndex: 0,
+            amountIn: "500000",
+            amountOut: "3166267",
+          },
+          {
+            transfer: {
+              port: "transfer",
+              channel: "channel-2",
+              fromChainId: "pryzm-1",
+              toChainId: "osmosis-1",
+              pfmEnabled: false,
+              supportsMemo: true,
+              denomIn: "ibc/13B2C536BB057AC79D5616B8EA1B9540EC1F2170718CAFF6F0083C966FFFED0B",
+              denomOut: "uosmo",
+              bridgeId: "IBC",
+              smartRelay: false,
+              chainId: "pryzm-1",
+              destDenom: "uosmo",
+            },
+            txIndex: 0,
+            amountIn: "3166267",
+            amountOut: "3166267",
+          },
+        ],
+        chainIds: ["noble-1", "pryzm-1", "osmosis-1"],
+        doesSwap: true,
+        estimatedAmountOut: "3166267",
+        swapVenues: [
+          {
+            name: "pryzm-native",
+            chainId: "pryzm-1",
+            logoUri:
+              "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/pryzm/logo.png",
+          },
+        ],
+        txsRequired: 1,
+        usdAmountIn: "0.50",
+        usdAmountOut: "0.54",
+        swapPriceImpactPercent: "6.8367",
+        estimatedFees: [],
+        requiredChainAddresses: ["noble-1", "pryzm-1", "osmosis-1"],
+        estimatedRouteDurationSeconds: 60,
+        swapVenue: {
+          name: "pryzm-native",
+          chainId: "pryzm-1",
+          logoUri:
+            "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/pryzm/logo.png",
+        },
+      };
+      const secondAddresses = [
+        {
+          chainId: "noble-1",
+          address: "noble1xfqaqhtm5dm3q5au8y4q49s9erudx4lxct5cyr",
+        },
+        {
+          chainId: "pryzm-1",
+          address: "pryzm1xfqaqhtm5dm3q5au8y4q49s9erudx4lxgckhz7",
+        },
+        {
+          chainId: "osmosis-1",
+          address: "osmo1xfqaqhtm5dm3q5au8y4q49s9erudx4lxcnjq2l",
+        },
+      ];
       try {
-        await executeRoute({
-          route,
-          userAddresses,
+        // testing
+        await executeMultipleRoutes({
+          route: {
+            firstRoute: route,
+            secondRoute,
+          },
+          userAddresses: {
+            firstRoute: userAddresses,
+            secondRoute: secondAddresses,
+          },
           timeoutSeconds,
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,

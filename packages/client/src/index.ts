@@ -27,6 +27,8 @@ export type { TxStatusResponse } from "./api/postTransactionStatus";
 
 export { executeRoute } from "./public-functions/executeRoute";
 export type { ExecuteRouteOptions } from "./public-functions/executeRoute";
+export { executeMultipleRoutes } from "./public-functions/executeMultipleRoutes";
+export type { ExecuteMultipleRoutesOptions } from "./public-functions/executeMultipleRoutes";
 
 export { getSigningStargateClient } from "./public-functions/getSigningStargateClient";
 export type { getSigningStargateClientProps } from "./public-functions/getSigningStargateClient";
