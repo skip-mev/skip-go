@@ -13,7 +13,7 @@ import type {
   BaseSettings,
 } from "src/types/client-types";
 import { updateRouteDetails } from "./subscribeToRouteStatus";
-import { validateUserAddresses } from "src/utils/address";
+import { createValidAddressList, validateUserAddresses } from "src/utils/address";
 import { ApiState } from "src/state/apiState";
 import { messages, type MessagesResponse } from "src/api/postMessages";
 import { executeTransactions } from "src/private-functions/executeTransactions";
@@ -57,7 +57,6 @@ export type ExecuteMultipleRoutesOptions = SignerGetters &
  *    {chainId: "ethereum", address: "0x..."}
  *   ]
  *  }
- *
  * })
  *
  */
@@ -86,37 +85,12 @@ export const executeMultipleRoutes = async (
       );
     }
 
-    _userAddresses.forEach((userAddress, index) => {
-      const requiredChainAddress = routeValue.requiredChainAddresses[index];
+    const routeAddressList = await createValidAddressList({
+      userAddresses: _userAddresses,
+      route: routeValue,
+    })
+    addressList[routeKey] = routeAddressList;
 
-      if (requiredChainAddress === userAddress?.chainId) {
-        addressList[routeKey]?.push(userAddress.address);
-      }
-    });
-
-    if (
-      addressList[routeKey]?.length !== routeValue.requiredChainAddresses.length
-    ) {
-      addressList[routeKey] = _userAddresses.map((x) => x.address);
-    }
-
-    const validLength =
-      addressList[routeKey]?.length ===
-        routeValue.requiredChainAddresses.length ||
-      addressList[routeKey]?.length === routeValue.chainIds?.length;
-
-    if (!validLength) {
-      throw new Error(
-        `executeMultipleRoutes error: invalid address list for route ${routeKey}`
-      );
-    }
-
-    const isUserAddressesValid = await validateUserAddresses(_userAddresses);
-    if (!isUserAddressesValid) {
-      throw new Error(
-        `executeMultipleRoutes error: invalid user addresses for route ${routeKey}`
-      );
-    }
   });
   console.log("addressList", addressList);
 
