@@ -1584,6 +1584,205 @@ export interface Fee {
   feeBehavior?: FeeBehavior;
 }
 
+export interface BalancesRequest {
+  chains?: Record<string, BalanceRequestChainEntry>;
+}
+
+export interface AssetsFromSourceRequest {
+  /** Denom of the source asset */
+  sourceAssetDenom: string;
+  /** Chain-id of the source asset */
+  sourceAssetChainId: string;
+  /**
+   * Whether to include recommendations requiring multiple transactions to reach the destination
+   * @default false
+   */
+  allowMultiTx?: boolean;
+  /**
+   * Whether to include CW20 tokens
+   * @default false
+   */
+  includeCw20Assets?: boolean;
+}
+
+export interface RouteRequest {
+  /** Amount of source asset to be transferred or swapped. Only one of amount_in and amount_out should be provided. */
+  amountIn?: string;
+  /** Amount of destination asset to receive. Only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out. */
+  amountOut?: string;
+  /** Denom of the source asset */
+  sourceAssetDenom?: string;
+  /** Chain-id of the source asset */
+  sourceAssetChainId?: string;
+  /** Denom of the destination asset */
+  destAssetDenom?: string;
+  /** Chain-id of the destination asset */
+  destAssetChainId?: string;
+  /** Cumulative fee to be distributed to affiliates, in bps (optional) */
+  cumulativeAffiliateFeeBps?: string;
+  /** Swap venues to consider, if provided (optional) */
+  swapVenues?: SwapVenue[];
+  /**
+   * Whether to allow route responses requiring multiple
+   * transactions
+   */
+  allowMultiTx?: boolean;
+  /** Toggles whether the api should return routes that fail price safety checks. */
+  allowUnsafe?: boolean;
+  /** Array of experimental features to enable */
+  experimentalFeatures?: string[];
+  /** Array of bridges to use */
+  bridges?: BridgeType[];
+  /** Indicates whether this transfer route should be relayed via Skip's Smart Relay service - true by default. */
+  smartRelay?: boolean;
+  smartSwapOptions?: SmartSwapOptions;
+  /** Whether to allow swaps in the route */
+  allowSwaps?: boolean;
+  /** Whether to enable Go Fast routes */
+  goFast?: boolean;
+}
+
+export interface MsgsRequest {
+  /** Denom of the source asset */
+  sourceAssetDenom?: string;
+  /** Chain-id of the source asset */
+  sourceAssetChainId?: string;
+  /** Denom of the destination asset */
+  destAssetDenom?: string;
+  /** Chain-id of the destination asset */
+  destAssetChainId?: string;
+  /** Amount of source asset to be transferred or swapped */
+  amountIn?: string;
+  /** Amount of destination asset out */
+  amountOut?: string;
+  /** Array of receipient and/or sender address for each chain in the path, corresponding to the chain_ids array returned from a route request */
+  addressList?: string[];
+  /** Array of operations required to perform the transfer or swap */
+  operations?: Operation[];
+  estimatedAmountOut?: string;
+  /** Percent tolerance for slippage on swap, if a swap is performed */
+  slippageTolerancePercent?: string;
+  /** Number of seconds for the IBC transfer timeout, defaults to 5 minutes */
+  timeoutSeconds?: string;
+  postRouteHandler?: PostHandler;
+  /** Map of chain-ids to arrays of affiliates. The API expects all chains to have the same cumulative affiliate fee bps for each chain specified. If any of the provided affiliate arrays does not have the same cumulative fee, the API will return an error. */
+  chainIdsToAffiliates?: Record<string, ChainAffiliates>;
+  /**
+   * Whether to enable gas warnings for intermediate and destination chains
+   * @default false
+   */
+  enableGasWarnings?: boolean;
+  /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format. */
+  feePayerAddress?: string;
+}
+
+export interface MsgsDirectRequest {
+  /** Denom of the source asset */
+  sourceAssetDenom?: string;
+  /** Chain-id of the source asset */
+  sourceAssetChainId?: string;
+  /** Denom of the destination asset */
+  destAssetDenom?: string;
+  /** Chain-id of the destination asset */
+  destAssetChainId?: string;
+  /** Amount of source asset to be transferred or swapped. If this is a swap, only one of amount_in and amount_out should be provided. */
+  amountIn?: string;
+  /** Amount of destination asset out. If this is a swap, only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out. */
+  amountOut?: string;
+  /** Map of chain-ids to receipient and/or sender address for each chain in the path. Since the path is not known to the caller beforehand, the caller should attempt to provide addresses for all chains in the path, and the API will return an error if the path cannot be constructed. */
+  chainIdsToAddresses?: Record<string, string>;
+  /** Swap venues to consider, if provided (optional) */
+  swapVenues?: SwapVenue[];
+  /** Percent tolerance for slippage on swap, if a swap is performed */
+  slippageTolerancePercent?: string;
+  /** Number of seconds for the IBC transfer timeout, defaults to 5 minutes */
+  timeoutSeconds?: string;
+  /** Map of chain-ids to arrays of affiliates. Since cumulative_affiliate_fee_bps must be provided to retrieve a route, and the swap chain is not known at this time, all chains must have the same cumulative_affiliate_fee_bps otherwise the API will return an error. */
+  chainIdsToAffiliates?: Record<string, ChainAffiliates>;
+  postRouteHandler?: PostHandler;
+  /**
+   * Whether to allow route responses requiring multiple
+   * transactions
+   */
+  allowMultiTx?: boolean;
+  /** Toggles whether the api should return routes that fail price safety checks. */
+  allowUnsafe?: boolean;
+  /** Array of experimental features to enable */
+  experimentalFeatures?: string[];
+  /** Array of bridges to use */
+  bridges?: BridgeType[];
+  /** Indicates whether this transfer route should be relayed via Skip's Smart Relay service */
+  smartRelay?: boolean;
+  smartSwapOptions?: SmartSwapOptions;
+  /** Whether to allow swaps in the route */
+  allowSwaps?: boolean;
+  /** Whether to enable Go Fast routes */
+  goFast?: boolean;
+  /**
+   * Whether to enable gas warnings for intermediate and destination chains
+   * @default false
+   */
+  enableGasWarnings?: boolean;
+  /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format. */
+  feePayerAddress?: string;
+}
+
+export interface AssetRecommendationsRequest {
+  /** Array where each entry corresponds to a distinct asset recommendation request. */
+  requests?: RecommendationRequest[];
+}
+
+export interface SubmitTxRequest {
+  /** Signed base64 encoded transaction */
+  tx?: string;
+  /** Chain ID of the transaction */
+  chainId?: string;
+}
+
+export interface TrackTxRequest {
+  /** Hex encoded hash of the transaction to track */
+  txHash: string;
+  /** Chain ID of the transaction */
+  chainId: string;
+}
+
+export interface IbcOriginAssetsRequest {
+  /** Array of assets to get origin assets for */
+  assets?: {
+    /** Denom of the asset */
+    denom?: string;
+    /** Chain-id of the asset */
+    chainId?: string;
+  }[];
+}
+
+export interface AssetsBetweenChainsRequest {
+  /** Chain-id of the source chain */
+  sourceChainId?: string;
+  /** Chain-id of the destination chain */
+  destChainId?: string;
+  /**
+   * Whether to include assets without metadata (symbol, name, logo_uri, etc.)
+   * @default false
+   */
+  includeNoMetadataAssets?: boolean;
+  /**
+   * Whether to include CW20 tokens
+   * @default false
+   */
+  includeCw20Assets?: boolean;
+  /**
+   * Whether to include EVM tokens
+   * @default false
+   */
+  includeEvmAssets?: boolean;
+  /**
+   * Whether to include recommendations requiring multiple transactions to reach the destination
+   * @default false
+   */
+  allowMultiTx?: boolean;
+}
+
 export interface ChainsRequest {
   /** Chain IDs to limit the response to, defaults to all chains if not provided */
   chainIds?: string[];
@@ -1998,12 +2197,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @request POST:/v2/info/balances
    * @response `200` `BalancesResponse` The balances of the assets
    */
-  balances = (
-    data: {
-      chains?: Record<string, BalanceRequestChainEntry>;
-    },
-    params: RequestParams = {},
-  ) =>
+  balances = (data: BalancesRequest, params: RequestParams = {}) =>
     this.request<BalancesResponse, any>({
       path: `/v2/info/balances`,
       method: "POST",
@@ -2075,25 +2269,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @response `400` `Error` The request was invalid, e.g. field is invalid
    * @response `500` `Error` Internal server error
    */
-  assetsFromSource = (
-    data: {
-      /** Denom of the source asset */
-      source_asset_denom: string;
-      /** Chain-id of the source asset */
-      source_asset_chain_id: string;
-      /**
-       * Whether to include recommendations requiring multiple transactions to reach the destination
-       * @default false
-       */
-      allow_multi_tx?: boolean;
-      /**
-       * Whether to include CW20 tokens
-       * @default false
-       */
-      include_cw20_assets?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
+  assetsFromSource = (data: AssetsFromSourceRequest, params: RequestParams = {}) =>
     this.request<AssetsFromSourceResponse, Error>({
       path: `/v2/fungible/assets_from_source`,
       method: "POST",
@@ -2113,42 +2289,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @response `400` `Error` The request was invalid, e.g. an invalid amount was passed or the swap size is unsafe
    * @response `500` `Error` Internal server error
    */
-  route = (
-    data: {
-      /** Amount of source asset to be transferred or swapped. Only one of amount_in and amount_out should be provided. */
-      amount_in?: string;
-      /** Amount of destination asset to receive. Only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out. */
-      amount_out?: string;
-      /** Denom of the source asset */
-      source_asset_denom?: string;
-      /** Chain-id of the source asset */
-      source_asset_chain_id?: string;
-      /** Denom of the destination asset */
-      dest_asset_denom?: string;
-      /** Chain-id of the destination asset */
-      dest_asset_chain_id?: string;
-      /** Cumulative fee to be distributed to affiliates, in bps (optional) */
-      cumulative_affiliate_fee_bps?: string | null;
-      /** Swap venues to consider, if provided (optional) */
-      swap_venues?: SwapVenue[];
-      /** Whether to allow route responses requiring multiple transactions */
-      allow_multi_tx?: boolean;
-      /** Toggles whether the api should return routes that fail price safety checks. */
-      allow_unsafe?: boolean;
-      /** Array of experimental features to enable */
-      experimental_features?: string[];
-      /** Array of bridges to use */
-      bridges?: BridgeType[];
-      /** Indicates whether this transfer route should be relayed via Skip's Smart Relay service - true by default. */
-      smart_relay?: boolean;
-      smart_swap_options?: SmartSwapOptions;
-      /** Whether to allow swaps in the route */
-      allow_swaps?: boolean;
-      /** Whether to enable Go Fast routes */
-      go_fast?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
+  route = (data: RouteRequest, params: RequestParams = {}) =>
     this.request<RouteResponse, Error>({
       path: `/v2/fungible/route`,
       method: "POST",
@@ -2168,42 +2309,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @response `400` `Error` The request was invalid, e.g. an invalid amount was passed.
    * @response `500` `Error` Internal server error
    */
-  msgs = (
-    data: {
-      /** Denom of the source asset */
-      source_asset_denom: string;
-      /** Chain-id of the source asset */
-      source_asset_chain_id: string;
-      /** Denom of the destination asset */
-      dest_asset_denom: string;
-      /** Chain-id of the destination asset */
-      dest_asset_chain_id: string;
-      /** Amount of source asset to be transferred or swapped */
-      amount_in: string;
-      /** Amount of destination asset out */
-      amount_out: string;
-      /** Array of receipient and/or sender address for each chain in the path, corresponding to the chain_ids array returned from a route request */
-      address_list: string[];
-      /** Array of operations required to perform the transfer or swap */
-      operations: Operation[];
-      estimated_amount_out?: string;
-      /** Percent tolerance for slippage on swap, if a swap is performed */
-      slippage_tolerance_percent?: string;
-      /** Number of seconds for the IBC transfer timeout, defaults to 5 minutes */
-      timeout_seconds?: string;
-      post_route_handler?: PostHandler;
-      /** Map of chain-ids to arrays of affiliates. The API expects all chains to have the same cumulative affiliate fee bps for each chain specified. If any of the provided affiliate arrays does not have the same cumulative fee, the API will return an error. */
-      chain_ids_to_affiliates?: Record<string, ChainAffiliates>;
-      /**
-       * Whether to enable gas warnings for intermediate and destination chains
-       * @default false
-       */
-      enable_gas_warnings?: boolean;
-      /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format. */
-      fee_payer_address?: string;
-    },
-    params: RequestParams = {},
-  ) =>
+  msgs = (data: MsgsRequest, params: RequestParams = {}) =>
     this.request<MsgsResponse, Error>({
       path: `/v2/fungible/msgs`,
       method: "POST",
@@ -2223,56 +2329,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @response `400` `Error` The request was invalid, e.g. an invalid amount was passed or the swap size is unsafe
    * @response `500` `Error` Internal server error
    */
-  msgsDirect = (
-    data: {
-      /** Denom of the source asset */
-      source_asset_denom?: string;
-      /** Chain-id of the source asset */
-      source_asset_chain_id?: string;
-      /** Denom of the destination asset */
-      dest_asset_denom?: string;
-      /** Chain-id of the destination asset */
-      dest_asset_chain_id?: string;
-      /** Amount of source asset to be transferred or swapped. If this is a swap, only one of amount_in and amount_out should be provided. */
-      amount_in?: string;
-      /** Amount of destination asset out. If this is a swap, only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out. */
-      amount_out?: string;
-      /** Map of chain-ids to receipient and/or sender address for each chain in the path. Since the path is not known to the caller beforehand, the caller should attempt to provide addresses for all chains in the path, and the API will return an error if the path cannot be constructed. */
-      chain_ids_to_addresses?: Record<string, string>;
-      /** Swap venues to consider, if provided (optional) */
-      swap_venues?: SwapVenue[];
-      /** Percent tolerance for slippage on swap, if a swap is performed */
-      slippage_tolerance_percent?: string;
-      /** Number of seconds for the IBC transfer timeout, defaults to 5 minutes */
-      timeout_seconds?: string;
-      /** Map of chain-ids to arrays of affiliates. Since cumulative_affiliate_fee_bps must be provided to retrieve a route, and the swap chain is not known at this time, all chains must have the same cumulative_affiliate_fee_bps otherwise the API will return an error. */
-      chain_ids_to_affiliates?: Record<string, ChainAffiliates>;
-      post_route_handler?: PostHandler;
-      /** Whether to allow route responses requiring multiple transactions */
-      allow_multi_tx?: boolean;
-      /** Toggles whether the api should return routes that fail price safety checks. */
-      allow_unsafe?: boolean;
-      /** Array of experimental features to enable */
-      experimental_features?: string[];
-      /** Array of bridges to use */
-      bridges?: BridgeType[];
-      /** Indicates whether this transfer route should be relayed via Skip's Smart Relay service */
-      smart_relay?: boolean;
-      smart_swap_options?: SmartSwapOptions;
-      /** Whether to allow swaps in the route */
-      allow_swaps?: boolean;
-      /** Whether to enable Go Fast routes */
-      go_fast?: boolean;
-      /**
-       * Whether to enable gas warnings for intermediate and destination chains
-       * @default false
-       */
-      enable_gas_warnings?: boolean;
-      /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format. */
-      fee_payer_address?: string;
-    },
-    params: RequestParams = {},
-  ) =>
+  msgsDirect = (data: MsgsDirectRequest, params: RequestParams = {}) =>
     this.request<MsgsDirectResponse, Error>({
       path: `/v2/fungible/msgs_direct`,
       method: "POST",
@@ -2293,13 +2350,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @response `404` `Error` A recommendation or the specified token was not found
    * @response `500` `Error` Internal server error
    */
-  assetRecommendations = (
-    data: {
-      /** Array where each entry corresponds to a distinct asset recommendation request. */
-      requests?: RecommendationRequest[];
-    },
-    params: RequestParams = {},
-  ) =>
+  assetRecommendations = (data: AssetRecommendationsRequest, params: RequestParams = {}) =>
     this.request<AssetRecommendationsResponse, Error>({
       path: `/v2/fungible/recommend_assets`,
       method: "POST",
@@ -2320,21 +2371,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @response `404` `Error` The specified chain is not supported.
    * @response `500` `Error` Internal server error
    */
-  submit = (
-    data: {
-      /**
-       * Signed base64 encoded transaction
-       * @example "base64 encoded transaction"
-       */
-      tx?: string;
-      /**
-       * Chain ID of the transaction
-       * @example "osmosis-1"
-       */
-      chain_id?: string;
-    },
-    params: RequestParams = {},
-  ) =>
+  submit = (data: SubmitTxRequest, params: RequestParams = {}) =>
     this.request<SubmitResponse, Error>({
       path: `/v2/tx/submit`,
       method: "POST",
@@ -2355,21 +2392,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @response `404` `Error` The specified chain is not supported or the specified transaction was not found.
    * @response `500` `Error` Internal server error
    */
-  track = (
-    data: {
-      /**
-       * Hex encoded hash of the transaction to track
-       * @example "F30790E79987F18F3A4DA8C7A9BA9FD837043EF59D8236CA85180E1078BC607F"
-       */
-      tx_hash: string;
-      /**
-       * Chain ID of the transaction
-       * @example "osmosis-1"
-       */
-      chain_id: string;
-    },
-    params: RequestParams = {},
-  ) =>
+  track = (data: TrackTxRequest, params: RequestParams = {}) =>
     this.request<TrackResponse, Error>({
       path: `/v2/tx/track`,
       method: "POST",
@@ -2408,18 +2431,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @response `400` `Error` The request was invalid, i.e. required fields are missing
    * @response `500` `Error` Internal server error
    */
-  ibcOriginAssets = (
-    data: {
-      /** Array of assets to get origin assets for */
-      assets?: {
-        /** Denom of the asset */
-        denom?: string;
-        /** Chain-id of the asset */
-        chain_id?: string;
-      }[];
-    },
-    params: RequestParams = {},
-  ) =>
+  ibcOriginAssets = (data: IbcOriginAssetsRequest, params: RequestParams = {}) =>
     this.request<IbcOriginAssetsResponse, Error>({
       path: `/v2/fungible/ibc_origin_assets`,
       method: "POST",
@@ -2439,35 +2451,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @response `404` `Error` One of the chain IDs was not found
    * @response `500` `Error` Internal server error
    */
-  fungibleAssetsBetweenChainsCreate = (
-    data: {
-      /** Chain-id of the source chain */
-      source_chain_id?: string;
-      /** Chain-id of the destination chain */
-      dest_chain_id?: string;
-      /**
-       * Whether to include assets without metadata (symbol, name, logo_uri, etc.)
-       * @default false
-       */
-      include_no_metadata_assets?: boolean;
-      /**
-       * Whether to include CW20 tokens
-       * @default false
-       */
-      include_cw20_assets?: boolean;
-      /**
-       * Whether to include EVM tokens
-       * @default false
-       */
-      include_evm_assets?: boolean;
-      /**
-       * Whether to include recommendations requiring multiple transactions to reach the destination
-       * @default false
-       */
-      allow_multi_tx?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
+  fungibleAssetsBetweenChainsCreate = (data: AssetsBetweenChainsRequest, params: RequestParams = {}) =>
     this.request<FungibleAssetsBetweenChainsCreateResponse, Error>({
       path: `/v2/fungible/assets_between_chains`,
       method: "POST",
