@@ -106,7 +106,6 @@ export const useInitWidget = (props: WidgetProps) => {
   }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
 
   useEffect(() => {
-    console.log(mergedSkipClientConfig);
     setClientOptions({
       ...mergedSkipClientConfig,
     });
