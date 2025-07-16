@@ -1,11 +1,9 @@
 import { PublicKey } from "@solana/web3.js";
 import { ClientState } from "../state/clientState";
-import { ChainType } from "../types/swaggerTypes";
+import { ChainType, type RouteResponse } from "../types/swaggerTypes";
 import { bech32m, bech32 } from "bech32";
 import { isAddress } from "viem";
-import type {
-  UserAddress,
-} from "src/types/client-types";
+import type { UserAddress } from "src/types/client-types";
 
 export const validateUserAddresses = async (userAddresses: UserAddress[]) => {
   const chains = await ClientState.getSkipChains();
@@ -56,4 +54,40 @@ export const validateUserAddresses = async (userAddresses: UserAddress[]) => {
   });
 
   return validations.every((validation) => validation);
+};
+
+export const createValidAddressList = async ({
+  userAddresses,
+  route,
+}: {
+  userAddresses: UserAddress[];
+  route: RouteResponse;
+}) => {
+  let addressList: string[] = [];
+  userAddresses.forEach((userAddress, index) => {
+    const requiredChainAddress = route.requiredChainAddresses[index];
+
+    if (requiredChainAddress === userAddress?.chainId) {
+      addressList.push(userAddress.address);
+    }
+  });
+
+  if (addressList.length !== route.requiredChainAddresses.length) {
+    addressList = userAddresses.map((x) => x.address);
+  }
+
+  const validLength =
+    addressList.length === route.requiredChainAddresses.length ||
+    addressList.length === route.chainIds?.length;
+
+  if (!validLength) {
+    throw new Error("createValidAddressList error: invalid address list");
+  }
+
+  const isUserAddressesValid = await validateUserAddresses(userAddresses);
+
+  if (!isUserAddressesValid) {
+    throw new Error("createValidAddressList error: invalid user addresses");
+  }
+  return addressList;
 };

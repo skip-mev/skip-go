@@ -15,7 +15,7 @@ import type {
 } from "src/types/client-types";
 import { ApiState } from "src/state/apiState";
 import { updateRouteDetails } from "./subscribeToRouteStatus";
-import { validateUserAddresses } from "src/utils/address";
+import { createValidAddressList } from "src/utils/address";
 
 /** Execute Route Options */
 export type ExecuteRouteOptions = SignerGetters &
@@ -46,32 +46,10 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     options,
   });
 
-  let addressList: string[] = [];
-  userAddresses.forEach((userAddress, index) => {
-    const requiredChainAddress = route.requiredChainAddresses[index];
-
-    if (requiredChainAddress === userAddress?.chainId) {
-      addressList.push(userAddress.address);
-    }
+  const addressList = await createValidAddressList({
+    userAddresses,
+    route,
   });
-
-  if (addressList.length !== route.requiredChainAddresses.length) {
-    addressList = userAddresses.map((x) => x.address);
-  }
-
-  const validLength =
-    addressList.length === route.requiredChainAddresses.length ||
-    addressList.length === route.chainIds?.length;
-
-  if (!validLength) {
-    throw new Error("executeRoute error: invalid address list");
-  }
-
-  const isUserAddressesValid = await validateUserAddresses(userAddresses);
-
-  if (!isUserAddressesValid) {
-    throw new Error("executeRoute error: invalid user addresses");
-  }
 
   const response = await messages({
     timeoutSeconds,
