@@ -27,6 +27,7 @@ export default function Home() {
   const [disableShadowDom, setDisableShadowDom] = useState(false);
   const [apiUrl, setApiUrl] = useState<"prod" | "dev">("prod");
   const [testnet, setTestnet] = useState<boolean>(false);
+  const [apiKey, setApiKey] = useState<string | undefined>();
 
   const [swapVenues, setSwapVenues] = useState<SwapVenue[]>();
   const [bridges, setBridges] = useState<Bridge[]>();
@@ -311,6 +312,10 @@ export default function Home() {
         >
           {apiUrl}
         </button>
+        <div>
+          <label>api key:</label>
+          <input value={apiKey ?? ""} onChange={(e) => setApiKey(e.target.value)} />
+        </div>
       </div>
       <div
         style={{
@@ -337,6 +342,7 @@ export default function Home() {
             <Widget
               theme={theme}
               defaultRoute={defaultRoute}
+              apiKey={apiKey}
               onWalletConnected={(props) =>
                 console.log("onWalletConnected", { ...props })
               }
