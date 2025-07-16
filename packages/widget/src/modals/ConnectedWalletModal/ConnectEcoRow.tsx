@@ -1,7 +1,7 @@
 import { Button, GhostButton } from "@/components/Button";
 import { Row } from "@/components/Layout";
 import { ModalRowItem } from "@/components/ModalRowItem";
-import { Text, TextButton } from "@/components/Typography";
+import { Text } from "@/components/Typography";
 import { useWalletList } from "@/hooks/useWalletList";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { useAtomValue } from "jotai";
@@ -157,7 +157,6 @@ export const ConnectEcoRow = ({
 
   return (
     <ModalRowItem
-      as="div"
       style={{ marginTop: ITEM_GAP, minHeight: `${ITEM_HEIGHT}px` }}
       onClick={handleConnectClick}
       leftContent={
@@ -198,14 +197,14 @@ export const ConnectEcoRow = ({
             </Row>
           </Row>
         ) : (
-          <TextButton>
+          <Text>
             Connect to{" "}
             {chainType === ChainType.Cosmos
               ? "Cosmos"
               : chainType === ChainType.Evm
                 ? "Ethereum"
                 : "Solana"}
-          </TextButton>
+          </Text>
         )
       }
       rightContent={
