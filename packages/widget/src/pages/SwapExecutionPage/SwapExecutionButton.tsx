@@ -114,7 +114,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
         route?.requiredChainAddresses?.length &&
         chainAddresses[route?.requiredChainAddresses?.length - 1]?.source;
 
-      track("swap execution page: confirm button - clicked", { ...route, destinationWalletSource });
+      track("swap execution page: confirm button - clicked", { route, destinationWalletSource });
       const onClickConfirmSwap = () => {
         if (route?.txsRequired && route.txsRequired > 1) {
           track("warning page: additional signing required", { route });
