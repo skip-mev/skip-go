@@ -5,7 +5,7 @@ import {
   resetWidget,
   setAsset,
 } from "@skip-go/widget";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useQueryParams } from "@/hooks/useURLQueryParams";
 import {
   venues,
@@ -27,9 +27,18 @@ export default function Home() {
   const [disableShadowDom, setDisableShadowDom] = useState(false);
   const [apiUrl, setApiUrl] = useState<"prod" | "dev">("prod");
   const [testnet, setTestnet] = useState<boolean>(false);
+  const [apiKey, setApiKey] = useState<string | undefined>();
 
   const [swapVenues, setSwapVenues] = useState<SwapVenue[]>();
   const [bridges, setBridges] = useState<Bridge[]>();
+  
+  const computedApiUrl = useMemo(() => {
+    const isProd = apiUrl === "prod";
+    if (apiKey) {
+      return isProd ? "https://api.skip.build" : "https://api.dev.skip.build";
+    }
+    return isProd ? "https://go.skip.build/api/skip" : "https://dev.go.skip.build/api/skip";
+  }, [apiUrl, apiKey]);
 
   useLayoutEffect(() => {
     if (otherParams !== undefined) {
@@ -311,6 +320,10 @@ export default function Home() {
         >
           {apiUrl}
         </button>
+        <div>
+          <label>api key:</label>
+          <input value={apiKey ?? ""} onChange={(e) => setApiKey(e.target.value)} />
+        </div>
       </div>
       <div
         style={{
@@ -337,6 +350,7 @@ export default function Home() {
             <Widget
               theme={theme}
               defaultRoute={defaultRoute}
+              apiKey={apiKey}
               onWalletConnected={(props) =>
                 console.log("onWalletConnected", { ...props })
               }
@@ -366,11 +380,7 @@ export default function Home() {
                 swapVenues: swapVenues,
                 bridges: bridges?.map(i => i.id as BridgeType),
               }}
-              apiUrl={
-                apiUrl === "prod"
-                  ? "https://go.skip.build/api/skip"
-                  : "https://dev.go.skip.build/api/skip"
-              }
+              apiUrl={computedApiUrl}
               filterOut={{
                 destination: {
                   "pacific-1": [
