@@ -1,5 +1,24 @@
 # @skip-go/client
 
+## 1.4.0
+
+### Minor Changes
+
+- d9ae5ec: Refactored route status management to be handled by the client library in onRouteUpdated callback passed to executeRoute and subscribeToRouteStatus
+
+### Patch Changes
+
+- 5c85386: Fix incomplete state handling, remove SwapPageFooter from TransactionHistoryPage
+- 4c3b591: cleanup injective dependencies
+- b1441b2: Fix TrackTxRequest to include SkipApiOptions
+- e508561: Add mapping 5 and 12 error codes to "no route found" on the widget
+
+## 1.3.7
+
+### Patch Changes
+
+- 3bc90be: fix injective and evmos direct signing
+
 ## 1.3.6
 
 ### Patch Changes

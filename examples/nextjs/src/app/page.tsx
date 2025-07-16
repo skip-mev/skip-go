@@ -102,17 +102,6 @@ export default function Home() {
     refetchOnWindowFocus: false,
   });
 
-  useEffect(() => {
-    if (swapVenuesQuery.data) {
-      setSwapVenues(swapVenuesQuery.data);
-    }
-  }, [swapVenuesQuery.data]);
-  useEffect(() => {
-    if (bridgesQuery.data) {
-      setBridges(bridgesQuery.data);
-    }
-  }, [bridgesQuery.data]);
-
   return (
     <div
       style={{
@@ -172,8 +161,7 @@ export default function Home() {
                     id={venue.name}
                     type="checkbox"
                     checked={
-                      swapVenues?.map((v) => v.name).includes(venue.name) ??
-                      true
+                      swapVenues?.map((v) => v.name).includes(venue.name)
                     }
                     onChange={(e) => {
                       if (e.currentTarget.checked) {
@@ -190,15 +178,6 @@ export default function Home() {
                 </div>
               ))}
           </div>
-          <button
-            onClick={() => {
-              setSwapVenues((prev) =>
-                prev?.length === 0 ? swapVenuesQuery.data : []
-              );
-            }}
-          >
-            {swapVenues?.length === 0 ? "Select " : "Deselect "} all
-          </button>
         </div>
         <div
           style={{
@@ -230,7 +209,7 @@ export default function Home() {
                   id={bridge.id}
                   type="checkbox"
                   checked={
-                    bridges?.map((b) => b.id).includes(bridge.id) ?? true
+                    bridges?.map((b) => b.id).includes(bridge.id)
                   }
                   onChange={(e) => {
                     if (e.currentTarget.checked) {
@@ -247,14 +226,6 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <button
-
-            onClick={() => {
-             setBridges((prev) => prev?.length === 0 ? bridgesQuery.data : []);
-            }}
-          >{
-bridges?.length === 0 ? "Select " : "Deselect "
-          } all</button>
         </div>
       </div>
       <div
@@ -391,7 +362,7 @@ bridges?.length === 0 ? "Select " : "Deselect "
               disableShadowDom={disableShadowDom}
               onlyTestnet={testnet}
               routeConfig={{
-                experimentalFeatures: ["eureka"],
+                experimentalFeatures: ["eureka", "layer_zero", "stargate", "hyperlane"],
                 swapVenues: swapVenues,
                 bridges: bridges?.map(i => i.id as BridgeType),
               }}

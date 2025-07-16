@@ -1,7 +1,5 @@
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
-import { signCosmosMessageDirectEvmos } from "./signCosmosMessageDirectEvmos";
-import { signCosmosMessageDirectInjective } from "./signCosmosMessageDirectInjective";
 import type { TxBodyEncodeObject } from "@cosmjs/proto-signing";
 import { makeAuthInfoBytes, makeSignDoc } from "@cosmjs/proto-signing";
 import { makePubkeyAnyFromAccount } from "src/proto-signing/pubkey";
@@ -22,22 +20,6 @@ export const signCosmosMessageDirect = async (
     fee,
     signerData: { accountNumber, sequence, chainId: signerChainId },
   } = options;
-
-  if (chainId.includes("evmos")) {
-    return signCosmosMessageDirectEvmos(signerAddress, signer, cosmosMsgs, fee, {
-      accountNumber,
-      sequence,
-      chainId: signerChainId,
-    });
-  }
-
-  if (chainId.includes("injective")) {
-    return signCosmosMessageDirectInjective(signerAddress, signer, cosmosMsgs, fee, {
-      accountNumber,
-      sequence,
-      chainId: signerChainId,
-    });
-  }
 
   const accounts = await signer.getAccounts();
   const accountFromSigner = accounts.find((account) => account.address === signerAddress);

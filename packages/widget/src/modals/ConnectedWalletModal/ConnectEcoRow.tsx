@@ -197,14 +197,14 @@ export const ConnectEcoRow = ({
             </Row>
           </Row>
         ) : (
-          <TextButton>
+          <Text>
             Connect to{" "}
             {chainType === ChainType.Cosmos
               ? "Cosmos"
               : chainType === ChainType.Evm
                 ? "Ethereum"
                 : "Solana"}
-          </TextButton>
+          </Text>
         )
       }
       rightContent={

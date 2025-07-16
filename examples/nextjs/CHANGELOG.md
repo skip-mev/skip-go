@@ -1,5 +1,36 @@
 # nextjs
 
+## 0.1.125
+
+### Patch Changes
+
+- 56bd346: deselect swap venues and bridges by default
+- Updated dependencies [d9ae5ec]
+- Updated dependencies [45c8b0e]
+- Updated dependencies [4c3b591]
+- Updated dependencies [6deedeb]
+- Updated dependencies [aa6bf9e]
+- Updated dependencies [21ec4ff]
+- Updated dependencies [591e462]
+- Updated dependencies [e508561]
+- Updated dependencies [8f8ae09]
+  - @skip-go/widget@3.13.0
+
+## 0.1.124
+
+### Patch Changes
+
+- Updated dependencies [f00f585]
+- Updated dependencies [97b6f32]
+  - @skip-go/widget@3.12.11
+
+## 0.1.123
+
+### Patch Changes
+
+- Updated dependencies [3bc90be]
+  - @skip-go/widget@3.12.10
+
 ## 0.1.122
 
 ### Patch Changes

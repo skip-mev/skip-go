@@ -22,6 +22,7 @@ import { WidgetRouteConfig } from "@/widget/Widget";
 import { RoutePreference } from "./types";
 import { DefaultRouteConfig } from "@/widget/useInitDefaultRoute";
 import { route, RouteRequest, RouteResponse } from "@skip-go/client";
+import { ROUTE_ERROR_CODE_MAP } from "@/constants/routeErrorCodeMap";
 
 export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = atomEffect(
   (get, set) => {
@@ -88,7 +89,10 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
 
 type CaughtRouteError = {
   isError: boolean;
-  error: unknown;
+  error: {
+    message?: string;
+    code?: number;
+  };
   message?: string;
 };
 
@@ -159,6 +163,12 @@ export const skipRouteAtom = atom<{
   const caughtError = data as CaughtRouteError;
   const routeResponse = data as RouteResponse;
   if (caughtError?.isError) {
+    const error = caughtError.error;
+
+    if (caughtError?.error?.code && ROUTE_ERROR_CODE_MAP[caughtError.error.code]) {
+      error.message = ROUTE_ERROR_CODE_MAP[caughtError.error.code];
+    }
+
     return {
       data: undefined,
       isError: true,
@@ -166,6 +176,7 @@ export const skipRouteAtom = atom<{
       isLoading: false,
     };
   }
+
   return {
     data: routeResponse,
     isError,

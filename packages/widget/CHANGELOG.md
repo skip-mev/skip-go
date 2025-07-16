@@ -1,5 +1,43 @@
 ## 0.0.15
 
+## 3.13.0
+
+### Minor Changes
+
+- d9ae5ec: Refactored route status management to be handled by the client library in onRouteUpdated callback passed to executeRoute and subscribeToRouteStatus
+
+### Patch Changes
+
+- 45c8b0e: Remove sentry
+- 4c3b591: cleanup injective dependencies
+- 6deedeb: Assume status for a route is finalized if top level status is complete, failed or incomplete and dont ever fetch from api in those cases
+- aa6bf9e: Never show no fees in red
+- 21ec4ff: show swap settings if route error or no route
+- 591e462: Fix bug with history page causing scrolling to be overwritten by expanded history item being scrolled into view after initially opening the item
+- e508561: Add mapping 5 and 12 error codes to "no route found" on the widget
+- 8f8ae09: bump graz 0.3.3
+- Updated dependencies [d9ae5ec]
+- Updated dependencies [5c85386]
+- Updated dependencies [4c3b591]
+- Updated dependencies [b1441b2]
+- Updated dependencies [e508561]
+  - @skip-go/client@1.4.0
+
+## 3.12.11
+
+### Patch Changes
+
+- f00f585: Add showing "< $0.01 in fees" and "no fees"
+- 97b6f32: fix stuck getting addresses on connectedAddress
+
+## 3.12.10
+
+### Patch Changes
+
+- 3bc90be: fix injective and evmos direct signing
+- Updated dependencies [3bc90be]
+  - @skip-go/client@1.3.7
+
 ## 3.12.9
 
 ### Patch Changes

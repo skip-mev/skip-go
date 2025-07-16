@@ -10,12 +10,13 @@ export const executeSvmTransaction = async (
   tx: { svmTx?: SvmTx },
   options: ExecuteRouteOptions,
   index: number,
+  routeId: string,
 ) => {
   const svmTx = tx?.svmTx;
   if (!svmTx?.chainId) {
     throw new Error("executeSvmTransaction error: chainId not found in svmTx");
   }
-  const signedTx = await signSvmTransaction({ tx, options, index });
+  const signedTx = await signSvmTransaction({ tx, options, index, routeId });
   if (!signedTx) {
     throw new Error("executeSvmTransaction error: signedTx is undefined");
   }

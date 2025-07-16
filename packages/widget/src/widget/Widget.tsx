@@ -61,11 +61,6 @@ export type WidgetProps = {
   filterOutUnlessUserHasBalance?: ChainFilter;
   walletConnect?: WalletConnect;
   /**
-   * enables sentry session replays on the widget to help with troubleshooting errors
-   * https://docs.sentry.io/product/explore/session-replay/web/
-   */
-  enableSentrySessionReplays?: boolean;
-  /**
    * Enable Amplitude analytics for the widget to improve user experience.
    */
   enableAmplitudeAnalytics?: boolean;

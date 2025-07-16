@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.12.9",
+  "version": "3.13.0",
   "repository": {
     "url": "https://github.com/skip-mev/skip-go",
     "directory": "packages/widget"
@@ -63,7 +63,7 @@
     "@typescript-eslint/parser": "^7.15.0",
     "@vitejs/plugin-react": "^4.3.1",
     "buffer": "^6.0.3",
-    "chain-registry": "^2.0.11",
+    "chain-registry": "^2.0.18",
     "download": "^8.0.0",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
@@ -116,7 +116,6 @@
     "@penumbra-zone/protobuf": "^7.2.0",
     "@penumbra-zone/transport-dom": "^7.5.0",
     "@r2wc/react-to-web-component": "^2.0.3",
-    "@sentry/react": "^8.46.0",
     "@skip-go/client": "workspace:^",
     "@solana/spl-token": "^0.4.8",
     "@solana/wallet-adapter-ledger": "^0.9.25",
@@ -129,7 +128,7 @@
     "@walletconnect/solana-adapter": "^0.0.8",
     "add": "^2.0.6",
     "bech32": "^2.0.0",
-    "graz": "0.3.2",
+    "graz": "0.3.3",
     "jotai": "^2.10.1",
     "jotai-effect": "^1.0.2",
     "jotai-tanstack-query": "^0.8.6",
@@ -139,6 +138,7 @@
     "react-error-boundary": "^4.0.13",
     "react-shadow-scope": "^1.0.5",
     "styled-components": "^6.1.13",
+    "uuid": "^11.1.0",
     "yarn": "^1.22.22",
     "zod": "^3.23.8"
   },

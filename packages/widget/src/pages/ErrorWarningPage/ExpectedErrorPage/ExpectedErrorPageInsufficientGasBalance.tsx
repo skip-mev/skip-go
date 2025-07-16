@@ -5,8 +5,6 @@ import { errorWarningAtom } from "@/state/errorWarning";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
 import { useTheme } from "styled-components";
-import { useEffect } from "react";
-import { setTag } from "@sentry/react";
 import { track } from "@amplitude/analytics-browser";
 import { PageHeader } from "@/components/PageHeader";
 
@@ -22,10 +20,6 @@ export const ExpectedErrorPageInsufficientGasBalance = ({
   const theme = useTheme();
   const setErrorWarningAtom = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
-
-  useEffect(() => {
-    setTag("errorMessage", error?.message);
-  }, [error?.message]);
 
   const onClickRetry = () => {
     setErrorWarningAtom(undefined);
