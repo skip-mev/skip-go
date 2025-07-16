@@ -67,7 +67,6 @@ export const useInitWidget = (props: WidgetProps) => {
       apiKey,
     };
 
-    // merge if not undefined
     return {
       apiUrl: fromWidgetProps.apiUrl ?? defaultSkipClientConfig.apiUrl,
       endpointOptions: fromWidgetProps.endpointOptions ?? defaultSkipClientConfig.endpointOptions,
