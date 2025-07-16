@@ -59,11 +59,12 @@ export const useInitWidget = (props: WidgetProps) => {
   const wallets = useAtomValue(walletsAtom);
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
-    const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
+    const { apiUrl, chainIdsToAffiliates, endpointOptions, apiKey } = props;
     const fromWidgetProps = {
       apiUrl,
       chainIdsToAffiliates,
       endpointOptions,
+      apiKey,
     };
 
     // merge if not undefined
@@ -71,6 +72,7 @@ export const useInitWidget = (props: WidgetProps) => {
       apiUrl: fromWidgetProps.apiUrl ?? defaultSkipClientConfig.apiUrl,
       endpointOptions: fromWidgetProps.endpointOptions ?? defaultSkipClientConfig.endpointOptions,
       chainIdsToAffiliates: fromWidgetProps.chainIdsToAffiliates ?? {},
+      apiKey: fromWidgetProps.apiKey,
     };
   }, [props]);
 
