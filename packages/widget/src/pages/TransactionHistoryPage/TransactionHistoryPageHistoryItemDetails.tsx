@@ -11,7 +11,6 @@ import { RouteStatus, TransactionDetails, TransferAssetRelease } from "@skip-go/
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { track } from "@amplitude/analytics-browser";
-import { useCopyAddress } from "@/hooks/useCopyAddress";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
   status?: RouteStatus;
