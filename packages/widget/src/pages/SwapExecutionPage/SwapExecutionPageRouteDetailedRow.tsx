@@ -196,7 +196,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
         justify="space-between"
       >
         <Row align="center">
-          <LeftContent>
+          <LeftContent gap={5}>
             <Row gap={5} align="center">
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
                 {formatDisplayAmount(assetDetails?.amount)}
