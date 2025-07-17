@@ -7,6 +7,7 @@ import {
   updateHistoryFromCamelCaseToRouteDetails,
   TransactionHistoryItem,
 } from "./updateHistoryVersion/updateHistoryFromCamelCaseToRouteDetails";
+import { updateHistoryFromRouteDetailsToUserAddresses } from "./updateHistoryVersion/updateHistoryFromRouteDetailsToUserAddresses";
 
 export const migrateOldLocalStorageValues = () => {
   if (typeof window === "undefined") return;
@@ -54,6 +55,7 @@ export const migrateOldLocalStorageValues = () => {
   });
 
   updateHistoryFromCamelCaseToRouteDetails();
+  updateHistoryFromRouteDetailsToUserAddresses();
 };
 
 export function toCamelCase<T extends object>(obj: T) {
