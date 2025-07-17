@@ -311,9 +311,6 @@ export const updateRouteDetails = ({
 
   const transferAssetRelease = transactionDetails?.findLast(i => i.statusResponse?.transferAssetRelease)?.statusResponse?.transferAssetRelease;
 
-  const senderAddress = options?.userAddresses?.at(0);
-  const receiverAddress = options?.userAddresses?.at(-1);
-
   const newRouteDetails: RouteDetails = {
     id: routeId,
     timestamp: currentRouteDetails.timestamp,
