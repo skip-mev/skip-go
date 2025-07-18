@@ -210,13 +210,13 @@ export const SwapPage = () => {
 
     const feeAsset = assets?.find(
       (asset) =>
-        asset?.denom === route?.feeAssetSubtractedFromRoute?.denom &&
-        asset?.chainId === route?.feeAssetSubtractedFromRoute?.chainId,
+        asset?.denom === route?.gasOnReceiveAsset?.denom &&
+        asset?.chainId === route?.gasOnReceiveAsset?.chainId,
     );
 
-    const gasOnReceive = route?.feeAssetSubtractedFromRoute ? (
+    const gasOnReceive = route?.gasOnReceiveAsset ? (
       <QuestionMarkTooltip
-        content={`You'll get ${formatUSD(route?.feeAssetSubtractedFromRoute?.amountUsd)} in ${feeAsset?.recommendedSymbol} for gas`}
+        content={`You'll get ${formatUSD(route?.gasOnReceiveAsset?.amountUsd)} in ${feeAsset?.recommendedSymbol} for gas`}
       />
     ) : null;
 
@@ -235,16 +235,15 @@ export const SwapPage = () => {
         {gasOnReceive}
       </>
     );
-  }, [assets, fees, route?.feeAssetSubtractedFromRoute]);
+  }, [assets, fees, route?.gasOnReceiveAsset]);
 
   const feeWarning = useMemo(() => {
     if (!route?.usdAmountIn || !route?.usdAmountOut) return false;
     return (
-      parseFloat(route.usdAmountOut) +
-        parseFloat(route?.feeAssetSubtractedFromRoute?.amountUsd ?? "0") <
+      parseFloat(route.usdAmountOut) + parseFloat(route?.gasOnReceiveAsset?.amountUsd ?? "0") <
       parseFloat(route.usdAmountIn) * 0.9
     );
-  }, [route?.feeAssetSubtractedFromRoute?.amountUsd, route?.usdAmountIn, route?.usdAmountOut]);
+  }, [route?.gasOnReceiveAsset?.amountUsd, route?.usdAmountIn, route?.usdAmountOut]);
 
   const swapButton = useMemo(() => {
     const computeFontSize = (label: string) => (label.length > 36 ? 18 : 24);

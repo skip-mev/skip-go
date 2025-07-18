@@ -111,7 +111,7 @@ export const routeConfigAtom = atom<WidgetRouteConfig>({
 });
 
 type Route = RouteResponse & {
-  feeAssetSubtractedFromRoute?: {
+  gasOnReceiveAsset?: {
     amountUsd: string;
     denom: string;
     chainId: string;
@@ -193,7 +193,7 @@ export const _skipRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Route | Cau
                 goFast: swapSettings.routePreference === RoutePreference.FASTEST,
                 abortDuplicateRequests: true,
               });
-              (response as Route).feeAssetSubtractedFromRoute = {
+              (response as Route).gasOnReceiveAsset = {
                 amountUsd: feeAssetResponse?.usdAmountOut,
                 denom: feeAssetResponse?.destAssetDenom,
                 chainId: feeAssetResponse?.destAssetChainId,
