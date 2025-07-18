@@ -43,7 +43,6 @@ import { useGetBalance } from "@/hooks/useGetBalance";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { useConnectToMissingCosmosChain } from "./useConnectToMissingCosmosChain";
 import { callbacksAtom } from "@/state/callbacks";
-import { gasOnReceiveRouteAtom } from "@/state/gasOnReceive";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -75,9 +74,9 @@ export const SwapPage = () => {
   const getBalance = useGetBalance();
   const callbacks = useAtomValue(callbacksAtom);
 
-  const gasRoute = useAtomValue(gasOnReceiveRouteAtom);
+  // const gasRoute = useAtomValue(gasOnReceiveRouteAtom);
 
-  console.log("gasRoute", gasRoute);
+  // console.log("gasRoute", gasRoute);
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
   useCleanupDebouncedAtoms();

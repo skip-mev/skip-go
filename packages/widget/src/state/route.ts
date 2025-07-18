@@ -23,7 +23,7 @@ import { RoutePreference } from "./types";
 import { DefaultRouteConfig } from "@/widget/useInitDefaultRoute";
 import { route, RouteRequest, RouteResponse } from "@skip-go/client";
 import { ROUTE_ERROR_CODE_MAP } from "@/constants/routeErrorCodeMap";
-import { gasOnReceiveRouteAtom } from "./gasOnReceive";
+import { gasOnReceiveRouteAtom, gasOnReceiveRouteRequestAtom } from "./gasOnReceive";
 import { BigNumber } from "bignumber.js";
 
 export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = atomEffect(
@@ -110,50 +110,97 @@ export const routeConfigAtom = atom<WidgetRouteConfig>({
   timeoutSeconds: undefined,
 });
 
-export const _skipRouteAtom: ReturnType<
-  typeof atomWithQuery<Awaited<ReturnType<typeof route> | CaughtRouteError>>
-> = atomWithQuery((get) => {
-  const params = get(skipRouteRequestAtom);
-  const currentPage = get(currentPageAtom);
-  const isInvertingSwap = get(isInvertingSwapAtom);
-  const errorWarning = get(errorWarningAtom);
-  const routeConfig = get(routeConfigAtom);
-  const swapSettings = get(swapSettingsAtom);
-
-  const queryEnabled =
-    params !== undefined &&
-    (Number(params.amountIn) > 0 || Number(params.amountOut) > 0) &&
-    !isInvertingSwap &&
-    currentPage === Routes.SwapPage &&
-    errorWarning === undefined;
-
-  return {
-    queryKey: ["skipRoute", params, routeConfig, swapSettings],
-    queryFn: async () => {
-      if (!params) {
-        throw new Error("No route request provided");
-      }
-      try {
-        const response = await route({
-          ...params,
-          smartRelay: true,
-          ...routeConfig,
-          goFast: swapSettings.routePreference === RoutePreference.FASTEST,
-          abortDuplicateRequests: true,
-        });
-        return response;
-      } catch (error) {
-        return {
-          isError: true,
-          error,
-        };
-      }
-    },
-    retry: 1,
-    enabled: queryEnabled,
-    refetchInterval: 1000 * 30,
+type Route = RouteResponse & {
+  feeAssetSubtractedFromRoute?: {
+    amountUsd: string;
+    denom: string;
+    chainId: string;
   };
-});
+};
+
+export const _skipRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Route | CaughtRouteError>>> =
+  atomWithQuery((get) => {
+    const params = get(skipRouteRequestAtom);
+    const currentPage = get(currentPageAtom);
+    const isInvertingSwap = get(isInvertingSwapAtom);
+    const errorWarning = get(errorWarningAtom);
+    const routeConfig = get(routeConfigAtom);
+    const swapSettings = get(swapSettingsAtom);
+    const gasOnReceiveRouteParams = get(gasOnReceiveRouteRequestAtom);
+    const destinationAsset = get(destinationAssetAtom);
+
+    const destinationAssetIsAFeeAsset = gasOnReceiveRouteParams?.destAssetDenoms.includes(
+      destinationAsset?.denom ?? "",
+    );
+
+    const queryEnabled =
+      params !== undefined &&
+      (Number(params.amountIn) > 0 || Number(params.amountOut) > 0) &&
+      !isInvertingSwap &&
+      currentPage === Routes.SwapPage &&
+      errorWarning === undefined;
+
+    return {
+      queryKey: ["skipRoute", params, routeConfig, swapSettings, gasOnReceiveRouteParams],
+      queryFn: async () => {
+        if (!params) {
+          throw new Error("No route request provided");
+        }
+        try {
+          const response = await route({
+            ...params,
+            smartRelay: true,
+            ...routeConfig,
+            goFast: swapSettings.routePreference === RoutePreference.FASTEST,
+            abortDuplicateRequests: true,
+          });
+
+          if (
+            !destinationAssetIsAFeeAsset &&
+            gasOnReceiveRouteParams?.destAssetDenoms !== undefined
+          ) {
+            const { destAssetDenoms, ...restParams } = gasOnReceiveRouteParams;
+            const feeAssetRoutes = destAssetDenoms.map((denom) =>
+              route({
+                destAssetDenom: denom,
+                ...restParams,
+                smartRelay: true,
+                ...routeConfig,
+                goFast: swapSettings.routePreference === RoutePreference.FASTEST,
+                abortDuplicateRequests: true,
+              }),
+            );
+
+            const results = await Promise.all(feeAssetRoutes);
+            const feeAssetResponse = results.find((result) => result?.usdAmountOut);
+            if (feeAssetResponse?.usdAmountOut && response?.usdAmountOut) {
+              response.usdAmountOut = BigNumber(response.usdAmountOut)
+                .minus(BigNumber(feeAssetResponse?.usdAmountOut ?? 0))
+                .toString();
+              response.amountOut = BigNumber(response.amountOut)
+                .minus(BigNumber(feeAssetResponse?.amountIn ?? 0))
+                .toString();
+              (response as Route).feeAssetSubtractedFromRoute = {
+                amountUsd: feeAssetResponse?.usdAmountOut,
+                denom: feeAssetResponse?.destAssetDenom,
+                chainId: feeAssetResponse?.destAssetChainId,
+              };
+            }
+          }
+
+          return response;
+        } catch (error) {
+          return {
+            isError: true,
+            error,
+          };
+        }
+      },
+      retry: 1,
+      enabled: queryEnabled,
+      refetchInterval: 1000 * 30,
+    };
+  });
 
 export const skipRouteAtom = atom<{
   data?: RouteResponse | undefined;
@@ -163,7 +210,7 @@ export const skipRouteAtom = atom<{
 }>((get) => {
   const { data, isError, error, isFetching, isPending } = get(_skipRouteAtom);
   const caughtError = data as CaughtRouteError;
-  const routeResponse = data as RouteResponse;
+  const routeResponse = data as Route;
   if (caughtError?.isError) {
     const error = caughtError.error;
 
@@ -171,99 +218,6 @@ export const skipRouteAtom = atom<{
       error.message = ROUTE_ERROR_CODE_MAP[caughtError.error.code];
     }
 
-    return {
-      data: undefined,
-      isError: true,
-      error: caughtError.error as Error,
-      isLoading: false,
-    };
-  }
-
-  return {
-    data: routeResponse,
-    isError,
-    error,
-    isLoading: isFetching && isPending,
-  };
-});
-
-export const _skipRouteReducedByGasRouteAtom: ReturnType<
-  typeof atomWithQuery<Awaited<ReturnType<typeof route> | CaughtRouteError>>
-> = atomWithQuery((get) => {
-  const currentPage = get(currentPageAtom);
-  const isInvertingSwap = get(isInvertingSwapAtom);
-  const errorWarning = get(errorWarningAtom);
-  const routeConfig = get(routeConfigAtom);
-  const swapSettings = get(swapSettingsAtom);
-  const mainRoute = get(skipRouteAtom);
-  const gasRoute = get(gasOnReceiveRouteAtom);
-  const mainRouteAmountSwapInReducedByGasRoute = BigNumber(mainRoute.data?.amountIn ?? "0").minus(
-    gasRoute.data?.amountIn ?? "0",
-  );
-  const mainRouteAmountSwapOutReducedByGasRoute = BigNumber(mainRoute.data?.amountIn ?? "0").plus(
-    gasRoute.data?.amountIn ?? "0",
-  );
-  const direction = get(swapDirectionAtom);
-  const params = mainRoute.data;
-
-  const mainRouteAmount =
-    direction === "swap-in"
-      ? {
-          amountIn: mainRouteAmountSwapInReducedByGasRoute.toString() ?? "0",
-          amountOut: undefined,
-        }
-      : {
-          amountIn: mainRouteAmountSwapOutReducedByGasRoute.toString() ?? "0",
-          amountOut: undefined,
-        };
-
-  const queryEnabled =
-    mainRoute !== undefined &&
-    !isInvertingSwap &&
-    currentPage === Routes.SwapPage &&
-    errorWarning === undefined;
-
-  return {
-    queryKey: ["skipRouteReducedByGas", mainRoute, gasRoute, mainRouteAmount],
-    queryFn: async () => {
-      if (!params) {
-        throw new Error("No route request provided");
-      }
-      try {
-        const response = await route({
-          sourceAssetChainId: params?.sourceAssetChainId,
-          sourceAssetDenom: params?.sourceAssetDenom,
-          destAssetChainId: params?.destAssetChainId,
-          destAssetDenom: params?.destAssetDenom,
-          ...(gasRoute?.data ? mainRouteAmount : {}),
-          smartRelay: true,
-          ...routeConfig,
-          goFast: swapSettings.routePreference === RoutePreference.FASTEST,
-          abortDuplicateRequests: true,
-        });
-        return response;
-      } catch (error) {
-        return {
-          isError: true,
-          error,
-        };
-      }
-    },
-    enabled: queryEnabled && gasRoute.data !== undefined,
-  };
-});
-
-export const skipRouteReducedByGasAtom = atom<{
-  data?: RouteResponse | undefined;
-  isError: boolean;
-  error?: Error | null;
-  isLoading: boolean;
-}>((get) => {
-  const { data, isError, error, isFetching, isPending } = get(_skipRouteReducedByGasRouteAtom);
-  const caughtError = data as CaughtRouteError;
-  const routeResponse = data as RouteResponse;
-
-  if (caughtError?.isError) {
     return {
       data: undefined,
       isError: true,
