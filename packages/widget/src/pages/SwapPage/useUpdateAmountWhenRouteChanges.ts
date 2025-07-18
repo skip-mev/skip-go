@@ -1,16 +1,18 @@
 import { useEffect, useRef } from "react";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { swapDirectionAtom, sourceAssetAtom, destinationAssetAtom } from "@/state/swapPage";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
-import { skipRouteAtom } from "@/state/route";
+import { skipRouteAtom, skipRouteReducedByGasAtom } from "@/state/route";
 import { removeTrailingZeros } from "@/utils/number";
 
 export const useUpdateAmountWhenRouteChanges = () => {
-  const [route] = useAtom(skipRouteAtom);
-  const [direction] = useAtom(swapDirectionAtom);
+  const originalRoute = useAtomValue(skipRouteAtom);
+  const routeReducedByGasRoute = useAtomValue(skipRouteReducedByGasAtom);
+  const direction = useAtomValue(swapDirectionAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
 
+  const route = routeReducedByGasRoute.data ? routeReducedByGasRoute : originalRoute;
   const prevRoute = useRef(route.data);
 
   useEffect(() => {
@@ -42,5 +44,29 @@ export const useUpdateAmountWhenRouteChanges = () => {
         amount: removeTrailingZeros(swapOutAmount),
       }));
     }
+
+    // if (gasRoute.data) {
+    //   console.log("Gas route data changed", gasRoute.data);
+    //   if (gasRoute.data === prevGasRoute.current) return;
+    //   prevGasRoute.current = gasRoute.data;
+    //   console.log("Gas route changed, updating amounts");
+
+    //   const mainRouteAmountReducedByGasRoute = BigNumber(route.data.amountIn).minus(
+    //     gasRoute.data.amountIn,
+    //   );
+    //   console.log(
+    //     "Main route amount reduced by gas route:",
+    //     mainRouteAmountReducedByGasRoute.toString(),
+    //   );
+    //   setSourceAsset((old) => ({
+    //     ...old,
+    //     amount: removeTrailingZeros(
+    //       convertTokenAmountToHumanReadableAmount(
+    //         mainRouteAmountReducedByGasRoute.toString(),
+    //         sourceAsset.decimals,
+    //       ),
+    //     ),
+    //   }));
+    // }
   }, [route.data, direction, sourceAsset, destinationAsset, setSourceAsset, setDestinationAsset]);
 };

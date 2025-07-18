@@ -23,6 +23,8 @@ import { RoutePreference } from "./types";
 import { DefaultRouteConfig } from "@/widget/useInitDefaultRoute";
 import { route, RouteRequest, RouteResponse } from "@skip-go/client";
 import { ROUTE_ERROR_CODE_MAP } from "@/constants/routeErrorCodeMap";
+import { gasOnReceiveRouteAtom } from "./gasOnReceive";
+import { BigNumber } from "bignumber.js";
 
 export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = atomEffect(
   (get, set) => {
@@ -46,7 +48,7 @@ export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = ato
   },
 );
 
-const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
+export const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
   const direction = get(swapDirectionAtom);
@@ -87,7 +89,7 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   };
 });
 
-type CaughtRouteError = {
+export type CaughtRouteError = {
   isError: boolean;
   error: {
     message?: string;
@@ -169,6 +171,99 @@ export const skipRouteAtom = atom<{
       error.message = ROUTE_ERROR_CODE_MAP[caughtError.error.code];
     }
 
+    return {
+      data: undefined,
+      isError: true,
+      error: caughtError.error as Error,
+      isLoading: false,
+    };
+  }
+
+  return {
+    data: routeResponse,
+    isError,
+    error,
+    isLoading: isFetching && isPending,
+  };
+});
+
+export const _skipRouteReducedByGasRouteAtom: ReturnType<
+  typeof atomWithQuery<Awaited<ReturnType<typeof route> | CaughtRouteError>>
+> = atomWithQuery((get) => {
+  const currentPage = get(currentPageAtom);
+  const isInvertingSwap = get(isInvertingSwapAtom);
+  const errorWarning = get(errorWarningAtom);
+  const routeConfig = get(routeConfigAtom);
+  const swapSettings = get(swapSettingsAtom);
+  const mainRoute = get(skipRouteAtom);
+  const gasRoute = get(gasOnReceiveRouteAtom);
+  const mainRouteAmountSwapInReducedByGasRoute = BigNumber(mainRoute.data?.amountIn ?? "0").minus(
+    gasRoute.data?.amountIn ?? "0",
+  );
+  const mainRouteAmountSwapOutReducedByGasRoute = BigNumber(mainRoute.data?.amountIn ?? "0").plus(
+    gasRoute.data?.amountIn ?? "0",
+  );
+  const direction = get(swapDirectionAtom);
+  const params = mainRoute.data;
+
+  const mainRouteAmount =
+    direction === "swap-in"
+      ? {
+          amountIn: mainRouteAmountSwapInReducedByGasRoute.toString() ?? "0",
+          amountOut: undefined,
+        }
+      : {
+          amountIn: mainRouteAmountSwapOutReducedByGasRoute.toString() ?? "0",
+          amountOut: undefined,
+        };
+
+  const queryEnabled =
+    mainRoute !== undefined &&
+    !isInvertingSwap &&
+    currentPage === Routes.SwapPage &&
+    errorWarning === undefined;
+
+  return {
+    queryKey: ["skipRouteReducedByGas", mainRoute, gasRoute, mainRouteAmount],
+    queryFn: async () => {
+      if (!params) {
+        throw new Error("No route request provided");
+      }
+      try {
+        const response = await route({
+          sourceAssetChainId: params?.sourceAssetChainId,
+          sourceAssetDenom: params?.sourceAssetDenom,
+          destAssetChainId: params?.destAssetChainId,
+          destAssetDenom: params?.destAssetDenom,
+          ...(gasRoute?.data ? mainRouteAmount : {}),
+          smartRelay: true,
+          ...routeConfig,
+          goFast: swapSettings.routePreference === RoutePreference.FASTEST,
+          abortDuplicateRequests: true,
+        });
+        return response;
+      } catch (error) {
+        return {
+          isError: true,
+          error,
+        };
+      }
+    },
+    enabled: queryEnabled && gasRoute.data !== undefined,
+  };
+});
+
+export const skipRouteReducedByGasAtom = atom<{
+  data?: RouteResponse | undefined;
+  isError: boolean;
+  error?: Error | null;
+  isLoading: boolean;
+}>((get) => {
+  const { data, isError, error, isFetching, isPending } = get(_skipRouteReducedByGasRouteAtom);
+  const caughtError = data as CaughtRouteError;
+  const routeResponse = data as RouteResponse;
+
+  if (caughtError?.isError) {
     return {
       data: undefined,
       isError: true,
