@@ -128,6 +128,7 @@ export const _skipRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Route | Cau
     const swapSettings = get(swapSettingsAtom);
     const gasOnReceiveRouteParams = get(gasOnReceiveRouteRequestAtom);
     const destinationAsset = get(destinationAssetAtom);
+    const direction = get(swapDirectionAtom);
 
     const destinationAssetIsAFeeAsset = gasOnReceiveRouteParams?.destAssetDenoms.includes(
       destinationAsset?.denom ?? "",
@@ -174,12 +175,21 @@ export const _skipRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Route | Cau
             const results = await Promise.all(feeAssetRoutes);
             const feeAssetResponse = results.find((result) => result?.usdAmountOut);
             if (feeAssetResponse?.usdAmountOut && response?.usdAmountOut) {
-              response.usdAmountOut = BigNumber(response.usdAmountOut)
-                .minus(BigNumber(feeAssetResponse?.usdAmountOut ?? 0))
-                .toString();
-              response.amountOut = BigNumber(response.amountOut)
-                .minus(BigNumber(feeAssetResponse?.amountIn ?? 0))
-                .toString();
+              if (direction === "swap-in") {
+                response.usdAmountOut = BigNumber(response.usdAmountOut)
+                  .minus(BigNumber(feeAssetResponse?.usdAmountOut ?? 0))
+                  .toString();
+                response.amountOut = BigNumber(response.amountOut)
+                  .minus(BigNumber(feeAssetResponse?.amountIn ?? 0))
+                  .toString();
+              } else if (direction === "swap-out") {
+                response.usdAmountIn = BigNumber(response.usdAmountOut)
+                  .plus(BigNumber(feeAssetResponse?.usdAmountOut ?? 0))
+                  .toString();
+                response.amountIn = BigNumber(response.amountOut)
+                  .plus(BigNumber(feeAssetResponse?.amountIn ?? 0))
+                  .toString();
+              }
               (response as Route).feeAssetSubtractedFromRoute = {
                 amountUsd: feeAssetResponse?.usdAmountOut,
                 denom: feeAssetResponse?.destAssetDenom,
