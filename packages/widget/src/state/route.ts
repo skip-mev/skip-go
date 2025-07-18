@@ -148,7 +148,7 @@ export const _skipRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Route | Cau
           throw new Error("No route request provided");
         }
         try {
-          const response = await route({
+          let response = await route({
             ...params,
             smartRelay: true,
             ...routeConfig,
@@ -174,22 +174,25 @@ export const _skipRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Route | Cau
 
             const results = await Promise.all(feeAssetRoutes);
             const feeAssetResponse = results.find((result) => result?.usdAmountOut);
+
             if (feeAssetResponse?.usdAmountOut && response?.usdAmountOut) {
               if (direction === "swap-in") {
-                response.usdAmountOut = BigNumber(response.usdAmountOut)
-                  .minus(BigNumber(feeAssetResponse?.usdAmountOut ?? 0))
-                  .toString();
-                response.amountOut = BigNumber(response.amountOut)
+                params.amountIn = BigNumber(response.amountOut)
                   .minus(BigNumber(feeAssetResponse?.amountIn ?? 0))
                   .toString();
               } else if (direction === "swap-out") {
-                response.usdAmountIn = BigNumber(response.usdAmountOut)
-                  .plus(BigNumber(feeAssetResponse?.usdAmountOut ?? 0))
-                  .toString();
-                response.amountIn = BigNumber(response.amountOut)
+                params.amountOut = BigNumber(response.amountOut)
                   .plus(BigNumber(feeAssetResponse?.amountIn ?? 0))
                   .toString();
               }
+
+              response = await route({
+                ...params,
+                smartRelay: true,
+                ...routeConfig,
+                goFast: swapSettings.routePreference === RoutePreference.FASTEST,
+                abortDuplicateRequests: true,
+              });
               (response as Route).feeAssetSubtractedFromRoute = {
                 amountUsd: feeAssetResponse?.usdAmountOut,
                 denom: feeAssetResponse?.destAssetDenom,
