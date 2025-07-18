@@ -110,7 +110,9 @@ export const routeConfigAtom = atom<WidgetRouteConfig>({
   timeoutSeconds: undefined,
 });
 
-type Route = RouteResponse & {
+type SwapRoute = RouteResponse & {
+  mainRoute?: RouteResponse;
+  feeRoute?: RouteResponse;
   gasOnReceiveAsset?: {
     amountUsd: string;
     denom: string;
@@ -118,112 +120,127 @@ type Route = RouteResponse & {
   };
 };
 
-export const _skipRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Route | CaughtRouteError>>> =
-  atomWithQuery((get) => {
-    const params = get(skipRouteRequestAtom);
-    const currentPage = get(currentPageAtom);
-    const isInvertingSwap = get(isInvertingSwapAtom);
-    const errorWarning = get(errorWarningAtom);
-    const routeConfig = get(routeConfigAtom);
-    const swapSettings = get(swapSettingsAtom);
-    const gasOnReceiveRouteParams = get(gasOnReceiveRouteRequestAtom);
-    const destinationAsset = get(destinationAssetAtom);
-    const direction = get(swapDirectionAtom);
+export const _skipRouteAtom: ReturnType<
+  typeof atomWithQuery<Awaited<SwapRoute | CaughtRouteError>>
+> = atomWithQuery((get) => {
+  const params = get(skipRouteRequestAtom);
+  const currentPage = get(currentPageAtom);
+  const isInvertingSwap = get(isInvertingSwapAtom);
+  const errorWarning = get(errorWarningAtom);
+  const routeConfig = get(routeConfigAtom);
+  const swapSettings = get(swapSettingsAtom);
+  const gasOnReceiveRouteParams = get(gasOnReceiveRouteRequestAtom);
+  const destinationAsset = get(destinationAssetAtom);
+  const direction = get(swapDirectionAtom);
 
-    const destinationAssetIsAFeeAsset = gasOnReceiveRouteParams?.destAssetDenoms.includes(
-      destinationAsset?.denom ?? "",
-    );
+  const destinationAssetIsAFeeAsset = gasOnReceiveRouteParams?.destAssetDenoms.includes(
+    destinationAsset?.denom ?? "",
+  );
 
-    const queryEnabled =
-      params !== undefined &&
-      (Number(params.amountIn) > 0 || Number(params.amountOut) > 0) &&
-      !isInvertingSwap &&
-      currentPage === Routes.SwapPage &&
-      errorWarning === undefined;
+  const queryEnabled =
+    params !== undefined &&
+    (Number(params.amountIn) > 0 || Number(params.amountOut) > 0) &&
+    !isInvertingSwap &&
+    currentPage === Routes.SwapPage &&
+    errorWarning === undefined;
 
-    return {
-      queryKey: ["skipRoute", params, routeConfig, swapSettings, gasOnReceiveRouteParams],
-      queryFn: async () => {
-        if (!params) {
-          throw new Error("No route request provided");
-        }
-        try {
-          let response = await route({
-            ...params,
-            smartRelay: true,
-            ...routeConfig,
-            goFast: swapSettings.routePreference === RoutePreference.FASTEST,
-            abortDuplicateRequests: true,
-          });
+  return {
+    queryKey: ["skipRoute", params, routeConfig, swapSettings, gasOnReceiveRouteParams],
+    queryFn: async () => {
+      if (!params) {
+        throw new Error("No route request provided");
+      }
+      try {
+        const response = (await route({
+          ...params,
+          smartRelay: true,
+          ...routeConfig,
+          goFast: swapSettings.routePreference === RoutePreference.FASTEST,
+          abortDuplicateRequests: true,
+        })) as SwapRoute;
 
-          if (
-            !destinationAssetIsAFeeAsset &&
-            gasOnReceiveRouteParams?.destAssetDenoms !== undefined
-          ) {
-            const { destAssetDenoms, ...restParams } = gasOnReceiveRouteParams;
-            const feeAssetRoutes = destAssetDenoms.map((denom) =>
-              route({
-                destAssetDenom: denom,
-                ...restParams,
-                smartRelay: true,
-                ...routeConfig,
-                goFast: swapSettings.routePreference === RoutePreference.FASTEST,
-                abortDuplicateRequests: true,
-              }),
-            );
+        response.mainRoute = response;
 
-            const results = await Promise.all(feeAssetRoutes);
-            const feeAssetResponse = results.find((result) => result?.usdAmountOut);
+        if (
+          !destinationAssetIsAFeeAsset &&
+          gasOnReceiveRouteParams?.destAssetDenoms !== undefined
+        ) {
+          const { destAssetDenoms, ...restParams } = gasOnReceiveRouteParams;
+          const feeAssetRoutes = destAssetDenoms.map((denom) =>
+            route({
+              destAssetDenom: denom,
+              ...restParams,
+              smartRelay: true,
+              ...routeConfig,
+              goFast: swapSettings.routePreference === RoutePreference.FASTEST,
+              abortDuplicateRequests: true,
+            }),
+          );
 
-            if (feeAssetResponse?.usdAmountOut && response?.usdAmountOut) {
+          const results = await Promise.all(feeAssetRoutes);
+          const feeRoute = results.find((result) => result?.usdAmountOut);
+
+          if (feeRoute?.usdAmountOut && response?.usdAmountOut) {
+            if (direction === "swap-in") {
+              params.amountIn = BigNumber(response.amountOut)
+                .minus(BigNumber(feeRoute?.amountIn ?? 0))
+                .toString();
+            } else if (direction === "swap-out") {
+              params.amountOut = BigNumber(response.amountOut)
+                .plus(BigNumber(feeRoute?.amountIn ?? 0))
+                .toString();
+            }
+
+            const mainRoute = await route({
+              ...params,
+              smartRelay: true,
+              ...routeConfig,
+              goFast: swapSettings.routePreference === RoutePreference.FASTEST,
+              abortDuplicateRequests: true,
+            });
+            if (mainRoute) {
+              response.mainRoute = mainRoute;
+              response.feeRoute = feeRoute;
               if (direction === "swap-in") {
-                params.amountIn = BigNumber(response.amountOut)
-                  .minus(BigNumber(feeAssetResponse?.amountIn ?? 0))
-                  .toString();
+                response.amountOut = mainRoute.amountOut;
+                response.usdAmountOut = mainRoute.usdAmountOut;
               } else if (direction === "swap-out") {
-                params.amountOut = BigNumber(response.amountOut)
-                  .plus(BigNumber(feeAssetResponse?.amountIn ?? 0))
-                  .toString();
+                response.amountIn = mainRoute.amountIn;
+                response.usdAmountIn = mainRoute.usdAmountIn;
               }
 
-              response = await route({
-                ...params,
-                smartRelay: true,
-                ...routeConfig,
-                goFast: swapSettings.routePreference === RoutePreference.FASTEST,
-                abortDuplicateRequests: true,
-              });
-              (response as Route).gasOnReceiveAsset = {
-                amountUsd: feeAssetResponse?.usdAmountOut,
-                denom: feeAssetResponse?.destAssetDenom,
-                chainId: feeAssetResponse?.destAssetChainId,
+              response.gasOnReceiveAsset = {
+                amountUsd: feeRoute?.usdAmountOut,
+                denom: feeRoute?.destAssetDenom,
+                chainId: feeRoute?.destAssetChainId,
               };
             }
           }
-
-          return response;
-        } catch (error) {
-          return {
-            isError: true,
-            error,
-          };
         }
-      },
-      retry: 1,
-      enabled: queryEnabled,
-      refetchInterval: 1000 * 30,
-    };
-  });
+
+        return response;
+      } catch (error) {
+        return {
+          isError: true,
+          error,
+        };
+      }
+    },
+    retry: 1,
+    enabled: queryEnabled,
+    refetchInterval: 1000 * 30,
+  };
+});
 
 export const skipRouteAtom = atom<{
-  data?: Route | undefined;
+  data?: SwapRoute | undefined;
   isError: boolean;
   error?: Error | null;
   isLoading: boolean;
 }>((get) => {
   const { data, isError, error, isFetching, isPending } = get(_skipRouteAtom);
   const caughtError = data as CaughtRouteError;
-  const routeResponse = data as Route;
+  const routeResponse = data as SwapRoute;
   if (caughtError?.isError) {
     const error = caughtError.error;
 
