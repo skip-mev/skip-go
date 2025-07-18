@@ -74,9 +74,6 @@ export const SwapPage = () => {
   const getBalance = useGetBalance();
   const callbacks = useAtomValue(callbacksAtom);
 
-  // const gasRoute = useAtomValue(gasOnReceiveRouteAtom);
-
-  // console.log("gasRoute", gasRoute);
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
   useCleanupDebouncedAtoms();
