@@ -23,7 +23,7 @@ import { RoutePreference } from "./types";
 import { DefaultRouteConfig } from "@/widget/useInitDefaultRoute";
 import { route, RouteRequest, RouteResponse } from "@skip-go/client";
 import { ROUTE_ERROR_CODE_MAP } from "@/constants/routeErrorCodeMap";
-import { gasOnReceiveRouteAtom, gasOnReceiveRouteRequestAtom } from "./gasOnReceive";
+import { gasOnReceiveRouteRequestAtom } from "./gasOnReceive";
 import { BigNumber } from "bignumber.js";
 
 export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = atomEffect(
@@ -203,7 +203,7 @@ export const _skipRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Route | Cau
   });
 
 export const skipRouteAtom = atom<{
-  data?: RouteResponse | undefined;
+  data?: Route | undefined;
   isError: boolean;
   error?: Error | null;
   isLoading: boolean;

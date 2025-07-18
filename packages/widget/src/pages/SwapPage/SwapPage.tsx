@@ -43,6 +43,9 @@ import { useGetBalance } from "@/hooks/useGetBalance";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { useConnectToMissingCosmosChain } from "./useConnectToMissingCosmosChain";
 import { callbacksAtom } from "@/state/callbacks";
+import { QuestionMarkTooltip } from "@/components/QuestionMarkTooltip";
+import { formatUSD } from "@/utils/intl";
+import { SmallText } from "@/components/Typography";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -204,17 +207,44 @@ export const SwapPage = () => {
   const fees = useMemo(() => (route ? getFeeList(route) : []), [route]);
   const feeLabel = useMemo(() => {
     const formattedUsdAmount = getTotalFees(fees)?.formattedUsdAmount;
+
+    const feeAsset = assets?.find(
+      (asset) =>
+        asset?.denom === route?.feeAssetSubtractedFromRoute?.denom &&
+        asset?.chainId === route?.feeAssetSubtractedFromRoute?.chainId,
+    );
+
+    const gasOnReceive = route?.feeAssetSubtractedFromRoute ? (
+      <QuestionMarkTooltip
+        content={`You'll get ${formatUSD(route?.feeAssetSubtractedFromRoute?.amountUsd)} in ${feeAsset?.recommendedSymbol} for gas`}
+      />
+    ) : null;
+
     if (formattedUsdAmount) {
-      return `${formattedUsdAmount} in fees`;
+      return (
+        <>
+          <SmallText color="inherit">{formattedUsdAmount} in fees</SmallText>
+          {gasOnReceive}
+        </>
+      );
     }
 
-    return "no fees";
-  }, [fees]);
+    return (
+      <>
+        <SmallText color="inherit">no fees</SmallText>
+        {gasOnReceive}
+      </>
+    );
+  }, [assets, fees, route?.feeAssetSubtractedFromRoute]);
 
   const feeWarning = useMemo(() => {
     if (!route?.usdAmountIn || !route?.usdAmountOut) return false;
-    return parseFloat(route.usdAmountOut) < parseFloat(route.usdAmountIn) * 0.9;
-  }, [route?.usdAmountIn, route?.usdAmountOut]);
+    return (
+      parseFloat(route.usdAmountOut) +
+        parseFloat(route?.feeAssetSubtractedFromRoute?.amountUsd ?? "0") <
+      parseFloat(route.usdAmountIn) * 0.9
+    );
+  }, [route?.feeAssetSubtractedFromRoute?.amountUsd, route?.usdAmountIn, route?.usdAmountOut]);
 
   const swapButton = useMemo(() => {
     const computeFontSize = (label: string) => (label.length > 36 ? 18 : 24);

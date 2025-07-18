@@ -6,12 +6,11 @@ import { skipRouteAtom } from "@/state/route";
 import { removeTrailingZeros } from "@/utils/number";
 
 export const useUpdateAmountWhenRouteChanges = () => {
-  const originalRoute = useAtomValue(skipRouteAtom);
+  const route = useAtomValue(skipRouteAtom);
   const direction = useAtomValue(swapDirectionAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
 
-  const route = originalRoute;
   const prevRoute = useRef(route.data);
 
   useEffect(() => {
