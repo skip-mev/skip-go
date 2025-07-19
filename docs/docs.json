@@ -26,6 +26,7 @@
               "general/post-route-actions",
               "general/affiliate-fees",
               "general/fee-info",
+              "contracts/skip-go-contracts",
               "general/faq",
               "general/upcoming-features"
             ]
