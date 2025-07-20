@@ -132,7 +132,7 @@ export const _skipRouteAtom: ReturnType<
   const gasOnReceiveRouteParams = get(gasOnReceiveRouteRequestAtom);
   const destinationAsset = get(destinationAssetAtom);
   const direction = get(swapDirectionAtom);
-
+  console.log("destDenoms", gasOnReceiveRouteParams?.destAssetDenoms);
   const destinationAssetIsAFeeAsset = gasOnReceiveRouteParams?.destAssetDenoms.includes(
     destinationAsset?.denom ?? "",
   );
@@ -151,6 +151,7 @@ export const _skipRouteAtom: ReturnType<
         throw new Error("No route request provided");
       }
       try {
+        console.log("Route request params:", params);
         const response = (await route({
           ...params,
           smartRelay: true,
@@ -160,26 +161,40 @@ export const _skipRouteAtom: ReturnType<
         })) as SwapRoute;
 
         response.mainRoute = response;
-
+        console.log("destinationAssetIsAFeeAsset", destinationAssetIsAFeeAsset);
+        let feeRoute: RouteResponse | undefined;
         if (
           !destinationAssetIsAFeeAsset &&
           gasOnReceiveRouteParams?.destAssetDenoms !== undefined
         ) {
+          console.log("Gas on receive route params:", gasOnReceiveRouteParams);
           const { destAssetDenoms, ...restParams } = gasOnReceiveRouteParams;
-          const feeAssetRoutes = destAssetDenoms.map((denom) =>
-            route({
-              destAssetDenom: denom,
-              ...restParams,
-              smartRelay: true,
-              ...routeConfig,
-              goFast: swapSettings.routePreference === RoutePreference.FASTEST,
-              abortDuplicateRequests: true,
-            }),
-          );
 
-          const results = await Promise.all(feeAssetRoutes);
-          const feeRoute = results.find((result) => result?.usdAmountOut);
-
+          const splitDenoms = chunkArray(destAssetDenoms);
+          for (const chunk of splitDenoms) {
+            const feeAssetRoutes = chunk.map(async (denom) => {
+              try {
+                const res = await route({
+                  destAssetDenom: denom,
+                  ...restParams,
+                  smartRelay: true,
+                  ...routeConfig,
+                  goFast: swapSettings.routePreference === RoutePreference.FASTEST,
+                  abortDuplicateRequests: true,
+                });
+                return res;
+              } catch (_e) {
+                return;
+              }
+            });
+            const result = await Promise.all(feeAssetRoutes);
+            const _feeRoute = result.find((result) => result?.usdAmountOut);
+            if (_feeRoute?.usdAmountOut) {
+              feeRoute = _feeRoute;
+              break;
+            }
+          }
+          console.log("Fee route found:", feeRoute);
           if (feeRoute?.usdAmountOut && response?.usdAmountOut) {
             if (direction === "swap-in") {
               params.amountIn = BigNumber(response.amountOut)
@@ -306,3 +321,11 @@ export const setRouteToDefaultRouteAtom = atom(null, (get, set, assets?: ClientA
     set(destinationAssetAmountAtom, amountOut?.toString());
   }
 });
+
+const chunkArray = (arr: string[], size = 3): string[][] => {
+  const result: string[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+};

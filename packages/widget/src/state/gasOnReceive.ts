@@ -34,7 +34,7 @@ export const gasOnReceiveRouteRequestAtom = atom((get) => {
     }
     return GAS_ON_RECEIVE_AMOUNT_USD[ChainType.Cosmos];
   })();
-
+  console.log("destinationChain", destinationChain);
   const destinationFeeAssets = destinationChain?.feeAssets.map((asset) => asset.denom);
 
   if (!sourceAsset?.chainId || !sourceAsset.denom || !destinationFeeAssets) return;
