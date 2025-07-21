@@ -182,23 +182,15 @@ export const executeMultipleRoutes = async (
 
   console.log("final result msgsRecord", msgsRecord);
 
-  const msgsToRouteId: Record<string, string> = {};
-  Object.keys(route).forEach((routeKey) => {
-    const { id } = updateRouteDetails({
-      status: "unconfirmed",
-      options: {
-        route: route[routeKey],
-        ...restOptions,
-      },
-    });
-    msgsToRouteId[routeKey] = id;
-  });
-
-  console.log('msgs record', msgsRecord);
-
   await Promise.all(
     Object.entries(msgsRecord).map(async ([routeKey, msgsResponse]) => {
-      const routeId = msgsToRouteId[routeKey];
+      const { id: routeId } = updateRouteDetails({
+        status: "unconfirmed",
+        options: {
+          route: route[routeKey],
+          ...restOptions,
+        },
+      });
 
       if (!routeId) {
         throw new Error("no route id found for route key")
