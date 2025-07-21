@@ -11,9 +11,9 @@ You can use the `/v2/tx` endpoints to track the progress of a cross-chain transf
 
 You can also use it to identify failure cases (e.g. a swap that fails due to slippage, an IBC transfer that fails due to inactive relayers) and determine where the user's tokens will become available. 
 
-For example, if one of your end users initiates a swap that begins with USDC on Noble and concludes with wstETH on Neutron, you can use the lifecycle tracking to report when the USDC moves from Noble to the Osmosis, where USDC is swapped to wstETH, then IBC'd to Neutron. It tracks every step of the journey.
+For example, if one of your end users initiates a swap that begins with ATOM on Neutron and concludes with ATOM on Osmosis, you can use the lifecycle tracking to report when the ATOM moves from Neutron to Osmosis.
 
-<Frame>![](/images/screenshottracking.png)</Frame> 
+<Frame>![](/images/transaction_tracking_072025.png)</Frame>
 
 ## Basics
 
