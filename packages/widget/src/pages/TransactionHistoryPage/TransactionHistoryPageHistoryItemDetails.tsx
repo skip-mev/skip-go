@@ -20,6 +20,8 @@ type TransactionHistoryPageHistoryItemDetailsProps = {
   onClickDelete?: () => void;
   transferAssetRelease?: TransferAssetRelease;
   transactionDetails: TransactionDetails[];
+  senderAddress?: string;
+  receiverAddress?: string;
 };
 
 const statusMap = {
@@ -43,6 +45,8 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   onClickDelete,
   transferAssetRelease,
   transactionDetails,
+  senderAddress,
+  receiverAddress,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
 
@@ -123,6 +127,20 @@ export const TransactionHistoryPageHistoryItemDetails = ({
           </SmallText>
         </Link>
       </StyledHistoryItemDetailRow>
+
+      {senderAddress && (
+        <StyledHistoryItemDetailRow align="center">
+          <StyledDetailsLabel>Sender</StyledDetailsLabel>
+          <SmallText normalTextColor>{senderAddress}</SmallText>
+        </StyledHistoryItemDetailRow>
+      )}
+
+      {receiverAddress && (
+        <StyledHistoryItemDetailRow align="center">
+          <StyledDetailsLabel>Receiver</StyledDetailsLabel>
+          <SmallText normalTextColor>{receiverAddress}</SmallText>
+        </StyledHistoryItemDetailRow>
+      )}
 
       <Row align="center" style={{ marginTop: 10, padding: "0px 10px" }}>
         <Button onClick={onClickDelete} gap={5} align="center">

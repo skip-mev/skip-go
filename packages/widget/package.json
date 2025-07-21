@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.12.11",
+  "version": "3.13.0",
   "repository": {
     "url": "https://github.com/skip-mev/skip-go",
     "directory": "packages/widget"
@@ -116,7 +116,6 @@
     "@penumbra-zone/protobuf": "^7.2.0",
     "@penumbra-zone/transport-dom": "^7.5.0",
     "@r2wc/react-to-web-component": "^2.0.3",
-    "@sentry/react": "^8.46.0",
     "@skip-go/client": "workspace:^",
     "@solana/spl-token": "^0.4.8",
     "@solana/wallet-adapter-ledger": "^0.9.25",

@@ -38,9 +38,9 @@ export const ModalRowItem = ({
 const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void; eureka?: boolean }>`
   ${removeButtonStyles};
   position: relative;
-  width: 100%;
   height: 60px;
   border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.rowItem)};
+  width: 100%;
   padding: 12px 15px;
   margin-top: 5px;
 
