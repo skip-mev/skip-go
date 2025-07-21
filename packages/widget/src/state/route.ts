@@ -110,8 +110,8 @@ export const routeConfigAtom = atom<WidgetRouteConfig>({
   timeoutSeconds: undefined,
 });
 
-type SwapRoute = RouteResponse & {
-  mainRoute?: RouteResponse;
+export type SwapRoute = RouteResponse & {
+  mainRoute: RouteResponse;
   feeRoute?: RouteResponse;
   gasOnReceiveAsset?: {
     amountUsd: string;

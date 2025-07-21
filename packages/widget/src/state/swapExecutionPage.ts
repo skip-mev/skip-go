@@ -1,6 +1,6 @@
 import { atomWithMutation } from "jotai-tanstack-query";
 import { skipChainsAtom } from "@/state/skipClient";
-import { routeConfigAtom, skipRouteAtom } from "@/state/route";
+import { routeConfigAtom, skipRouteAtom, SwapRoute } from "@/state/route";
 import { atom } from "jotai";
 import {
   DEEPLINK_CHOICE,
@@ -45,7 +45,7 @@ type ValidatingGasBalanceData = {
 
 type SwapExecutionState = {
   userAddresses: UserAddress[];
-  route?: RouteResponse;
+  route?: SwapRoute;
   clientOperations: ClientOperation[];
   currentTransactionId?: string;
   isValidatingGasBalance?: ValidatingGasBalanceData;
@@ -125,6 +125,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
   set(submitSwapExecutionCallbacksAtom, {
     onRouteStatusUpdated: async (routeStatus) => {
+      console.log(routeStatus);
       set(setTransactionHistoryAtom, routeStatus);
     },
     onTransactionUpdated: (txInfo) => {
@@ -311,142 +312,29 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
       console.log("Executing route", route);
       if (!userAddresses.length) return;
 
-      const secondRoute = {
-        sourceAssetDenom: "uusdc",
-        sourceAssetChainId: "noble-1",
-        destAssetDenom: "uosmo",
-        destAssetChainId: "osmosis-1",
-        amountIn: "500000",
-        amountOut: "3166267",
-        operations: [
-          {
-            transfer: {
-              port: "transfer",
-              channel: "channel-79",
-              fromChainId: "noble-1",
-              toChainId: "pryzm-1",
-              pfmEnabled: true,
-              supportsMemo: true,
-              denomIn: "uusdc",
-              denomOut: "ibc/BFAAB7870A9AAABF64A7366DAAA0B8E5065EAA1FCE762F45677DC24BE796EF65",
-              bridgeId: "IBC",
-              smartRelay: false,
-              chainId: "noble-1",
-              destDenom: "ibc/BFAAB7870A9AAABF64A7366DAAA0B8E5065EAA1FCE762F45677DC24BE796EF65",
-            },
-            txIndex: 0,
-            amountIn: "500000",
-            amountOut: "500000",
-          },
-          {
-            swap: {
-              swapIn: {
-                swapVenue: {
-                  name: "pryzm-native",
-                  chainId: "pryzm-1",
-                  logoUri:
-                    "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/pryzm/logo.png",
-                },
-                swapOperations: [
-                  {
-                    pool: "amm:11",
-                    denomIn: "ibc/BFAAB7870A9AAABF64A7366DAAA0B8E5065EAA1FCE762F45677DC24BE796EF65",
-                    denomOut:
-                      "ibc/13B2C536BB057AC79D5616B8EA1B9540EC1F2170718CAFF6F0083C966FFFED0B",
-                  },
-                ],
-                swapAmountIn: "500000",
-                priceImpactPercent: "6.8367",
-                estimatedAmountOut: "3166267",
-              },
-              estimatedAffiliateFee:
-                "0ibc/13B2C536BB057AC79D5616B8EA1B9540EC1F2170718CAFF6F0083C966FFFED0B",
-              fromChainId: "pryzm-1",
-              chainId: "pryzm-1",
-              denomIn: "ibc/BFAAB7870A9AAABF64A7366DAAA0B8E5065EAA1FCE762F45677DC24BE796EF65",
-              denomOut: "ibc/13B2C536BB057AC79D5616B8EA1B9540EC1F2170718CAFF6F0083C966FFFED0B",
-              swapVenues: [
-                {
-                  name: "pryzm-native",
-                  chainId: "pryzm-1",
-                  logoUri:
-                    "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/pryzm/logo.png",
-                },
-              ],
-            },
-            txIndex: 0,
-            amountIn: "500000",
-            amountOut: "3166267",
-          },
-          {
-            transfer: {
-              port: "transfer",
-              channel: "channel-2",
-              fromChainId: "pryzm-1",
-              toChainId: "osmosis-1",
-              pfmEnabled: false,
-              supportsMemo: true,
-              denomIn: "ibc/13B2C536BB057AC79D5616B8EA1B9540EC1F2170718CAFF6F0083C966FFFED0B",
-              denomOut: "uosmo",
-              bridgeId: "IBC",
-              smartRelay: false,
-              chainId: "pryzm-1",
-              destDenom: "uosmo",
-            },
-            txIndex: 0,
-            amountIn: "3166267",
-            amountOut: "3166267",
-          },
-        ],
-        chainIds: ["noble-1", "pryzm-1", "osmosis-1"],
-        doesSwap: true,
-        estimatedAmountOut: "3166267",
-        swapVenues: [
-          {
-            name: "pryzm-native",
-            chainId: "pryzm-1",
-            logoUri:
-              "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/pryzm/logo.png",
-          },
-        ],
-        txsRequired: 1,
-        usdAmountIn: "0.50",
-        usdAmountOut: "0.54",
-        swapPriceImpactPercent: "6.8367",
-        estimatedFees: [],
-        requiredChainAddresses: ["noble-1", "pryzm-1", "osmosis-1"],
-        estimatedRouteDurationSeconds: 60,
-        swapVenue: {
-          name: "pryzm-native",
-          chainId: "pryzm-1",
-          logoUri:
-            "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/pryzm/logo.png",
-        },
-      };
       const secondAddresses = [
         {
           chainId: "noble-1",
-          address: "noble1xfqaqhtm5dm3q5au8y4q49s9erudx4lxct5cyr",
+          address: "noble1qj83mw6k79k7wp2675t8xueytwcf7t6dr6r79x",
         },
-        {
-          chainId: "pryzm-1",
-          address: "pryzm1xfqaqhtm5dm3q5au8y4q49s9erudx4lxgckhz7",
-        },
+        // {
+        //   chainId: "elys-1",
+        //   address: "elys1qj83mw6k79k7wp2675t8xueytwcf7t6dte03s2",
+        // },
         {
           chainId: "osmosis-1",
-          address: "osmo1xfqaqhtm5dm3q5au8y4q49s9erudx4lxcnjq2l",
+          address: "osmo1qj83mw6k79k7wp2675t8xueytwcf7t6drz9xt6",
         },
       ];
       try {
-        // testing
         await executeMultipleRoutes({
           route: {
-            firstRoute: route,
-            secondRoute,
+            mainRoute: route.mainRoute,
+            ...(route?.feeRoute ? { secondRoute: route.feeRoute } : {}),
           },
           userAddresses: {
-            firstRoute: userAddresses,
-            secondRoute: secondAddresses,
+            mainRoute: userAddresses,
+            ...(route?.feeRoute ? { secondRoute: secondAddresses } : {}),
           },
           timeoutSeconds,
           slippageTolerancePercent: swapSettings.slippage.toString(),
@@ -466,7 +354,6 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
               throw new Error("getCosmosSigner error: wallet not found");
             }
             const key = await wallet.getKey(chainId);
-
             return key.isNanoLedger
               ? wallet.getOfflineSignerOnlyAmino(chainId)
               : wallet.getOfflineSigner(chainId);
@@ -478,7 +365,6 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
             const evmWalletClient = (await getWalletClient(config, {
               chainId: parseInt(chainId),
             })) as WalletClient;
-
             return evmWalletClient;
           },
           getSvmSigner: async () => {

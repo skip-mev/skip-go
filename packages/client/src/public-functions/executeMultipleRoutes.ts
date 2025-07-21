@@ -17,6 +17,7 @@ import { createValidAddressList, validateUserAddresses } from "src/utils/address
 import { ApiState } from "src/state/apiState";
 import { messages, type MessagesResponse } from "src/api/postMessages";
 import { executeTransactions } from "src/private-functions/executeTransactions";
+import { v4 as uuidv4 } from "uuid";
 
 /** Execute Routes Options */
 export type ExecuteMultipleRoutesOptions = SignerGetters &
@@ -63,9 +64,6 @@ export type ExecuteMultipleRoutesOptions = SignerGetters &
 export const executeMultipleRoutes = async (
   options: ExecuteMultipleRoutesOptions
 ) => {
-  const { id: routeId } = updateRouteDetails({
-    status: "unconfirmed",
-  });
 
   const {
     route,
@@ -76,10 +74,12 @@ export const executeMultipleRoutes = async (
   } = options;
 
   // address validation
-  let addressList: Record<string, string[]> = {};
-  Object.entries(route).forEach(async ([routeKey, routeValue]) => {
+  const addressList: Record<string, string[]> = {};
+
+  for (const [routeKey, routeValue] of Object.entries(route)) {
     const _userAddresses = userAddresses[routeKey];
-    if (!_userAddresses) {
+    
+    if (_userAddresses === undefined) {
       throw new Error(
         `executeMultipleRoutes error: no user addresses found for route: ${routeKey}`
       );
@@ -88,17 +88,16 @@ export const executeMultipleRoutes = async (
     const routeAddressList = await createValidAddressList({
       userAddresses: _userAddresses,
       route: routeValue,
-    })
-    addressList[routeKey] = routeAddressList;
+    });
 
-  });
-  console.log("addressList", addressList);
+    addressList[routeKey] = routeAddressList;
+  }
 
   // getting messages for each route
   const msgsResponses = await Promise.all(
     Object.entries(route).map(async ([routeKey, routeValue]) => {
       const routeAddressList = addressList[routeKey];
-      if (!routeAddressList) {
+      if (routeAddressList === undefined) {
         throw new Error(
           `executeMultipleRoutes error: address list not found for route ${routeKey}`
         );
@@ -183,8 +182,30 @@ export const executeMultipleRoutes = async (
 
   console.log("final result msgsRecord", msgsRecord);
 
+  const msgsToRouteId: Record<string, string> = {};
+  Object.keys(route).forEach((routeKey) => {
+    const { id } = updateRouteDetails({
+      status: "unconfirmed",
+      options: {
+        route: route[routeKey],
+        ...restOptions,
+      },
+    });
+    msgsToRouteId[routeKey] = id;
+  });
+
+  console.log('msgs record', msgsRecord);
+
   await Promise.all(
     Object.entries(msgsRecord).map(async ([routeKey, msgsResponse]) => {
+      const routeId = msgsToRouteId[routeKey];
+
+      if (!routeId) {
+        throw new Error("no route id found for route key")
+      }
+
+      console.log('route', route, route[routeKey]);
+
       await executeTransactions({
         ...restOptions,
         routeId,

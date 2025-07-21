@@ -100,9 +100,8 @@ const isSuccessState = (transaction?: TransactionDetails): boolean => {
 }
 
 export type subscribeToRouteStatusProps = {
-  routeDetails?: RouteDetails;
+  routeDetails?: RouteDetails | RouteDetails[];
   onRouteStatusUpdated?: ExecuteRouteOptions["onRouteStatusUpdated"];
-  unsubscribe?: () => void;
 };
 
 export type executeAndSubscribeToRouteStatusProps = {
@@ -139,18 +138,37 @@ const initializeNewRouteDetails = (options?: Partial<ExecuteRouteOptions>) => {
 }
 
 export const subscribeToRouteStatus = (props: subscribeToRouteStatusProps) => {
-  let cancelled = false;
+  const { routeDetails, onRouteStatusUpdated } = props;
+  const routeList = Array.isArray(routeDetails) ? routeDetails : [routeDetails];
 
-  const unsubscribe = () => {
-    cancelled = true;
+  const cancelFlags = new Map<string, { cancelled: boolean }>();
+
+  const unsubscribers: (() => void)[] = [];
+
+  for (const route of routeList) {
+    const cancelFlag = { cancelled: false };
+    cancelFlags.set(route?.id ?? uuidv4(), cancelFlag);
+
+    const unsubscribe = () => {
+      cancelFlag.cancelled = true;
+    };
+
+    unsubscribers.push(unsubscribe);
+
+    void executeAndSubscribeToRouteStatus({
+      routeDetails: route,
+      onRouteStatusUpdated,
+      isCancelled: () => cancelFlag.cancelled,
+    });
+  }
+
+  const unsubscribeAll = () => {
+    for (const unsubscribe of unsubscribers) {
+      unsubscribe();
+    }
   };
 
-  executeAndSubscribeToRouteStatus({
-    ...props,
-    isCancelled: () => cancelled,
-  });
-
-  return unsubscribe;
+  return unsubscribeAll;
 };
 
 export const executeAndSubscribeToRouteStatus = async ({
@@ -267,6 +285,7 @@ export const updateRouteDetails = ({
     currentRouteDetails = initializeNewRouteDetails(options);
     routeId = currentRouteDetails?.id;
   }
+  console.log(routeId, currentRouteDetails);
   if (currentRouteDetails === undefined) {
     throw new Error ("No route details found")
   }
