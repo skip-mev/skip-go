@@ -25,7 +25,7 @@ export type ExecuteMultipleRoutesOptions = SignerGetters &
   TransactionCallbacks &
   BaseSettings &
   Pick<ApiRequest<"msgs">, "timeoutSeconds"> & {
-    route: Record<string, RouteResponse>;
+    route: { mainRoute: RouteResponse } & Record<string, RouteResponse>;
     /**
      * Addresses should be in the same order with the `requiredChainAddresses` in the `route`
      */
