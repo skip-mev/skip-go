@@ -6,26 +6,28 @@ import { Button, Link } from "@/components/Button";
 import { TrashIcon } from "@/icons/TrashIcon";
 import { useMemo } from "react";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
-import { SimpleStatus } from "@/utils/clientType";
 import { getTruncatedAddress } from "@/utils/crypto";
-import { TransferAssetRelease } from "@skip-go/client";
+import { RouteStatus, TransactionDetails, TransferAssetRelease } from "@skip-go/client";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
-import { TransactionDetails } from "@/state/swapExecutionPage";
 import { track } from "@amplitude/analytics-browser";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
-  status?: SimpleStatus;
+  status?: RouteStatus;
   sourceChainName: string;
   destinationChainName: string;
   absoluteTimeString: string;
   onClickDelete?: () => void;
   transferAssetRelease?: TransferAssetRelease;
   transactionDetails: TransactionDetails[];
+  senderAddress?: string;
+  receiverAddress?: string;
 };
 
 const statusMap = {
   unconfirmed: "Unconfirmed",
+  allowance: "In Progress",
+  validating: "In Progress",
   signing: "In Progress",
   broadcasted: "In Progress",
   pending: "In Progress",
@@ -43,6 +45,8 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   onClickDelete,
   transferAssetRelease,
   transactionDetails,
+  senderAddress,
+  receiverAddress,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
 
@@ -123,6 +127,20 @@ export const TransactionHistoryPageHistoryItemDetails = ({
           </SmallText>
         </Link>
       </StyledHistoryItemDetailRow>
+
+      {senderAddress && (
+        <StyledHistoryItemDetailRow align="center">
+          <StyledDetailsLabel>Sender</StyledDetailsLabel>
+          <SmallText normalTextColor>{senderAddress}</SmallText>
+        </StyledHistoryItemDetailRow>
+      )}
+
+      {receiverAddress && (
+        <StyledHistoryItemDetailRow align="center">
+          <StyledDetailsLabel>Receiver</StyledDetailsLabel>
+          <SmallText normalTextColor>{receiverAddress}</SmallText>
+        </StyledHistoryItemDetailRow>
+      )}
 
       <Row align="center" style={{ marginTop: 10, padding: "0px 10px" }}>
         <Button onClick={onClickDelete} gap={5} align="center">

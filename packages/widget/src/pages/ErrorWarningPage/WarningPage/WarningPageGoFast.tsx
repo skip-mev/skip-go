@@ -10,7 +10,6 @@ import { CogIcon } from "@/icons/CogIcon";
 import { Column, Row } from "@/components/Layout";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { useEffect } from "react";
-import { setTag } from "@sentry/react";
 import { track } from "@amplitude/analytics-browser";
 import { PageHeader } from "@/components/PageHeader";
 
@@ -27,7 +26,6 @@ export const WarningPageGoFast = ({ onClickBack, onClickContinue }: WarningPageG
 
   useEffect(() => {
     setShowGoFastErrorAtom(false);
-    setTag("goFastWarning", true);
   }, [setShowGoFastErrorAtom]);
 
   const handleOnClickBack = () => {

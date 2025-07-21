@@ -19,6 +19,7 @@ import type {
 } from "src/types/client-types";
 import { ApiState } from "src/state/apiState";
 import type { TrackTxPollingProps } from "src/api/postTrackTransaction";
+import { updateRouteDetails } from "./subscribeToRouteStatus";
 
 /** Execute Route Options */
 export type ExecuteRouteOptions = SignerGetters &
@@ -33,10 +34,9 @@ export type ExecuteRouteOptions = SignerGetters &
     simulate?: boolean;
     slippageTolerancePercent?: string;
     /**
-     * Arbitrary Tx to be executed before or after route msgs
+     * If `appendCosmosMsgs` is provided, it will append the specified Cosmos messages to the transactions.
      */
-    beforeMsg?: CosmosMsg;
-    afterMsg?: CosmosMsg;
+    appendCosmosMsgs?: Record<string, CosmosMsg[]>
     /**
      * Set allowance amount to max if EVM transaction requires allowance approval.
      */
@@ -94,7 +94,12 @@ export type ExecuteRouteOptions = SignerGetters &
   };
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {
-  const { route, userAddresses, beforeMsg, afterMsg, timeoutSeconds } = options;
+  const { route, userAddresses, appendCosmosMsgs, timeoutSeconds } = options;
+
+  const { id: routeId } = updateRouteDetails({
+    status: "unconfirmed",
+    options
+  });
 
   let addressList: string[] = [];
   userAddresses.forEach((userAddress, index) => {
@@ -139,21 +144,20 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     feePayerAddress: options.svmFeePayer?.address,
   });
 
-  if (beforeMsg && (response?.txs?.length ?? 0) > 0) {
-    const firstTx = response?.txs?.[0];
-    if (firstTx && "cosmosTx" in firstTx) {
-      firstTx.cosmosTx?.msgs?.unshift(beforeMsg);
-    }
+  if (appendCosmosMsgs) {
+    Object.entries(appendCosmosMsgs).forEach(([chainId, msgs]) => {
+      const txIndex = response?.txs?.findIndex(
+        (tx) => "cosmosTx" in tx && tx.cosmosTx.chainId === chainId
+      );
+      if (txIndex === undefined || txIndex === -1) return
+      const tx = response?.txs?.[txIndex];
+      if (tx && "cosmosTx" in tx) {
+        tx.cosmosTx.msgs?.unshift(...msgs);
+      }
+    })
   }
 
-  if (afterMsg && (response?.txs?.length ?? 0) > 0) {
-    const lastTx = response?.txs?.[response.txs.length - 1];
-    if (lastTx && "cosmosTx" in lastTx) {
-      lastTx.cosmosTx?.msgs?.push(afterMsg);
-    }
-  }
-
-  await executeTransactions({ ...options, txs: response?.txs });
+  await executeTransactions({ ...options, routeId, txs: response?.txs });
 };
 
 const validateUserAddresses = async (userAddresses: UserAddress[]) => {

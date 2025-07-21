@@ -5,8 +5,8 @@ import React, { useMemo } from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
 import { Button, PillButton, Link, PillButtonLink } from "@/components/Button";
-import { ChainTransaction } from "@skip-go/client";
-import { ClientOperation, SimpleStatus } from "@/utils/clientType";
+import { ChainTransaction, RouteDetails, TransferEventStatus } from "@skip-go/client";
+import { ClientOperation } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useAtomValue } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
@@ -15,7 +15,6 @@ import { formatDisplayAmount } from "@/utils/number";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
-import { TxsStatus } from "./useBroadcastedTxs";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
@@ -27,7 +26,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
   chainId: ClientOperation["fromChainId"] | ClientOperation["chainId"];
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
-  status?: SimpleStatus;
+  status?: TransferEventStatus;
   isSignRequired?: boolean;
   index: number;
   context: "source" | "destination" | "intermediary";
@@ -35,7 +34,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
     address: string;
     image?: string;
   };
-  statusData?: TxsStatus;
+  statusData?: RouteDetails;
 };
 
 export const SwapExecutionPageRouteDetailedRow = ({
@@ -87,10 +86,19 @@ export const SwapExecutionPageRouteDetailedRow = ({
         (selectedChainAddress?.source === "wallet" &&
           selectedChainAddress?.wallet?.walletInfo.logo) ||
         undefined,
+      source: selectedChainAddress?.source,
     };
   }, [chainAddresses, chainId, context]);
 
   const walletImage = useCroppedImage(chainAddressWallet.image);
+
+  const renderWalletImage = useMemo(() => {
+    if (chainAddressWallet?.source === "injected" || chainAddressWallet?.source === "input") return;
+    if (!chainAddressWallet.address) return;
+    if (walletImage) return <img height="100%" src={walletImage} />;
+
+    return <SkeletonElement height={18} width={18} />;
+  }, [chainAddressWallet.address, chainAddressWallet?.source, walletImage]);
 
   const renderAddress = useMemo(() => {
     const Container = shouldRenderEditDestinationWallet
@@ -116,16 +124,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
     return (
       <Container>
         <AddressPillButton onClick={() => copyAddress(chainAddressWallet?.address)}>
-          {walletImage ? (
-            <img
-              src={walletImage}
-              style={{
-                height: "100%",
-              }}
-            />
-          ) : (
-            <SkeletonElement height={18} width={18} />
-          )}
+          {renderWalletImage}
           {renderContent()}
         </AddressPillButton>
         {shouldRenderEditDestinationWallet && (
@@ -142,7 +141,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   }, [
     shouldRenderEditDestinationWallet,
     chainAddressWallet.address,
-    walletImage,
+    renderWalletImage,
     isMobileScreenSize,
     onClickEditDestinationWallet,
     theme.primary.text.lowContrast,
@@ -197,7 +196,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
         justify="space-between"
       >
         <Row align="center">
-          <LeftContent>
+          <LeftContent gap={5}>
             <Row gap={5} align="center">
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
                 {formatDisplayAmount(assetDetails?.amount)}
@@ -268,7 +267,7 @@ export const StyledAnimatedBorder = ({
   width: number;
   height: number;
   borderSize?: number;
-  status?: SimpleStatus;
+  status?: TransferEventStatus;
 }) => (
   <StyledLoadingContainer
     align="center"
@@ -295,7 +294,7 @@ const StyledLoadingContainer = styled(Row)<{
   height: number;
   width: number;
   borderSize: number;
-  status?: SimpleStatus;
+  status?: TransferEventStatus;
   backgroundColor?: string;
 }>`
   flex-shrink: 0;

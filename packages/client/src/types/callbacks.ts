@@ -1,3 +1,4 @@
+import type { RouteDetails } from "../public-functions/subscribeToRouteStatus";
 import type { Erc20Approval, TransferStatus } from "./swaggerTypes";
 
 type CallbackStatus = "error" | "pending" | "completed";
@@ -9,7 +10,10 @@ export type TransactionCallbacks = {
     signerAddress?: string,
   }) => Promise<void>
   onTransactionSigned?: (txInfo: { chainId: string }) => Promise<void>;
-  onTransactionBroadcast?: (txInfo: { txHash: string; chainId: string }) => Promise<void>;
+  onTransactionBroadcast?: (txInfo: {
+    txHash: string;
+    chainId: string;
+  }) => Promise<void>;
   onTransactionTracked?: (txInfo: {
     txHash: string;
     chainId: string;
@@ -20,6 +24,7 @@ export type TransactionCallbacks = {
     txHash: string;
     status?: TransferStatus;
   }) => Promise<void>;
+  onRouteStatusUpdated?: (routeStatus: RouteDetails) => void;
   onValidateGasBalance?: (value: {
     chainId?: string;
     txIndex?: number;
