@@ -38,6 +38,7 @@ export type ExecuteMultipleRoutesOptions = SignerGetters &
      * Specify actions to perform after the route is completed
      */
     postRouteHandler?: Record<string, PostHandler>;
+    setNonce?: (latestNonce: number) => number;
   };
 
 /**
@@ -208,7 +209,7 @@ export const executeMultipleRoutes = async (
 
   await Promise.all(
     Object.entries(msgsRecord).map(async ([routeKey, msgsResponse]) => {
-      console.log('route', route, route[routeKey]);
+      console.log('route', route);
 
       const { transactionDetails, executeTransaction } = await executeTransactions({
         ...restOptions,
@@ -216,7 +217,12 @@ export const executeMultipleRoutes = async (
         txs: msgsResponse?.txs,
         route: route[routeKey]!,
         userAddresses: userAddresses[routeKey]!,
-        bypassApprovalCheck: routeKey !== 'mainRoute',
+        bypassApprovalCheck: true,
+        setNonce: routeKey !== 'mainRoute' ? (latestNonce) => {
+          const nextNonce = latestNonce + 1;
+          console.log('routeKey', routeKey, 'nextNonce', nextNonce)
+          return nextNonce;
+        }: undefined,
         useUnlimitedApproval: true
       });
 
