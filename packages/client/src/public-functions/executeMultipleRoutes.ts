@@ -192,10 +192,6 @@ export const executeMultipleRoutes = async (
         },
       });
 
-      if (!routeId) {
-        throw new Error("no route id found for route key")
-      }
-
       console.log('route', route, route[routeKey]);
 
       await executeTransactions({

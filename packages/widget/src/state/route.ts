@@ -160,7 +160,7 @@ export const _skipRouteAtom: ReturnType<
           abortDuplicateRequests: true,
         })) as SwapRoute;
 
-        response.mainRoute = response;
+        response.mainRoute = { ...response };
         console.log("destinationAssetIsAFeeAsset", destinationAssetIsAFeeAsset);
         let feeRoute: RouteResponse | undefined;
         if (

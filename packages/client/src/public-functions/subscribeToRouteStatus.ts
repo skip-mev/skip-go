@@ -285,7 +285,6 @@ export const updateRouteDetails = ({
     currentRouteDetails = initializeNewRouteDetails(options);
     routeId = currentRouteDetails?.id;
   }
-  console.log(routeId, currentRouteDetails);
   if (currentRouteDetails === undefined) {
     throw new Error ("No route details found")
   }
@@ -377,6 +376,7 @@ const getSimpleRoute = (route?: Route | SimpleRoute): SimpleRoute => {
 }
 
 const getRouteDetailsWithSimpleTransactionDetailsStatus = (routeDetails: RouteDetails) => {
+  console.log(routeDetails);
   return {
     ...routeDetails,
     transactionDetails: routeDetails.transactionDetails.map(txDetails => {
