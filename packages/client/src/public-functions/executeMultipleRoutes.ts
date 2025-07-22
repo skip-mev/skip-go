@@ -147,7 +147,6 @@ export const executeMultipleRoutes = async (
 
   const transferIndexToRouteKey: Record<number, string> = {};
 
-  console.log(msgsRecord)
   let transferIndex = 0;
 
   Object.entries(msgsRecord).forEach(([routeKey, msgs]) => {
