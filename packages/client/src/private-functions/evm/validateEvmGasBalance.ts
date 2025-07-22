@@ -13,11 +13,13 @@ export const validateEvmGasBalance = async ({
   tx,
   getFallbackGasAmount,
   useUnlimitedApproval,
+  bypassApprovalCheck,
 }: {
   signer: WalletClient;
   tx: EvmTx;
   getFallbackGasAmount?: GetFallbackGasAmount;
   useUnlimitedApproval?: boolean;
+  bypassApprovalCheck?: boolean;
 }) => {
   const chainId = tx?.chainId ?? "";
   const skipAssets = (await ClientState.getSkipAssets({ chainId }))?.[chainId];
@@ -55,7 +57,7 @@ export const validateEvmGasBalance = async ({
 
   const { requiredErc20Approvals } = tx;
 
-  if (requiredErc20Approvals) {
+  if (!bypassApprovalCheck &&requiredErc20Approvals) {
     try {
       await validateEvmTokenApproval({
         requiredErc20Approvals,

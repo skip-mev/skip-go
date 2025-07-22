@@ -118,9 +118,10 @@ export const executeEvmTransaction = async (
 
   const latestNonce = await extendedSigner.getTransactionCount({
     address: evmSigner.account.address as `0x${string}`,
+    blockTag: 'pending',
   })
 
-  const usedNonce = options.setNonce?.(latestNonce + 1) ?? latestNonce + 1;
+  const usedNonce = options.setNonce?.(latestNonce) ?? latestNonce;
 
   // Execute the transaction
   const txHash = await extendedSigner.sendTransaction({

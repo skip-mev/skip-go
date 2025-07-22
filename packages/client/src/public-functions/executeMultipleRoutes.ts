@@ -79,7 +79,7 @@ export const executeMultipleRoutes = async (
 
   for (const [routeKey, routeValue] of Object.entries(route)) {
     const _userAddresses = userAddresses[routeKey];
-    
+
     if (_userAddresses === undefined) {
       throw new Error(
         `executeMultipleRoutes error: no user addresses found for route: ${routeKey}`
@@ -217,7 +217,7 @@ export const executeMultipleRoutes = async (
         txs: msgsResponse?.txs,
         route: route[routeKey]!,
         userAddresses: userAddresses[routeKey]!,
-        bypassApprovalCheck: true,
+        bypassApprovalCheck: routeKey !== 'mainRoute',
         setNonce: routeKey !== 'mainRoute' ? (latestNonce) => {
           const nextNonce = latestNonce + 1;
           console.log('routeKey', routeKey, 'nextNonce', nextNonce)
