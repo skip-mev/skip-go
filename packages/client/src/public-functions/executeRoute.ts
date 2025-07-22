@@ -36,6 +36,7 @@ export type ExecuteRouteOptions = SignerGetters &
      * Specify actions to perform after the route is completed
      */
     postRouteHandler?: PostHandler;
+    setNonce?: (latestNonce: number) => number;
   };
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {
@@ -89,4 +90,3 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     options
   });
 };
-
