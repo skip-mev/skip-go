@@ -227,6 +227,7 @@ export const executeMultipleRoutes = async (
     chainId: string;
     groupIndex: number;
     txIndex: number;
+    routeKey?: string;
     canExecuteInParallel: boolean;
   }[] = [];
 
@@ -236,6 +237,7 @@ export const executeMultipleRoutes = async (
         chainId: tx.chainId,
         groupIndex,
         txIndex,
+        routeKey: tx.routeKey,
         canExecuteInParallel: txIndex === 0,
       });
     });
