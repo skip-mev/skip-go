@@ -114,13 +114,7 @@ export const SwapExecutionPageRouteSimple = ({
       {gasRoute?.gasOnReceiveAsset && (
         <GasOnReceiveWrapper>
           <>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-              }}
-            >
+            <Row gap={8} align="center">
               <GasIcon color={theme.primary.text.lowContrast} />
               {isFetchingBalance || fetchingGasRoute ? (
                 <SkeletonElement height={20} width={300} />
@@ -131,7 +125,7 @@ export const SwapExecutionPageRouteSimple = ({
                     : "Gas top up available, enable to receive gas on destination"}
                 </SmallText>
               )}
-            </div>
+            </Row>
             {!isFetchingBalance && (
               <Switch
                 checked={gasOnReceive}
