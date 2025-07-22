@@ -43,8 +43,6 @@ import { useGetBalance } from "@/hooks/useGetBalance";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { useConnectToMissingCosmosChain } from "./useConnectToMissingCosmosChain";
 import { callbacksAtom } from "@/state/callbacks";
-import { QuestionMarkTooltip } from "@/components/QuestionMarkTooltip";
-import { formatUSD } from "@/utils/intl";
 import { SmallText } from "@/components/Typography";
 
 export const SwapPage = () => {
@@ -208,23 +206,10 @@ export const SwapPage = () => {
   const feeLabel = useMemo(() => {
     const formattedUsdAmount = getTotalFees(fees)?.formattedUsdAmount;
 
-    const feeAsset = assets?.find(
-      (asset) =>
-        asset?.denom === route?.gasOnReceiveAsset?.denom &&
-        asset?.chainId === route?.gasOnReceiveAsset?.chainId,
-    );
-
-    const gasOnReceive = route?.gasOnReceiveAsset ? (
-      <QuestionMarkTooltip
-        content={`You'll get ${formatUSD(route?.gasOnReceiveAsset?.amountUsd)} in ${feeAsset?.recommendedSymbol} for gas`}
-      />
-    ) : null;
-
     if (formattedUsdAmount) {
       return (
         <>
           <SmallText color="inherit">{formattedUsdAmount} in fees</SmallText>
-          {gasOnReceive}
         </>
       );
     }
@@ -232,18 +217,14 @@ export const SwapPage = () => {
     return (
       <>
         <SmallText color="inherit">no fees</SmallText>
-        {gasOnReceive}
       </>
     );
-  }, [assets, fees, route?.gasOnReceiveAsset]);
+  }, [fees]);
 
   const feeWarning = useMemo(() => {
     if (!route?.usdAmountIn || !route?.usdAmountOut) return false;
-    return (
-      parseFloat(route.usdAmountOut) + parseFloat(route?.gasOnReceiveAsset?.amountUsd ?? "0") <
-      parseFloat(route.usdAmountIn) * 0.9
-    );
-  }, [route?.gasOnReceiveAsset?.amountUsd, route?.usdAmountIn, route?.usdAmountOut]);
+    return parseFloat(route.usdAmountOut) < parseFloat(route.usdAmountIn) * 0.9;
+  }, [route?.usdAmountIn, route?.usdAmountOut]);
 
   const swapButton = useMemo(() => {
     const computeFontSize = (label: string) => (label.length > 36 ? 18 : 24);

@@ -15,6 +15,7 @@ import { Tooltip } from "@/components/Tooltip";
 import { useIsGasStationTx } from "./useIsGasStationTx";
 import { convertToPxValue } from "@/utils/style";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { gasOnReceiveRouteAtom } from "@/state/gasOnReceive";
 
 type operationTypeToIcon = Record<OperationType, React.ReactElement>;
 
@@ -62,9 +63,9 @@ export const SwapExecutionPageRouteDetailed = ({
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
   const { route } = useAtomValue(swapExecutionStateAtom);
-
+  const { data: gorRoute } = useAtomValue(gasOnReceiveRouteAtom);
+  console.log("gorRoute", gorRoute);
   const isGasStationTx = useIsGasStationTx();
-  const firstOperation = operations[0];
   const status = statusData?.transferEvents;
 
   const getBridgeSwapVenue = useCallback(
