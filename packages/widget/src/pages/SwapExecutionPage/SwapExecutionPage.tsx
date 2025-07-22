@@ -3,12 +3,13 @@ import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { PageHeader } from "@/components/PageHeader";
 import React, { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 import { currentPageAtom, Routes } from "@/state/router";
 import {
   chainAddressesAtom,
+  gasRouteEffect,
   skipSubmitSwapExecutionAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
@@ -23,6 +24,7 @@ import { track } from "@amplitude/analytics-browser";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { usePreventPageUnload } from "@/hooks/usePreventPageUnload";
 import { currentTransactionAtom } from "@/state/history";
+import { gasOnReceiveAtomEffect } from "@/state/gasOnReceive";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -44,6 +46,8 @@ export const SwapExecutionPage = () => {
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains, isLoading } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
+  useAtom(gasOnReceiveAtomEffect);
+  useAtom(gasRouteEffect);
 
   const { mutate: submitExecuteRouteMutation, error } = useAtomValue(skipSubmitSwapExecutionAtom);
 

@@ -36,6 +36,7 @@ import { WalletClient } from "viem";
 import { getWalletClient } from "@wagmi/core";
 import { atomWithStorageNoCrossTabSync } from "@/utils/storage";
 import { Adapter } from "@solana/wallet-adapter-base";
+import { gasOnReceiveAtom, gasOnReceiveRouteAtom } from "./gasOnReceive";
 
 type ValidatingGasBalanceData = {
   chainId?: string;
@@ -45,8 +46,17 @@ type ValidatingGasBalanceData = {
 
 type SwapExecutionState = {
   userAddresses: UserAddress[];
+  /**
+   * original route
+   */
   route?: RouteResponse;
   clientOperations: ClientOperation[];
+
+  originalRoute?: RouteResponse;
+  mainRoute?: RouteResponse;
+  feeRoute?: RouteResponse;
+  isFeeRouteEnabled?: boolean;
+
   currentTransactionId?: string;
   isValidatingGasBalance?: ValidatingGasBalanceData;
 };
@@ -86,6 +96,28 @@ export const setCurrentTransactionIdAtom = atom(null, (_get, set, transactionId?
   }));
 });
 
+export const gasRouteEffect = atomEffect((get, set) => {
+  get(skipRouteAtom);
+  const { data: gorRoute } = get(gasOnReceiveRouteAtom);
+  const isGorEnabled = get(gasOnReceiveAtom);
+
+  set(swapExecutionStateAtom, (prev) => ({
+    ...prev,
+    mainRoute: gorRoute?.mainRoute,
+    feeRoute: gorRoute?.feeRoute,
+    isFeeRouteEnabled: isGorEnabled,
+    ...(isGorEnabled && gorRoute?.mainRoute
+      ? {
+          route: gorRoute.mainRoute,
+          clientOperations: getClientOperations(gorRoute.mainRoute.operations),
+        }
+      : {
+          route: prev.originalRoute,
+          clientOperations: getClientOperations(prev.originalRoute?.operations || []),
+        }),
+  }));
+});
+
 export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
   const { data: chains } = get(skipChainsAtom);
@@ -119,7 +151,8 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     userAddresses: [],
     transactionDetailsArray: [],
     route,
-    clientOperations: getClientOperations(route.mainRoute?.operations),
+    originalRoute: route,
+    clientOperations: getClientOperations(route.operations),
     currentTransactionId: undefined,
   });
 

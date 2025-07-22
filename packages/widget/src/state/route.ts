@@ -23,8 +23,6 @@ import { RoutePreference } from "./types";
 import { DefaultRouteConfig } from "@/widget/useInitDefaultRoute";
 import { route, RouteRequest, RouteResponse } from "@skip-go/client";
 import { ROUTE_ERROR_CODE_MAP } from "@/constants/routeErrorCodeMap";
-import { gasOnReceiveRouteRequestAtom } from "./gasOnReceive";
-import { BigNumber } from "bignumber.js";
 
 export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = atomEffect(
   (get, set) => {
@@ -110,18 +108,8 @@ export const routeConfigAtom = atom<WidgetRouteConfig>({
   timeoutSeconds: undefined,
 });
 
-type SwapRoute = RouteResponse & {
-  mainRoute?: RouteResponse;
-  feeRoute?: RouteResponse;
-  gasOnReceiveAsset?: {
-    amountUsd: string;
-    denom: string;
-    chainId: string;
-  };
-};
-
 export const _skipRouteAtom: ReturnType<
-  typeof atomWithQuery<Awaited<SwapRoute | CaughtRouteError>>
+  typeof atomWithQuery<Awaited<RouteResponse | CaughtRouteError>>
 > = atomWithQuery((get) => {
   const params = get(skipRouteRequestAtom);
   const currentPage = get(currentPageAtom);
@@ -129,13 +117,6 @@ export const _skipRouteAtom: ReturnType<
   const errorWarning = get(errorWarningAtom);
   const routeConfig = get(routeConfigAtom);
   const swapSettings = get(swapSettingsAtom);
-  const gasOnReceiveRouteParams = get(gasOnReceiveRouteRequestAtom);
-  const destinationAsset = get(destinationAssetAtom);
-  const direction = get(swapDirectionAtom);
-  console.log("destDenoms", gasOnReceiveRouteParams?.destAssetDenoms);
-  const destinationAssetIsAFeeAsset = gasOnReceiveRouteParams?.destAssetDenoms.includes(
-    destinationAsset?.denom ?? "",
-  );
 
   const queryEnabled =
     params !== undefined &&
@@ -145,94 +126,19 @@ export const _skipRouteAtom: ReturnType<
     errorWarning === undefined;
 
   return {
-    queryKey: ["skipRoute", params, routeConfig, swapSettings, gasOnReceiveRouteParams],
+    queryKey: ["skipRoute", params, routeConfig, swapSettings],
     queryFn: async () => {
       if (!params) {
         throw new Error("No route request provided");
       }
       try {
-        console.log("Route request params:", params);
-        const response = (await route({
+        const response = await route({
           ...params,
           smartRelay: true,
           ...routeConfig,
           goFast: swapSettings.routePreference === RoutePreference.FASTEST,
           abortDuplicateRequests: true,
-        })) as SwapRoute;
-
-        response.mainRoute = { ...response };
-        console.log("destinationAssetIsAFeeAsset", destinationAssetIsAFeeAsset);
-        let feeRoute: RouteResponse | undefined;
-        if (
-          !destinationAssetIsAFeeAsset &&
-          gasOnReceiveRouteParams?.destAssetDenoms !== undefined
-        ) {
-          console.log("Gas on receive route params:", gasOnReceiveRouteParams);
-          const { destAssetDenoms, ...restParams } = gasOnReceiveRouteParams;
-
-          const splitDenoms = chunkArray(destAssetDenoms);
-          for (const chunk of splitDenoms) {
-            const feeAssetRoutes = chunk.map(async (denom) => {
-              try {
-                const res = await route({
-                  destAssetDenom: denom,
-                  ...restParams,
-                  smartRelay: true,
-                  ...routeConfig,
-                  goFast: swapSettings.routePreference === RoutePreference.FASTEST,
-                  abortDuplicateRequests: true,
-                });
-                return res;
-              } catch (_e) {
-                return;
-              }
-            });
-            const result = await Promise.all(feeAssetRoutes);
-            const _feeRoute = result.find((result) => result?.usdAmountOut);
-            if (_feeRoute?.usdAmountOut) {
-              feeRoute = _feeRoute;
-              break;
-            }
-          }
-          console.log("Fee route found:", feeRoute);
-          if (feeRoute?.usdAmountOut && response?.usdAmountOut) {
-            if (direction === "swap-in") {
-              params.amountIn = BigNumber(response.amountOut)
-                .minus(BigNumber(feeRoute?.amountIn ?? 0))
-                .toString();
-            } else if (direction === "swap-out") {
-              params.amountOut = BigNumber(response.amountOut)
-                .plus(BigNumber(feeRoute?.amountIn ?? 0))
-                .toString();
-            }
-
-            const mainRoute = await route({
-              ...params,
-              smartRelay: true,
-              ...routeConfig,
-              goFast: swapSettings.routePreference === RoutePreference.FASTEST,
-              abortDuplicateRequests: true,
-            });
-            if (mainRoute) {
-              response.mainRoute = mainRoute;
-              response.feeRoute = feeRoute;
-              if (direction === "swap-in") {
-                response.amountOut = mainRoute.amountOut;
-                response.usdAmountOut = mainRoute.usdAmountOut;
-              } else if (direction === "swap-out") {
-                response.amountIn = mainRoute.amountIn;
-                response.usdAmountIn = mainRoute.usdAmountIn;
-              }
-
-              response.gasOnReceiveAsset = {
-                amountUsd: feeRoute?.usdAmountOut,
-                denom: feeRoute?.destAssetDenom,
-                chainId: feeRoute?.destAssetChainId,
-              };
-            }
-          }
-        }
-
+        });
         return response;
       } catch (error) {
         return {
@@ -248,14 +154,14 @@ export const _skipRouteAtom: ReturnType<
 });
 
 export const skipRouteAtom = atom<{
-  data?: SwapRoute | undefined;
+  data?: RouteResponse | undefined;
   isError: boolean;
   error?: Error | null;
   isLoading: boolean;
 }>((get) => {
   const { data, isError, error, isFetching, isPending } = get(_skipRouteAtom);
   const caughtError = data as CaughtRouteError;
-  const routeResponse = data as SwapRoute;
+  const routeResponse = data as RouteResponse;
   if (caughtError?.isError) {
     const error = caughtError.error;
 
@@ -321,11 +227,3 @@ export const setRouteToDefaultRouteAtom = atom(null, (get, set, assets?: ClientA
     set(destinationAssetAmountAtom, amountOut?.toString());
   }
 });
-
-const chunkArray = (arr: string[], size = 3): string[][] => {
-  const result: string[][] = [];
-  for (let i = 0; i < arr.length; i += size) {
-    result.push(arr.slice(i, i + size));
-  }
-  return result;
-};
