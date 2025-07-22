@@ -8,13 +8,15 @@ import { useAtomValue } from "jotai";
 type UseSwapExecutionStateParams = {
   chainAddresses: Record<number, ChainAddress>;
   route?: RouteResponse;
-  isLoading: boolean;
+  isGettingAddressesLoading: boolean;
+  isFetchingDestinationBalance: boolean;
 };
 
 export function useSwapExecutionState({
   chainAddresses,
   route,
-  isLoading,
+  isGettingAddressesLoading,
+  isFetchingDestinationBalance,
 }: UseSwapExecutionStateParams): SwapExecutionState {
   const currentTransaction = useAtomValue(currentTransactionAtom);
 
@@ -31,7 +33,8 @@ export function useSwapExecutionState({
   }, [currentTransaction]);
 
   return useMemo(() => {
-    if (isLoading) return SwapExecutionState.pendingGettingAddresses;
+    if (isFetchingDestinationBalance) return SwapExecutionState.pendingGettingDestinationBalance;
+    if (isGettingAddressesLoading) return SwapExecutionState.pendingGettingAddresses;
     if (!chainAddresses) return SwapExecutionState.destinationAddressUnset;
     const requiredChainAddresses = route?.requiredChainAddresses;
     if (!requiredChainAddresses) return SwapExecutionState.destinationAddressUnset;
@@ -75,7 +78,8 @@ export function useSwapExecutionState({
 
     return SwapExecutionState.ready;
   }, [
-    isLoading,
+    isFetchingDestinationBalance,
+    isGettingAddressesLoading,
     chainAddresses,
     route?.requiredChainAddresses,
     currentTransaction?.status,

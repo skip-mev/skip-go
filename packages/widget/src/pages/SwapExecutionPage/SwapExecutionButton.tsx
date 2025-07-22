@@ -183,7 +183,8 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
       );
     case SwapExecutionState.pendingGettingAddresses:
       return <MainButton label="Getting addresses" loading />;
-
+    case SwapExecutionState.pendingGettingDestinationBalance:
+      return <MainButton label="Getting destination balance" loading />;
     default:
       return null;
   }
