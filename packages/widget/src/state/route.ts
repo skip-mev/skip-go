@@ -46,7 +46,7 @@ export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = ato
   },
 );
 
-const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
+export const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
   const direction = get(swapDirectionAtom);
@@ -87,7 +87,7 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   };
 });
 
-type CaughtRouteError = {
+export type CaughtRouteError = {
   isError: boolean;
   error: {
     message?: string;
@@ -109,7 +109,7 @@ export const routeConfigAtom = atom<WidgetRouteConfig>({
 });
 
 export const _skipRouteAtom: ReturnType<
-  typeof atomWithQuery<Awaited<ReturnType<typeof route> | CaughtRouteError>>
+  typeof atomWithQuery<Awaited<RouteResponse | CaughtRouteError>>
 > = atomWithQuery((get) => {
   const params = get(skipRouteRequestAtom);
   const currentPage = get(currentPageAtom);

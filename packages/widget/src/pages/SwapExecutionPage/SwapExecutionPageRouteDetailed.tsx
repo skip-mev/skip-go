@@ -14,6 +14,8 @@ import React, { useCallback, useMemo } from "react";
 import { Tooltip } from "@/components/Tooltip";
 import { useIsGasStationTx } from "./useIsGasStationTx";
 import { convertToPxValue } from "@/utils/style";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { gasOnReceiveRouteAtom } from "@/state/gasOnReceive";
 
 type operationTypeToIcon = Record<OperationType, React.ReactElement>;
 
@@ -60,8 +62,10 @@ export const SwapExecutionPageRouteDetailed = ({
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
+  const { route } = useAtomValue(swapExecutionStateAtom);
+  const { data: gorRoute } = useAtomValue(gasOnReceiveRouteAtom);
+  console.log("gorRoute", gorRoute);
   const isGasStationTx = useIsGasStationTx();
-  const firstOperation = operations[0];
   const status = statusData?.transferEvents;
 
   const getBridgeSwapVenue = useCallback(
@@ -188,9 +192,9 @@ export const SwapExecutionPageRouteDetailed = ({
     <StyledSwapExecutionPageRoute>
       <Column>
         <SwapExecutionPageRouteDetailedRow
-          tokenAmount={firstOperation.amountIn}
-          denom={firstOperation.denomIn}
-          chainId={firstOperation.fromChainId}
+          tokenAmount={route?.amountIn ?? ""}
+          denom={route?.sourceAssetDenom}
+          chainId={route?.sourceAssetChainId}
           explorerLink={status?.[0]?.fromExplorerLink}
           status={firstOperationStatus}
           context="source"

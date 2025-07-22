@@ -43,6 +43,7 @@ import { useGetBalance } from "@/hooks/useGetBalance";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { useConnectToMissingCosmosChain } from "./useConnectToMissingCosmosChain";
 import { callbacksAtom } from "@/state/callbacks";
+import { SmallText } from "@/components/Typography";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -204,11 +205,20 @@ export const SwapPage = () => {
   const fees = useMemo(() => (route ? getFeeList(route) : []), [route]);
   const feeLabel = useMemo(() => {
     const formattedUsdAmount = getTotalFees(fees)?.formattedUsdAmount;
+
     if (formattedUsdAmount) {
-      return `${formattedUsdAmount} in fees`;
+      return (
+        <>
+          <SmallText color="inherit">{formattedUsdAmount} in fees</SmallText>
+        </>
+      );
     }
 
-    return "no fees";
+    return (
+      <>
+        <SmallText color="inherit">no fees</SmallText>
+      </>
+    );
   }, [fees]);
 
   const feeWarning = useMemo(() => {

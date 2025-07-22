@@ -4,11 +4,10 @@ import { slippageAtom } from "@/state/swapPage";
 import { SLIPPAGE_OPTIONS } from "@/constants/widget";
 import { Column, Row, Spacer } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
-import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 import styled, { css } from "styled-components";
-import { Tooltip } from "@/components/Tooltip";
 import { track } from "@amplitude/analytics-browser";
 import { convertToPxValue } from "@/utils/style";
+import { QuestionMarkTooltip } from "@/components/QuestionMarkTooltip";
 
 const SlippageSelector: React.FC = () => {
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -28,16 +27,14 @@ const SlippageSelector: React.FC = () => {
       <SwapDetailText align="center">
         Max Slippage
         <Spacer width={5} />
-        <Tooltip
+        <QuestionMarkTooltip
           content={
             <SmallText normalTextColor style={{ width: 250 }}>
               If price changes unfavorably during the transaction by more than this amount, the
               transaction will revert.
             </SmallText>
           }
-        >
-          <QuestionMarkIcon />
-        </Tooltip>
+        />
       </SwapDetailText>
       <StyledSlippageOptionsContainer gap={5}>
         {SLIPPAGE_OPTIONS.map((option) => (
