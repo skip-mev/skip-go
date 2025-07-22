@@ -81,12 +81,5 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     })
   }
 
-  const { transactionDetails, executeTransaction } = await executeTransactions({ ...options, routeId, txs: response?.txs });
-
-  await executeAndSubscribeToRouteStatus({
-    transactionDetails: transactionDetails,
-    executeTransaction,
-    routeId,
-    options
-  });
+  await executeTransactions({ ...options, routeId, txs: response?.txs });
 };

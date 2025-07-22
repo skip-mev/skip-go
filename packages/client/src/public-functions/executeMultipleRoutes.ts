@@ -12,7 +12,7 @@ import type {
   UserAddress,
   BaseSettings,
 } from "src/types/client-types";
-import { executeAndSubscribeToRouteStatus, updateRouteDetails } from "./subscribeToRouteStatus";
+import { updateRouteDetails } from "./subscribeToRouteStatus";
 import { createValidAddressList, validateUserAddresses } from "src/utils/address";
 import { ApiState } from "src/state/apiState";
 import { messages, type MessagesResponse } from "src/api/postMessages";
@@ -38,7 +38,6 @@ export type ExecuteMultipleRoutesOptions = SignerGetters &
      * Specify actions to perform after the route is completed
      */
     postRouteHandler?: Record<string, PostHandler>;
-    setNonce?: (latestNonce: number) => number;
   };
 
 /**
@@ -79,7 +78,7 @@ export const executeMultipleRoutes = async (
 
   for (const [routeKey, routeValue] of Object.entries(route)) {
     const _userAddresses = userAddresses[routeKey];
-
+    
     if (_userAddresses === undefined) {
       throw new Error(
         `executeMultipleRoutes error: no user addresses found for route: ${routeKey}`
@@ -192,84 +191,26 @@ export const executeMultipleRoutes = async (
 
   console.log("final result msgsRecord", msgsRecord);
 
-  const combinedTransactionDetails: {
-      chainId: string;
-      routeKey?: string;
-  }[][] = [];
-  const combinedExecuteTransactions: ((index: number) => Promise<any>)[] = [];
-
-  const { id: routeId } = updateRouteDetails({
-    status: "unconfirmed",
-    options: {
-      route: route['mainRoute'],
-      ...restOptions,
-    },
-    transferIndexToRouteKey,
-  });
-
   await Promise.all(
     Object.entries(msgsRecord).map(async ([routeKey, msgsResponse]) => {
-      console.log('route', route);
+      const { id: routeId } = updateRouteDetails({
+        status: "unconfirmed",
+        options: {
+          route: route[routeKey],
+          ...restOptions,
+        },
+        transferIndexToRouteKey,
+      });
 
-      const { transactionDetails, executeTransaction } = await executeTransactions({
+      console.log('route', route, route[routeKey]);
+
+      await executeTransactions({
         ...restOptions,
         routeId,
         txs: msgsResponse?.txs,
         route: route[routeKey]!,
         userAddresses: userAddresses[routeKey]!,
-        bypassApprovalCheck: routeKey !== 'mainRoute',
-        setNonce: routeKey !== 'mainRoute' ? (latestNonce) => {
-          const nextNonce = latestNonce + 1;
-          console.log('routeKey', routeKey, 'nextNonce', nextNonce)
-          return nextNonce;
-        }: undefined,
-        useUnlimitedApproval: true
       });
-
-      combinedTransactionDetails.push(transactionDetails.map(txDetails => ({...txDetails, routeKey })));
-      combinedExecuteTransactions.push(executeTransaction);
     })
   );
-
-  const transactionDetails: {
-    chainId: string;
-    groupIndex: number;
-    txIndex: number;
-    routeKey?: string;
-    canExecuteInParallel: boolean;
-  }[] = [];
-
-  combinedTransactionDetails.forEach((group, groupIndex) => {
-    group.forEach((tx, txIndex) => {
-      transactionDetails.push({
-        chainId: tx.chainId,
-        groupIndex,
-        txIndex,
-        routeKey: tx.routeKey,
-        canExecuteInParallel: txIndex === 0,
-      });
-    });
-  });
-
-  const executeTransaction = async (flatIndex: number) => {
-    const txDetails = transactionDetails[flatIndex];
-    if (txDetails !== undefined) {
-      return combinedExecuteTransactions[txDetails?.groupIndex]?.(txDetails?.txIndex);
-    }
-  };
-
-  console.log('combined stuff', combinedTransactionDetails, combinedExecuteTransactions);
-
-  console.log(transactionDetails);
-
-  await executeAndSubscribeToRouteStatus({
-    transactionDetails: transactionDetails,
-    executeTransaction,
-    routeId,
-    options: {
-      route: route['mainRoute'],
-      userAddresses: userAddresses['mainRoute']!,
-      ...restOptions,
-    },
-  });
 };

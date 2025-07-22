@@ -30,7 +30,6 @@ export type TransactionDetails = {
   explorerLink?: string;
   routeKeyToStatus?: Record<string, TransactionStatus>;
   routeKey?: string;
-  canExecuteInParallel?: boolean;
 };
 
 type SimpleRoute = Partial<Pick<
@@ -175,8 +174,18 @@ export const subscribeToRouteStatus = (props: subscribeToRouteStatusProps) => {
   return unsubscribeAll;
 };
 
-export const executeAndSubscribeToRouteStatus = async (props: executeAndSubscribeToRouteStatusProps) => {
-  let { routeId, routeDetails, transactionDetails } = props;
+export const executeAndSubscribeToRouteStatus = async ({
+  transactionDetails,
+  executeTransaction,
+  trackTxPollingOptions,
+  onTransactionTracked,
+  onTransactionCompleted,
+  routeDetails,
+  onRouteStatusUpdated,
+  options,
+  routeId,
+  isCancelled,
+}: executeAndSubscribeToRouteStatusProps) => {
   removeRoutesWithFinalStatus();
 
   routeId ??= routeDetails?.id;
@@ -187,107 +196,73 @@ export const executeAndSubscribeToRouteStatus = async (props: executeAndSubscrib
     return;
   }
 
-  const parallelTxs = transactionDetails
-  .map((tx, index) => ({ tx, index }))
-  .filter(({ tx }) => tx.canExecuteInParallel);
+  for (const [transactionIndex, transaction] of transactionDetails.entries()) {
+    if (executeTransaction && !transaction.txHash) {
+      let { txHash, explorerLink } = await executeTransaction?.(transactionIndex);
+      transaction.txHash = txHash;
+      if (!explorerLink) {
+        const trackResponse = await trackTransaction({
+          chainId: transaction.chainId,
+          txHash: transaction.txHash,
+          ...trackTxPollingOptions,
+        });
+        explorerLink = trackResponse.explorerLink;
+      }
 
-  const serialTxs = transactionDetails
-    .map((tx, index) => ({ tx, index }))
-    .filter(({ tx }) => !tx.canExecuteInParallel);
-
-  await Promise.all(
-    parallelTxs.map(({ tx, index }) =>
-      executeTransactionAndPollStatus({...props, index, transaction: tx})
-    )
-  );
-
-  for (const { tx, index } of serialTxs) {
-    await executeTransactionAndPollStatus({...props, index, transaction: tx})
-  }
-
-};
-
-const executeTransactionAndPollStatus = async ({
-  index,
-  transaction,
-  transactionDetails,
-  executeTransaction,
-  trackTxPollingOptions,
-  onTransactionTracked,
-  onTransactionCompleted,
-  onRouteStatusUpdated,
-  routeId,
-  routeDetails,
-  options,
-  isCancelled,
-}: executeAndSubscribeToRouteStatusProps & { index: number, transaction: TransactionDetails }) => {
-
-  if (executeTransaction && !transaction.txHash) {
-    let { txHash, explorerLink } = await executeTransaction(index);
-    transaction.txHash = txHash;
-
-    if (!explorerLink) {
-      const trackResponse = await trackTransaction({
-        chainId: transaction.chainId,
-        txHash,
-        ...trackTxPollingOptions,
-      });
-      explorerLink = trackResponse.explorerLink;
+      transaction.explorerLink = explorerLink;
+      await onTransactionTracked?.({ txHash: transaction.txHash, chainId: transaction.chainId, explorerLink });
     }
 
-    transaction.explorerLink = explorerLink;
-    await onTransactionTracked?.({ txHash, chainId: transaction.chainId, explorerLink });
-  }
-
-  if (!transaction.txHash) {
-    updateRouteDetails({
-      routeId,
-      routeDetails,
-      transactionDetails,
-      options: {
-        ...options,
-        onRouteStatusUpdated,
-      },
-    });
-    return;
-  }
-
-  while (!isFinalState(transaction)) {
-    if (isCancelled?.()) {
-      console.info(`Polling cancelled for route ${routeId}`);
-      return;
-    }
-
-    try {
-      const statusResponse = await transactionStatus({
-        chainId: transaction.chainId,
-        txHash: transaction.txHash,
-      });
-
-      transaction.statusResponse = statusResponse;
-
+    if (transaction.txHash === undefined) {
       updateRouteDetails({
         routeId,
         routeDetails,
         transactionDetails,
         options: {
-          ...options,
           onRouteStatusUpdated,
-        },
+          ...options,
+        }
       });
+      return;
+    }
 
-      if (isFinalState(transaction)) {
-        await onTransactionCompleted?.({
+    while (!isFinalState(transaction)) {
+      if (isCancelled?.()) {
+        console.info(`Polling cancelled for route ${routeId}`);
+        return;
+      }
+      try {
+        const statusResponse = await transactionStatus({
           chainId: transaction.chainId,
           txHash: transaction.txHash,
-          status: statusResponse as TransferStatus,
         });
-        break;
+
+        transaction.statusResponse = statusResponse;
+
+        updateRouteDetails({
+          routeId,
+          routeDetails,
+          transactionDetails,
+          options: {
+            onRouteStatusUpdated,
+            ...options,
+          }
+        });
+
+        if (isFinalState(transaction)) {
+          onTransactionCompleted?.({
+            chainId: transaction.chainId,
+            txHash: transaction.txHash,
+            status: statusResponse as TransferStatus,
+          });
+
+          break;
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        await wait(1000);
       }
-    } catch (error) {
-      console.error(`Polling error for tx ${transaction.txHash}`, error);
-    } finally {
-      await wait(1000);
     }
   }
 };
@@ -329,25 +304,23 @@ export const updateRouteDetails = ({
     currentRouteDetails.txsSigned += 1;
   }
 
-  const mainTransactionDetails = transactionDetails.filter(transactionDetail => transactionDetail.routeKey === undefined || transactionDetail.routeKey === "mainRoute")
-
-  const transferEvents = routeDetails?.transferEvents ?? getTransferEventsFromTxStatusResponse(mainTransactionDetails
+  const transferEvents = routeDetails?.transferEvents ?? getTransferEventsFromTxStatusResponse(transactionDetails
     .map((tx) => tx.statusResponse)
     .filter((status): status is TxStatusResponse => status !== undefined));
 
   const allExpectedTxsStarted =
-    mainTransactionDetails.every(
+    transactionDetails.every(
       (tx) =>
         tx.txHash || tx.status === undefined
     );
-  const allKnownDetailsHaveFinalStatus = mainTransactionDetails.every(
+  const allKnownDetailsHaveFinalStatus = transactionDetails.every(
     (transaction) => isFinalState(transaction),
   );
 
   const isAllSettled = allExpectedTxsStarted && allKnownDetailsHaveFinalStatus;
 
-  const someTxSucceeded = mainTransactionDetails.some(tx => isSuccessState(tx));
-  const someTxFailed = mainTransactionDetails.some(tx => !isSuccessState(tx));
+  const someTxSucceeded = transactionDetails.some(tx => isSuccessState(tx));
+  const someTxFailed = transactionDetails.some(tx => !isSuccessState(tx));
 
   const getRouteStatus= () => {
     if (status) return status;
@@ -364,7 +337,7 @@ export const updateRouteDetails = ({
     return currentRouteDetails?.status;
   }
 
-  const transferAssetRelease = mainTransactionDetails?.findLast(i => i.statusResponse?.transferAssetRelease)?.statusResponse?.transferAssetRelease;
+  const transferAssetRelease = transactionDetails?.findLast(i => i.statusResponse?.transferAssetRelease)?.statusResponse?.transferAssetRelease;
 
   const senderAddress = options?.userAddresses?.at(0);
   const receiverAddress = options?.userAddresses?.at(-1);
@@ -430,10 +403,6 @@ const getRouteDetailsWithSimpleTransactionDetailsStatus = (routeDetails: RouteDe
             newTxDetails.routeKeyToStatus[routeKey] = getTransactionStatus(transfer.state);
           }
         })
-      }
-
-      if (txDetails.routeKey !== undefined) {
-        newTxDetails.routeKeyToStatus[txDetails.routeKey] = txDetails?.status ?? getTransactionStatus(statusResponse?.transfers?.[0]?.state);
       }
       return newTxDetails;
     })
