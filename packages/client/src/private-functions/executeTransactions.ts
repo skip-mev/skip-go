@@ -217,12 +217,10 @@ export const executeTransactions = async (
     return txResult;
   }
 
-  await executeAndSubscribeToRouteStatus({
-    transactionDetails: transactionDetails,
+  return {
+    transactionDetails,
     executeTransaction,
-    routeId,
-    options
-  });
+  };
 };
 
 const EVM_GAS_AMOUNT = 150_000;
