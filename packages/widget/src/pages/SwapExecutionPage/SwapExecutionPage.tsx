@@ -1,14 +1,15 @@
-import { Column } from "@/components/Layout";
+import { Column, Row } from "@/components/Layout";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { PageHeader } from "@/components/PageHeader";
 import React, { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 import { currentPageAtom, Routes } from "@/state/router";
 import {
   chainAddressesAtom,
+  gasRouteEffect,
   skipSubmitSwapExecutionAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
@@ -23,6 +24,19 @@ import { track } from "@amplitude/analytics-browser";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { usePreventPageUnload } from "@/hooks/usePreventPageUnload";
 import { currentTransactionAtom } from "@/state/history";
+import {
+  gasOnReceiveAtom,
+  gasOnReceiveAtomEffect,
+  gasOnReceiveRouteAtom,
+  isSomeDestinationFeeBalanceAvailableAtom,
+} from "@/state/gasOnReceive";
+import { SkeletonElement } from "@/components/Skeleton";
+import { Switch } from "@/components/Switch";
+import { SmallText } from "@/components/Typography";
+import { GasIcon } from "@/icons/GasIcon";
+import { formatUSD } from "@/utils/intl";
+import styled, { useTheme } from "styled-components";
+import { skipAssetsAtom } from "@/state/skipClient";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -35,6 +49,7 @@ export enum SwapExecutionState {
   validatingGasBalance,
   approving,
   pendingGettingAddresses,
+  pendingGettingDestinationBalance,
 }
 
 export const SwapExecutionPage = () => {
@@ -42,8 +57,14 @@ export const SwapExecutionPage = () => {
   const { route, clientOperations } = useAtomValue(swapExecutionStateAtom);
   const currentTransaction = useAtomValue(currentTransactionAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
-  const { connectRequiredChains, isLoading } = useAutoSetAddress();
+  const { connectRequiredChains, isLoading: isGettingAddressesLoading } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
+  const isSomeDestinationFeeBalanceAvailable = useAtomValue(
+    isSomeDestinationFeeBalanceAvailableAtom,
+  );
+  const isFetchingDestinationBalance = isSomeDestinationFeeBalanceAvailable.isLoading;
+  useAtom(gasOnReceiveAtomEffect);
+  useAtom(gasRouteEffect);
 
   const { mutate: submitExecuteRouteMutation, error } = useAtomValue(skipSubmitSwapExecutionAtom);
 
@@ -62,7 +83,8 @@ export const SwapExecutionPage = () => {
   const swapExecutionState = useSwapExecutionState({
     chainAddresses,
     route,
-    isLoading,
+    isGettingAddressesLoading,
+    isFetchingDestinationBalance,
   });
 
   const isSafeToleave = route?.txsRequired === currentTransaction?.transactionDetails.length;
@@ -189,6 +211,7 @@ export const SwapExecutionPage = () => {
         swapExecutionState={swapExecutionState}
         firstOperationStatus={firstOperationStatus}
         secondOperationStatus={secondOperationStatus}
+        bottomContent={<GasOnReceive />}
       />
       <SwapExecutionButton
         swapExecutionState={swapExecutionState}
@@ -202,3 +225,63 @@ export const SwapExecutionPage = () => {
     </Column>
   );
 };
+
+const GasOnReceive = () => {
+  const theme = useTheme();
+  const [gasOnReceive, setGasOnReceive] = useAtom(gasOnReceiveAtom);
+  const { data: gasRoute, isLoading: fetchingGasRoute } = useAtomValue(gasOnReceiveRouteAtom);
+  const { data: assets } = useAtomValue(skipAssetsAtom);
+  const isSomeDestinationFeeBalanceAvailable = useAtomValue(
+    isSomeDestinationFeeBalanceAvailableAtom,
+  );
+  const isFetchingBalance = isSomeDestinationFeeBalanceAvailable.isLoading;
+  const gasOnReceiveAsset = useMemo(() => {
+    if (!gasRoute?.gasOnReceiveAsset) return;
+
+    const asset = assets?.find(
+      (a) =>
+        a.chainId === gasRoute.gasOnReceiveAsset?.chainId &&
+        a.denom === gasRoute.gasOnReceiveAsset?.denom,
+    );
+    return asset;
+  }, [assets, gasRoute?.gasOnReceiveAsset]);
+
+  if (!gasRoute?.gasOnReceiveAsset) {
+    return null;
+  }
+  return (
+    <GasOnReceiveWrapper>
+      <>
+        <Row gap={8} align="center">
+          <GasIcon color={theme.primary.text.lowContrast} />
+          {isFetchingBalance || fetchingGasRoute ? (
+            <SkeletonElement height={20} width={300} />
+          ) : (
+            <SmallText>
+              {gasOnReceive
+                ? `You'll receive ${formatUSD(gasRoute?.gasOnReceiveAsset?.amountUsd ?? "")} in ${gasOnReceiveAsset?.recommendedSymbol?.toUpperCase()} as gas top-up`
+                : "Gas top up available, enable to receive gas on destination"}
+            </SmallText>
+          )}
+        </Row>
+        {!isFetchingBalance && (
+          <Switch
+            checked={gasOnReceive}
+            onChange={(v) => {
+              setGasOnReceive(v);
+            }}
+          />
+        )}
+      </>
+    </GasOnReceiveWrapper>
+  );
+};
+
+const GasOnReceiveWrapper = styled(Row)`
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 20px;
+  margin-top: 20px;
+  border-top: 1px solid ${({ theme }) => theme.secondary.background.normal};
+`;
