@@ -159,8 +159,13 @@ export const gasOnReceiveRouteAtom: ReturnType<
       console.log({ originalRoute, gasOnReceiveRouteParams, params, destinationAddress });
       if (!params) throw new Error("No route request provided");
       let feeRoute: RouteResponse | undefined;
-      if (destinationAssetIsAFeeAsset || gasOnReceiveRouteParams?.destAssetDenoms === undefined)
-        return;
+      if (
+        destinationAssetIsAFeeAsset ||
+        !gasOnReceiveRouteParams?.destAssetDenoms ||
+        gasOnReceiveRouteParams.destAssetDenoms.length === 0
+      ) {
+        return null;
+      }
       const { destAssetDenoms, ...restParams } = gasOnReceiveRouteParams;
 
       const splitDenoms = chunkArray(destAssetDenoms);
