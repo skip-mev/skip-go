@@ -24,7 +24,9 @@ export const sortedHistoryItemsAtom = atom((get): RouteDetails[] => {
   return history
     .filter(
       (historyItem) =>
-        historyItem.txsSigned > 0 && historyItem.transactionDetails.some((tx) => tx.txHash),
+        historyItem.txsSigned > 0 &&
+        historyItem.mainRouteId === undefined &&
+        historyItem.transactionDetails.some((tx) => tx.txHash),
     )
     .sort((a, b) => b.timestamp - a.timestamp);
 });

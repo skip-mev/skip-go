@@ -145,7 +145,7 @@ export const executeMultipleRoutes = async (
   });
   console.log("after appendCosmosMsgs msgsRecord", msgsRecord);
 
-  const transferIndexToRouteKey: Record<number, string> = {};
+  let transferIndexToRouteKey: Record<number, string> | undefined = undefined;
 
   const cosmosTxIndex0Map = new Map<
     string,
@@ -159,6 +159,10 @@ export const executeMultipleRoutes = async (
     const firstTx = msgs?.txs?.[0];
     if (firstTx && "cosmosTx" in firstTx) {
       const { chainId, msgs: firstTxMsgs } = firstTx.cosmosTx;
+
+      if (!transferIndexToRouteKey) {
+        transferIndexToRouteKey = {};
+      }
 
       transferIndexToRouteKey[transferIndex] = routeKey;
       transferIndex++;
@@ -191,6 +195,8 @@ export const executeMultipleRoutes = async (
 
   console.log("final result msgsRecord", msgsRecord);
 
+  let mainRouteId: string | undefined = undefined;
+
   await Promise.all(
     Object.entries(msgsRecord).map(async ([routeKey, msgsResponse]) => {
       const { id: routeId } = updateRouteDetails({
@@ -199,8 +205,13 @@ export const executeMultipleRoutes = async (
           route: route[routeKey],
           ...restOptions,
         },
+        mainRouteId,
         transferIndexToRouteKey,
       });
+
+      if (routeKey === "mainRoute") {
+        mainRouteId = routeId;
+      }
 
       console.log('route', route, route[routeKey]);
 
