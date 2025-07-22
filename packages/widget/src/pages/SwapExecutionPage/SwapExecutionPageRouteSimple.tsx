@@ -1,6 +1,6 @@
-import { css, keyframes, styled, useTheme } from "styled-components";
-import { Column, Row } from "@/components/Layout";
-import { useAtom, useAtomValue } from "jotai";
+import { styled, useTheme } from "styled-components";
+import { Column } from "@/components/Layout";
+import { useAtomValue } from "jotai";
 import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleRow";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
@@ -10,17 +10,6 @@ import { SwapExecutionState } from "./SwapExecutionPage";
 import { useMemo } from "react";
 import { convertToPxValue } from "@/utils/style";
 import { RouteDetails, TransferEventStatus } from "@skip-go/client";
-import { formatUSD } from "@/utils/intl";
-import {
-  gasOnReceiveAtom,
-  gasOnReceiveRouteAtom,
-  isSomeDestinationFeeBalanceAvailableAtom,
-} from "@/state/gasOnReceive";
-import { GasIcon } from "@/icons/GasIcon";
-import { Switch } from "@/components/Switch";
-import { SmallText } from "@/components/Typography";
-import { skipAssetsAtom } from "@/state/skipClient";
-import { SkeletonElement } from "@/components/Skeleton";
 
 export type SwapExecutionPageRouteProps = {
   operations: ClientOperation[];
@@ -29,6 +18,7 @@ export type SwapExecutionPageRouteProps = {
   swapExecutionState?: SwapExecutionState;
   firstOperationStatus?: TransferEventStatus | undefined;
   secondOperationStatus?: TransferEventStatus | undefined;
+  bottomContent?: React.ReactNode;
 };
 
 export const SwapExecutionPageRouteSimple = ({
@@ -37,27 +27,10 @@ export const SwapExecutionPageRouteSimple = ({
   onClickEditDestinationWallet,
   swapExecutionState,
   firstOperationStatus,
+  bottomContent,
 }: SwapExecutionPageRouteProps) => {
   const theme = useTheme();
   const { route, originalRoute } = useAtomValue(swapExecutionStateAtom);
-  const [gasOnReceive, setGasOnReceive] = useAtom(gasOnReceiveAtom);
-  const { data: gasRoute, isLoading: fetchingGasRoute } = useAtomValue(gasOnReceiveRouteAtom);
-  const { data: assets } = useAtomValue(skipAssetsAtom);
-  const isSomeDestinationFeeBalanceAvailable = useAtomValue(
-    isSomeDestinationFeeBalanceAvailableAtom,
-  );
-
-  const gasOnReceiveAsset = useMemo(() => {
-    if (!gasRoute?.gasOnReceiveAsset) return;
-
-    const asset = assets?.find(
-      (a) =>
-        a.chainId === gasRoute.gasOnReceiveAsset?.chainId &&
-        a.denom === gasRoute.gasOnReceiveAsset?.denom,
-    );
-    return asset;
-  }, [assets, gasRoute?.gasOnReceiveAsset]);
-  const isFetchingBalance = isSomeDestinationFeeBalanceAvailable.isLoading;
 
   const firstOperation = operations[0];
   const lastOperation = operations[operations.length - 1];
@@ -94,7 +67,7 @@ export const SwapExecutionPageRouteSimple = ({
   const destinationExplorerLink = status?.[lastOperation.transferIndex]?.toExplorerLink;
 
   return (
-    <StyledSwapExecutionPageRoute isLoading={fetchingGasRoute} justify="space-between">
+    <StyledSwapExecutionPageRoute justify="space-between">
       <SwapExecutionPageRouteSimpleRow
         {...source}
         status={firstOperationStatus}
@@ -110,33 +83,7 @@ export const SwapExecutionPageRouteSimple = ({
         explorerLink={destinationExplorerLink}
         context="destination"
       />
-
-      {gasRoute?.gasOnReceiveAsset && (
-        <GasOnReceiveWrapper>
-          <>
-            <Row gap={8} align="center">
-              <GasIcon color={theme.primary.text.lowContrast} />
-              {isFetchingBalance || fetchingGasRoute ? (
-                <SkeletonElement height={20} width={300} />
-              ) : (
-                <SmallText>
-                  {gasOnReceive
-                    ? `You'll receive ${formatUSD(gasRoute?.gasOnReceiveAsset?.amountUsd ?? "")} in ${gasOnReceiveAsset?.recommendedSymbol?.toUpperCase()} as gas top-up`
-                    : "Gas top up available, enable to receive gas on destination"}
-                </SmallText>
-              )}
-            </Row>
-            {!isFetchingBalance && (
-              <Switch
-                checked={gasOnReceive}
-                onChange={(v) => {
-                  setGasOnReceive(v);
-                }}
-              />
-            )}
-          </>
-        </GasOnReceiveWrapper>
-      )}
+      {bottomContent}
     </StyledSwapExecutionPageRoute>
   );
 };
@@ -146,64 +93,9 @@ const StyledBridgeArrowIcon = styled(BridgeArrowIcon)`
   width: 54px;
 `;
 
-const sweepRightToLeft = keyframes`
-  0% {
-    background-position: 100% 0;
-    opacity: 0.2;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    background-position: 0% 0;
-    opacity: 0.2;
-  }
-`;
-
-const StyledSwapExecutionPageRoute = styled(Column)<{
-  isLoading?: boolean;
-}>`
+const StyledSwapExecutionPageRoute = styled(Column)`
   padding: 30px;
   background: ${({ theme }) => theme.primary.background.normal};
   border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.main)};
   min-height: 225px;
-  position: relative;
-  overflow: hidden;
-
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 4px;
-    width: 100%;
-    background: ${({ theme }) => `linear-gradient(
-      90deg,
-      transparent 0%,
-      ${theme.primary.text.normal},
-      transparent 100%
-    )`};
-    background-size: 300% 100%;
-    background-repeat: no-repeat;
-    background-position: 0% 0;
-
-    opacity: ${({ isLoading }) => (isLoading ? 1 : 0)};
-    animation: ${({ isLoading }) =>
-      isLoading
-        ? css`
-            ${sweepRightToLeft} 1.5s linear infinite
-          `
-        : "none"};
-    transition: opacity 0.4s ease;
-    pointer-events: none;
-  }
-`;
-
-const GasOnReceiveWrapper = styled(Row)`
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding-top: 20px;
-  margin-top: 20px;
-  border-top: 1px solid ${({ theme }) => theme.secondary.background.normal};
 `;
