@@ -311,7 +311,8 @@ export const simulateTxAtom = atom<boolean>();
 export const batchSignTxsAtom = atom<boolean>(true);
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
-  const { route, userAddresses, mainRoute, feeRoute } = get(swapExecutionStateAtom);
+  const { route, userAddresses, mainRoute, feeRoute, isFeeRouteEnabled } =
+    get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const simulateTx = get(simulateTxAtom);
   const batchSignTxs = get(batchSignTxsAtom);
@@ -354,10 +355,10 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           chainId: "noble-1",
           address: "noble1qj83mw6k79k7wp2675t8xueytwcf7t6dr6r79x",
         },
-        {
-          chainId: "elys-1",
-          address: "elys1qj83mw6k79k7wp2675t8xueytwcf7t6dte03s2",
-        },
+        // {
+        //   chainId: "elys-1",
+        //   address: "elys1qj83mw6k79k7wp2675t8xueytwcf7t6dte03s2",
+        // },
         {
           chainId: "osmosis-1",
           address: "osmo1qj83mw6k79k7wp2675t8xueytwcf7t6drz9xt6",
@@ -367,16 +368,17 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
         await executeMultipleRoutes({
           route: {
             mainRoute: mainRoute,
-            ...(feeRoute ? { secondRoute: feeRoute } : {}),
+            ...(isFeeRouteEnabled ? { feeRoute } : {}),
           },
           userAddresses: {
             mainRoute: userAddresses,
-            ...(feeRoute ? { secondRoute: secondAddresses } : {}),
+            ...(isFeeRouteEnabled ? { feeRoute: secondAddresses } : {}),
           },
           timeoutSeconds,
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
-          simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainId !== "984122",
+          simulate:
+            simulateTx !== undefined ? simulateTx : mainRoute.sourceAssetChainId !== "984122",
           batchSignTxs: batchSignTxs !== undefined ? batchSignTxs : true,
           ...submitSwapExecutionCallbacks,
           getCosmosSigner: async (chainId) => {
