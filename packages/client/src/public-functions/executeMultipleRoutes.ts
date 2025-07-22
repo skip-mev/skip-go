@@ -145,6 +145,20 @@ export const executeMultipleRoutes = async (
   });
   console.log("after appendCosmosMsgs msgsRecord", msgsRecord);
 
+  const transferIndexToRouteKey: Record<number, string> = {};
+
+  console.log(msgsRecord)
+  let transferIndex = 0;
+
+  Object.entries(msgsRecord).forEach(([routeKey, msgs]) => {
+    msgs?.txs?.forEach(() => {
+      transferIndexToRouteKey[transferIndex] = routeKey;
+      transferIndex++;
+    });
+  });
+
+  console.log("transferIndexToRouteKey", transferIndexToRouteKey);
+
   const cosmosTxIndex0Map = new Map<
     string,
     { routeKey: string; firstCosmosTx: CosmosTx }
@@ -190,6 +204,7 @@ export const executeMultipleRoutes = async (
           route: route[routeKey],
           ...restOptions,
         },
+        transferIndexToRouteKey,
       });
 
       console.log('route', route, route[routeKey]);

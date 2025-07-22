@@ -28,6 +28,7 @@ export type TransactionDetails = {
   status?: TransactionStatus;
   statusResponse?: TxStatusResponse;
   explorerLink?: string;
+  routeKeyToStatus: Record<string, TransactionStatus>;
 };
 
 type SimpleRoute = Partial<Pick<
@@ -53,6 +54,7 @@ export type RouteDetails = {
   transferAssetRelease?: TransferAssetRelease;
   senderAddress: string;
   receiverAddress: string;
+  transferIndexToRouteKey?: Record<number, string>;
 };
 
 export function getTransactionStatus(state?: TransactionState): TransactionStatus {
@@ -270,6 +272,7 @@ type updateRouteDetailsProps = {
   options?: Partial<ExecuteRouteOptions>;
   status?: RouteStatus;
   routeId?: string;
+  transferIndexToRouteKey?: Record<number, string>;
 }
 
 export const updateRouteDetails = ({
@@ -278,13 +281,17 @@ export const updateRouteDetails = ({
   options,
   status,
   routeId,
+  transferIndexToRouteKey,
 }: updateRouteDetailsProps): RouteDetails => {
   routeId ??= routeDetails?.id ?? '';
+
   let currentRouteDetails = routeDetails ?? routeDetailsMap.get(routeId);
+
   if (!routeId && currentRouteDetails == undefined) {
     currentRouteDetails = initializeNewRouteDetails(options);
     routeId = currentRouteDetails?.id;
   }
+  transferIndexToRouteKey ??= currentRouteDetails?.transferIndexToRouteKey;
   if (currentRouteDetails === undefined) {
     throw new Error ("No route details found")
   }
@@ -346,11 +353,12 @@ export const updateRouteDetails = ({
     senderAddress: currentRouteDetails?.senderAddress ?? senderAddress?.address ?? '',
     receiverAddress: currentRouteDetails?.receiverAddress ?? receiverAddress?.address ?? '',
     txsSigned: currentRouteDetails?.txsSigned,
+    transferIndexToRouteKey,
   };
 
-  const newRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(newRouteDetails);
+  const newRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(newRouteDetails, transferIndexToRouteKey);
 
-  const previousRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(currentRouteDetails);
+  const previousRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(currentRouteDetails, transferIndexToRouteKey);
 
   if ((options?.onRouteStatusUpdated) && JSON.stringify(newRouteStatus) !== JSON.stringify(previousRouteStatus)) {
     options?.onRouteStatusUpdated?.(newRouteStatus);
@@ -375,16 +383,27 @@ const getSimpleRoute = (route?: Route | SimpleRoute): SimpleRoute => {
   }
 }
 
-const getRouteDetailsWithSimpleTransactionDetailsStatus = (routeDetails: RouteDetails) => {
-  console.log(routeDetails);
+const getRouteDetailsWithSimpleTransactionDetailsStatus = (routeDetails: RouteDetails, transferIndexToRouteKey?: Record<number, string>) => {
+  console.log('transferIndexToRouteKey', transferIndexToRouteKey);
   return {
     ...routeDetails,
     transactionDetails: routeDetails.transactionDetails.map(txDetails => {
       const { statusResponse, ...rest } = txDetails;
-      return {
+      console.log('transfers', statusResponse?.transfers);
+      const newTxDetails = {
         ...rest,
-        status: txDetails?.status ?? getTransactionStatus(txDetails.statusResponse?.state),
+        status: txDetails?.status ?? getTransactionStatus(statusResponse?.transfers?.[0]?.state),
+        routeKeyToStatus: { ...(txDetails.routeKeyToStatus ?? {}) },
+      };
+      if (transferIndexToRouteKey) {
+        statusResponse?.transfers?.forEach((transfer, index) => {
+          const routeKey = transferIndexToRouteKey?.[index];
+          if (routeKey !== undefined) {
+            newTxDetails.routeKeyToStatus[routeKey] = getTransactionStatus(transfer.state);
+          }
+        })
       }
+      return newTxDetails;
     })
   };
 }
