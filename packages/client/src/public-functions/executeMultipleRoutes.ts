@@ -216,6 +216,8 @@ export const executeMultipleRoutes = async (
         txs: msgsResponse?.txs,
         route: route[routeKey]!,
         userAddresses: userAddresses[routeKey]!,
+        bypassApprovalCheck: routeKey !== 'mainRoute',
+        useUnlimitedApproval: true
       });
 
       combinedTransactionDetails.push(transactionDetails.map(txDetails => ({...txDetails, routeKey })));
