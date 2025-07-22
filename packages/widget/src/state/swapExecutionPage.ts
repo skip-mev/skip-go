@@ -311,7 +311,7 @@ export const simulateTxAtom = atom<boolean>();
 export const batchSignTxsAtom = atom<boolean>(true);
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
-  const { route, userAddresses } = get(swapExecutionStateAtom);
+  const { route, userAddresses, mainRoute, feeRoute } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const simulateTx = get(simulateTxAtom);
   const batchSignTxs = get(batchSignTxsAtom);
@@ -341,8 +341,8 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   return {
     gcTime: Infinity,
     mutationFn: async ({ getSvmSigner }: { getSvmSigner: () => Promise<Adapter> }) => {
-      if (!route) return;
-      console.log("Executing route", route);
+      if (!mainRoute) return;
+      console.log("Executing route", mainRoute);
       if (!userAddresses.length) return;
 
       const secondAddresses = [
@@ -366,12 +366,12 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
       try {
         await executeMultipleRoutes({
           route: {
-            mainRoute: route.mainRoute,
-            ...(route?.feeRoute ? { secondRoute: route.feeRoute } : {}),
+            mainRoute: mainRoute,
+            ...(feeRoute ? { secondRoute: feeRoute } : {}),
           },
           userAddresses: {
             mainRoute: userAddresses,
-            ...(route?.feeRoute ? { secondRoute: secondAddresses } : {}),
+            ...(feeRoute ? { secondRoute: secondAddresses } : {}),
           },
           timeoutSeconds,
           slippageTolerancePercent: swapSettings.slippage.toString(),
