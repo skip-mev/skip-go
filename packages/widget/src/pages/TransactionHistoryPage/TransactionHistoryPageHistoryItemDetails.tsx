@@ -7,10 +7,16 @@ import { TrashIcon } from "@/icons/TrashIcon";
 import { useMemo } from "react";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { getTruncatedAddress } from "@/utils/crypto";
-import { RouteStatus, TransactionDetails, TransferAssetRelease } from "@skip-go/client";
+import {
+  RouteDetails,
+  RouteStatus,
+  TransactionDetails,
+  TransferAssetRelease,
+} from "@skip-go/client";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { track } from "@amplitude/analytics-browser";
+import { GasOnReceive } from "@/components/GasOnReceive";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
   status?: RouteStatus;
@@ -20,6 +26,7 @@ type TransactionHistoryPageHistoryItemDetailsProps = {
   onClickDelete?: () => void;
   transferAssetRelease?: TransferAssetRelease;
   transactionDetails: TransactionDetails[];
+  feeAssetRouteDetails?: RouteDetails;
 };
 
 const statusMap = {
@@ -43,8 +50,11 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   onClickDelete,
   transferAssetRelease,
   transactionDetails,
+  feeAssetRouteDetails,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
+
+  console.log("feeAssetRouteDetails", feeAssetRouteDetails);
 
   const initialTxHash = transactionDetails?.[0]?.txHash;
 
@@ -122,6 +132,10 @@ export const TransactionHistoryPageHistoryItemDetails = ({
             <ChainIcon />
           </SmallText>
         </Link>
+      </StyledHistoryItemDetailRow>
+
+      <StyledHistoryItemDetailRow align="center">
+        <GasOnReceive routeDetails={feeAssetRouteDetails} />
       </StyledHistoryItemDetailRow>
 
       <Row align="center" style={{ marginTop: 10, padding: "0px 10px" }}>

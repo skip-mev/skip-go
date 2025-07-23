@@ -34,6 +34,8 @@ export type TransactionDetails = {
 
 type SimpleRoute = Partial<Pick<
   Route,
+  | "usdAmountIn"
+  | "usdAmountOut"
   | "amountIn"
   | "amountOut"
   | "sourceAssetDenom"
@@ -378,6 +380,8 @@ export const updateRouteDetails = ({
 
 const getSimpleRoute = (route?: Route | SimpleRoute): SimpleRoute => {
   return {
+    usdAmountOut: route?.usdAmountOut,
+    usdAmountIn: route?.usdAmountIn,
     amountIn: route?.amountIn,
     amountOut: route?.amountOut,
     sourceAssetDenom: route?.sourceAssetDenom,

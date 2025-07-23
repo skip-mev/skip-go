@@ -37,6 +37,7 @@ import { GasIcon } from "@/icons/GasIcon";
 import { formatUSD } from "@/utils/intl";
 import styled, { useTheme } from "styled-components";
 import { skipAssetsAtom } from "@/state/skipClient";
+import { GasOnReceive } from "@/components/GasOnReceive";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -225,63 +226,3 @@ export const SwapExecutionPage = () => {
     </Column>
   );
 };
-
-const GasOnReceive = () => {
-  const theme = useTheme();
-  const [gasOnReceive, setGasOnReceive] = useAtom(gasOnReceiveAtom);
-  const { data: gasRoute, isLoading: fetchingGasRoute } = useAtomValue(gasOnReceiveRouteAtom);
-  const { data: assets } = useAtomValue(skipAssetsAtom);
-  const isSomeDestinationFeeBalanceAvailable = useAtomValue(
-    isSomeDestinationFeeBalanceAvailableAtom,
-  );
-  const isFetchingBalance = isSomeDestinationFeeBalanceAvailable.isLoading;
-  const gasOnReceiveAsset = useMemo(() => {
-    if (!gasRoute?.gasOnReceiveAsset) return;
-
-    const asset = assets?.find(
-      (a) =>
-        a.chainId === gasRoute.gasOnReceiveAsset?.chainId &&
-        a.denom === gasRoute.gasOnReceiveAsset?.denom,
-    );
-    return asset;
-  }, [assets, gasRoute?.gasOnReceiveAsset]);
-
-  if (!gasRoute?.gasOnReceiveAsset) {
-    return null;
-  }
-  return (
-    <GasOnReceiveWrapper>
-      <>
-        <Row gap={8} align="center">
-          <GasIcon color={theme.primary.text.lowContrast} />
-          {isFetchingBalance || fetchingGasRoute ? (
-            <SkeletonElement height={20} width={300} />
-          ) : (
-            <SmallText>
-              {gasOnReceive
-                ? `You'll receive ${formatUSD(gasRoute?.gasOnReceiveAsset?.amountUsd ?? "")} in ${gasOnReceiveAsset?.recommendedSymbol?.toUpperCase()} as gas top-up`
-                : "Gas top up available, enable to receive gas on destination"}
-            </SmallText>
-          )}
-        </Row>
-        {!isFetchingBalance && (
-          <Switch
-            checked={gasOnReceive}
-            onChange={(v) => {
-              setGasOnReceive(v);
-            }}
-          />
-        )}
-      </>
-    </GasOnReceiveWrapper>
-  );
-};
-
-const GasOnReceiveWrapper = styled(Row)`
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding-top: 20px;
-  margin-top: 20px;
-  border-top: 1px solid ${({ theme }) => theme.secondary.background.normal};
-`;

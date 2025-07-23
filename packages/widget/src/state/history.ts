@@ -19,16 +19,31 @@ export const transactionHistoryAtom = atomWithStorage<RouteDetails[]>(
   [],
 );
 
-export const sortedHistoryItemsAtom = atom((get): RouteDetails[] => {
+export type RouteDetailsWithRelatedRoutes = RouteDetails & {
+  relatedRoutes?: RouteDetails[];
+};
+
+export const sortedHistoryItemsAtom = atom((get): RouteDetailsWithRelatedRoutes[] => {
   const history = get(transactionHistoryAtom);
-  return history
+  const sortedAndFiltered = history
     .filter(
       (historyItem) =>
         historyItem.txsSigned > 0 &&
         historyItem.mainRouteId === undefined &&
         historyItem.transactionDetails.some((tx) => tx.txHash),
     )
+    .map((historyItem) => {
+      const relatedRoutes = history.filter((item) => item.mainRouteId === historyItem.id);
+      return {
+        ...historyItem,
+        relatedRoutes: relatedRoutes,
+      };
+    })
     .sort((a, b) => b.timestamp - a.timestamp);
+
+  console.log(sortedAndFiltered);
+
+  return sortedAndFiltered;
 });
 
 export const setTransactionHistoryAtom = atom(
@@ -61,7 +76,7 @@ export const currentTransactionAtom = atom((get): RouteDetails | undefined => {
 });
 
 export const lastTransactionInTimeAtom = atom((get) => {
-  const history = get(transactionHistoryAtom);
+  const history = get(sortedHistoryItemsAtom);
   if (history.length === 0) return;
 
   const sorted = [...history].sort((a, b) => b.timestamp - a.timestamp);

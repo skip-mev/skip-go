@@ -19,11 +19,11 @@ import { ThinArrowIcon } from "@/icons/ThinArrowIcon";
 import { Tooltip } from "@/components/Tooltip";
 import { CircleSkeletonElement } from "@/components/Skeleton";
 import { convertToPxValue } from "@/utils/style";
-import { RouteDetails } from "@skip-go/client";
+import { RouteDetails, TransactionStatus, RouteStatus } from "@skip-go/client";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
-  txHistoryItem: RouteDetails;
+  txHistoryItem: RouteDetails & { relatedRoutes?: RouteDetails[] };
   showDetails?: boolean;
   onClickRow?: () => void;
   onClickDelete?: () => void;
@@ -89,6 +89,35 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
       assetImage: destinationAssetDetails.assetImage ?? "",
       chainName: destinationAssetDetails.chainName,
     };
+
+    const feeAssetRouteDetails = useMemo(() => {
+      let routeDetails = txHistoryItem?.relatedRoutes?.[0];
+      const transactionDetailContainingCosmosFeeAsset = historyItem?.transactionDetails.find(
+        (txDetail) => txDetail.routeKeyToStatus?.feeRoute !== undefined,
+      );
+
+      const convertTransactionStatusToRouteStatus = (
+        transactionStatus?: TransactionStatus,
+      ): RouteStatus | undefined => {
+        if (!transactionStatus) return;
+        if (transactionStatus === "success") {
+          return "completed";
+        }
+        return transactionStatus;
+      };
+
+      const cosmosFeeAssetStatus = convertTransactionStatusToRouteStatus(
+        transactionDetailContainingCosmosFeeAsset?.routeKeyToStatus?.feeRoute,
+      );
+
+      if (cosmosFeeAssetStatus) {
+        routeDetails = historyItem;
+        if (routeDetails) {
+          routeDetails.status = cosmosFeeAssetStatus;
+        }
+      }
+      return routeDetails;
+    }, [historyItem, txHistoryItem?.relatedRoutes]);
 
     const renderStatus = useMemo(() => {
       switch (historyItem?.status) {
@@ -176,6 +205,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
               onClickDelete?.();
             }}
             transferAssetRelease={historyItem?.transferAssetRelease}
+            feeAssetRouteDetails={feeAssetRouteDetails}
           />
         )}
       </StyledHistoryContainer>
