@@ -94,7 +94,7 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
     return <GasIcon color={theme.primary.text.lowContrast} />;
   }, [routeDetails?.status, theme.primary.text.lowContrast]);
 
-  if (!routeDetails && !gasRoute?.gasOnReceiveAsset) {
+  if (!routeDetails && (!gasRoute?.gasOnReceiveAsset || !gasOnReceiveAsset || fetchingGasRoute)) {
     return null;
   }
 
