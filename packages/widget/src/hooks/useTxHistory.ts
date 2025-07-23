@@ -27,12 +27,10 @@ export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
       if (!relatedRoute.id) {
         relatedRoute = txHistoryItem;
       }
-      console.log("subscribing to related route", relatedRoute);
       unsubscribers.push(
         subscribeToRouteStatus({
           routeDetails: relatedRoute as RouteDetails,
           onRouteStatusUpdated: (routeStatus) => {
-            console.log("on related route status updated");
             setTransactionHistory(routeStatus);
           },
         }),

@@ -1,5 +1,5 @@
 import { SmallText } from "@/components/Typography";
-import { Column, Row } from "@/components/Layout";
+import { Column, Row, Spacer } from "@/components/Layout";
 import { styled, useTheme } from "styled-components";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { Button, Link } from "@/components/Button";
@@ -135,7 +135,10 @@ export const TransactionHistoryPageHistoryItemDetails = ({
       </StyledHistoryItemDetailRow>
 
       <StyledHistoryItemDetailRow align="center">
-        <GasOnReceive routeDetails={feeAssetRouteDetails} />
+        <Column width="100%">
+          <Spacer height={16} showLine lineColor={theme.secondary.background.transparent} />
+          <GasOnReceive routeDetails={feeAssetRouteDetails} />
+        </Column>
       </StyledHistoryItemDetailRow>
 
       <Row align="center" style={{ marginTop: 10, padding: "0px 10px" }}>

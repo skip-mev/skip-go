@@ -1,4 +1,4 @@
-import { Column } from "@/components/Layout";
+import { Column, Spacer } from "@/components/Layout";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { PageHeader } from "@/components/PageHeader";
 import React, { useMemo, useState } from "react";
@@ -25,10 +25,13 @@ import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { usePreventPageUnload } from "@/hooks/usePreventPageUnload";
 import { currentTransactionAtom } from "@/state/history";
 import {
+  gasOnReceiveAtom,
   gasOnReceiveAtomEffect,
+  gasOnReceiveRouteAtom,
   isSomeDestinationFeeBalanceAvailableAtom,
 } from "@/state/gasOnReceive";
 import { GasOnReceive } from "@/components/GasOnReceive";
+import { useTheme } from "styled-components";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -45,8 +48,9 @@ export enum SwapExecutionState {
 }
 
 export const SwapExecutionPage = () => {
+  const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, clientOperations } = useAtomValue(swapExecutionStateAtom);
+  const { route, clientOperations, feeRoute } = useAtomValue(swapExecutionStateAtom);
   const currentTransaction = useAtomValue(currentTransactionAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains, isLoading: isGettingAddressesLoading } = useAutoSetAddress();
@@ -54,6 +58,7 @@ export const SwapExecutionPage = () => {
   const isSomeDestinationFeeBalanceAvailable = useAtomValue(
     isSomeDestinationFeeBalanceAvailableAtom,
   );
+  const { data: gasRoute } = useAtomValue(gasOnReceiveRouteAtom);
   const isFetchingDestinationBalance = isSomeDestinationFeeBalanceAvailable.isLoading;
   useAtom(gasOnReceiveAtomEffect);
   useAtom(gasRouteEffect);
@@ -203,7 +208,14 @@ export const SwapExecutionPage = () => {
         swapExecutionState={swapExecutionState}
         firstOperationStatus={firstOperationStatus}
         secondOperationStatus={secondOperationStatus}
-        bottomContent={<GasOnReceive />}
+        bottomContent={
+          (gasRoute !== undefined || feeRoute !== undefined) && (
+            <Column>
+              <Spacer height={24} showLine lineColor={theme.secondary.background.transparent} />
+              <GasOnReceive routeDetails={currentTransaction} />
+            </Column>
+          )
+        }
       />
       <SwapExecutionButton
         swapExecutionState={swapExecutionState}

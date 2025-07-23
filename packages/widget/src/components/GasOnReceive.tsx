@@ -8,14 +8,14 @@ import { skipAssetsAtom } from "@/state/skipClient";
 import { formatUSD } from "@/utils/intl";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
-import styled, { useTheme } from "styled-components";
+import { useTheme } from "styled-components";
 import { Row } from "./Layout";
 import { SkeletonElement } from "./Skeleton";
 import { Switch } from "./Switch";
 import { SmallText } from "./Typography";
-import { currentTransactionAtom } from "@/state/history";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { RouteDetails } from "@skip-go/client";
+import { currentTransactionAtom } from "@/state/history";
 
 export type GasOnReceiveProps = {
   routeDetails?: RouteDetails;
@@ -25,14 +25,14 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
   const theme = useTheme();
   const [gasOnReceive, setGasOnReceive] = useAtom(gasOnReceiveAtom);
   const { data: gasRoute, isLoading: fetchingGasRoute } = useAtomValue(gasOnReceiveRouteAtom);
-  const currentTransaction = useAtomValue(currentTransactionAtom);
-  // const { feeRoute } = useAtomValue(swapExecutionStateAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const isSomeDestinationFeeBalanceAvailable = useAtomValue(
     isSomeDestinationFeeBalanceAvailableAtom,
   );
 
-  const isLoading = routeDetails?.status === "pending" || currentTransaction?.status === "pending";
+  const currentTransaction = useAtomValue(currentTransactionAtom);
+
+  const isGorEnabled = useAtomValue(gasOnReceiveAtom);
 
   const isFetchingBalance = isSomeDestinationFeeBalanceAvailable.isLoading;
   const gasOnReceiveAsset = useMemo(() => {
@@ -55,72 +55,69 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
   const gasOnReceiveText = useMemo(() => {
     const formattedAmountText = `${formatUSD(amountUsd)} in ${assetSymbol} as gas top-up`;
 
-    const isCompleted = routeDetails?.status === "completed";
+    switch (routeDetails?.status) {
+      case "pending":
+        return `Receiving ${formattedAmountText}`;
+      case "completed":
+        return `Received ${formattedAmountText}`;
+      case "failed":
+        return `Failed to receive ${formattedAmountText}`;
+      default:
+        if (gasRoute && isGorEnabled) {
+          return `You'll receive ${formattedAmountText}`;
+        }
+        return "Enable to receive fee asset on destination chain";
+    }
+  }, [amountUsd, assetSymbol, gasRoute, isGorEnabled, routeDetails?.status]);
 
-    if (isCompleted) {
-      return `Received ${formattedAmountText}`;
+  const renderIcon = useMemo(() => {
+    if (routeDetails?.status === "pending") {
+      return (
+        <SmallText
+          style={{
+            marginLeft: "8px",
+            marginRight: "8px",
+            position: "relative",
+          }}
+        >
+          <SpinnerIcon
+            style={{
+              animation: "spin 1s linear infinite",
+              position: "absolute",
+              height: 14,
+              width: 14,
+            }}
+          />
+        </SmallText>
+      );
     }
-
-    if (isLoading) {
-      return `Receiving ${formattedAmountText}`;
-    }
-    if (gasRoute) {
-      return `You'll receive ${formattedAmountText}`;
-    }
-    return "Enable to receive fee asset on destination chain";
-  }, [amountUsd, assetSymbol, gasRoute, isLoading, routeDetails?.status]);
+    return <GasIcon color={theme.primary.text.lowContrast} />;
+  }, [routeDetails?.status, theme.primary.text.lowContrast]);
 
   if (!routeDetails && !gasRoute?.gasOnReceiveAsset) {
     return null;
   }
+
   return (
-    <GasOnReceiveWrapper>
-      <>
-        <Row gap={8} align="center">
-          {isLoading ? (
-            <SmallText
-              style={{
-                marginLeft: "8px",
-                marginRight: "8px",
-                position: "relative",
-              }}
-            >
-              <SpinnerIcon
-                style={{
-                  animation: "spin 1s linear infinite",
-                  position: "absolute",
-                  height: 14,
-                  width: 14,
-                }}
-              />
-            </SmallText>
-          ) : (
-            <GasIcon color={theme.primary.text.lowContrast} />
-          )}
-          {isFetchingBalance || fetchingGasRoute ? (
-            <SkeletonElement height={20} width={300} />
-          ) : (
-            <SmallText>{gasOnReceiveText}</SmallText>
-          )}
-        </Row>
-        {!isFetchingBalance && !currentTransaction && !routeDetails && (
-          <Switch
-            checked={gasOnReceive}
-            onChange={(v) => {
-              setGasOnReceive(v);
-            }}
-          />
+    <Row align="center" justify="space-between">
+      <Row gap={8} align="center">
+        {renderIcon}
+        {isFetchingBalance || fetchingGasRoute ? (
+          <SkeletonElement height={20} width={300} />
+        ) : (
+          <SmallText color={routeDetails?.status === "failed" ? theme.warning.text : undefined}>
+            {gasOnReceiveText}
+          </SmallText>
         )}
-      </>
-    </GasOnReceiveWrapper>
+      </Row>
+      {!isFetchingBalance && !currentTransaction && !routeDetails && (
+        <Switch
+          checked={gasOnReceive}
+          onChange={(v) => {
+            setGasOnReceive(v);
+          }}
+        />
+      )}
+    </Row>
   );
 };
-
-const GasOnReceiveWrapper = styled(Row)`
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding-top: 20px;
-  margin-top: 20px;
-  border-top: 1px solid ${({ theme }) => theme.secondary.background.normal};
-`;
