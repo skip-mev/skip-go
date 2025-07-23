@@ -9,6 +9,8 @@ export type FlexProps = {
   flexDirection?: "row" | "column";
 };
 
+type SizeValue = string | number;
+
 export const flexProps = css<FlexProps>`
   display: flex;
   ${({ align }) => align && `align-items: ${align}`};
@@ -20,8 +22,10 @@ export const flexProps = css<FlexProps>`
 `;
 
 export const Row = styled.div<SpacerProps & FlexProps>`
-  ${({ width }) => width && `width: ${width}px`};
-  ${({ height }) => height && `height: ${height}px`};
+  ${({ width }) =>
+    width !== undefined && `width: ${typeof width === "number" ? `${width}px` : width}`};
+  ${({ height }) =>
+    height !== undefined && `height: ${typeof height === "number" ? `${height}px` : height}`};
   flex-direction: row;
   ${flexProps};
 `;
@@ -31,13 +35,34 @@ export const Column = styled(Row)`
 `;
 
 export const Spacer = styled.div<SpacerProps>`
-  ${({ width }) => width && `width: ${width}px`};
-  ${({ height }) => height && `height: ${height}px`};
+  position: relative;
   flex-shrink: 0;
   flex-grow: 0;
+  ${({ width }) =>
+    width !== undefined && `width: ${typeof width === "number" ? `${width}px` : width}`};
+  ${({ height }) =>
+    height !== undefined && `height: ${typeof height === "number" ? `${height}px` : height}`};
+
+  ${({ showLine, lineColor = "#ccc", lineThickness = 1 }) =>
+    showLine &&
+    `
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: ${lineThickness}px;
+        background-color: ${lineColor};
+        transform: translateY(-50%);
+      }
+    `}
 `;
 
 type SpacerProps = {
-  width?: number;
-  height?: number;
+  width?: SizeValue;
+  height?: SizeValue;
+  showLine?: boolean;
+  lineColor?: string;
+  lineThickness?: number;
 };

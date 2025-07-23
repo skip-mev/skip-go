@@ -14,7 +14,7 @@ import type {
   BaseSettings,
 } from "src/types/client-types";
 import { ApiState } from "src/state/apiState";
-import { updateRouteDetails } from "./subscribeToRouteStatus";
+import { executeAndSubscribeToRouteStatus, updateRouteDetails } from "./subscribeToRouteStatus";
 import { createValidAddressList } from "src/utils/address";
 
 /** Execute Route Options */
@@ -80,5 +80,12 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     })
   }
 
-  await executeTransactions({ ...options, routeId, txs: response?.txs });
+  const { transactionDetails, executeTransaction } = await executeTransactions({ ...options, routeId, txs: response?.txs });
+
+  await executeAndSubscribeToRouteStatus({
+    transactionDetails,
+    executeTransaction,
+    routeId,
+    options,
+  });
 };

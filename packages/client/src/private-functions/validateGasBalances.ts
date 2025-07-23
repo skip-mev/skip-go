@@ -21,7 +21,6 @@ export type ValidateGasBalancesProps = {
   disabledChainIds?: string[];
   // run gas validation for specific chainId
   enabledChainIds?: string[];
-  useUnlimitedApproval?: boolean;
   routeId: string;
   options: ExecuteRouteOptions;
 } & Pick<SignerGetters, "getCosmosSigner" | "getEvmSigner">;
@@ -35,7 +34,6 @@ export const validateGasBalances = async ({
   simulate,
   disabledChainIds,
   enabledChainIds,
-  useUnlimitedApproval,
   getCosmosPriorityFeeDenom,
   routeId,
   options
@@ -111,7 +109,8 @@ export const validateGasBalances = async ({
             tx: tx.evmTx,
             signer,
             getFallbackGasAmount,
-            useUnlimitedApproval,
+            useUnlimitedApproval: options?.useUnlimitedApproval,
+            bypassApprovalCheck: options?.bypassApprovalCheck,
           });
           return res;
         } catch (e) {

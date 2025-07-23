@@ -24,7 +24,7 @@ import { BigNumber } from "bignumber.js";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
-  txHistoryItem: RouteDetails;
+  txHistoryItem: RouteDetails & { relatedRoutes?: RouteDetails[] };
   showDetails?: boolean;
   onClickRow?: () => void;
   onClickDelete?: () => void;
@@ -102,6 +102,10 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
       assetImage: destinationAssetDetails.assetImage ?? "",
       chainName: destinationAssetDetails.chainName,
     };
+
+    const feeAssetRouteDetails = useMemo(() => {
+      return historyItem?.relatedRoutes?.[0] || txHistoryItem?.relatedRoutes?.[0];
+    }, [historyItem, txHistoryItem]);
 
     const renderStatus = useMemo(() => {
       switch (historyItem?.status) {
@@ -189,6 +193,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
               onClickDelete?.();
             }}
             transferAssetRelease={historyItem?.transferAssetRelease}
+            feeAssetRouteDetails={feeAssetRouteDetails}
           />
         )}
       </StyledHistoryContainer>
