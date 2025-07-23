@@ -20,6 +20,7 @@ import { Tooltip } from "@/components/Tooltip";
 import { CircleSkeletonElement } from "@/components/Skeleton";
 import { convertToPxValue } from "@/utils/style";
 import { RouteDetails } from "@skip-go/client";
+import { BigNumber } from "bignumber.js";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -64,10 +65,22 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
       transactionDetails,
     } = txHistoryItem;
 
+    const totalSourceTokenAmount = useMemo(() => {
+      const totalRelatedRouteSourceAmount =
+        txHistoryItem?.relatedRoutes?.reduce(
+          (acc, routeDetail) =>
+            BigNumber(acc)
+              .plus(BigNumber(routeDetail.route?.amountIn || 0))
+              .toNumber(),
+          0,
+        ) ?? 0;
+      return BigNumber(amountIn ?? 0).plus(BigNumber(totalRelatedRouteSourceAmount).toNumber());
+    }, [amountIn, txHistoryItem]);
+
     const sourceAssetDetails = useGetAssetDetails({
       assetDenom: sourceAssetDenom,
       chainId: sourceAssetChainId,
-      tokenAmount: amountIn,
+      tokenAmount: totalSourceTokenAmount,
     });
 
     const destinationAssetDetails = useGetAssetDetails({
