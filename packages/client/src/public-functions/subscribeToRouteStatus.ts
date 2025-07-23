@@ -59,7 +59,8 @@ export type RouteDetails = {
   receiverAddress: string;
   transferIndexToRouteKey?: Record<number, string>;
   mainRouteId?: string;
-  relatedRoutes?: (RouteDetails | Route)[];
+  relatedRoutes?: Partial<RouteDetails>[];
+  routeKey?: string;
 };
 
 export function getTransactionStatus(state?: TransactionState): TransactionStatus {
@@ -280,7 +281,7 @@ type updateRouteDetailsProps = {
   routeId?: string;
   mainRouteId?: string;
   transferIndexToRouteKey?: Record<number, string>;
-  relatedRoutes?: (RouteDetails | Route)[];
+  relatedRoutes?: Partial<RouteDetails>[];
 }
 
 export const updateRouteDetails = ({
@@ -351,6 +352,13 @@ export const updateRouteDetails = ({
   const senderAddress = options?.userAddresses?.at(0);
   const receiverAddress = options?.userAddresses?.at(-1);
 
+  const updatedRelatedRoutes = updateRelatedRoutes({
+    relatedRoutes: relatedRoutes ?? currentRouteDetails?.relatedRoutes ?? [],
+    transferIndexToRouteKey,
+    transactionDetails,
+    routeId,
+  })
+
   const newRouteDetails: RouteDetails = {
     id: routeId,
     timestamp: currentRouteDetails.timestamp,
@@ -365,12 +373,12 @@ export const updateRouteDetails = ({
     txsSigned: currentRouteDetails?.txsSigned,
     transferIndexToRouteKey,
     mainRouteId: mainRouteId ?? currentRouteDetails?.mainRouteId,
-    relatedRoutes: relatedRoutes ?? currentRouteDetails?.relatedRoutes,
+    relatedRoutes: updatedRelatedRoutes,
   };
 
-  const newRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(newRouteDetails, transferIndexToRouteKey);
+  const newRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(newRouteDetails);
 
-  const previousRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(currentRouteDetails, transferIndexToRouteKey);
+  const previousRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(currentRouteDetails);
 
   if ((options?.onRouteStatusUpdated) && JSON.stringify(newRouteStatus) !== JSON.stringify(previousRouteStatus)) {
     options?.onRouteStatusUpdated?.(newRouteStatus);
@@ -397,26 +405,15 @@ const getSimpleRoute = (route?: Route | SimpleRoute): SimpleRoute => {
   }
 }
 
-const getRouteDetailsWithSimpleTransactionDetailsStatus = (routeDetails: RouteDetails, transferIndexToRouteKey?: Record<number, string>) => {
-  console.log('transferIndexToRouteKey', transferIndexToRouteKey);
+const getRouteDetailsWithSimpleTransactionDetailsStatus = (routeDetails: RouteDetails) => {
   return {
     ...routeDetails,
     transactionDetails: routeDetails.transactionDetails.map(txDetails => {
       const { statusResponse, ...rest } = txDetails;
-      console.log('transfers', statusResponse?.transfers);
       const newTxDetails = {
         ...rest,
         status: txDetails?.status ?? getTransactionStatus(statusResponse?.transfers?.[0]?.state),
-        routeKeyToStatus: { ...(txDetails.routeKeyToStatus ?? {}) },
       };
-      if (transferIndexToRouteKey) {
-        statusResponse?.transfers?.forEach((transfer, index) => {
-          const routeKey = transferIndexToRouteKey?.[index];
-          if (routeKey !== undefined) {
-            newTxDetails.routeKeyToStatus[routeKey] = getTransactionStatus(transfer.state);
-          }
-        })
-      }
       return newTxDetails;
     })
   };
@@ -429,3 +426,43 @@ const removeRoutesWithFinalStatus = () => {
     }
   });
 };
+
+const convertTransactionStatusToRouteStatus = (
+  transactionStatus?: TransactionStatus,
+): RouteStatus | undefined => {
+  if (!transactionStatus) return;
+  if (transactionStatus === "success") {
+    return "completed";
+  }
+  return transactionStatus;
+};
+
+type updateRelatedRoutesProps = {
+  routeId?: string;
+  relatedRoutes: Partial<RouteDetails>[];
+  transferIndexToRouteKey?: Record<number, string>;
+  transactionDetails?: TransactionDetails[];
+}
+
+const updateRelatedRoutes = ({
+  relatedRoutes,
+  transferIndexToRouteKey,
+  transactionDetails,
+  routeId,
+}: updateRelatedRoutesProps) => {
+  let updatedRelatedRoutes = [...relatedRoutes];
+  if (transferIndexToRouteKey) {
+    for (const [indexStr, routeKey] of Object.entries(transferIndexToRouteKey)) {
+      const tx = transactionDetails?.[Number(indexStr)];
+      const state = tx?.statusResponse?.transfers?.[0]?.state;
+      const status = convertTransactionStatusToRouteStatus(getTransactionStatus(state));
+      const targetRoute = updatedRelatedRoutes.find((r) => r.routeKey === routeKey);
+      if (targetRoute) {
+        if (status) targetRoute.status = status;
+        targetRoute.id === routeId; 
+      }
+
+    }
+  }
+  return updatedRelatedRoutes;
+}

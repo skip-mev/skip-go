@@ -91,33 +91,9 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
     };
 
     const feeAssetRouteDetails = useMemo(() => {
-      let routeDetails = txHistoryItem?.relatedRoutes?.[0];
-      const transactionDetailContainingCosmosFeeAsset = historyItem?.transactionDetails.find(
-        (txDetail) => txDetail.routeKeyToStatus?.feeRoute !== undefined,
-      );
-
-      const convertTransactionStatusToRouteStatus = (
-        transactionStatus?: TransactionStatus,
-      ): RouteStatus | undefined => {
-        if (!transactionStatus) return;
-        if (transactionStatus === "success") {
-          return "completed";
-        }
-        return transactionStatus;
-      };
-
-      const cosmosFeeAssetStatus = convertTransactionStatusToRouteStatus(
-        transactionDetailContainingCosmosFeeAsset?.routeKeyToStatus?.feeRoute,
-      );
-
-      if (cosmosFeeAssetStatus) {
-        routeDetails = historyItem;
-        if (routeDetails) {
-          routeDetails.status = cosmosFeeAssetStatus;
-        }
-      }
-      return routeDetails;
-    }, [historyItem, txHistoryItem?.relatedRoutes]);
+      console.log(historyItem, txHistoryItem);
+      return historyItem?.relatedRoutes?.[0] ?? txHistoryItem?.relatedRoutes?.[0];
+    }, [historyItem, txHistoryItem]);
 
     const renderStatus = useMemo(() => {
       switch (historyItem?.status) {

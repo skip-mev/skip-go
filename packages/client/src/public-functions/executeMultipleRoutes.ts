@@ -215,11 +215,11 @@ export const executeMultipleRoutes = async (
   const mergedMainAndSecondaryRoutes = Object.entries(msgsRecord).length !== Object.entries(route).length;
 
   for (const [routeKey, msgsResponse] of Object.entries(msgsRecord)) {
-    let relatedRoutes: Route[] | undefined;
+    let relatedRoutes: Partial<RouteDetails>[] | undefined;
     if (routeKey !== "mainRoute" || mergedMainAndSecondaryRoutes) {
       relatedRoutes = Object.entries(route)
         .filter(([key]) => key !== "mainRoute")
-        .map(([_, route]) => route);
+        .map(([key, route]) => ({ route, routeKey: key }));
     }
 
     console.log('related routes', relatedRoutes)

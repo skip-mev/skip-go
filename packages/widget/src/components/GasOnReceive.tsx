@@ -64,11 +64,11 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
     if (isLoading) {
       return `Receiving ${formattedAmountText}`;
     }
-    if (gasOnReceive) {
+    if (gasRoute) {
       return `You'll receive ${formattedAmountText}`;
     }
     return "Enable to receive fee asset on destination chain";
-  }, [amountUsd, assetSymbol, gasOnReceive, isLoading, routeDetails?.status]);
+  }, [amountUsd, assetSymbol, gasRoute, isLoading, routeDetails?.status]);
 
   if (!routeDetails && !gasRoute?.gasOnReceiveAsset) {
     return null;

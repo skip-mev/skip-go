@@ -357,10 +357,10 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           chainId: "noble-1",
           address: "noble1qj83mw6k79k7wp2675t8xueytwcf7t6dr6r79x",
         },
-        // {
-        //   chainId: "elys-1",
-        //   address: "elys1qj83mw6k79k7wp2675t8xueytwcf7t6dte03s2",
-        // },
+        {
+          chainId: "elys-1",
+          address: "elys1qj83mw6k79k7wp2675t8xueytwcf7t6dte03s2",
+        },
         {
           chainId: "osmosis-1",
           address: "osmo1qj83mw6k79k7wp2675t8xueytwcf7t6drz9xt6",

@@ -33,10 +33,14 @@ export const sortedHistoryItemsAtom = atom((get): RouteDetailsWithRelatedRoutes[
         historyItem.transactionDetails.some((tx) => tx.txHash),
     )
     .map((historyItem) => {
-      const relatedRoutes = history.filter((item) => item.mainRouteId === historyItem.id);
+      const relatedRoutes = [
+        ...(historyItem.relatedRoutes ?? []),
+        ...(history.filter((item) => item.mainRouteId === historyItem.id) ?? []),
+      ];
+
       return {
         ...historyItem,
-        relatedRoutes: relatedRoutes,
+        relatedRoutes,
       };
     })
     .sort((a, b) => b.timestamp - a.timestamp);

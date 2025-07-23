@@ -1,5 +1,5 @@
 import { RouteDetailsWithRelatedRoutes, setTransactionHistoryAtom } from "@/state/history";
-import { subscribeToRouteStatus } from "@skip-go/client";
+import { RouteDetails, subscribeToRouteStatus } from "@skip-go/client";
 import { useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 
@@ -26,7 +26,7 @@ export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
     txHistoryItem.relatedRoutes?.forEach((relatedRoute) => {
       unsubscribers.push(
         subscribeToRouteStatus({
-          routeDetails: relatedRoute,
+          routeDetails: relatedRoute as RouteDetails,
           onRouteStatusUpdated: (routeStatus) => setTransactionHistory(routeStatus),
         }),
       );
