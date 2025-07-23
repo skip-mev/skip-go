@@ -106,7 +106,7 @@ export const isSomeDestinationFeeBalanceAvailableAtom = atomWithQuery((get) => {
 export const gasOnReceiveAtomEffect = atomEffect((get, set) => {
   const isSomeDestinationFeeBalanceAvailable = get(isSomeDestinationFeeBalanceAvailableAtom);
   const currentTransactionItem = get(currentTransactionAtom);
-  if (currentTransactionItem?.status === "unconfirmed") {
+  if (!currentTransactionItem) {
     if (
       isSomeDestinationFeeBalanceAvailable.data &&
       !isSomeDestinationFeeBalanceAvailable.isLoading
@@ -142,7 +142,7 @@ export const gasOnReceiveRouteAtom: ReturnType<
     currentPage === Routes.SwapExecutionPage &&
     !destinationAssetIsAFeeAsset &&
     !!destinationAddress &&
-    currentTransactionItem?.status === "unconfirmed";
+    !currentTransactionItem;
 
   return {
     enabled: queryEnabled,

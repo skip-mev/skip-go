@@ -6,6 +6,7 @@ import {
   type CosmosTx,
   ChainType,
   type Tx,
+  type Route,
 } from "../types/swaggerTypes";
 import type { ApiRequest, ApiResponse } from "../utils/generateApi";
 import type {
@@ -15,7 +16,7 @@ import type {
   BaseSettings,
   TxResult,
 } from "src/types/client-types";
-import { executeAndSubscribeToRouteStatus, updateRouteDetails } from "./subscribeToRouteStatus";
+import { executeAndSubscribeToRouteStatus, updateRouteDetails, type RouteDetails } from "./subscribeToRouteStatus";
 import { createValidAddressList, validateUserAddresses } from "src/utils/address";
 import { ApiState } from "src/state/apiState";
 import { messages, type MessagesResponse } from "src/api/postMessages";
@@ -210,8 +211,16 @@ export const executeMultipleRoutes = async (
   }[]> = {};
   const executeTransactionList: Record<number, (index: number) => Promise<TxResult>> = {};
 
+  const mergedMainAndSecondaryRoutes = Object.entries(msgsRecord).length !== Object.entries(route).length;
+
   for (const [routeKey, msgsResponse] of Object.entries(msgsRecord)) {
-    console.log('msgsResponse', msgsResponse);
+    let relatedRoutes: Route[] | undefined;
+    if (routeKey !== "mainRoute" || mergedMainAndSecondaryRoutes) {
+      relatedRoutes = Object.entries(route)
+        .filter(([key]) => key !== "mainRoute")
+        .map(([_, route]) => route);
+    }
+
     const { id: routeId } = updateRouteDetails({
       status: "unconfirmed",
       options: {
@@ -220,6 +229,7 @@ export const executeMultipleRoutes = async (
       },
       mainRouteId,
       transferIndexToRouteKey,
+      relatedRoutes,
     });
 
     msgsRecordIndexToRouteId[index] = routeId;
@@ -264,6 +274,7 @@ export const executeMultipleRoutes = async (
   await Promise.all(
     Object.entries(msgsRecord).map(([routeKey, msgsResponse], index) => {
       console.log('executeTransaction', executeTransactionList[index]);
+
       return executeAndSubscribeToRouteStatus({
         transactionDetails: transactionDetailsList[index],
         executeTransaction: executeTransactionList[index],

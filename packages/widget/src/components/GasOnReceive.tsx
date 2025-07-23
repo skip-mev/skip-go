@@ -67,17 +67,11 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
       return `You'll receive ${formattedAmountText}`;
     }
     return "Enable to receive fee asset on destination chain";
-  }, [
-    gasOnReceive,
-    gasOnReceiveAsset?.recommendedSymbol,
-    gasRoute?.gasOnReceiveAsset?.amountUsd,
-    isLoading,
-    routeDetails?.status,
-  ]);
+  }, [amountUsd, assetSymbol, gasOnReceive, isLoading, routeDetails?.status]);
 
-  // if (!gasRoute?.gasOnReceiveAsset) {
-  //   return null;
-  // }
+  if (!routeDetails && !gasRoute?.gasOnReceiveAsset) {
+    return null;
+  }
   return (
     <GasOnReceiveWrapper>
       <>
@@ -108,7 +102,7 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
             <SmallText>{gasOnReceiveText}</SmallText>
           )}
         </Row>
-        {!isFetchingBalance && currentTransaction?.status === "unconfirmed" && (
+        {!isFetchingBalance && !currentTransaction && !routeDetails && (
           <Switch
             checked={gasOnReceive}
             onChange={(v) => {
