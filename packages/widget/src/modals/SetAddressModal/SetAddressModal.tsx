@@ -12,7 +12,11 @@ import { isValidWalletAddress } from "./isValidWalletAddress";
 import { useWalletList } from "@/hooks/useWalletList";
 import { ModalHeader } from "@/components/ModalHeader";
 import { StyledModalContainer } from "@/components/Modal";
-import { chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import {
+  chainAddressesAtom,
+  feeRouteChainAddressesAtom,
+  swapExecutionStateAtom,
+} from "@/state/swapExecutionPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
@@ -25,6 +29,7 @@ export type SetAddressModalProps = ModalProps & {
   chainId: string;
   chainAddressIndex: number;
   signRequired?: boolean;
+  isFeeRoute?: boolean;
 };
 
 export enum WalletSource {
@@ -35,9 +40,11 @@ export enum WalletSource {
 
 export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
-  const { chainId, chainAddressIndex } = modalProps;
-  const { route } = useAtomValue(swapExecutionStateAtom);
-  const requiredChainAddresses = route?.requiredChainAddresses;
+  const { chainId, chainAddressIndex, isFeeRoute } = modalProps;
+  const { route, feeRoute } = useAtomValue(swapExecutionStateAtom);
+  const requiredChainAddresses = isFeeRoute
+    ? feeRoute?.requiredChainAddresses
+    : route?.requiredChainAddresses;
   if (modalProps.chainAddressIndex === undefined) {
     throw new Error("chain address index cannot be undefined");
   }
@@ -49,7 +56,11 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   const [showManualAddressInput, setShowManualAddressInput] = useState(false);
   const [manualWalletAddress, setManualWalletAddress] = useState("");
   const _walletList = useWalletList({ chainId, destinationWalletList: true });
-  const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
+  const [_chainAddresses, _setChainAddresses] = useAtom(chainAddressesAtom);
+  const [feeRouteChainAddresses, setFeeRouteChainAddresses] = useAtom(feeRouteChainAddressesAtom);
+
+  const chainAddresses = isFeeRoute ? feeRouteChainAddresses : _chainAddresses;
+  const setChainAddresses = isFeeRoute ? setFeeRouteChainAddresses : _setChainAddresses;
 
   // If not same chain transaction, show warning
   const showWithdrawalWarning =

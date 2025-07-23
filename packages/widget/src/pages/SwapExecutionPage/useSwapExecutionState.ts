@@ -1,24 +1,31 @@
 import { useMemo } from "react";
 import { ChainAddress } from "@/state/swapExecutionPage";
 import { SwapExecutionState } from "./SwapExecutionPage";
-import { RouteResponse } from "@skip-go/client";
 import { currentTransactionAtom } from "@/state/history";
 import { useAtomValue } from "jotai";
+import { gasOnReceiveAtom } from "@/state/gasOnReceive";
 
 type UseSwapExecutionStateParams = {
   chainAddresses: Record<number, ChainAddress>;
-  route?: RouteResponse;
+  feeRouteChainAddresses?: Record<number, ChainAddress>;
+  requiredChainAddresses?: string[];
+  feeRouteRequiredChainAddresses?: string[];
   isGettingAddressesLoading: boolean;
+  isGettingFeeRouteAddressesLoading?: boolean;
   isFetchingDestinationBalance: boolean;
 };
 
 export function useSwapExecutionState({
   chainAddresses,
-  route,
+  requiredChainAddresses,
   isGettingAddressesLoading,
   isFetchingDestinationBalance,
+  feeRouteChainAddresses,
+  feeRouteRequiredChainAddresses,
+  isGettingFeeRouteAddressesLoading,
 }: UseSwapExecutionStateParams): SwapExecutionState {
   const currentTransaction = useAtomValue(currentTransactionAtom);
+  const isFeeRouteEnabled = useAtomValue(gasOnReceiveAtom);
 
   const showSignaturesRemaining = useMemo(() => {
     if (!currentTransaction) return false;
@@ -35,12 +42,18 @@ export function useSwapExecutionState({
   return useMemo(() => {
     if (isFetchingDestinationBalance) return SwapExecutionState.pendingGettingDestinationBalance;
     if (isGettingAddressesLoading) return SwapExecutionState.pendingGettingAddresses;
+    if (isFeeRouteEnabled && isGettingFeeRouteAddressesLoading)
+      return SwapExecutionState.pendingGettingFeeRouteAddresses;
+
     if (!chainAddresses) return SwapExecutionState.destinationAddressUnset;
-    const requiredChainAddresses = route?.requiredChainAddresses;
     if (!requiredChainAddresses) return SwapExecutionState.destinationAddressUnset;
 
     const allAddressesSet = requiredChainAddresses.every(
       (_chainId, index) => chainAddresses[index]?.address,
+    );
+
+    const feeRouteAllAddressesSet = feeRouteRequiredChainAddresses?.every(
+      (_chainId, index) => feeRouteChainAddresses?.[index]?.address,
     );
 
     const lastChainAddress = chainAddresses[requiredChainAddresses.length - 1]?.address;
@@ -76,13 +89,21 @@ export function useSwapExecutionState({
       return SwapExecutionState.recoveryAddressUnset;
     }
 
+    if (isFeeRouteEnabled && feeRouteRequiredChainAddresses && !feeRouteAllAddressesSet) {
+      return SwapExecutionState.feeRouteRecoveryAddressUnset;
+    }
+
     return SwapExecutionState.ready;
   }, [
     isFetchingDestinationBalance,
     isGettingAddressesLoading,
+    isFeeRouteEnabled,
+    isGettingFeeRouteAddressesLoading,
     chainAddresses,
-    route?.requiredChainAddresses,
+    requiredChainAddresses,
+    feeRouteRequiredChainAddresses,
     currentTransaction?.status,
+    feeRouteChainAddresses,
     showSignaturesRemaining,
   ]);
 }

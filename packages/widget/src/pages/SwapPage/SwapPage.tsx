@@ -19,7 +19,11 @@ import {
   isInvertingSwapAtom,
   preloadSigningStargateClientEffect,
 } from "@/state/swapPage";
-import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
+import {
+  setSwapExecutionStateAtom,
+  chainAddressesAtom,
+  feeRouteChainAddressesAtom,
+} from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance, useMaxAmountTokenMinusFees } from "./useSetMaxAmount";
@@ -76,6 +80,8 @@ export const SwapPage = () => {
   const callbacks = useAtomValue(callbacksAtom);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
+  const setFeeRouteChainAddresses = useSetAtom(feeRouteChainAddressesAtom);
+
   useFetchAllBalances();
   useCleanupDebouncedAtoms();
   useUpdateAmountWhenRouteChanges();
@@ -315,6 +321,7 @@ export const SwapPage = () => {
         startTransition(() => {
           setError(undefined);
           setChainAddresses({});
+          setFeeRouteChainAddresses({});
           setSwapExecutionState();
           setCurrentPage(Routes.SwapExecutionPage);
         });
@@ -409,6 +416,7 @@ export const SwapPage = () => {
     showGoFastWarning,
     isGoFast,
     setChainAddresses,
+    setFeeRouteChainAddresses,
     setCurrentPage,
     setSwapExecutionState,
     setError,

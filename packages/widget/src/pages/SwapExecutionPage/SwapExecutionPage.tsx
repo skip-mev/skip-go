@@ -9,6 +9,8 @@ import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed
 import { currentPageAtom, Routes } from "@/state/router";
 import {
   chainAddressesAtom,
+  chainAddressesAtomEffect,
+  feeRouteChainAddressesAtom,
   gasRouteEffect,
   skipSubmitSwapExecutionAtom,
   swapExecutionStateAtom,
@@ -37,6 +39,7 @@ import { GasIcon } from "@/icons/GasIcon";
 import { formatUSD } from "@/utils/intl";
 import styled, { useTheme } from "styled-components";
 import { skipAssetsAtom } from "@/state/skipClient";
+import { useFeeRouteAutoSetAddress } from "@/hooks/useFeeRouteAutoSetAddress";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -50,21 +53,36 @@ export enum SwapExecutionState {
   approving,
   pendingGettingAddresses,
   pendingGettingDestinationBalance,
+  pendingGettingFeeRouteAddresses,
+  feeRouteRecoveryAddressUnset,
 }
 
 export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, clientOperations } = useAtomValue(swapExecutionStateAtom);
+  const { route, feeRoute, clientOperations } = useAtomValue(swapExecutionStateAtom);
   const currentTransaction = useAtomValue(currentTransactionAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
+  const feeRouteChainAddresses = useAtomValue(feeRouteChainAddressesAtom);
+  console.log("feeRouteChainAddresses", feeRouteChainAddresses);
   const { connectRequiredChains, isLoading: isGettingAddressesLoading } = useAutoSetAddress();
+  const {
+    connectRequiredChains: connectFeeRouteRequiredChains,
+    isLoading: isGettingFeeRouteAddressesLoading,
+  } = useFeeRouteAutoSetAddress();
+
   const [simpleRoute, setSimpleRoute] = useState(true);
   const isSomeDestinationFeeBalanceAvailable = useAtomValue(
     isSomeDestinationFeeBalanceAvailableAtom,
   );
-  const isFetchingDestinationBalance = isSomeDestinationFeeBalanceAvailable.isLoading;
-  useAtom(gasOnReceiveAtomEffect);
+
+  const gasRoute = useAtomValue(gasOnReceiveRouteAtom);
+
+  const isFetchingDestinationBalance =
+    isSomeDestinationFeeBalanceAvailable.isLoading || gasRoute.isLoading;
+
   useAtom(gasRouteEffect);
+  useAtom(chainAddressesAtomEffect);
+  useAtom(gasOnReceiveAtomEffect);
 
   const { mutate: submitExecuteRouteMutation, error } = useAtomValue(skipSubmitSwapExecutionAtom);
 
@@ -82,8 +100,11 @@ export const SwapExecutionPage = () => {
 
   const swapExecutionState = useSwapExecutionState({
     chainAddresses,
-    route,
-    isGettingAddressesLoading,
+    requiredChainAddresses: route?.requiredChainAddresses,
+    feeRouteChainAddresses: feeRouteChainAddresses,
+    feeRouteRequiredChainAddresses: feeRoute?.requiredChainAddresses,
+    isGettingAddressesLoading: isGettingAddressesLoading,
+    isGettingFeeRouteAddressesLoading: isGettingFeeRouteAddressesLoading,
     isFetchingDestinationBalance,
   });
 
@@ -219,6 +240,7 @@ export const SwapExecutionPage = () => {
         signaturesRemaining={signaturesRemaining}
         lastOperation={lastOperation}
         connectRequiredChains={connectRequiredChains}
+        connectFeeRouteRequiredChains={connectFeeRouteRequiredChains}
         submitExecuteRouteMutation={submitExecuteRouteMutation}
       />
       <SwapPageFooter />
@@ -245,8 +267,7 @@ const GasOnReceive = () => {
     );
     return asset;
   }, [assets, gasRoute?.gasOnReceiveAsset]);
-
-  if (!gasRoute?.gasOnReceiveAsset) {
+  if (!gasRoute?.gasOnReceiveAsset || !gasOnReceiveAsset || fetchingGasRoute) {
     return null;
   }
   return (
