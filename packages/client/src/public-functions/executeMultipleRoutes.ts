@@ -1,9 +1,12 @@
 import type { TransactionCallbacks } from "../types/callbacks";
-import type {
-  CosmosMsg,
-  RouteResponse,
-  PostHandler,
-  CosmosTx,
+import {
+  type CosmosMsg,
+  type RouteResponse,
+  type PostHandler,
+  type CosmosTx,
+  ChainType,
+  type Tx,
+  type Route,
 } from "../types/swaggerTypes";
 import type { ApiRequest, ApiResponse } from "../utils/generateApi";
 import type {
@@ -11,12 +14,15 @@ import type {
   GasOptions,
   UserAddress,
   BaseSettings,
+  TxResult,
 } from "src/types/client-types";
-import { updateRouteDetails } from "./subscribeToRouteStatus";
+import { executeAndSubscribeToRouteStatus, updateRouteDetails, type RouteDetails } from "./subscribeToRouteStatus";
 import { createValidAddressList, validateUserAddresses } from "src/utils/address";
 import { ApiState } from "src/state/apiState";
 import { messages, type MessagesResponse } from "src/api/postMessages";
 import { executeTransactions } from "src/private-functions/executeTransactions";
+import { v4 as uuidv4 } from "uuid";
+import { trackTransaction } from "src/api/postTrackTransaction";
 
 /** Execute Routes Options */
 export type ExecuteMultipleRoutesOptions = SignerGetters &
@@ -24,7 +30,7 @@ export type ExecuteMultipleRoutesOptions = SignerGetters &
   TransactionCallbacks &
   BaseSettings &
   Pick<ApiRequest<"msgs">, "timeoutSeconds"> & {
-    route: Record<string, RouteResponse>;
+    route: { mainRoute: RouteResponse } & Record<string, RouteResponse>;
     /**
      * Addresses should be in the same order with the `requiredChainAddresses` in the `route`
      */
@@ -63,9 +69,6 @@ export type ExecuteMultipleRoutesOptions = SignerGetters &
 export const executeMultipleRoutes = async (
   options: ExecuteMultipleRoutesOptions
 ) => {
-  const { id: routeId } = updateRouteDetails({
-    status: "unconfirmed",
-  });
 
   const {
     route,
@@ -76,29 +79,31 @@ export const executeMultipleRoutes = async (
   } = options;
 
   // address validation
-  let addressList: Record<string, string[]> = {};
-  Object.entries(route).forEach(async ([routeKey, routeValue]) => {
+  const addressList: Record<string, string[]> = {};
+
+  for (const [routeKey, routeValue] of Object.entries(route)) {
     const _userAddresses = userAddresses[routeKey];
-    if (!_userAddresses) {
+    
+    if (_userAddresses === undefined) {
       throw new Error(
         `executeMultipleRoutes error: no user addresses found for route: ${routeKey}`
       );
     }
+    console.log('user addresses', userAddresses)
 
     const routeAddressList = await createValidAddressList({
       userAddresses: _userAddresses,
       route: routeValue,
-    })
-    addressList[routeKey] = routeAddressList;
+    });
 
-  });
-  console.log("addressList", addressList);
+    addressList[routeKey] = routeAddressList;
+  }
 
   // getting messages for each route
   const msgsResponses = await Promise.all(
     Object.entries(route).map(async ([routeKey, routeValue]) => {
       const routeAddressList = addressList[routeKey];
-      if (!routeAddressList) {
+      if (routeAddressList === undefined) {
         throw new Error(
           `executeMultipleRoutes error: address list not found for route ${routeKey}`
         );
@@ -146,15 +151,28 @@ export const executeMultipleRoutes = async (
   });
   console.log("after appendCosmosMsgs msgsRecord", msgsRecord);
 
+  let transferIndexToRouteKey: Record<number, string> | undefined = undefined;
+
   const cosmosTxIndex0Map = new Map<
     string,
     { routeKey: string; firstCosmosTx: CosmosTx }
   >();
+
+  let transferIndex = 0;
+
   // combine first tx if same source chain (cosmos)
   for (const [routeKey, msgs] of Object.entries(msgsRecord)) {
     const firstTx = msgs?.txs?.[0];
     if (firstTx && "cosmosTx" in firstTx) {
       const { chainId, msgs: firstTxMsgs } = firstTx.cosmosTx;
+
+      if (!transferIndexToRouteKey) {
+        transferIndexToRouteKey = {};
+      }
+
+      transferIndexToRouteKey[transferIndex] = routeKey;
+      transferIndex++;
+
       if (!cosmosTxIndex0Map.has(chainId)) {
         cosmosTxIndex0Map.set(chainId, {
           routeKey: routeKey,
@@ -183,15 +201,94 @@ export const executeMultipleRoutes = async (
 
   console.log("final result msgsRecord", msgsRecord);
 
-  await Promise.all(
-    Object.entries(msgsRecord).map(async ([routeKey, msgsResponse]) => {
-      await executeTransactions({
+  let mainRouteId: string | undefined = undefined;
+
+  let msgsRecordIndexToRouteId: Record<number, string> = {};
+
+  let index = 0;
+
+  const transactionDetailsList: Record<number, {
+    chainId: string;
+  }[]> = {};
+  const executeTransactionList: Record<number, (index: number) => Promise<TxResult>> = {};
+
+  const mergedMainAndSecondaryRoutes = Object.entries(msgsRecord).length !== Object.entries(route).length;
+
+  for (const [routeKey, msgsResponse] of Object.entries(msgsRecord)) {
+    let relatedRoutes: Partial<RouteDetails>[] | undefined;
+    if (routeKey !== "mainRoute" || mergedMainAndSecondaryRoutes) {
+      relatedRoutes = Object.entries(route)
+        .filter(([key]) => key !== "mainRoute")
+        .map(([key, route]) => ({ route, routeKey: key }));
+    }
+
+    console.log('related routes', relatedRoutes)
+
+    const { id: routeId } = updateRouteDetails({
+      status: "unconfirmed",
+      options: {
+        route: route[routeKey],
         ...restOptions,
-        routeId,
-        txs: msgsResponse?.txs,
-        route: route[routeKey]!,
-        userAddresses: userAddresses[routeKey]!,
+      },
+      mainRouteId,
+      transferIndexToRouteKey,
+      relatedRoutes,
+    });
+
+    msgsRecordIndexToRouteId[index] = routeId;
+
+    if (routeKey === "mainRoute") {
+      mainRouteId = routeId;
+    }
+
+    const { transactionDetails, executeTransaction } = await executeTransactions({
+      ...restOptions,
+      routeId,
+      txs: msgsResponse?.txs,
+      route: route[routeKey]!,
+      userAddresses: userAddresses[routeKey]!,
+    });
+
+    if (transactionDetails[0]?.chainType === ChainType.Evm) {
+      for (const [index, transactionDetail] of transactionDetails.entries()) {
+        const txResult = await executeTransaction(index);
+        if (txResult.txHash) {
+          const trackResponse = await trackTransaction({
+            chainId: transactionDetail.chainId,
+            txHash: txResult.txHash,
+            ...options.trackTxPollingOptions,
+          });
+          transactionDetail.txHash = txResult.txHash;
+          transactionDetail.explorerLink = trackResponse.explorerLink;
+        }
+      }
+    } else {
+      executeTransactionList[index] = executeTransaction;
+    }
+    transactionDetailsList[index] = transactionDetails;
+
+    index++;
+  }
+
+  console.log("Promise.all");
+
+  console.log(transactionDetailsList);
+
+  await Promise.all(
+    Object.entries(msgsRecord).map(([routeKey, msgsResponse], index) => {
+      console.log('executeTransaction', executeTransactionList[index]);
+
+      return executeAndSubscribeToRouteStatus({
+        transactionDetails: transactionDetailsList[index],
+        executeTransaction: executeTransactionList[index],
+        routeId: msgsRecordIndexToRouteId[index],
+        options: {
+          route: route[routeKey]!,
+          userAddresses: userAddresses[routeKey]!,
+          ...restOptions,
+        },
       });
     })
   );
+
 };

@@ -40,13 +40,18 @@ export const executeTransactions = async (
 
   const chainIds = getChainIdsFromTxs(txs);
 
-  const transactionDetails = txs.map(tx => {
+  const transactionDetails: {
+      chainId: string;
+      chainType: ChainType;
+      txHash?: string;
+      explorerLink?: string;
+  }[] = txs.map(tx => {
     if ("cosmosTx" in tx) {
-      return { chainId: tx.cosmosTx?.chainId }
+      return { chainId: tx.cosmosTx?.chainId, chainType: ChainType.Cosmos }
     } else if ("evmTx" in tx) {
-      return { chainId: tx.evmTx?.chainId }
+      return { chainId: tx.evmTx?.chainId, chainType: ChainType.Evm }
     } else if ("svmTx" in tx) {
-      return { chainId: tx.svmTx?.chainId }
+      return { chainId: tx.svmTx?.chainId, chainType: ChainType.Svm }
     } else {
       throw new Error("executeRoute error: invalid message type");
     }
@@ -168,6 +173,7 @@ export const executeTransactions = async (
 
   const executeTransaction = async (index: number) => {
     const tx = txs[index];
+    console.log("executeTransaction", txs, index);
     if (!tx) {
       throw new Error(`executeRoute error: invalid message at index ${index}`);
     }
@@ -217,12 +223,10 @@ export const executeTransactions = async (
     return txResult;
   }
 
-  await executeAndSubscribeToRouteStatus({
-    transactionDetails: transactionDetails,
+  return {
+    transactionDetails,
     executeTransaction,
-    routeId,
-    options
-  });
+  }
 };
 
 const EVM_GAS_AMOUNT = 150_000;

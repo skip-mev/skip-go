@@ -1,10 +1,10 @@
-import { setTransactionHistoryAtom } from "@/state/history";
+import { RouteDetailsWithRelatedRoutes, setTransactionHistoryAtom } from "@/state/history";
 import { RouteDetails, subscribeToRouteStatus } from "@skip-go/client";
 import { useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 
 type useTxHistoryProps = {
-  txHistoryItem?: RouteDetails;
+  txHistoryItem?: RouteDetailsWithRelatedRoutes;
 };
 
 export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
@@ -14,15 +14,33 @@ export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
   useEffect(() => {
     if (!txHistoryItem || subscribed) return;
 
-    const unsubscribe = subscribeToRouteStatus({
-      routeDetails: txHistoryItem,
-      onRouteStatusUpdated: (routeStatus) => setTransactionHistory(routeStatus),
+    const unsubscribers: (() => void)[] = [];
+
+    unsubscribers.push(
+      subscribeToRouteStatus({
+        routeDetails: txHistoryItem,
+        onRouteStatusUpdated: (routeStatus) => setTransactionHistory(routeStatus),
+      }),
+    );
+
+    txHistoryItem.relatedRoutes?.forEach((relatedRoute) => {
+      if (!relatedRoute.id) {
+        relatedRoute = txHistoryItem;
+      }
+      unsubscribers.push(
+        subscribeToRouteStatus({
+          routeDetails: relatedRoute as RouteDetails,
+          onRouteStatusUpdated: (routeStatus) => {
+            setTransactionHistory(routeStatus);
+          },
+        }),
+      );
     });
 
     setSubscribed(true);
 
     return () => {
-      unsubscribe();
+      unsubscribers.forEach((unsubscribe) => unsubscribe());
     };
   }, [setTransactionHistory, subscribed, txHistoryItem]);
 

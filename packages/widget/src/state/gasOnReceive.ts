@@ -16,6 +16,7 @@ import { Routes, currentPageAtom } from "./router";
 import BigNumber from "bignumber.js";
 import { chainAddressesAtom } from "./swapExecutionPage";
 import { atomEffect } from "jotai-effect";
+import { currentTransactionAtom } from "./history";
 
 type SwapRoute = {
   mainRoute?: RouteResponse;
@@ -104,14 +105,16 @@ export const isSomeDestinationFeeBalanceAvailableAtom = atomWithQuery((get) => {
 
 export const gasOnReceiveAtomEffect = atomEffect((get, set) => {
   const isSomeDestinationFeeBalanceAvailable = get(isSomeDestinationFeeBalanceAvailableAtom);
-
-  if (
-    isSomeDestinationFeeBalanceAvailable.data &&
-    !isSomeDestinationFeeBalanceAvailable.isLoading
-  ) {
-    set(gasOnReceiveAtom, false);
-  } else {
-    set(gasOnReceiveAtom, true);
+  const currentTransactionItem = get(currentTransactionAtom);
+  if (!currentTransactionItem) {
+    if (
+      isSomeDestinationFeeBalanceAvailable.data &&
+      !isSomeDestinationFeeBalanceAvailable.isLoading
+    ) {
+      set(gasOnReceiveAtom, false);
+    } else {
+      set(gasOnReceiveAtom, true);
+    }
   }
 });
 
@@ -125,6 +128,7 @@ export const gasOnReceiveRouteAtom: ReturnType<
   const routeConfig = get(routeConfigAtom);
   const swapSettings = get(swapSettingsAtom);
   const gasOnReceiveRouteParams = get(gasOnReceiveRouteRequestAtom);
+  const currentTransactionItem = get(currentTransactionAtom);
   const destinationAssetIsAFeeAsset = gasOnReceiveRouteParams?.destAssetDenoms.includes(
     destinationAsset?.denom ?? "",
   );
@@ -137,7 +141,8 @@ export const gasOnReceiveRouteAtom: ReturnType<
     originalRoute &&
     currentPage === Routes.SwapExecutionPage &&
     !destinationAssetIsAFeeAsset &&
-    !!destinationAddress;
+    !!destinationAddress &&
+    !currentTransactionItem;
 
   return {
     enabled: queryEnabled,
@@ -159,8 +164,13 @@ export const gasOnReceiveRouteAtom: ReturnType<
       console.log({ originalRoute, gasOnReceiveRouteParams, params, destinationAddress });
       if (!params) throw new Error("No route request provided");
       let feeRoute: RouteResponse | undefined;
-      if (destinationAssetIsAFeeAsset || gasOnReceiveRouteParams?.destAssetDenoms === undefined)
-        return;
+      if (
+        destinationAssetIsAFeeAsset ||
+        !gasOnReceiveRouteParams?.destAssetDenoms ||
+        gasOnReceiveRouteParams.destAssetDenoms.length === 0
+      ) {
+        return null;
+      }
       const { destAssetDenoms, ...restParams } = gasOnReceiveRouteParams;
 
       const splitDenoms = chunkArray(destAssetDenoms);
