@@ -9,7 +9,7 @@ import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed
 import { currentPageAtom, Routes } from "@/state/router";
 import {
   chainAddressesAtom,
-  chainAddressesAtomEffect,
+  feeRouteAddressesAtomEffect,
   feeRouteChainAddressesAtom,
   gasRouteEffect,
   skipSubmitSwapExecutionAtom,
@@ -75,7 +75,7 @@ export const SwapExecutionPage = () => {
     isSomeDestinationFeeBalanceAvailable.isLoading || isGasRouteLoading;
 
   useAtom(gasRouteEffect);
-  useAtom(chainAddressesAtomEffect);
+  useAtom(feeRouteAddressesAtomEffect);
   useAtom(gasOnReceiveAtomEffect);
 
   const { mutate: submitExecuteRouteMutation, error } = useAtomValue(skipSubmitSwapExecutionAtom);

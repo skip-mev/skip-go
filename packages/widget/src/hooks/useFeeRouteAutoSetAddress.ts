@@ -1,6 +1,7 @@
 import {
   ChainAddress,
   feeRouteChainAddressesAtom,
+  feeRouteUserAddressesEffectAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
 import { connectedAddressesAtom, walletsAtom } from "@/state/wallets";
@@ -34,6 +35,8 @@ export const useFeeRouteAutoSetAddress = () => {
   const { createCosmosWallets } = useCreateCosmosWallets();
   const { createEvmWallets } = useCreateEvmWallets();
   const { createSolanaWallets } = useCreateSolanaWallets();
+
+  useAtom(feeRouteUserAddressesEffectAtom);
 
   const connectRequiredChains = useCallback(
     async (openModal?: boolean) => {

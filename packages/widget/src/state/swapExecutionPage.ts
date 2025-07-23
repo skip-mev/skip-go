@@ -27,6 +27,8 @@ import {
   UserAddress,
   TransactionDetails,
   executeMultipleRoutes,
+  SignerGetters,
+  BaseSettings,
 } from "@skip-go/client";
 import { currentPageAtom, Routes } from "./router";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
@@ -82,7 +84,7 @@ export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
 export const feeRouteChainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
-export const chainAddressesAtomEffect = atomEffect((get, set) => {
+export const feeRouteAddressesAtomEffect = atomEffect((get, set) => {
   const isEnabled = get(gasOnReceiveAtom);
   const gasRoute = get(gasOnReceiveRouteAtom);
   const _chainAddresses = get(chainAddressesAtom);
@@ -320,7 +322,7 @@ export const setValidatingGasBalanceAtom = atom(
   },
 );
 
-export const chainAddressEffectAtom = atomEffect((get, set) => {
+export const userAddressesEffectAtom = atomEffect((get, set) => {
   const chainAddresses = get(chainAddressesAtom);
   const addressesMatch = Object.values(chainAddresses).every(
     (chainAddress) => !!chainAddress.address,
@@ -340,6 +342,26 @@ export const chainAddressEffectAtom = atomEffect((get, set) => {
   }));
 });
 
+export const feeRouteUserAddressesEffectAtom = atomEffect((get, set) => {
+  const chainAddresses = get(feeRouteChainAddressesAtom);
+  const addressesMatch = Object.values(chainAddresses).every(
+    (chainAddress) => !!chainAddress.address,
+  );
+  if (!addressesMatch) return;
+
+  const userAddresses = Object.values(chainAddresses).map((chainAddress) => {
+    return {
+      chainId: chainAddress.chainId,
+      address: chainAddress.address as string,
+    };
+  });
+
+  set(swapExecutionStateAtom, (prev) => ({
+    ...prev,
+    feeRouteUserAddresses: userAddresses,
+  }));
+});
+
 type SubmitSwapExecutionCallbacks = TransactionCallbacks & {
   onTransactionUpdated?: (transactionDetails: TransactionDetails) => void;
   onError: (error: unknown, transactionDetailsArray?: TransactionDetails[]) => void;
@@ -351,7 +373,8 @@ export const simulateTxAtom = atom<boolean>();
 export const batchSignTxsAtom = atom<boolean>(true);
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
-  const { userAddresses, mainRoute, feeRoute, isFeeRouteEnabled } = get(swapExecutionStateAtom);
+  const { userAddresses, route, mainRoute, feeRoute, isFeeRouteEnabled, feeRouteUserAddresses } =
+    get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const simulateTx = get(simulateTxAtom);
   const batchSignTxs = get(batchSignTxsAtom);
@@ -381,46 +404,20 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   return {
     gcTime: Infinity,
     mutationFn: async ({ getSvmSigner }: { getSvmSigner: () => Promise<Adapter> }) => {
-      if (!mainRoute) return;
-      console.log("Executing route", mainRoute);
-      if (!userAddresses.length) return;
-
-      const secondAddresses = [
-        // {
-        //   chainId: "10",
-        //   address: "0xdA96a0fe76B6e185324976D926E41d0183828d70",
-        // },
-        {
-          chainId: "noble-1",
-          address: "noble1qj83mw6k79k7wp2675t8xueytwcf7t6dr6r79x",
-        },
-        {
-          chainId: "elys-1",
-          address: "elys1qj83mw6k79k7wp2675t8xueytwcf7t6dte03s2",
-        },
-        {
-          chainId: "osmosis-1",
-          address: "osmo1qj83mw6k79k7wp2675t8xueytwcf7t6drz9xt6",
-        },
-      ];
-      try {
-        await executeMultipleRoutes({
-          route: {
-            mainRoute,
-            ...(isFeeRouteEnabled ? { feeRoute } : {}),
-          },
-          userAddresses: {
-            mainRoute: userAddresses,
-            ...(isFeeRouteEnabled ? { feeRoute: secondAddresses } : {}),
-          },
+      const createParams = (
+        sourceChainId: string,
+      ): SignerGetters &
+        BaseSettings & {
+          timeoutSeconds?: string;
+        } => {
+        return {
           timeoutSeconds,
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
-          simulate:
-            simulateTx !== undefined ? simulateTx : mainRoute.sourceAssetChainId !== "984122",
+          simulate: simulateTx !== undefined ? simulateTx : sourceChainId !== "984122",
           batchSignTxs: batchSignTxs !== undefined ? batchSignTxs : true,
           ...submitSwapExecutionCallbacks,
-          getCosmosSigner: async (chainId) => {
+          getCosmosSigner: async (chainId: string) => {
             if (getSigners?.getCosmosSigner?.(chainId)) {
               return getSigners.getCosmosSigner(chainId);
             }
@@ -436,7 +433,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
               ? wallet.getOfflineSignerOnlyAmino(chainId)
               : wallet.getOfflineSigner(chainId);
           },
-          getEvmSigner: async (chainId) => {
+          getEvmSigner: async (chainId: string) => {
             if (getSigners?.getEvmSigner?.(chainId)) {
               return getSigners.getEvmSigner(chainId);
             }
@@ -455,7 +452,32 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
             }
             return adapter;
           },
-        });
+        };
+      };
+
+      try {
+        if (isFeeRouteEnabled && mainRoute && feeRoute) {
+          if (!feeRouteUserAddresses?.length) return;
+          await executeMultipleRoutes({
+            route: {
+              mainRoute,
+              ...(isFeeRouteEnabled ? { feeRoute } : {}),
+            },
+            userAddresses: {
+              mainRoute: userAddresses,
+              ...(isFeeRouteEnabled ? { feeRoute: feeRouteUserAddresses } : {}),
+            },
+            ...createParams(mainRoute.sourceAssetChainId),
+          });
+        } else {
+          if (!route) return;
+          if (!userAddresses.length) return;
+          await executeRoute({
+            route,
+            userAddresses,
+            ...createParams(route.sourceAssetChainId),
+          });
+        }
       } catch (error: unknown) {
         console.error(error);
         const currentTransaction = get(currentTransactionAtom);

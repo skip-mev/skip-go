@@ -1,6 +1,6 @@
 import { skipChainsAtom } from "@/state/skipClient";
 import {
-  chainAddressEffectAtom,
+  userAddressesEffectAtom,
   chainAddressesAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
@@ -38,7 +38,7 @@ export const useAutoSetAddress = () => {
   const { createEvmWallets } = useCreateEvmWallets();
   const { createSolanaWallets } = useCreateSolanaWallets();
 
-  useAtom(chainAddressEffectAtom);
+  useAtom(userAddressesEffectAtom);
 
   const connectedAddress = useAtomValue(connectedAddressesAtom);
 

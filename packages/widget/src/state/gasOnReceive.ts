@@ -2,12 +2,7 @@ import { atom } from "jotai";
 import { skipChainsAtom } from "./skipClient";
 import { _skipRouteAtom, routeConfigAtom, skipRouteAtom, skipRouteRequestAtom } from "./route";
 import { ChainType, RouteResponse, balances, route } from "@skip-go/client";
-import {
-  destinationAssetAtom,
-  sourceAssetAtom,
-  swapDirectionAtom,
-  swapSettingsAtom,
-} from "./swapPage";
+import { destinationAssetAtom, sourceAssetAtom, swapSettingsAtom } from "./swapPage";
 import { skipAllBalancesAtom } from "./balances";
 import { convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
 import { atomWithQuery } from "jotai-tanstack-query";
@@ -107,11 +102,11 @@ export const gasOnReceiveAtomEffect = atomEffect((get, set) => {
   const gorRoute = get(gasOnReceiveRouteAtom);
   const isSomeDestinationFeeBalanceAvailable = get(isSomeDestinationFeeBalanceAvailableAtom);
   const currentTransactionItem = get(currentTransactionAtom);
+  if (gorRoute.isLoading || isSomeDestinationFeeBalanceAvailable.isLoading) {
+    set(gasOnReceiveAtom, false);
+    return;
+  }
   if (!currentTransactionItem) {
-    if (gorRoute.isLoading || isSomeDestinationFeeBalanceAvailable.isLoading) {
-      set(gasOnReceiveAtom, false);
-      return;
-    }
     if (gorRoute.data?.gasOnReceiveAsset) {
       if (isSomeDestinationFeeBalanceAvailable.data) {
         set(gasOnReceiveAtom, false);

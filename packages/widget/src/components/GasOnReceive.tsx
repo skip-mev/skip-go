@@ -102,7 +102,7 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
     <Row align="center" justify="space-between">
       <Row gap={8} align="center">
         {renderIcon}
-        {isFetchingBalance || fetchingGasRoute ? (
+        {(isFetchingBalance || fetchingGasRoute) && !routeDetails ? (
           <SkeletonElement height={20} width={300} />
         ) : (
           <SmallText color={routeDetails?.status === "failed" ? theme.warning.text : undefined}>
@@ -110,14 +110,17 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
           </SmallText>
         )}
       </Row>
-      {!isFetchingBalance && !currentTransaction && !routeDetails && (
-        <Switch
-          checked={gasOnReceive}
-          onChange={(v) => {
-            setGasOnReceive(v);
-          }}
-        />
-      )}
+      {routeDetails
+        ? null
+        : !isFetchingBalance &&
+          !currentTransaction && (
+            <Switch
+              checked={gasOnReceive}
+              onChange={(v) => {
+                setGasOnReceive(v);
+              }}
+            />
+          )}
     </Row>
   );
 };
