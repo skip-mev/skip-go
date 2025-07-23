@@ -26,6 +26,7 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
   const [gasOnReceive, setGasOnReceive] = useAtom(gasOnReceiveAtom);
   const { data: gasRoute, isLoading: fetchingGasRoute } = useAtomValue(gasOnReceiveRouteAtom);
   const currentTransaction = useAtomValue(currentTransactionAtom);
+  // const { feeRoute } = useAtomValue(swapExecutionStateAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const isSomeDestinationFeeBalanceAvailable = useAtomValue(
     isSomeDestinationFeeBalanceAvailableAtom,

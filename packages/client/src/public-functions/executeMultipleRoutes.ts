@@ -89,6 +89,7 @@ export const executeMultipleRoutes = async (
         `executeMultipleRoutes error: no user addresses found for route: ${routeKey}`
       );
     }
+    console.log('user addresses', userAddresses)
 
     const routeAddressList = await createValidAddressList({
       userAddresses: _userAddresses,
@@ -220,6 +221,8 @@ export const executeMultipleRoutes = async (
         .filter(([key]) => key !== "mainRoute")
         .map(([_, route]) => route);
     }
+
+    console.log('related routes', relatedRoutes)
 
     const { id: routeId } = updateRouteDetails({
       status: "unconfirmed",

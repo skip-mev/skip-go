@@ -1,4 +1,4 @@
-import { Column, Row } from "@/components/Layout";
+import { Column } from "@/components/Layout";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { PageHeader } from "@/components/PageHeader";
 import React, { useMemo, useState } from "react";
@@ -25,18 +25,9 @@ import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { usePreventPageUnload } from "@/hooks/usePreventPageUnload";
 import { currentTransactionAtom } from "@/state/history";
 import {
-  gasOnReceiveAtom,
   gasOnReceiveAtomEffect,
-  gasOnReceiveRouteAtom,
   isSomeDestinationFeeBalanceAvailableAtom,
 } from "@/state/gasOnReceive";
-import { SkeletonElement } from "@/components/Skeleton";
-import { Switch } from "@/components/Switch";
-import { SmallText } from "@/components/Typography";
-import { GasIcon } from "@/icons/GasIcon";
-import { formatUSD } from "@/utils/intl";
-import styled, { useTheme } from "styled-components";
-import { skipAssetsAtom } from "@/state/skipClient";
 import { GasOnReceive } from "@/components/GasOnReceive";
 
 export enum SwapExecutionState {

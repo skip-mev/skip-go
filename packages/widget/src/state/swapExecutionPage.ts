@@ -100,6 +100,9 @@ export const gasRouteEffect = atomEffect((get, set) => {
   get(skipRouteAtom);
   const { data: gorRoute } = get(gasOnReceiveRouteAtom);
   const isGorEnabled = get(gasOnReceiveAtom);
+  const currentTransaction = get(currentTransactionAtom);
+
+  if (currentTransaction) return;
 
   set(swapExecutionStateAtom, (prev) => ({
     ...prev,
@@ -311,8 +314,7 @@ export const simulateTxAtom = atom<boolean>();
 export const batchSignTxsAtom = atom<boolean>(true);
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
-  const { route, userAddresses, mainRoute, feeRoute, isFeeRouteEnabled } =
-    get(swapExecutionStateAtom);
+  const { userAddresses, mainRoute, feeRoute, isFeeRouteEnabled } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const simulateTx = get(simulateTxAtom);
   const batchSignTxs = get(batchSignTxsAtom);
@@ -342,20 +344,19 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   return {
     gcTime: Infinity,
     mutationFn: async ({ getSvmSigner }: { getSvmSigner: () => Promise<Adapter> }) => {
-      const routeToExecute = isFeeRouteEnabled ? feeRoute : mainRoute;
-      if (!routeToExecute) return;
-      console.log("Executing route", routeToExecute);
+      if (!mainRoute) return;
+      console.log("Executing route", mainRoute);
       if (!userAddresses.length) return;
 
       const secondAddresses = [
-        {
-          chainId: "10",
-          address: "0xdA96a0fe76B6e185324976D926E41d0183828d70",
-        },
         // {
-        //   chainId: "noble-1",
-        //   address: "noble1qj83mw6k79k7wp2675t8xueytwcf7t6dr6r79x",
+        //   chainId: "10",
+        //   address: "0xdA96a0fe76B6e185324976D926E41d0183828d70",
         // },
+        {
+          chainId: "noble-1",
+          address: "noble1qj83mw6k79k7wp2675t8xueytwcf7t6dr6r79x",
+        },
         // {
         //   chainId: "elys-1",
         //   address: "elys1qj83mw6k79k7wp2675t8xueytwcf7t6dte03s2",
@@ -368,7 +369,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
       try {
         await executeMultipleRoutes({
           route: {
-            mainRoute: routeToExecute,
+            mainRoute,
             ...(isFeeRouteEnabled ? { feeRoute } : {}),
           },
           userAddresses: {
@@ -379,7 +380,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
           simulate:
-            simulateTx !== undefined ? simulateTx : routeToExecute.sourceAssetChainId !== "984122",
+            simulateTx !== undefined ? simulateTx : mainRoute.sourceAssetChainId !== "984122",
           batchSignTxs: batchSignTxs !== undefined ? batchSignTxs : true,
           ...submitSwapExecutionCallbacks,
           getCosmosSigner: async (chainId) => {

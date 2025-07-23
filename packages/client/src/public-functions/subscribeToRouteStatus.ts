@@ -59,7 +59,7 @@ export type RouteDetails = {
   receiverAddress: string;
   transferIndexToRouteKey?: Record<number, string>;
   mainRouteId?: string;
-  relatedRoutes?: (RouteDetails & Route)[];
+  relatedRoutes?: (RouteDetails | Route)[];
 };
 
 export function getTransactionStatus(state?: TransactionState): TransactionStatus {
@@ -365,7 +365,7 @@ export const updateRouteDetails = ({
     txsSigned: currentRouteDetails?.txsSigned,
     transferIndexToRouteKey,
     mainRouteId: mainRouteId ?? currentRouteDetails?.mainRouteId,
-    relatedRoutes,
+    relatedRoutes: relatedRoutes ?? currentRouteDetails?.relatedRoutes,
   };
 
   const newRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(newRouteDetails, transferIndexToRouteKey);
