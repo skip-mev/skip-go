@@ -46,6 +46,7 @@ type ValidatingGasBalanceData = {
 
 type SwapExecutionState = {
   userAddresses: UserAddress[];
+  feeRouteUserAddresses?: UserAddress[];
   /**
    * original route
    */
@@ -79,6 +80,40 @@ export type ChainAddress = {
  */
 export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
+export const feeRouteChainAddressesAtom = atom<Record<number, ChainAddress>>({});
+
+export const chainAddressesAtomEffect = atomEffect((get, set) => {
+  const isEnabled = get(gasOnReceiveAtom);
+  const gasRoute = get(gasOnReceiveRouteAtom);
+  const _chainAddresses = get(chainAddressesAtom);
+  const chainAddresses = Object.values(_chainAddresses);
+  const { data: chains } = get(skipChainsAtom);
+
+  if (isEnabled && gasRoute.data?.feeRoute) {
+    gasRoute.data.feeRoute.requiredChainAddresses.forEach((chainId, i) => {
+      const chain = chains?.find((c) => c.chainId === chainId);
+      const findAddress = chainAddresses.find((address) => address.chainId === chainId);
+      if (findAddress) {
+        set(feeRouteChainAddressesAtom, (prev) => ({
+          ...prev,
+          [i]: findAddress,
+        }));
+      } else {
+        set(feeRouteChainAddressesAtom, (prev) => ({
+          ...prev,
+          [i]: {
+            chainId,
+            address: undefined,
+            chainType: chain?.chainType,
+          },
+        }));
+      }
+    });
+  } else {
+    set(feeRouteChainAddressesAtom, {});
+  }
+});
+
 export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutionState>(
   LOCAL_STORAGE_KEYS.swapExecutionState,
   {
@@ -97,7 +132,7 @@ export const setCurrentTransactionIdAtom = atom(null, (_get, set, transactionId?
 });
 
 export const gasRouteEffect = atomEffect((get, set) => {
-  get(skipRouteAtom);
+  const { data: originalRoute } = get(skipRouteAtom);
   const { data: gorRoute } = get(gasOnReceiveRouteAtom);
   const isGorEnabled = get(gasOnReceiveAtom);
   const currentTransaction = get(currentTransactionAtom);
@@ -115,8 +150,10 @@ export const gasRouteEffect = atomEffect((get, set) => {
           clientOperations: getClientOperations(gorRoute.mainRoute.operations),
         }
       : {
-          route: prev.originalRoute,
-          clientOperations: getClientOperations(prev.originalRoute?.operations || []),
+          route: originalRoute ?? prev.originalRoute,
+          clientOperations: getClientOperations(
+            originalRoute?.operations ?? prev.originalRoute?.operations,
+          ),
         }),
   }));
 });
@@ -147,7 +184,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       address: "",
     };
   });
-
+  set(gasOnReceiveAtom, false);
   set(chainAddressesAtom, initialChainAddresses);
 
   set(swapExecutionStateAtom, {
