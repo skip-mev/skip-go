@@ -35,7 +35,7 @@ export default function Home() {
   
  const computedApiUrl = useMemo(() => {
     if (apiUrl === "local") {
-      return "localhost:8080";
+      return "http://localhost:8080";
     }
     const isProd = apiUrl === "prod";
     if (apiKey) {
@@ -48,7 +48,7 @@ export default function Home() {
       : "https://dev.go.skip.build/api/skip";
   }, [apiUrl, apiKey]);
 
-    useEffect(() => {
+  useEffect(() => {
     setApiOptions({ apiUrl: computedApiUrl });
   }, [computedApiUrl]);
 
