@@ -369,7 +369,7 @@ export default function Home() {
               theme={theme}
               defaultRoute={defaultRoute}
               apiKey={apiKey}
-              apiUrl={""}
+              apiUrl={apiUrl}
               onWalletConnected={(props) =>
                 console.log("onWalletConnected", { ...props })
               }
