@@ -63,12 +63,12 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
       case "failed":
         return `Failed to receive ${formattedAmountText}`;
       default:
-        if (gasRoute && isGorEnabled) {
+        if (isGorEnabled) {
           return `You'll receive ${formattedAmountText}`;
         }
         return "Enable to receive fee asset on destination chain";
     }
-  }, [amountUsd, assetSymbol, gasRoute, isGorEnabled, routeDetails?.status]);
+  }, [amountUsd, assetSymbol, isGorEnabled, routeDetails?.status]);
 
   const renderIcon = useMemo(() => {
     if (routeDetails?.status === "pending") {
