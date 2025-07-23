@@ -348,9 +348,15 @@ We recommend using the [Gas and Fee Tooling](/client/balance-gas-and-fee-tooling
 
 This means we may make breaking changes to them at any time. 
 
-#### What are the dev, testnet and mainnet links for the Skipgo app?
+### What are the Skip Go app environments?
 
-Dev: https://dev.go.skip.build/ Testnet: https://testnet.go.skip.build/ Mainnet: https://go.skip.build/
+The Skip Go app is available in three environments: mainnet, testnet, and dev.
+
+The mainnet/production user facing app runs at [https://go.skip.build](https://go.skip.build). It connects to mainnet chains and uses the production API. This is the version that most users interact with.
+
+The testnet app runs at [https://testnet.go.skip.build](https://testnet.go.skip.build). It connects to testnet chains but still uses the production API. This setup is useful when you want to test on testnet without changing API behavior.
+
+The dev app runs at [https://dev.go.skip.build](https://dev.go.skip.build). It connects to mainnet chains but uses a development version of the API that hasn’t been released to production yet.
 
 #### What does `cumulative_fee_bps` in `/route` mean?
 
