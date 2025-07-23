@@ -198,7 +198,7 @@ export const executeAndSubscribeToRouteStatus = async ({
   const currentRouteDetails = routeDetailsMap.get(routeId ?? '');
   transactionDetails ??= routeDetails?.transactionDetails ?? currentRouteDetails?.transactionDetails ?? [];
 
-  if (routeDetails && isFinalRouteStatus(routeDetails)) {
+  if (routeDetails && isFinalRouteStatus(routeDetails) && routeDetails?.relatedRoutes?.every((relatedRoute) => isFinalRouteStatus(relatedRoute as RouteDetails))) {
     return;
   }
 
@@ -232,7 +232,7 @@ export const executeAndSubscribeToRouteStatus = async ({
       return;
     }
 
-    while (!isFinalState(transaction)) {
+    while (!isFinalState(transaction) || routeDetails?.relatedRoutes?.every((relatedRoute) => !isFinalRouteStatus(relatedRoute as RouteDetails))) {
       if (isCancelled?.()) {
         console.info(`Polling cancelled for route ${routeId}`);
         return;
@@ -252,7 +252,8 @@ export const executeAndSubscribeToRouteStatus = async ({
           options: {
             onRouteStatusUpdated,
             ...options,
-          }
+          },
+          relatedRoutes: routeDetails?.relatedRoutes,
         });
 
         if (isFinalState(transaction)) {
@@ -262,7 +263,10 @@ export const executeAndSubscribeToRouteStatus = async ({
             status: statusResponse as TransferStatus,
           });
 
-          break;
+          if (routeDetails?.relatedRoutes?.every((relatedRoute) => isFinalRouteStatus(relatedRoute as RouteDetails))) {
+            console.log('all related routes are finalized')
+            break;
+          }
         }
       } catch (error) {
         console.error(error);
@@ -356,7 +360,6 @@ export const updateRouteDetails = ({
     relatedRoutes: relatedRoutes ?? currentRouteDetails?.relatedRoutes ?? [],
     transferIndexToRouteKey,
     transactionDetails,
-    routeId,
   })
 
   const newRouteDetails: RouteDetails = {
@@ -438,7 +441,6 @@ const convertTransactionStatusToRouteStatus = (
 };
 
 type updateRelatedRoutesProps = {
-  routeId?: string;
   relatedRoutes: Partial<RouteDetails>[];
   transferIndexToRouteKey?: Record<number, string>;
   transactionDetails?: TransactionDetails[];
@@ -448,21 +450,20 @@ const updateRelatedRoutes = ({
   relatedRoutes,
   transferIndexToRouteKey,
   transactionDetails,
-  routeId,
 }: updateRelatedRoutesProps) => {
-  let updatedRelatedRoutes = [...relatedRoutes];
-  if (transferIndexToRouteKey) {
-    for (const [indexStr, routeKey] of Object.entries(transferIndexToRouteKey)) {
-      const tx = transactionDetails?.[Number(indexStr)];
-      const state = tx?.statusResponse?.transfers?.[0]?.state;
+  let updatedRelatedRoutes = [...relatedRoutes.map(relatedRoute => ({ ...relatedRoute }))];
+  if (!transferIndexToRouteKey) return updatedRelatedRoutes;
+
+  transactionDetails?.forEach((transaction) => {
+    Object.entries(transferIndexToRouteKey).forEach(([index, routeKey]) => {
+      const state = transaction?.statusResponse?.transfers?.[Number(index)]?.state;
       const status = convertTransactionStatusToRouteStatus(getTransactionStatus(state));
       const targetRoute = updatedRelatedRoutes.find((r) => r.routeKey === routeKey);
-      if (targetRoute) {
-        if (status) targetRoute.status = status;
-        targetRoute.id === routeId; 
+      if (targetRoute && status) {
+        targetRoute.status = status;
       }
+    });
 
-    }
-  }
+  })
   return updatedRelatedRoutes;
 }

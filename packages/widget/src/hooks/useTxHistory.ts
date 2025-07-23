@@ -24,10 +24,17 @@ export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
     );
 
     txHistoryItem.relatedRoutes?.forEach((relatedRoute) => {
+      if (!relatedRoute.id) {
+        relatedRoute = txHistoryItem;
+      }
+      console.log("subscribing to related route", relatedRoute);
       unsubscribers.push(
         subscribeToRouteStatus({
           routeDetails: relatedRoute as RouteDetails,
-          onRouteStatusUpdated: (routeStatus) => setTransactionHistory(routeStatus),
+          onRouteStatusUpdated: (routeStatus) => {
+            console.log("on related route status updated");
+            setTransactionHistory(routeStatus);
+          },
         }),
       );
     });

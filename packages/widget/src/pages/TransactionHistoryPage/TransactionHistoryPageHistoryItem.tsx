@@ -19,7 +19,7 @@ import { ThinArrowIcon } from "@/icons/ThinArrowIcon";
 import { Tooltip } from "@/components/Tooltip";
 import { CircleSkeletonElement } from "@/components/Skeleton";
 import { convertToPxValue } from "@/utils/style";
-import { RouteDetails, TransactionStatus, RouteStatus } from "@skip-go/client";
+import { RouteDetails } from "@skip-go/client";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -91,8 +91,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
     };
 
     const feeAssetRouteDetails = useMemo(() => {
-      console.log(historyItem, txHistoryItem);
-      return historyItem?.relatedRoutes?.[0] ?? txHistoryItem?.relatedRoutes?.[0];
+      return historyItem?.relatedRoutes?.[0] || txHistoryItem?.relatedRoutes?.[0];
     }, [historyItem, txHistoryItem]);
 
     const renderStatus = useMemo(() => {
