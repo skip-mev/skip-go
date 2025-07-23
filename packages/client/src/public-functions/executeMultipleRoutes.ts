@@ -258,6 +258,9 @@ export const executeMultipleRoutes = async (
             txHash: txResult.txHash,
             ...options.trackTxPollingOptions,
           });
+
+          await options?.onTransactionTracked?.({ txHash: txResult.txHash, chainId: transactionDetail.chainId, explorerLink: trackResponse.explorerLink });
+          
           transactionDetail.txHash = txResult.txHash;
           transactionDetail.explorerLink = trackResponse.explorerLink;
         }
