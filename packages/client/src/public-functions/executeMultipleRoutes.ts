@@ -1,9 +1,11 @@
 import type { TransactionCallbacks } from "../types/callbacks";
-import type {
-  CosmosMsg,
-  RouteResponse,
-  PostHandler,
-  CosmosTx,
+import {
+  type CosmosMsg,
+  type RouteResponse,
+  type PostHandler,
+  type CosmosTx,
+  ChainType,
+  type Tx,
 } from "../types/swaggerTypes";
 import type { ApiRequest, ApiResponse } from "../utils/generateApi";
 import type {
@@ -11,13 +13,15 @@ import type {
   GasOptions,
   UserAddress,
   BaseSettings,
+  TxResult,
 } from "src/types/client-types";
-import { updateRouteDetails } from "./subscribeToRouteStatus";
+import { executeAndSubscribeToRouteStatus, updateRouteDetails } from "./subscribeToRouteStatus";
 import { createValidAddressList, validateUserAddresses } from "src/utils/address";
 import { ApiState } from "src/state/apiState";
 import { messages, type MessagesResponse } from "src/api/postMessages";
 import { executeTransactions } from "src/private-functions/executeTransactions";
 import { v4 as uuidv4 } from "uuid";
+import { trackTransaction } from "src/api/postTrackTransaction";
 
 /** Execute Routes Options */
 export type ExecuteMultipleRoutesOptions = SignerGetters &
@@ -197,31 +201,80 @@ export const executeMultipleRoutes = async (
 
   let mainRouteId: string | undefined = undefined;
 
+  let msgsRecordIndexToRouteId: Record<number, string> = {};
+
+  let index = 0;
+
+  const transactionDetailsList: Record<number, {
+    chainId: string;
+  }[]> = {};
+  const executeTransactionList: Record<number, (index: number) => Promise<TxResult>> = {};
+
+  for (const [routeKey, msgsResponse] of Object.entries(msgsRecord)) {
+    console.log('msgsResponse', msgsResponse);
+    const { id: routeId } = updateRouteDetails({
+      status: "unconfirmed",
+      options: {
+        route: route[routeKey],
+        ...restOptions,
+      },
+      mainRouteId,
+      transferIndexToRouteKey,
+    });
+
+    msgsRecordIndexToRouteId[index] = routeId;
+
+    if (routeKey === "mainRoute") {
+      mainRouteId = routeId;
+    }
+
+    const { transactionDetails, executeTransaction } = await executeTransactions({
+      ...restOptions,
+      routeId,
+      txs: msgsResponse?.txs,
+      route: route[routeKey]!,
+      userAddresses: userAddresses[routeKey]!,
+    });
+
+    if (transactionDetails[0]?.chainType === ChainType.Evm) {
+      for (const [index, transactionDetail] of transactionDetails.entries()) {
+        const txResult = await executeTransaction(index);
+        if (txResult.txHash) {
+          const trackResponse = await trackTransaction({
+            chainId: transactionDetail.chainId,
+            txHash: txResult.txHash,
+            ...options.trackTxPollingOptions,
+          });
+          transactionDetail.txHash = txResult.txHash;
+          transactionDetail.explorerLink = trackResponse.explorerLink;
+        }
+      }
+    } else {
+      executeTransactionList[index] = executeTransaction;
+    }
+    transactionDetailsList[index] = transactionDetails;
+
+    index++;
+  }
+
+  console.log("Promise.all");
+
+  console.log(transactionDetailsList);
+
   await Promise.all(
-    Object.entries(msgsRecord).map(async ([routeKey, msgsResponse]) => {
-      const { id: routeId } = updateRouteDetails({
-        status: "unconfirmed",
+    Object.entries(msgsRecord).map(([routeKey, msgsResponse], index) => {
+      console.log('executeTransaction', executeTransactionList[index]);
+      return executeAndSubscribeToRouteStatus({
+        transactionDetails: transactionDetailsList[index],
+        executeTransaction: executeTransactionList[index],
+        routeId: msgsRecordIndexToRouteId[index],
         options: {
-          route: route[routeKey],
+          route: route[routeKey]!,
+          userAddresses: userAddresses[routeKey]!,
           ...restOptions,
         },
-        mainRouteId,
-        transferIndexToRouteKey,
-      });
-
-      if (routeKey === "mainRoute") {
-        mainRouteId = routeId;
-      }
-
-      console.log('route', route, route[routeKey]);
-
-      await executeTransactions({
-        ...restOptions,
-        routeId,
-        txs: msgsResponse?.txs,
-        route: route[routeKey]!,
-        userAddresses: userAddresses[routeKey]!,
       });
     })
   );
+
 };

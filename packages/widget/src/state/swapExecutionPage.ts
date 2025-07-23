@@ -342,8 +342,9 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   return {
     gcTime: Infinity,
     mutationFn: async ({ getSvmSigner }: { getSvmSigner: () => Promise<Adapter> }) => {
-      if (!mainRoute) return;
-      console.log("Executing route", mainRoute);
+      const routeToExecute = isFeeRouteEnabled ? feeRoute : mainRoute;
+      if (!routeToExecute) return;
+      console.log("Executing route", routeToExecute);
       if (!userAddresses.length) return;
 
       const secondAddresses = [
@@ -351,10 +352,10 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           chainId: "10",
           address: "0xdA96a0fe76B6e185324976D926E41d0183828d70",
         },
-        {
-          chainId: "noble-1",
-          address: "noble1qj83mw6k79k7wp2675t8xueytwcf7t6dr6r79x",
-        },
+        // {
+        //   chainId: "noble-1",
+        //   address: "noble1qj83mw6k79k7wp2675t8xueytwcf7t6dr6r79x",
+        // },
         // {
         //   chainId: "elys-1",
         //   address: "elys1qj83mw6k79k7wp2675t8xueytwcf7t6dte03s2",
@@ -367,7 +368,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
       try {
         await executeMultipleRoutes({
           route: {
-            mainRoute: mainRoute,
+            mainRoute: routeToExecute,
             ...(isFeeRouteEnabled ? { feeRoute } : {}),
           },
           userAddresses: {
@@ -378,7 +379,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
           simulate:
-            simulateTx !== undefined ? simulateTx : mainRoute.sourceAssetChainId !== "984122",
+            simulateTx !== undefined ? simulateTx : routeToExecute.sourceAssetChainId !== "984122",
           batchSignTxs: batchSignTxs !== undefined ? batchSignTxs : true,
           ...submitSwapExecutionCallbacks,
           getCosmosSigner: async (chainId) => {

@@ -116,13 +116,6 @@ export const executeEvmTransaction = async (
     options
   });
 
-  const latestNonce = await extendedSigner.getTransactionCount({
-    address: evmSigner.account.address as `0x${string}`,
-    blockTag: 'pending',
-  })
-
-  const usedNonce = options.setNonce?.(latestNonce) ?? latestNonce;
-
   // Execute the transaction
   const txHash = await extendedSigner.sendTransaction({
     account: evmSigner.account,
@@ -130,7 +123,6 @@ export const executeEvmTransaction = async (
     data: `0x${evmTx.data}`,
     chain: evmSigner.chain,
     value: evmTx.value === "" ? undefined : BigInt(evmTx.value),
-    nonce: usedNonce
   });
 
   updateRouteDetails({

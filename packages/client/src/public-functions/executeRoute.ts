@@ -36,7 +36,6 @@ export type ExecuteRouteOptions = SignerGetters &
      * Specify actions to perform after the route is completed
      */
     postRouteHandler?: PostHandler;
-    setNonce?: (latestNonce: number) => number;
   };
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {
@@ -81,5 +80,12 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     })
   }
 
-  await executeTransactions({ ...options, routeId, txs: response?.txs });
+  const { transactionDetails, executeTransaction } = await executeTransactions({ ...options, routeId, txs: response?.txs });
+
+  await executeAndSubscribeToRouteStatus({
+    transactionDetails,
+    executeTransaction,
+    routeId,
+    options,
+  });
 };
