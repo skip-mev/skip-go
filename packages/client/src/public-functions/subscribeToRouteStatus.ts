@@ -246,7 +246,7 @@ export const executeAndSubscribeToRouteStatus = async ({
         console.info(`Polling cancelled for route ${routeId}`);
         break;
       }
-      
+
       try {
         const statusResponse = await transactionStatus({
           chainId: transaction.chainId,
@@ -460,16 +460,19 @@ const updateRelatedRoutes = ({
   let updatedRelatedRoutes = [...relatedRoutes.map(relatedRoute => ({ ...relatedRoute }))];
   if (!transferIndexToRouteKey) return updatedRelatedRoutes;
 
-  transactionDetails?.forEach((transaction) => {
-    Object.entries(transferIndexToRouteKey).forEach(([index, routeKey]) => {
-      const state = transaction?.statusResponse?.transfers?.[Number(index)]?.state;
+  transactionDetails?.forEach((tx) => {
+    Object.entries(transferIndexToRouteKey).forEach(([indexStr, routeKey]) => {
+      const index = Number(indexStr);
+      const transaction = transactionDetails?.[index];
+
+      const state = transaction?.statusResponse?.transfers?.[index]?.state;
       const status = convertTransactionStatusToRouteStatus(getTransactionStatus(state));
-      const targetRoute = updatedRelatedRoutes.find((r) => r.routeKey === routeKey);
-      if (targetRoute && status) {
+      const targetRoute = updatedRelatedRoutes[index];
+
+      if (targetRoute?.routeKey === routeKey && status) {
         targetRoute.status = status;
       }
     });
-
   })
   return updatedRelatedRoutes;
 }

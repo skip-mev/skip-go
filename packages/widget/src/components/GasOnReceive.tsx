@@ -8,7 +8,7 @@ import { skipAssetsAtom } from "@/state/skipClient";
 import { formatUSD } from "@/utils/intl";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
-import styled, { useTheme } from "styled-components";
+import { useTheme } from "styled-components";
 import { Row } from "./Layout";
 import { SkeletonElement } from "./Skeleton";
 import { Switch } from "./Switch";
