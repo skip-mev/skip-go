@@ -8,7 +8,7 @@ import { skipAssetsAtom } from "@/state/skipClient";
 import { formatUSD } from "@/utils/intl";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Row } from "./Layout";
 import { SkeletonElement } from "./Skeleton";
 import { Switch } from "./Switch";
@@ -18,7 +18,7 @@ import { RouteDetails } from "@skip-go/client";
 import { currentTransactionAtom } from "@/state/history";
 
 export type GasOnReceiveProps = {
-  routeDetails?: RouteDetails;
+  routeDetails?: Partial<RouteDetails>;
 };
 
 export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
@@ -94,7 +94,7 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
     return <GasIcon color={theme.primary.text.lowContrast} />;
   }, [routeDetails?.status, theme.primary.text.lowContrast]);
 
-  if (!routeDetails && (!gasOnReceiveAsset || fetchingGasRoute)) {
+  if (!routeDetails && (!gasRoute?.gasOnReceiveAsset || !gasOnReceiveAsset || fetchingGasRoute)) {
     return null;
   }
 

@@ -32,8 +32,8 @@ import {
   isSomeDestinationFeeBalanceAvailableAtom,
 } from "@/state/gasOnReceive";
 import { GasOnReceive } from "@/components/GasOnReceive";
-import { useTheme } from "styled-components";
 import { useFeeRouteAutoSetAddress } from "@/hooks/useFeeRouteAutoSetAddress";
+import { useTheme } from "styled-components";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -176,7 +176,7 @@ export const SwapExecutionPage = () => {
     lastTxHash &&
     lastTxChainId &&
     route?.txsRequired === currentTransaction?.transactionDetails.length;
-
+  console.log("ct", currentTransaction);
   return (
     <Column gap={5}>
       <PageHeader
@@ -227,10 +227,11 @@ export const SwapExecutionPage = () => {
         firstOperationStatus={firstOperationStatus}
         secondOperationStatus={secondOperationStatus}
         bottomContent={
-          (gasRoute !== undefined || feeRoute !== undefined) && (
+          (gasRoute !== undefined || feeRoute !== undefined) &&
+          !isGasRouteLoading && (
             <Column>
-              <Spacer height={24} showLine lineColor={theme.secondary.background.transparent} />
-              <GasOnReceive routeDetails={currentTransaction} />
+              <Spacer height={30} showLine lineColor={theme.secondary.background.transparent} />
+              <GasOnReceive routeDetails={currentTransaction?.relatedRoutes?.[0]} />
             </Column>
           )
         }

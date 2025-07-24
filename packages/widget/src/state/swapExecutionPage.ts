@@ -194,6 +194,8 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     transactionDetailsArray: [],
     route,
     originalRoute: route,
+    feeRoute: undefined,
+    mainRoute: undefined,
     clientOperations: getClientOperations(route.operations),
     currentTransactionId: undefined,
   });
