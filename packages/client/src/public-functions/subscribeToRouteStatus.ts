@@ -230,12 +230,23 @@ export const executeAndSubscribeToRouteStatus = async ({
       return;
     }
 
-    while (!isFinalState(transaction) || routeDetails?.relatedRoutes?.some((relatedRoute) => !isFinalRouteStatus(relatedRoute as RouteDetails))) {
+    while (true) {
       console.log('polling transaction status', transaction.txHash, transaction.chainId, routeId);
+
+      const updatedRouteDetails = routeDetailsMap.get(routeId ?? '');
+      const allRelatedRoutesFinal = updatedRouteDetails?.relatedRoutes?.every(
+        (relatedRoute) => relatedRoute && isFinalRouteStatus(relatedRoute as RouteDetails)
+      );
+
+      if (isFinalState(transaction) && allRelatedRoutesFinal) {
+        break;
+      }
+
       if (isCancelled?.()) {
         console.info(`Polling cancelled for route ${routeId}`);
-        return;
+        break;
       }
+      
       try {
         const statusResponse = await transactionStatus({
           chainId: transaction.chainId,
@@ -367,7 +378,7 @@ export const updateRouteDetails = ({
     transactionDetails,
     transferEvents,
     transferAssetRelease,
-    userAddresses: currentRouteDetails?.userAddresses ?? options?.userAddresses,
+    userAddresses: (currentRouteDetails?.userAddresses.length > 0 ? currentRouteDetails?.userAddresses : options?.userAddresses) ?? [],
     txsSigned: currentRouteDetails?.txsSigned,
     transferIndexToRouteKey,
     mainRouteId: mainRouteId ?? currentRouteDetails?.mainRouteId,
