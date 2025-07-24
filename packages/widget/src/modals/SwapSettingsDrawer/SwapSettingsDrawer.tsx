@@ -13,7 +13,6 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { track } from "@amplitude/analytics-browser";
 import { convertToPxValue } from "@/utils/style";
-import { ReceiveGasOnDestination } from "./ReceiveGasOnDestination";
 import RoutePreferenceSelector from "./RoutePreferenceSelector";
 
 export const SwapSettingsDrawer = createModal(() => {
@@ -64,7 +63,6 @@ export const SwapSettingsDrawer = createModal(() => {
         )}
       </Column>
 
-      <ReceiveGasOnDestination amountUsd="0.5" feeAsset={{ chainId: "noble-1", denom: "uusdc" }} />
       {fees.length > 0 && (
         <Column gap={10}>
           {fees.map(({ label, fee }, index) => (
