@@ -460,16 +460,15 @@ const updateRelatedRoutes = ({
   let updatedRelatedRoutes = [...relatedRoutes.map(relatedRoute => ({ ...relatedRoute }))];
   if (!transferIndexToRouteKey) return updatedRelatedRoutes;
 
-  transactionDetails?.forEach((tx) => {
+  transactionDetails?.forEach((transaction) => {
     Object.entries(transferIndexToRouteKey).forEach(([indexStr, routeKey]) => {
       const index = Number(indexStr);
-      const transaction = transactionDetails?.[index];
 
       const state = transaction?.statusResponse?.transfers?.[index]?.state;
       const status = convertTransactionStatusToRouteStatus(getTransactionStatus(state));
-      const targetRoute = updatedRelatedRoutes[index];
 
-      if (targetRoute?.routeKey === routeKey && status) {
+      const targetRoute = updatedRelatedRoutes.find((r) => r.routeKey === routeKey);
+      if (targetRoute && status && state) {
         targetRoute.status = status;
       }
     });
