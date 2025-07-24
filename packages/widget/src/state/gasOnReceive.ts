@@ -24,7 +24,7 @@ type SwapRoute = {
 };
 
 const GAS_ON_RECEIVE_AMOUNT_USD = {
-  [ChainType.Cosmos]: 0.5,
+  [ChainType.Cosmos]: 0.1,
   evm_l2: 4,
 };
 
