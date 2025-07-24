@@ -1,7 +1,7 @@
 import { RouteDetailsWithRelatedRoutes, setTransactionHistoryAtom } from "@/state/history";
 import { RouteDetails, subscribeToRouteStatus } from "@skip-go/client";
 import { useSetAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 type useTxHistoryProps = {
   txHistoryItem?: RouteDetailsWithRelatedRoutes;
@@ -9,40 +9,44 @@ type useTxHistoryProps = {
 
 export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
   const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
-  const [subscribed, setSubscribed] = useState(false);
+  const unsubscribersRef = useRef<(() => void)[] | null>(null);
+  const subscribedIdsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    if (!txHistoryItem || subscribed) return;
+    if (!txHistoryItem) return;
 
     const unsubscribers: (() => void)[] = [];
+    const subscribedRouteIds = new Set<string>();
 
-    unsubscribers.push(
-      subscribeToRouteStatus({
-        routeDetails: txHistoryItem,
-        onRouteStatusUpdated: (routeStatus) => setTransactionHistory(routeStatus),
-      }),
-    );
+    const subscribe = (route: RouteDetails) => {
+      if (!route.id || subscribedRouteIds.has(route.id)) return;
+      subscribedRouteIds.add(route.id);
 
-    txHistoryItem.relatedRoutes?.forEach((relatedRoute) => {
-      if (!relatedRoute.id) {
-        relatedRoute = txHistoryItem;
-      }
       unsubscribers.push(
         subscribeToRouteStatus({
-          routeDetails: relatedRoute as RouteDetails,
+          routeDetails: route,
           onRouteStatusUpdated: (routeStatus) => {
             setTransactionHistory(routeStatus);
           },
         }),
       );
+    };
+
+    subscribe(txHistoryItem);
+
+    txHistoryItem.relatedRoutes?.forEach((relatedRoute) => {
+      if (relatedRoute && relatedRoute.id) {
+        subscribe(relatedRoute as RouteDetails);
+      }
     });
 
-    setSubscribed(true);
+    unsubscribersRef.current = unsubscribers;
+    subscribedIdsRef.current = subscribedRouteIds;
 
     return () => {
-      unsubscribers.forEach((unsubscribe) => unsubscribe());
+      unsubscribers.forEach((unsub) => unsub());
     };
-  }, [setTransactionHistory, subscribed, txHistoryItem]);
+  }, [txHistoryItem, setTransactionHistory]);
 
   return txHistoryItem;
 };
