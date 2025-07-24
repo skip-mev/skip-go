@@ -27,6 +27,8 @@ type TransactionHistoryPageHistoryItemDetailsProps = {
   transferAssetRelease?: TransferAssetRelease;
   transactionDetails: TransactionDetails[];
   feeAssetRouteDetails?: RouteDetails;
+  senderAddress?: string;
+  receiverAddress?: string;
 };
 
 const statusMap = {
@@ -51,6 +53,8 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   transferAssetRelease,
   transactionDetails,
   feeAssetRouteDetails,
+  senderAddress,
+  receiverAddress,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
 
@@ -133,6 +137,20 @@ export const TransactionHistoryPageHistoryItemDetails = ({
           </SmallText>
         </Link>
       </StyledHistoryItemDetailRow>
+
+      {senderAddress && (
+        <StyledHistoryItemDetailRow align="center">
+          <StyledDetailsLabel>Sender</StyledDetailsLabel>
+          <SmallText normalTextColor>{senderAddress}</SmallText>
+        </StyledHistoryItemDetailRow>
+      )}
+
+      {receiverAddress && (
+        <StyledHistoryItemDetailRow align="center">
+          <StyledDetailsLabel>Receiver</StyledDetailsLabel>
+          <SmallText normalTextColor>{receiverAddress}</SmallText>
+        </StyledHistoryItemDetailRow>
+      )}
 
       {feeAssetRouteDetails && (
         <StyledHistoryItemDetailRow align="center">

@@ -166,6 +166,27 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
         .replace("year", "yr");
     }, [historyItem?.status, timestamp]);
 
+    const senderAddress = useMemo(() => {
+      return historyItem?.userAddresses?.find(
+        (address) => address.chainId === historyItem?.route?.sourceAssetChainId,
+      )?.address;
+    }, [historyItem?.route?.sourceAssetChainId, historyItem?.userAddresses]);
+
+    const receiverAddress = useMemo(() => {
+      if (historyItem?.transferAssetRelease !== undefined) {
+        return historyItem?.userAddresses?.find(
+          (address) => address.chainId === historyItem?.transferAssetRelease?.chainId,
+        )?.address;
+      }
+      return historyItem?.userAddresses?.find(
+        (address) => address.chainId === historyItem?.route?.destAssetChainId,
+      )?.address;
+    }, [
+      historyItem?.route?.destAssetChainId,
+      historyItem?.transferAssetRelease,
+      historyItem?.userAddresses,
+    ]);
+
     if (!txHistoryItem.route) return null;
 
     return (
@@ -196,6 +217,8 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
             }}
             transferAssetRelease={historyItem?.transferAssetRelease}
             feeAssetRouteDetails={feeAssetRouteDetails}
+            senderAddress={senderAddress}
+            receiverAddress={receiverAddress}
           />
         )}
       </StyledHistoryContainer>

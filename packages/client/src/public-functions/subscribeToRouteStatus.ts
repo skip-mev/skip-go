@@ -15,7 +15,7 @@ import {
 } from "../utils/clientType";
 import type { ExecuteRouteOptions } from "./executeRoute";
 import { trackTransaction } from "../api/postTrackTransaction";
-import type { TxResult } from "src/types";
+import type { TxResult, UserAddress } from "src/types";
 import { v4 as uuidv4 } from 'uuid';
 
 export type RouteStatus = "unconfirmed" | "validating" | "allowance" | "signing" | "pending" | "completed" | "incomplete" | "failed";
@@ -55,12 +55,11 @@ export type RouteDetails = {
   transactionDetails: TransactionDetails[];
   transferEvents: ClientTransferEvent[];
   transferAssetRelease?: TransferAssetRelease;
-  senderAddress: string;
-  receiverAddress: string;
   transferIndexToRouteKey?: Record<number, string>;
   mainRouteId?: string;
   relatedRoutes?: Partial<RouteDetails>[];
   routeKey?: string;
+  userAddresses: UserAddress[];
 };
 
 export function getTransactionStatus(state?: TransactionState): TransactionStatus {
@@ -138,9 +137,8 @@ const initializeNewRouteDetails = (options?: Partial<ExecuteRouteOptions>) => {
     txsSigned: 0,
     transactionDetails: [],
     transferEvents: [],
-    senderAddress: options?.userAddresses?.[0]?.address ?? '',
-    receiverAddress: options?.userAddresses?.at(-1)?.address ?? '',
     relatedRoutes: [],
+    userAddresses: options?.userAddresses ?? [],
   };
   routeDetailsMap.set(newRouteId, newRouteDetails);
   return newRouteDetails;
@@ -354,9 +352,6 @@ export const updateRouteDetails = ({
 
   const transferAssetRelease = transactionDetails?.findLast(i => i.statusResponse?.transferAssetRelease)?.statusResponse?.transferAssetRelease;
 
-  const senderAddress = options?.userAddresses?.at(0);
-  const receiverAddress = options?.userAddresses?.at(-1);
-
   const updatedRelatedRoutes = updateRelatedRoutes({
     relatedRoutes: relatedRoutes ?? currentRouteDetails?.relatedRoutes ?? [],
     transferIndexToRouteKey,
@@ -372,8 +367,7 @@ export const updateRouteDetails = ({
     transactionDetails,
     transferEvents,
     transferAssetRelease,
-    senderAddress: currentRouteDetails?.senderAddress ?? senderAddress?.address ?? '',
-    receiverAddress: currentRouteDetails?.receiverAddress ?? receiverAddress?.address ?? '',
+    userAddresses: currentRouteDetails?.userAddresses ?? options?.userAddresses,
     txsSigned: currentRouteDetails?.txsSigned,
     transferIndexToRouteKey,
     mainRouteId: mainRouteId ?? currentRouteDetails?.mainRouteId,

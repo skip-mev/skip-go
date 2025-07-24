@@ -10,7 +10,6 @@ export type ModalRowItemProps = {
   onClick?: () => void;
   style?: React.CSSProperties;
   eureka?: boolean;
-  as?: "button" | "div";
 };
 
 export const ModalRowItem = ({
@@ -19,11 +18,10 @@ export const ModalRowItem = ({
   onClick,
   style,
   eureka,
-  as = "button",
 }: ModalRowItemProps) => {
   return (
     <StyledModalRowItemContainer
-      as={as}
+      as="button"
       align="center"
       justify="space-between"
       onClick={onClick}
@@ -37,36 +35,13 @@ export const ModalRowItem = ({
   );
 };
 
-type ModalRowFunctionalProps = {
-  onClick?: () => void;
-  as?: "button" | "div";
-};
-
-type ModalRowStyleProps = ModalRowFunctionalProps & {
-  eureka?: boolean;
-};
-
-const StyledModalRowItemContainer = styled(Row).attrs<ModalRowFunctionalProps>(
-  ({ onClick, as }) => ({
-    ...(as === "div" &&
-      !!onClick && {
-        role: "button",
-        tabIndex: 0,
-        onKeyDown: (e: React.KeyboardEvent) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            onClick();
-          }
-        },
-      }),
-  }),
-)<ModalRowStyleProps>`
+const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void; eureka?: boolean }>`
   ${removeButtonStyles};
   position: relative;
-  width: ${({ as }) => (as === "div" ? "-webkit-fill-available" : "100%")};
   height: 60px;
   border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.rowItem)};
-  padding: ${({ as }) => (as === "div" ? "0 15px" : "12px 15px")};
+  width: 100%;
+  padding: 12px 15px;
   margin-top: 5px;
 
   z-index: 0;

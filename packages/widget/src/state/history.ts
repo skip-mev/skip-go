@@ -7,6 +7,7 @@ import { setCurrentTransactionIdAtom, swapExecutionStateAtom } from "./swapExecu
 export enum HISTORY_VERSION {
   "camelCase",
   "routeDetails",
+  "userAddresses",
 }
 
 export const transactionHistoryVersionAtom = atomWithStorage<number | undefined>(

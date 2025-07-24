@@ -22,6 +22,7 @@ import { Adapter } from "@solana/wallet-adapter-base";
 import { MutateFunction } from "jotai-tanstack-query";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { svmWalletAtom } from "@/state/wallets";
+import { chainAddressesAtom } from "@/state/swapExecutionPage";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -53,6 +54,8 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     estimatedRouteDurationSeconds: route?.estimatedRouteDurationSeconds,
     enabled: swapExecutionState === SwapExecutionState.pending,
   });
+
+  const chainAddresses = useAtomValue(chainAddressesAtom);
 
   const { wallets: solanaWallets } = useWallet();
   const svmWallet = useAtomValue(svmWalletAtom);
@@ -120,7 +123,11 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
         />
       );
     case SwapExecutionState.ready: {
-      track("swap execution page: confirm button - clicked", { route });
+      const destinationWalletSource =
+        route?.requiredChainAddresses?.length &&
+        chainAddresses[route?.requiredChainAddresses?.length - 1]?.source;
+
+      track("swap execution page: confirm button - clicked", { route, destinationWalletSource });
       const onClickConfirmSwap = () => {
         if (route?.txsRequired && route.txsRequired > 1) {
           track("warning page: additional signing required", { route });
@@ -142,6 +149,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           });
           return;
         }
+
         submitExecuteRouteMutation({
           getSvmSigner: async () => {
             const wallet = solanaWallets.find((w) => w.adapter.name === svmWallet?.walletName);
