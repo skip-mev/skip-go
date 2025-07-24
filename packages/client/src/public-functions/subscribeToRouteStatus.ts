@@ -232,7 +232,8 @@ export const executeAndSubscribeToRouteStatus = async ({
       return;
     }
 
-    while (!isFinalState(transaction) || routeDetails?.relatedRoutes?.every((relatedRoute) => !isFinalRouteStatus(relatedRoute as RouteDetails))) {
+    while (!isFinalState(transaction) || routeDetails?.relatedRoutes?.some((relatedRoute) => !isFinalRouteStatus(relatedRoute as RouteDetails))) {
+      console.log('polling transaction status', transaction.txHash, transaction.chainId, routeId);
       if (isCancelled?.()) {
         console.info(`Polling cancelled for route ${routeId}`);
         return;
@@ -264,7 +265,7 @@ export const executeAndSubscribeToRouteStatus = async ({
           });
 
           if (routeDetails?.relatedRoutes?.every((relatedRoute) => isFinalRouteStatus(relatedRoute as RouteDetails))) {
-            console.log('all related routes are finalized')
+            console.log('all related routes are finalized');
             break;
           }
         }

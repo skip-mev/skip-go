@@ -134,12 +134,14 @@ export const TransactionHistoryPageHistoryItemDetails = ({
         </Link>
       </StyledHistoryItemDetailRow>
 
-      <StyledHistoryItemDetailRow align="center">
-        <Column width="100%">
-          <Spacer height={16} showLine lineColor={theme.secondary.background.transparent} />
-          <GasOnReceive routeDetails={feeAssetRouteDetails} />
-        </Column>
-      </StyledHistoryItemDetailRow>
+      {feeAssetRouteDetails && (
+        <StyledHistoryItemDetailRow align="center">
+          <Column width="100%">
+            <Spacer height={16} showLine lineColor={theme.secondary.background.transparent} />
+            <GasOnReceive routeDetails={feeAssetRouteDetails} />
+          </Column>
+        </StyledHistoryItemDetailRow>
+      )}
 
       <Row align="center" style={{ marginTop: 10, padding: "0px 10px" }}>
         <Button onClick={onClickDelete} gap={5} align="center">

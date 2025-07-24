@@ -74,7 +74,9 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
               .toNumber(),
           0,
         ) ?? 0;
-      return BigNumber(amountIn ?? 0).plus(BigNumber(totalRelatedRouteSourceAmount).toNumber());
+      return BigNumber(amountIn ?? 0)
+        .plus(BigNumber(totalRelatedRouteSourceAmount))
+        .toString();
     }, [amountIn, txHistoryItem]);
 
     const sourceAssetDetails = useGetAssetDetails({
