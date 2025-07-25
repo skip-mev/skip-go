@@ -409,12 +409,11 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
       const createParams = (
         sourceChainId: string,
       ): SignerGetters &
-        BaseSettings & {
+        Omit<BaseSettings, "slippageTolerancePercent"> & {
           timeoutSeconds?: string;
         } => {
         return {
           timeoutSeconds,
-          slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
           simulate: simulateTx !== undefined ? simulateTx : sourceChainId !== "984122",
           batchSignTxs: batchSignTxs !== undefined ? batchSignTxs : true,
@@ -469,6 +468,10 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
               mainRoute: userAddresses,
               ...(isFeeRouteEnabled ? { feeRoute: feeRouteUserAddresses } : {}),
             },
+            slippageTolerancePercent: {
+              mainRoute: swapSettings.slippage.toString(),
+              ...(isFeeRouteEnabled ? { feeRoute: "10" } : {}),
+            },
             ...createParams(mainRoute.sourceAssetChainId),
           });
         } else {
@@ -477,6 +480,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           await executeRoute({
             route,
             userAddresses,
+            slippageTolerancePercent: swapSettings.slippage.toString(),
             ...createParams(route.sourceAssetChainId),
           });
         }
