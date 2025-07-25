@@ -25,7 +25,7 @@ type SwapRoute = {
 
 const GAS_ON_RECEIVE_AMOUNT_USD = {
   [ChainType.Cosmos]: 0.1,
-  evm_l2: 4,
+  evm_l2: 2,
 };
 
 export const gasOnReceiveAtom = atom<boolean>(false);

@@ -266,6 +266,7 @@ export const executeMultipleRoutes = async (
         txs: msgsResponse?.txs,
         route: route[routeKey]!,
         userAddresses: userAddresses[routeKey]!,
+        isMultiRoutes: true,
       });
 
     if (transactionDetails[0]?.chainType === ChainType.Evm) {
