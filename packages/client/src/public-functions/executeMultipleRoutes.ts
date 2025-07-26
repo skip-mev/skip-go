@@ -16,8 +16,15 @@ import type {
   BaseSettings,
   TxResult,
 } from "src/types/client-types";
-import { executeAndSubscribeToRouteStatus, updateRouteDetails, type RouteDetails } from "./subscribeToRouteStatus";
-import { createValidAddressList, validateUserAddresses } from "src/utils/address";
+import {
+  executeAndSubscribeToRouteStatus,
+  updateRouteDetails,
+  type RouteDetails,
+} from "./subscribeToRouteStatus";
+import {
+  createValidAddressList,
+  validateUserAddresses,
+} from "src/utils/address";
 import { ApiState } from "src/state/apiState";
 import { messages, type MessagesResponse } from "src/api/postMessages";
 import { executeTransactions } from "src/private-functions/executeTransactions";
@@ -28,13 +35,13 @@ import { trackTransaction } from "src/api/postTrackTransaction";
 export type ExecuteMultipleRoutesOptions = SignerGetters &
   GasOptions &
   TransactionCallbacks &
-  BaseSettings &
+  Omit<BaseSettings, "slippageTolerancePercent"> &
   Pick<ApiRequest<"msgs">, "timeoutSeconds"> & {
     route: { mainRoute: RouteResponse } & Record<string, RouteResponse>;
     /**
      * Addresses should be in the same order with the `requiredChainAddresses` in the `route`
      */
-    userAddresses: Record<string, UserAddress[]>;
+    userAddresses: { mainRoute: UserAddress[] } & Record<string, UserAddress[]>;
     /**
      * If `appendCosmosMsgs` is provided, it will append the specified Cosmos messages to the transactions.
      */
@@ -43,6 +50,10 @@ export type ExecuteMultipleRoutesOptions = SignerGetters &
      * Specify actions to perform after the route is completed
      */
     postRouteHandler?: Record<string, PostHandler>;
+    slippageTolerancePercent?: { mainRoute: string } & Record<
+      string,
+      string
+    >;
   };
 
 /**
@@ -69,12 +80,12 @@ export type ExecuteMultipleRoutesOptions = SignerGetters &
 export const executeMultipleRoutes = async (
   options: ExecuteMultipleRoutesOptions
 ) => {
-
   const {
     route,
     userAddresses,
     appendCosmosMsgs,
     postRouteHandler,
+    slippageTolerancePercent,
     ...restOptions
   } = options;
 
@@ -83,13 +94,13 @@ export const executeMultipleRoutes = async (
 
   for (const [routeKey, routeValue] of Object.entries(route)) {
     const _userAddresses = userAddresses[routeKey];
-    
+
     if (_userAddresses === undefined) {
       throw new Error(
         `executeMultipleRoutes error: no user addresses found for route: ${routeKey}`
       );
     }
-    console.log('user addresses', userAddresses)
+    console.log("user addresses", userAddresses);
 
     const routeAddressList = await createValidAddressList({
       userAddresses: _userAddresses,
@@ -118,7 +129,7 @@ export const executeMultipleRoutes = async (
         destAssetDenom: routeValue?.destAssetDenom,
         operations: routeValue?.operations,
         addressList: routeAddressList,
-        slippageTolerancePercent: options.slippageTolerancePercent || "1",
+        slippageTolerancePercent: slippageTolerancePercent?.[routeKey] || "1",
         chainIdsToAffiliates: ApiState.chainIdsToAffiliates,
         postRouteHandler: postRouteHandler?.[routeKey],
         feePayerAddress: options.svmFeePayer?.address,
@@ -207,12 +218,19 @@ export const executeMultipleRoutes = async (
 
   let index = 0;
 
-  const transactionDetailsList: Record<number, {
-    chainId: string;
-  }[]> = {};
-  const executeTransactionList: Record<number, (index: number) => Promise<TxResult>> = {};
+  const transactionDetailsList: Record<
+    number,
+    {
+      chainId: string;
+    }[]
+  > = {};
+  const executeTransactionList: Record<
+    number,
+    (index: number) => Promise<TxResult>
+  > = {};
 
-  const mergedMainAndSecondaryRoutes = Object.entries(msgsRecord).length !== Object.entries(route).length;
+  const mergedMainAndSecondaryRoutes =
+    Object.entries(msgsRecord).length !== Object.entries(route).length;
 
   for (const [routeKey, msgsResponse] of Object.entries(msgsRecord)) {
     let relatedRoutes: Partial<RouteDetails>[] | undefined;
@@ -222,7 +240,7 @@ export const executeMultipleRoutes = async (
         .map(([key, route]) => ({ route, routeKey: key }));
     }
 
-    console.log('related routes', relatedRoutes)
+    console.log("related routes", relatedRoutes);
 
     const { id: routeId } = updateRouteDetails({
       status: "unconfirmed",
@@ -241,13 +259,15 @@ export const executeMultipleRoutes = async (
       mainRouteId = routeId;
     }
 
-    const { transactionDetails, executeTransaction } = await executeTransactions({
-      ...restOptions,
-      routeId,
-      txs: msgsResponse?.txs,
-      route: route[routeKey]!,
-      userAddresses: userAddresses[routeKey]!,
-    });
+    const { transactionDetails, executeTransaction } =
+      await executeTransactions({
+        ...restOptions,
+        routeId,
+        txs: msgsResponse?.txs,
+        route: route[routeKey]!,
+        userAddresses: userAddresses[routeKey]!,
+        isMultiRoutes: true,
+      });
 
     if (transactionDetails[0]?.chainType === ChainType.Evm) {
       for (const [index, transactionDetail] of transactionDetails.entries()) {
@@ -259,8 +279,12 @@ export const executeMultipleRoutes = async (
             ...options.trackTxPollingOptions,
           });
 
-          await options?.onTransactionTracked?.({ txHash: txResult.txHash, chainId: transactionDetail.chainId, explorerLink: trackResponse.explorerLink });
-          
+          await options?.onTransactionTracked?.({
+            txHash: txResult.txHash,
+            chainId: transactionDetail.chainId,
+            explorerLink: trackResponse.explorerLink,
+          });
+
           transactionDetail.txHash = txResult.txHash;
           transactionDetail.explorerLink = trackResponse.explorerLink;
         }
@@ -279,7 +303,7 @@ export const executeMultipleRoutes = async (
 
   await Promise.all(
     Object.entries(msgsRecord).map(([routeKey, msgsResponse], index) => {
-      console.log('executeTransaction', executeTransactionList[index]);
+      console.log("executeTransaction", executeTransactionList[index]);
 
       return executeAndSubscribeToRouteStatus({
         transactionDetails: transactionDetailsList[index],
@@ -293,5 +317,4 @@ export const executeMultipleRoutes = async (
       });
     })
   );
-
 };

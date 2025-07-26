@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { skipChainsAtom } from "./skipClient";
+import { skipAssetsAtom, skipChainsAtom } from "./skipClient";
 import { _skipRouteAtom, routeConfigAtom, skipRouteAtom, skipRouteRequestAtom } from "./route";
 import { ChainType, RouteResponse, balances, route } from "@skip-go/client";
 import { destinationAssetAtom, sourceAssetAtom, swapSettingsAtom } from "./swapPage";
@@ -25,7 +25,7 @@ type SwapRoute = {
 
 const GAS_ON_RECEIVE_AMOUNT_USD = {
   [ChainType.Cosmos]: 0.1,
-  evm_l2: 4,
+  evm_l2: 2,
 };
 
 export const gasOnReceiveAtom = atom<boolean>(false);
@@ -34,6 +34,7 @@ export const gasOnReceiveAmountAtom = atom<string | undefined>(undefined);
 export const gasOnReceiveRouteRequestAtom = atom((get) => {
   const balances = get(skipAllBalancesAtom);
   const chains = get(skipChainsAtom);
+
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
   const _amount = get(gasOnReceiveAmountAtom);
@@ -47,7 +48,25 @@ export const gasOnReceiveRouteRequestAtom = atom((get) => {
     }
     return GAS_ON_RECEIVE_AMOUNT_USD[ChainType.Cosmos];
   })();
-  const destinationFeeAssets = destinationChain?.feeAssets.map((asset) => asset.denom);
+  const destinationFeeAssets = (() => {
+    if (destinationChain?.chainType === ChainType.Evm) {
+      const assets = get(skipAssetsAtom);
+      const evmFeeAsset = assets.data?.find(
+        (asset) => asset.chain_key === destinationChain?.chainId && asset.denom.includes("-native"),
+      );
+      if (evmFeeAsset) {
+        return [{ amountIn: undefined, denom: evmFeeAsset.denom }];
+      }
+    }
+    return destinationChain?.feeAssets.map((asset) => {
+      const gasPrice = asset.gasPrice?.average ?? asset.gasPrice?.high ?? asset.gasPrice?.low;
+      return {
+        amountIn: gasPrice && BigNumber(gasPrice).multipliedBy(3).toString(),
+        denom: asset.denom,
+      };
+    });
+  })();
+  console.log("destinationFeeAssets", destinationFeeAssets);
 
   if (!sourceAsset?.chainId || !sourceAsset.denom || !destinationFeeAssets) return;
 
@@ -89,9 +108,15 @@ export const isSomeDestinationFeeBalanceAvailableAtom = atomWithQuery((get) => {
         },
       });
       const isSomeBalanceAvailable = gasOnReceiveRouteParams?.destAssetDenoms.some(
-        (denom) =>
-          balanceResponse?.chains?.[destination.chainId]?.denoms?.[denom]?.amount &&
-          balanceResponse?.chains?.[destination.chainId]?.denoms?.[denom]?.amount !== "0",
+        ({ denom, amountIn }) => {
+          const balanceAmount =
+            balanceResponse?.chains?.[destination.chainId]?.denoms?.[denom]?.amount;
+          const isMoreThanAmountIn =
+            !!balanceAmount &&
+            !!amountIn &&
+            BigNumber(balanceAmount).isGreaterThanOrEqualTo(amountIn);
+          return amountIn ? isMoreThanAmountIn : balanceAmount && balanceAmount !== "0";
+        },
       );
       return isSomeBalanceAvailable;
     },
@@ -128,9 +153,9 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
     const swapSettings = get(swapSettingsAtom);
     const gasOnReceiveRouteParams = get(gasOnReceiveRouteRequestAtom);
     const currentTransactionItem = get(currentTransactionAtom);
-    const destinationAssetIsAFeeAsset = gasOnReceiveRouteParams?.destAssetDenoms.includes(
-      destinationAsset?.denom ?? "",
-    );
+    const destinationAssetIsAFeeAsset = gasOnReceiveRouteParams?.destAssetDenoms
+      .map((i) => i.denom)
+      .includes(destinationAsset?.denom ?? "");
     const chainAddresses = get(chainAddressesAtom);
     const chainAddressesArray = Object.values(chainAddresses);
     const destination = chainAddressesArray?.[chainAddressesArray.length - 1];
@@ -195,14 +220,19 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
           return null;
         }
 
-        const { destAssetDenoms, ...restParams } = gasOnReceiveRouteParams;
+        const {
+          destAssetDenoms,
+          amountIn: amountInFallback,
+          ...restParams
+        } = gasOnReceiveRouteParams;
 
         const splitDenoms = chunkArray(destAssetDenoms);
         for (const chunk of splitDenoms) {
-          const feeAssetRoutes = chunk.map(async (denom) => {
+          const feeAssetRoutes = chunk.map(async ({ amountIn: amountInGasprice, denom }) => {
             try {
               const res = await route({
                 destAssetDenom: denom,
+                amountIn: amountInGasprice ?? amountInFallback,
                 ...restParams,
                 smartRelay: true,
                 ...routeConfig,
@@ -249,8 +279,11 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
     };
   });
 
-const chunkArray = (arr: string[], size = 3): string[][] => {
-  const result: string[][] = [];
+const chunkArray = (
+  arr: { denom: string; amountIn?: string }[],
+  size = 3,
+): { denom: string; amountIn?: string }[][] => {
+  const result: { denom: string; amountIn?: string }[][] = [];
   for (let i = 0; i < arr.length; i += size) {
     result.push(arr.slice(i, i + size));
   }

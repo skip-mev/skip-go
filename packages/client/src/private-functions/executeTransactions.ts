@@ -16,7 +16,7 @@ import { getAccountNumberAndSequence } from "./getAccountNumberAndSequence";
 import { getChainIdsFromTxs } from "./getChainIdsFromTxs";
 
 export const executeTransactions = async (
-  options: ExecuteRouteOptions & { txs?: Tx[], routeId: string }
+  options: ExecuteRouteOptions & { txs?: Tx[], routeId: string, isMultiRoutes?: boolean }
 ) => {
   const {
     txs,
@@ -30,6 +30,7 @@ export const executeTransactions = async (
     trackTxPollingOptions,
     batchSignTxs = true,
     routeId,
+    isMultiRoutes
   } = options;
 
   if (txs === undefined) {
@@ -88,6 +89,7 @@ export const executeTransactions = async (
     getCosmosPriorityFeeDenom: options.getCosmosPriorityFeeDenom,
     options,
     routeId,
+    isMultiRoutes
   });
 
   const validateEnabledChainIds = async (chainId: string) => {
@@ -102,6 +104,7 @@ export const executeTransactions = async (
       getCosmosPriorityFeeDenom: options.getCosmosPriorityFeeDenom,
       options,
       routeId,
+      isMultiRoutes
     });
   };
 
