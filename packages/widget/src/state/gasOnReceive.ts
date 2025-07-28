@@ -100,6 +100,8 @@ export const isSomeDestinationFeeBalanceAvailableAtom = atomWithQuery((get) => {
   return {
     enabled: queryEnabled,
     retry: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
     refetchInterval: false,
     queryKey: ["destinationBalances", { destination, gasOnReceiveRouteParams }],
     queryFn: async () => {
