@@ -58,7 +58,6 @@ export const SwapExecutionPage = () => {
   const currentTransaction = useAtomValue(currentTransactionAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const feeRouteChainAddresses = useAtomValue(feeRouteChainAddressesAtom);
-  console.log("feeRouteChainAddresses", feeRouteChainAddresses);
   const { connectRequiredChains, isLoading: isGettingAddressesLoading } = useAutoSetAddress();
   const {
     connectRequiredChains: connectFeeRouteRequiredChains,
@@ -70,7 +69,6 @@ export const SwapExecutionPage = () => {
     isSomeDestinationFeeBalanceAvailableAtom,
   );
   const { data: gasRoute, isLoading: isGasRouteLoading } = useAtomValue(gasOnReceiveRouteAtom);
-
   const isFetchingDestinationBalance =
     isSomeDestinationFeeBalanceAvailable.isLoading || isGasRouteLoading;
 
@@ -227,7 +225,7 @@ export const SwapExecutionPage = () => {
         firstOperationStatus={firstOperationStatus}
         secondOperationStatus={secondOperationStatus}
         bottomContent={
-          (gasRoute !== undefined || feeRoute !== undefined) &&
+          (gasRoute || feeRoute) &&
           !isGasRouteLoading && (
             <Column>
               <Spacer height={30} showLine lineColor={theme.secondary.background.transparent} />
