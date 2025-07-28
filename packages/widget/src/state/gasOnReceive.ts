@@ -61,12 +61,16 @@ export const gasOnReceiveRouteRequestAtom = atom((get) => {
     return destinationChain?.feeAssets.map((asset) => {
       const gasPrice = asset.gasPrice?.average ?? asset.gasPrice?.high ?? asset.gasPrice?.low;
       return {
-        amountIn: gasPrice && BigNumber(gasPrice).multipliedBy(3).toString(),
+        amountIn:
+          gasPrice &&
+          convertHumanReadableAmountToCryptoAmount(
+            BigNumber(gasPrice).multipliedBy(3).toNumber(),
+            destinationAsset?.decimals,
+          ),
         denom: asset.denom,
       };
     });
   })();
-  console.log("destinationFeeAssets", destinationFeeAssets);
 
   if (!sourceAsset?.chainId || !sourceAsset.denom || !destinationFeeAssets) return;
 
@@ -127,18 +131,13 @@ export const gasOnReceiveAtomEffect = atomEffect((get, set) => {
   const gorRoute = get(gasOnReceiveRouteAtom);
   const isSomeDestinationFeeBalanceAvailable = get(isSomeDestinationFeeBalanceAvailableAtom);
   const currentTransactionItem = get(currentTransactionAtom);
-  if (gorRoute.isLoading || isSomeDestinationFeeBalanceAvailable.isLoading) {
+  if (gorRoute.isLoading || isSomeDestinationFeeBalanceAvailable.isLoading) return;
+  if (currentTransactionItem) return;
+  if (!gorRoute.data?.gasOnReceiveAsset) return;
+  if (isSomeDestinationFeeBalanceAvailable.data) {
     set(gasOnReceiveAtom, false);
-    return;
-  }
-  if (!currentTransactionItem) {
-    if (gorRoute.data?.gasOnReceiveAsset) {
-      if (isSomeDestinationFeeBalanceAvailable.data) {
-        set(gasOnReceiveAtom, false);
-      } else {
-        set(gasOnReceiveAtom, true);
-      }
-    }
+  } else {
+    set(gasOnReceiveAtom, true);
   }
 });
 
