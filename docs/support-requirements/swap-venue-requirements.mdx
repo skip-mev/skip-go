@@ -5,9 +5,8 @@ description: "This document covers what Skip Go API requires of DEXes to support
 
 ## Background
 
-* DEXes often want Skip Go API to add support for their DEX as a swapping venue because the API powers cross-chain swaps + transfers in all the major cosmos wallets (Leap, Keplr, IBC Wallet, Metamask Snap) and cross-chain DEX aggregation to many popular defi aggregator and dapp frontends (e.g. Stargaze). As a result, being added to the Skip Go API instantly offers distribution across the interchain for your DEX
-* The Skip Go API’s swapping system is currently built in CosmWasm and can support swapping assets on Cosmos SDK modules (ex: Osmosis Poolmanager) and other CosmWasm contracts (ex: Astroport DEX) that can be queried and executed by Skip Go API’s CosmWasm contracts.
-* **You can use [this form ](https://skip-protocol.notion.site/Request-to-add-Swapping-Venue-to-Skip-API-104299e5ec644d95acbef320926da041?pvs=4)to submit information about your swapping venue to Skip and track your progress through the required steps**
+* DEXes often want Skip Go API to add support for their DEX as a swapping venue because the API powers cross-chain swaps + transfers in all the major cosmos and ethereum wallets (MM, Keplr, IBC Wallet, Metamask Snap) and cross-chain DEX aggregation to many popular defi aggregator and dapp frontends (e.g. Stargaze). As a result, being added to the Skip Go API instantly offers distribution across the interchain for your DEX
+* The Skip Go API’s swapping system is currently built in CosmWasm and can support swapping assets on Cosmos SDK modules (ex: Osmosis Poolmanager) and other CosmWasm contracts (ex: Astroport DEX) that can be queried and executed by Skip Go API’s CosmWasm contracts. The API support's swapping EVM dexes. (Uniswap v2/v3, Aerodrome, Velodrome).
 
 ### Chain Requirements
 
@@ -38,7 +37,47 @@ description: "This document covers what Skip Go API requires of DEXes to support
 ###  Query Messages  
 3. Exposes a “Swap Exact In Simulation” method where a user can put the inputs that would be used in the “Swap Exact In” execution method, and gets a response from the query that specifies the asset they would receive if executing the method ([see Osmosis for a module example](https://github.com/osmosis-labs/osmosis/blob/d7eb3b7018cde0557216237c84f063b3915af650/x/poolmanager/client/grpc/grpc%5Fquery.go#L113), or [Astroport for a contract example](https://github.com/astroport-fi/astroport-core/blob/52af83eab04c620ac40019f7cc9cee433d0c601e/contracts/router/src/contract.rs#L240)).
 4. Exposes a “Swap Exact Out Simulation” method where a user can input the asset desired and a given pool / path, and the query returns the asset required to swap in to receive the output asset desired ([see Osmosis for a module example](https://github.com/osmosis-labs/osmosis/blob/d7eb3b7018cde0557216237c84f063b3915af650/x/poolmanager/client/grpc/grpc%5Fquery.go#L93), or [Astroport for a contract example](https://github.com/astroport-fi/astroport-core/blob/52af83eab04c620ac40019f7cc9cee433d0c601e/contracts/pair/src/contract.rs#L892)).
+## Getting Skip to Add Support for Your DEX
 
-## Getting Skip to add support for your DEX
+Once your DEX and its chain meet the requirements listed above, you can submit it for integration by opening a support ticket in our [Discord](https://discord.gg/interchain).
 
-If your DEX and the chain its deployed on meets all of the functionality requirements described above, please fill out [this support request form](https://skip-protocol.notion.site/Template-for-Request-to-add-Swapping-Venue-to-Skip-API-104299e5ec644d95acbef320926da041?pvs=4) and submit it to [support@skip.build](mailto:support@skip.build) or TG:@bpiv400\. The form will help us scope how much work is required on our side to add support, guide our implementation, and inform our decision for how quickly to prioritize it in our roadmap (e.g. based on swapping volume + liquidity, and clarity of the technical information)
+We may request additional information to help prioritize the integration of your swap venue based on:
+
+- **Swap volume**
+- **Liquidity**
+- **Quality and clarity of technical documentation**
+
+---
+
+### Required Submission Info
+
+#### General Information
+
+- Team Name  
+- Contact Name  
+- Contact Telegram
+- Team Website
+- Swapping Venue Name (if different from team name)  
+- Swapping Venue Website  
+- Swapping Venue Documentation
+
+---
+
+#### Additional DEX Information
+
+Please answer the following questions to help us assess integration suitability:
+
+- **What kind of venue is it?**  
+  _e.g., AMM, CLOB, staking protocol_
+
+- **If an AMM, what pricing curves are supported?**  
+  - Include documentation  
+  - Describe any non-standard logic  
+
+- **How are fees calculated?**  
+  - Pool fees, maker/taker fees, etc.  
+  - Include documentation and note any non-standard mechanisms
+
+- **Which tokens typically offer better pricing on this venue?**
+
+- **Which tokens or token pairs**
