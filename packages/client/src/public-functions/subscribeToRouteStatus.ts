@@ -16,9 +16,17 @@ import {
 import type { ExecuteRouteOptions } from "./executeRoute";
 import { trackTransaction } from "../api/postTrackTransaction";
 import type { TxResult, UserAddress } from "src/types";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
-export type RouteStatus = "unconfirmed" | "validating" | "allowance" | "signing" | "pending" | "completed" | "incomplete" | "failed";
+export type RouteStatus =
+  | "unconfirmed"
+  | "validating"
+  | "allowance"
+  | "signing"
+  | "pending"
+  | "completed"
+  | "incomplete"
+  | "failed";
 
 export type TransactionStatus = "pending" | "success" | "failed";
 
@@ -32,18 +40,20 @@ export type TransactionDetails = {
   routeKey?: string;
 };
 
-type SimpleRoute = Partial<Pick<
-  Route,
-  | "usdAmountIn"
-  | "usdAmountOut"
-  | "amountIn"
-  | "amountOut"
-  | "sourceAssetDenom"
-  | "sourceAssetChainId"
-  | "destAssetDenom"
-  | "destAssetChainId"
-  | "estimatedRouteDurationSeconds"
->>;
+type SimpleRoute = Partial<
+  Pick<
+    Route,
+    | "usdAmountIn"
+    | "usdAmountOut"
+    | "amountIn"
+    | "amountOut"
+    | "sourceAssetDenom"
+    | "sourceAssetChainId"
+    | "destAssetDenom"
+    | "destAssetChainId"
+    | "estimatedRouteDurationSeconds"
+  >
+>;
 
 export type RouteDetails = {
   id: string;
@@ -62,7 +72,9 @@ export type RouteDetails = {
   userAddresses: UserAddress[];
 };
 
-export function getTransactionStatus(state?: TransactionState): TransactionStatus {
+export function getTransactionStatus(
+  state?: TransactionState
+): TransactionStatus {
   switch (state) {
     case "STATE_SUBMITTED":
     case "STATE_PENDING":
@@ -78,11 +90,15 @@ export function getTransactionStatus(state?: TransactionState): TransactionStatu
 }
 
 const isFinalRouteStatus = (routeDetails: RouteDetails) => {
-  if (routeDetails.status === "completed" || routeDetails.status === "failed" || routeDetails.status === "incomplete") {
+  if (
+    routeDetails.status === "completed" ||
+    routeDetails.status === "failed" ||
+    routeDetails.status === "incomplete"
+  ) {
     return true;
   }
   return false;
-}
+};
 
 const isFinalState = (transaction?: TransactionDetails): boolean => {
   const transactionState = transaction?.statusResponse?.transfers?.[0]?.state;
@@ -104,7 +120,7 @@ const isSuccessState = (transaction?: TransactionDetails): boolean => {
     transactionState === "STATE_COMPLETED_SUCCESS" ||
     transactionStatus === "success"
   );
-}
+};
 
 export type subscribeToRouteStatusProps = {
   routeDetails?: RouteDetails | RouteDetails[];
@@ -142,7 +158,7 @@ const initializeNewRouteDetails = (options?: Partial<ExecuteRouteOptions>) => {
   };
   routeDetailsMap.set(newRouteId, newRouteDetails);
   return newRouteDetails;
-}
+};
 
 export const subscribeToRouteStatus = (props: subscribeToRouteStatusProps) => {
   const { routeDetails, onRouteStatusUpdated } = props;
@@ -193,16 +209,26 @@ export const executeAndSubscribeToRouteStatus = async ({
   removeRoutesWithFinalStatus();
 
   routeId ??= routeDetails?.id;
-  const currentRouteDetails = routeDetailsMap.get(routeId ?? '');
-  transactionDetails ??= routeDetails?.transactionDetails ?? currentRouteDetails?.transactionDetails ?? [];
+  const currentRouteDetails = routeDetailsMap.get(routeId ?? "");
+  transactionDetails ??=
+    routeDetails?.transactionDetails ??
+    currentRouteDetails?.transactionDetails ??
+    [];
 
-  if (routeDetails && isFinalRouteStatus(routeDetails) && routeDetails?.relatedRoutes?.every((relatedRoute) => isFinalRouteStatus(relatedRoute as RouteDetails))) {
+  if (
+    routeDetails &&
+    isFinalRouteStatus(routeDetails) &&
+    routeDetails?.relatedRoutes?.every((relatedRoute) =>
+      isFinalRouteStatus(relatedRoute as RouteDetails)
+    )
+  ) {
     return;
   }
 
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
     if (executeTransaction && !transaction.txHash) {
-      let { txHash, explorerLink } = await executeTransaction?.(transactionIndex);
+      let { txHash, explorerLink } =
+        await executeTransaction?.(transactionIndex);
       transaction.txHash = txHash;
       if (!explorerLink) {
         const trackResponse = await trackTransaction({
@@ -214,7 +240,11 @@ export const executeAndSubscribeToRouteStatus = async ({
       }
 
       transaction.explorerLink = explorerLink;
-      await onTransactionTracked?.({ txHash: transaction.txHash, chainId: transaction.chainId, explorerLink });
+      await onTransactionTracked?.({
+        txHash: transaction.txHash,
+        chainId: transaction.chainId,
+        explorerLink,
+      });
     }
 
     if (transaction.txHash === undefined) {
@@ -225,17 +255,23 @@ export const executeAndSubscribeToRouteStatus = async ({
         options: {
           onRouteStatusUpdated,
           ...options,
-        }
+        },
       });
       return;
     }
 
     while (true) {
-      console.log('polling transaction status', transaction.txHash, transaction.chainId, routeId);
+      console.log(
+        "polling transaction status",
+        transaction.txHash,
+        transaction.chainId,
+        routeId
+      );
 
-      const updatedRouteDetails = routeDetailsMap.get(routeId ?? '');
+      const updatedRouteDetails = routeDetailsMap.get(routeId ?? "");
       const allRelatedRoutesFinal = updatedRouteDetails?.relatedRoutes?.every(
-        (relatedRoute) => relatedRoute && isFinalRouteStatus(relatedRoute as RouteDetails)
+        (relatedRoute) =>
+          relatedRoute && isFinalRouteStatus(relatedRoute as RouteDetails)
       );
 
       if (isFinalState(transaction) && allRelatedRoutesFinal) {
@@ -273,8 +309,12 @@ export const executeAndSubscribeToRouteStatus = async ({
             status: statusResponse as TransferStatus,
           });
 
-          if (routeDetails?.relatedRoutes?.every((relatedRoute) => isFinalRouteStatus(relatedRoute as RouteDetails))) {
-            console.log('all related routes are finalized');
+          if (
+            routeDetails?.relatedRoutes?.every((relatedRoute) =>
+              isFinalRouteStatus(relatedRoute as RouteDetails)
+            )
+          ) {
+            console.log("all related routes are finalized");
             break;
           }
         }
@@ -296,7 +336,7 @@ type updateRouteDetailsProps = {
   mainRouteId?: string;
   transferIndexToRouteKey?: Record<number, string>;
   relatedRoutes?: Partial<RouteDetails>[];
-}
+};
 
 export const updateRouteDetails = ({
   transactionDetails,
@@ -308,7 +348,7 @@ export const updateRouteDetails = ({
   transferIndexToRouteKey,
   relatedRoutes,
 }: updateRouteDetailsProps): RouteDetails => {
-  routeId ??= routeDetails?.id ?? '';
+  routeId ??= routeDetails?.id ?? "";
 
   let currentRouteDetails = routeDetails ?? routeDetailsMap.get(routeId);
 
@@ -318,35 +358,38 @@ export const updateRouteDetails = ({
   }
   transferIndexToRouteKey ??= currentRouteDetails?.transferIndexToRouteKey;
   if (currentRouteDetails === undefined) {
-    throw new Error ("No route details found")
+    throw new Error("No route details found");
   }
 
   transactionDetails ??= currentRouteDetails?.transactionDetails ?? [];
-  const txsRequired = currentRouteDetails?.txsRequired ?? options?.route?.txsRequired ?? 1;
+  const txsRequired =
+    currentRouteDetails?.txsRequired ?? options?.route?.txsRequired ?? 1;
 
   if (currentRouteDetails?.status === "signing" && status === "pending") {
     currentRouteDetails.txsSigned += 1;
   }
 
-  const transferEvents = routeDetails?.transferEvents ?? getTransferEventsFromTxStatusResponse(transactionDetails
-    .map((tx) => tx.statusResponse)
-    .filter((status): status is TxStatusResponse => status !== undefined));
-
-  const allExpectedTxsStarted =
-    transactionDetails.every(
-      (tx) =>
-        tx.txHash || tx.status === undefined
+  const transferEvents =
+    routeDetails?.transferEvents ??
+    getTransferEventsFromTxStatusResponse(
+      transactionDetails
+        .map((tx) => tx.statusResponse)
+        .filter((status): status is TxStatusResponse => status !== undefined)
     );
+
+  const allExpectedTxsStarted = transactionDetails.every(
+    (tx) => tx.txHash || tx.status === undefined
+  );
   const allKnownDetailsHaveFinalStatus = transactionDetails.every(
-    (transaction) => isFinalState(transaction),
+    (transaction) => isFinalState(transaction)
   );
 
   const isAllSettled = allExpectedTxsStarted && allKnownDetailsHaveFinalStatus;
 
-  const someTxSucceeded = transactionDetails.some(tx => isSuccessState(tx));
-  const someTxFailed = transactionDetails.some(tx => !isSuccessState(tx));
+  const someTxSucceeded = transactionDetails.some((tx) => isSuccessState(tx));
+  const someTxFailed = transactionDetails.some((tx) => !isSuccessState(tx));
 
-  const getRouteStatus= () => {
+  const getRouteStatus = () => {
     if (status) return status;
     if (someTxSucceeded && !allExpectedTxsStarted) return "incomplete";
     if (isAllSettled) {
@@ -359,15 +402,17 @@ export const updateRouteDetails = ({
       }
     }
     return currentRouteDetails?.status;
-  }
+  };
 
-  const transferAssetRelease = transactionDetails?.findLast(i => i.statusResponse?.transferAssetRelease)?.statusResponse?.transferAssetRelease;
+  const transferAssetRelease = transactionDetails?.findLast(
+    (i) => i.statusResponse?.transferAssetRelease
+  )?.statusResponse?.transferAssetRelease;
 
   const updatedRelatedRoutes = updateRelatedRoutes({
     relatedRoutes: relatedRoutes ?? currentRouteDetails?.relatedRoutes ?? [],
     transferIndexToRouteKey,
     transactionDetails,
-  })
+  });
 
   const newRouteDetails: RouteDetails = {
     id: routeId,
@@ -378,18 +423,26 @@ export const updateRouteDetails = ({
     transactionDetails,
     transferEvents,
     transferAssetRelease,
-    userAddresses: (currentRouteDetails?.userAddresses.length > 0 ? currentRouteDetails?.userAddresses : options?.userAddresses) ?? [],
+    userAddresses:
+      (currentRouteDetails?.userAddresses.length > 0
+        ? currentRouteDetails?.userAddresses
+        : options?.userAddresses) ?? [],
     txsSigned: currentRouteDetails?.txsSigned,
     transferIndexToRouteKey,
     mainRouteId: mainRouteId ?? currentRouteDetails?.mainRouteId,
     relatedRoutes: updatedRelatedRoutes,
   };
 
-  const newRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(newRouteDetails);
+  const newRouteStatus =
+    getRouteDetailsWithSimpleTransactionDetailsStatus(newRouteDetails);
 
-  const previousRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(currentRouteDetails);
+  const previousRouteStatus =
+    getRouteDetailsWithSimpleTransactionDetailsStatus(currentRouteDetails);
 
-  if ((options?.onRouteStatusUpdated) && JSON.stringify(newRouteStatus) !== JSON.stringify(previousRouteStatus)) {
+  if (
+    options?.onRouteStatusUpdated &&
+    JSON.stringify(newRouteStatus) !== JSON.stringify(previousRouteStatus)
+  ) {
     options?.onRouteStatusUpdated?.(newRouteStatus);
   }
 
@@ -411,33 +464,41 @@ const getSimpleRoute = (route?: Route | SimpleRoute): SimpleRoute => {
     destAssetDenom: route?.destAssetDenom,
     destAssetChainId: route?.destAssetChainId,
     estimatedRouteDurationSeconds: route?.estimatedRouteDurationSeconds,
-  }
-}
+  };
+};
 
-const getRouteDetailsWithSimpleTransactionDetailsStatus = (routeDetails: RouteDetails) => {
+const getRouteDetailsWithSimpleTransactionDetailsStatus = (
+  routeDetails: RouteDetails
+) => {
   return {
     ...routeDetails,
-    transactionDetails: routeDetails.transactionDetails.map(txDetails => {
+    transactionDetails: routeDetails.transactionDetails.map((txDetails) => {
       const { statusResponse, ...rest } = txDetails;
       const newTxDetails = {
         ...rest,
-        status: txDetails?.status ?? getTransactionStatus(statusResponse?.transfers?.[0]?.state),
+        status:
+          txDetails?.status ??
+          getTransactionStatus(statusResponse?.transfers?.[0]?.state),
       };
       return newTxDetails;
-    })
+    }),
   };
-}
+};
 
 const removeRoutesWithFinalStatus = () => {
   routeDetailsMap.forEach((routeDetails, routeId) => {
-    if (routeDetails.status === "completed" || routeDetails.status === "failed" || routeDetails.status === "incomplete") {
+    if (
+      routeDetails.status === "completed" ||
+      routeDetails.status === "failed" ||
+      routeDetails.status === "incomplete"
+    ) {
       routeDetailsMap.delete(routeId);
     }
   });
 };
 
 const convertTransactionStatusToRouteStatus = (
-  transactionStatus?: TransactionStatus,
+  transactionStatus?: TransactionStatus
 ): RouteStatus | undefined => {
   if (!transactionStatus) return;
   if (transactionStatus === "success") {
@@ -450,14 +511,16 @@ type updateRelatedRoutesProps = {
   relatedRoutes: Partial<RouteDetails>[];
   transferIndexToRouteKey?: Record<number, string>;
   transactionDetails?: TransactionDetails[];
-}
+};
 
 const updateRelatedRoutes = ({
   relatedRoutes,
   transferIndexToRouteKey,
   transactionDetails,
 }: updateRelatedRoutesProps) => {
-  let updatedRelatedRoutes = [...relatedRoutes.map(relatedRoute => ({ ...relatedRoute }))];
+  let updatedRelatedRoutes = [
+    ...relatedRoutes.map((relatedRoute) => ({ ...relatedRoute })),
+  ];
   if (!transferIndexToRouteKey) return updatedRelatedRoutes;
 
   transactionDetails?.forEach((transaction) => {
@@ -465,13 +528,17 @@ const updateRelatedRoutes = ({
       const index = Number(indexStr);
 
       const state = transaction?.statusResponse?.transfers?.[index]?.state;
-      const status = convertTransactionStatusToRouteStatus(getTransactionStatus(state));
+      const status = convertTransactionStatusToRouteStatus(
+        getTransactionStatus(state)
+      );
 
-      const targetRoute = updatedRelatedRoutes.find((r) => r.routeKey === routeKey);
+      const targetRoute = updatedRelatedRoutes.find(
+        (r) => r.routeKey === routeKey
+      );
       if (targetRoute && status && state) {
         targetRoute.status = status;
       }
     });
-  })
+  });
   return updatedRelatedRoutes;
-}
+};
