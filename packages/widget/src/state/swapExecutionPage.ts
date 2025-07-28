@@ -203,6 +203,12 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   set(submitSwapExecutionCallbacksAtom, {
     onRouteStatusUpdated: async (routeStatus) => {
       console.log(routeStatus);
+      const failedFeeRoute = routeStatus?.relatedRoutes?.find(
+        (relatedRoute) => relatedRoute.status === "failed",
+      );
+      if (failedFeeRoute) {
+        track("gas on receive: fee route failed", { feeRoute: failedFeeRoute });
+      }
       set(setTransactionHistoryAtom, routeStatus);
     },
     onTransactionUpdated: (txInfo) => {
@@ -459,6 +465,13 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
       try {
         if (isFeeRouteEnabled && mainRoute && feeRoute) {
           if (!feeRouteUserAddresses?.length) return;
+
+          track("execute route", {
+            gasOnReceive: true,
+            mainRoute,
+            feeRoute,
+          });
+
           await executeMultipleRoutes({
             route: {
               mainRoute,
@@ -477,6 +490,12 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
         } else {
           if (!route) return;
           if (!userAddresses.length) return;
+
+          track("execute route", {
+            gasOnReceive: false,
+            mainRoute: route,
+          });
+
           await executeRoute({
             route,
             userAddresses,

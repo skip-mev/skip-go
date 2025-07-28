@@ -12,6 +12,7 @@ import BigNumber from "bignumber.js";
 import { chainAddressesAtom } from "./swapExecutionPage";
 import { atomEffect } from "jotai-effect";
 import { currentTransactionAtom } from "./history";
+import { track } from "@amplitude/analytics-browser";
 
 type SwapRoute = {
   mainRoute?: RouteResponse;
@@ -125,6 +126,11 @@ export const isSomeDestinationFeeBalanceAvailableAtom = atomWithQuery((get) => {
           return amountIn ? isMoreThanAmountIn : balanceAmount && balanceAmount !== "0";
         },
       );
+
+      if (!isSomeBalanceAvailable) {
+        track("gas on receive: no destination balance");
+      }
+
       return isSomeBalanceAvailable;
     },
   };

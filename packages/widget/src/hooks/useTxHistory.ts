@@ -1,4 +1,5 @@
 import { RouteDetailsWithRelatedRoutes, setTransactionHistoryAtom } from "@/state/history";
+import { track } from "@amplitude/analytics-browser";
 import { RouteDetails, subscribeToRouteStatus } from "@skip-go/client";
 import { useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
@@ -26,6 +27,12 @@ export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
         subscribeToRouteStatus({
           routeDetails: route,
           onRouteStatusUpdated: (routeStatus) => {
+            const failedFeeRoute = routeStatus?.relatedRoutes?.find(
+              (relatedRoute) => relatedRoute.status === "failed",
+            );
+            if (failedFeeRoute) {
+              track("gas on receive: fee route failed", { feeRoute: failedFeeRoute });
+            }
             setTransactionHistory(routeStatus);
           },
         }),
