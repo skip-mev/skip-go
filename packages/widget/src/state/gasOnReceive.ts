@@ -17,7 +17,8 @@ type SwapRoute = {
   mainRoute?: RouteResponse;
   feeRoute?: RouteResponse;
   gasOnReceiveAsset?: {
-    amountUsd: string;
+    amountUsd?: string;
+    amountOut: string;
     denom: string;
     chainId: string;
   };
@@ -253,7 +254,7 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
             break;
           }
         }
-        if (!feeRoute?.usdAmountOut || !originalRoute) return null;
+        if (!feeRoute?.amountOut || !originalRoute) return null;
         params.amountIn = BigNumber(originalRoute.amountOut)
           .minus(BigNumber(feeRoute?.amountIn ?? 0))
           .toString();
@@ -271,6 +272,7 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
           mainRoute,
           feeRoute,
           gasOnReceiveAsset: {
+            amount: feeRoute.amountOut,
             amountUsd: feeRoute.usdAmountOut,
             denom: feeRoute.destAssetDenom,
             chainId: feeRoute.destAssetChainId,

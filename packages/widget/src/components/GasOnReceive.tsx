@@ -16,6 +16,7 @@ import { SmallText } from "./Typography";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { RouteDetails } from "@skip-go/client";
 import { currentTransactionAtom } from "@/state/history";
+import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 
 export type GasOnReceiveProps = {
   routeDetails?: Partial<RouteDetails>;
@@ -48,12 +49,15 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
     return asset;
   }, [assets, gasRoute?.gasOnReceiveAsset, routeDetails]);
 
-  const amountUsd =
-    routeDetails?.route?.usdAmountOut ?? gasRoute?.gasOnReceiveAsset?.amountUsd ?? "";
+  const amountUsd = routeDetails?.route?.usdAmountOut ?? gasRoute?.gasOnReceiveAsset?.amountUsd;
+  const amountOut = routeDetails?.route?.amountOut ?? gasRoute?.gasOnReceiveAsset?.amountOut ?? "";
+
   const assetSymbol = gasOnReceiveAsset?.recommendedSymbol?.toUpperCase() ?? "";
 
   const gasOnReceiveText = useMemo(() => {
-    const formattedAmountText = `${formatUSD(amountUsd)} in ${assetSymbol} as gas top-up`;
+    const formattedAmountText = amountUsd
+      ? `${formatUSD(amountUsd)} in ${assetSymbol} as gas top-up`
+      : `${convertTokenAmountToHumanReadableAmount(amountOut, gasOnReceiveAsset?.decimals)} ${assetSymbol}`;
 
     switch (routeDetails?.status) {
       case "pending":
@@ -68,7 +72,14 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
         }
         return "Enable to receive fee asset on destination chain";
     }
-  }, [amountUsd, assetSymbol, isGorEnabled, routeDetails?.status]);
+  }, [
+    amountOut,
+    amountUsd,
+    assetSymbol,
+    gasOnReceiveAsset?.decimals,
+    isGorEnabled,
+    routeDetails?.status,
+  ]);
 
   const renderIcon = useMemo(() => {
     if (routeDetails?.status === "pending") {
