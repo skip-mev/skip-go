@@ -38,7 +38,11 @@ import { WalletClient } from "viem";
 import { getWalletClient } from "@wagmi/core";
 import { atomWithStorageNoCrossTabSync } from "@/utils/storage";
 import { Adapter } from "@solana/wallet-adapter-base";
-import { gasOnReceiveAtom, gasOnReceiveRouteAtom } from "./gasOnReceive";
+import {
+  gasOnReceiveAtom,
+  gasOnReceiveRouteAtom,
+  isSomeDestinationFeeBalanceAvailableAtom,
+} from "./gasOnReceive";
 
 type ValidatingGasBalanceData = {
   chainId?: string;
@@ -389,6 +393,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const swapSettings = get(swapSettingsAtom);
   const getSigners = get(getConnectedSignersAtom);
   const wallets = get(walletsAtom);
+  const isDestinationFeeBalanceAvailable = get(isSomeDestinationFeeBalanceAvailableAtom);
 
   const { timeoutSeconds } = get(routeConfigAtom);
 
@@ -468,6 +473,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
 
           track("execute route", {
             gasOnReceive: true,
+            isDestinationFeeBalanceAvailable: isDestinationFeeBalanceAvailable.data,
             mainRoute,
             feeRoute,
           });
@@ -493,6 +499,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
 
           track("execute route", {
             gasOnReceive: false,
+            isDestinationFeeBalanceAvailable: isDestinationFeeBalanceAvailable.data,
             mainRoute: route,
           });
 
