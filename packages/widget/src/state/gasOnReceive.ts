@@ -119,11 +119,11 @@ export const isSomeDestinationFeeBalanceAvailableAtom = atomWithQuery((get) => {
         ({ denom, amountOut }) => {
           const balanceAmount =
             balanceResponse?.chains?.[destination.chainId]?.denoms?.[denom]?.amount;
-          const isMoreThanAmountIn =
+          const isMoreThanAmountOut =
             !!balanceAmount &&
             !!amountOut &&
             BigNumber(balanceAmount).isGreaterThanOrEqualTo(amountOut);
-          return amountOut ? isMoreThanAmountIn : balanceAmount && balanceAmount !== "0";
+          return amountOut ? isMoreThanAmountOut : balanceAmount && balanceAmount !== "0";
         },
       );
 
