@@ -38,7 +38,11 @@ import { WalletClient } from "viem";
 import { getWalletClient } from "@wagmi/core";
 import { atomWithStorageNoCrossTabSync } from "@/utils/storage";
 import { Adapter } from "@solana/wallet-adapter-base";
-import { gasOnReceiveAtom, gasOnReceiveRouteAtom } from "./gasOnReceive";
+import {
+  gasOnReceiveAtom,
+  gasOnReceiveRouteAtom,
+  isSomeDestinationFeeBalanceAvailableAtom,
+} from "./gasOnReceive";
 
 type ValidatingGasBalanceData = {
   chainId?: string;
@@ -203,6 +207,12 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   set(submitSwapExecutionCallbacksAtom, {
     onRouteStatusUpdated: async (routeStatus) => {
       console.log(routeStatus);
+      const failedFeeRoute = routeStatus?.relatedRoutes?.find(
+        (relatedRoute) => relatedRoute.status === "failed",
+      );
+      if (failedFeeRoute) {
+        track("gas on receive: fee route failed", { feeRoute: failedFeeRoute });
+      }
       set(setTransactionHistoryAtom, routeStatus);
     },
     onTransactionUpdated: (txInfo) => {
@@ -383,6 +393,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const swapSettings = get(swapSettingsAtom);
   const getSigners = get(getConnectedSignersAtom);
   const wallets = get(walletsAtom);
+  const isDestinationFeeBalanceAvailable = get(isSomeDestinationFeeBalanceAvailableAtom);
 
   const { timeoutSeconds } = get(routeConfigAtom);
 
@@ -459,6 +470,14 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
       try {
         if (isFeeRouteEnabled && mainRoute && feeRoute) {
           if (!feeRouteUserAddresses?.length) return;
+
+          track("execute route", {
+            gasOnReceive: true,
+            isDestinationFeeBalanceAvailable: isDestinationFeeBalanceAvailable.data,
+            mainRoute,
+            feeRoute,
+          });
+
           await executeMultipleRoutes({
             route: {
               mainRoute,
@@ -477,6 +496,13 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
         } else {
           if (!route) return;
           if (!userAddresses.length) return;
+
+          track("execute route", {
+            gasOnReceive: false,
+            isDestinationFeeBalanceAvailable: isDestinationFeeBalanceAvailable.data,
+            mainRoute: route,
+          });
+
           await executeRoute({
             route,
             userAddresses,

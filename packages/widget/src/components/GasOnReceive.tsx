@@ -19,6 +19,7 @@ import { currentTransactionAtom } from "@/state/history";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { convertToPxValue } from "@/utils/style";
 import { QuestionMarkTooltip } from "./QuestionMarkTooltip";
+import { track } from "@amplitude/analytics-browser";
 
 export type GasOnReceiveProps = {
   routeDetails?: Partial<RouteDetails>;
@@ -157,8 +158,11 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
           !currentTransaction && (
             <Switch
               checked={gasOnReceive}
-              onChange={(v) => {
-                setGasOnReceive(v);
+              onChange={(value) => {
+                track("gas on receive: toggle button - clicked", {
+                  gasOnReceive: value,
+                });
+                setGasOnReceive(value);
               }}
             />
           )}
