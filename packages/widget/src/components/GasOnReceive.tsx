@@ -53,13 +53,13 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
 
   const amountUsd = routeDetails?.route?.usdAmountOut ?? gasRoute?.gasOnReceiveAsset?.amountUsd;
   const amountOut = routeDetails?.route?.amountOut ?? gasRoute?.gasOnReceiveAsset?.amountOut ?? "";
-
   const assetSymbol = gasOnReceiveAsset?.recommendedSymbol?.toUpperCase() ?? "";
 
   const gasOnReceiveText = useMemo(() => {
-    const formattedAmountText = amountUsd
-      ? `${formatUSD(amountUsd)} in ${assetSymbol}`
-      : `${convertTokenAmountToHumanReadableAmount(amountOut, gasOnReceiveAsset?.decimals)} ${assetSymbol}`;
+    const formattedAmountText =
+      amountUsd && Number(amountUsd) > 0
+        ? `${formatUSD(amountUsd)} in ${assetSymbol}`
+        : `${convertTokenAmountToHumanReadableAmount(amountOut, gasOnReceiveAsset?.decimals)} ${assetSymbol}`;
 
     switch (routeDetails?.status) {
       case "pending":
