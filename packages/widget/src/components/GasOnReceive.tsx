@@ -71,7 +71,7 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
       default:
         return (
           <Row align="center" gap={8}>
-            Enable gas top up{" "}
+            Enable gas top up
             {
               <QuestionMarkTooltip
                 content={
