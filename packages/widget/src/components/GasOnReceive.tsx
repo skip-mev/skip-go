@@ -70,7 +70,7 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
         return `Failed to receive ${formattedAmountText} as gas top-up`;
       default:
         return (
-          <Row gap={8}>
+          <Row align="center" gap={8}>
             Enable gas top up{" "}
             {
               <QuestionMarkTooltip
