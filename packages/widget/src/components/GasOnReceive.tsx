@@ -59,28 +59,25 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
 
   const gasOnReceiveText = useMemo(() => {
     const formattedAmountText = amountUsd
-      ? `${formatUSD(amountUsd)} in ${assetSymbol} as gas top-up`
+      ? `${formatUSD(amountUsd)} in ${assetSymbol}`
       : `${convertTokenAmountToHumanReadableAmount(amountOut, gasOnReceiveAsset?.decimals)} ${assetSymbol}`;
 
     switch (routeDetails?.status) {
       case "pending":
         return `Receiving ${formattedAmountText}`;
       case "completed":
-        return `Received ${formattedAmountText}`;
+        return `Received ${formattedAmountText} as gas top-up`;
       case "failed":
-        return `Failed to receive ${formattedAmountText}`;
+        return `Failed to receive ${formattedAmountText} as gas top-up`;
       default:
-        if (isGorEnabled) {
-          return `You'll receive ${formattedAmountText}`;
-        }
         return (
           <Row gap={8}>
             Enable gas top up{" "}
             {
               <QuestionMarkTooltip
                 content={
-                  <SmallText normalTextColor style={{ width: 160 }}>
-                    Enable to receive fee asset on destination chain
+                  <SmallText normalTextColor style={{ whiteSpace: "nowrap" }}>
+                    You'll get {formattedAmountText}
                   </SmallText>
                 }
               />
@@ -88,14 +85,7 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
           </Row>
         );
     }
-  }, [
-    amountOut,
-    amountUsd,
-    assetSymbol,
-    gasOnReceiveAsset?.decimals,
-    isGorEnabled,
-    routeDetails?.status,
-  ]);
+  }, [amountOut, amountUsd, assetSymbol, gasOnReceiveAsset?.decimals, routeDetails?.status]);
 
   const renderIcon = useMemo(() => {
     if (routeDetails?.status === "pending") {
@@ -118,15 +108,8 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
         </SmallText>
       );
     }
-    return (
-      <GasIcon color={gasOnReceive ? theme.primary.text.normal : theme.primary.text.lowContrast} />
-    );
-  }, [
-    gasOnReceive,
-    routeDetails?.status,
-    theme.primary.text.lowContrast,
-    theme.primary.text.normal,
-  ]);
+    return <GasIcon color={theme.primary.text.lowContrast} />;
+  }, [routeDetails?.status, theme.primary.text.lowContrast]);
 
   if (!routeDetails && (!gasRoute?.gasOnReceiveAsset || !gasOnReceiveAsset || fetchingGasRoute)) {
     return null;
@@ -139,15 +122,7 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
         {(isFetchingBalance || fetchingGasRoute) && !routeDetails ? (
           <SkeletonElement height={20} width={300} />
         ) : (
-          <SmallText
-            color={
-              routeDetails?.status === "failed"
-                ? theme.warning.text
-                : gasOnReceive
-                  ? theme.primary.text.normal
-                  : undefined
-            }
-          >
+          <SmallText color={routeDetails?.status === "failed" ? theme.warning.text : undefined}>
             {gasOnReceiveText}
           </SmallText>
         )}
