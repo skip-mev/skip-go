@@ -57,13 +57,13 @@ export const gasOnReceiveRouteRequestAtom = atom((get) => {
         (asset) => asset.chain_key === destinationChain?.chainId && asset.denom.includes("-native"),
       );
       if (evmFeeAsset) {
-        return [{ amountIn: undefined, denom: evmFeeAsset.denom }];
+        return [{ amountOut: undefined, denom: evmFeeAsset.denom }];
       }
     }
     return destinationChain?.feeAssets.map((asset) => {
       const gasPrice = asset.gasPrice?.average ?? asset.gasPrice?.high ?? asset.gasPrice?.low;
       return {
-        amountIn:
+        amountOut:
           gasPrice &&
           convertHumanReadableAmountToCryptoAmount(
             BigNumber(gasPrice).multipliedBy(3).toNumber(),
@@ -116,14 +116,14 @@ export const isSomeDestinationFeeBalanceAvailableAtom = atomWithQuery((get) => {
         },
       });
       const isSomeBalanceAvailable = gasOnReceiveRouteParams?.destAssetDenoms.some(
-        ({ denom, amountIn }) => {
+        ({ denom, amountOut }) => {
           const balanceAmount =
             balanceResponse?.chains?.[destination.chainId]?.denoms?.[denom]?.amount;
-          const isMoreThanAmountIn =
+          const isMoreThanAmountOut =
             !!balanceAmount &&
-            !!amountIn &&
-            BigNumber(balanceAmount).isGreaterThanOrEqualTo(amountIn);
-          return amountIn ? isMoreThanAmountIn : balanceAmount && balanceAmount !== "0";
+            !!amountOut &&
+            BigNumber(balanceAmount).isGreaterThanOrEqualTo(amountOut);
+          return amountOut ? isMoreThanAmountOut : balanceAmount && balanceAmount !== "0";
         },
       );
 
@@ -188,6 +188,8 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
       isRouteEnabled &&
       !currentTransactionItem;
 
+    console.log("debug: queryEnabled", queryEnabled);
+
     return {
       enabled: queryEnabled,
       queryKey: [
@@ -236,11 +238,12 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
 
         const splitDenoms = chunkArray(destAssetDenoms);
         for (const chunk of splitDenoms) {
-          const feeAssetRoutes = chunk.map(async ({ amountIn: amountInGasprice, denom }) => {
+          const feeAssetRoutes = chunk.map(async ({ amountOut, denom }) => {
             try {
               const res = await route({
                 destAssetDenom: denom,
-                amountIn: amountInGasprice ?? amountInFallback,
+                amountIn: amountOut ? undefined : amountInFallback,
+                amountOut: amountOut ?? undefined,
                 ...restParams,
                 smartRelay: true,
                 ...routeConfig,
@@ -261,7 +264,7 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
           }
         }
         if (!feeRoute?.amountOut || !originalRoute) return null;
-        params.amountIn = BigNumber(originalRoute.amountIn)
+        params.amountIn = BigNumber(originalRoute.amountIn ?? 0)
           .minus(BigNumber(feeRoute?.amountIn ?? 0))
           .toString();
         params.amountOut = undefined;
@@ -278,7 +281,7 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
           mainRoute,
           feeRoute,
           gasOnReceiveAsset: {
-            amount: feeRoute.amountOut,
+            amountOut: feeRoute.amountOut,
             amountUsd: feeRoute.usdAmountOut,
             denom: feeRoute.destAssetDenom,
             chainId: feeRoute.destAssetChainId,
@@ -289,10 +292,10 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
   });
 
 const chunkArray = (
-  arr: { denom: string; amountIn?: string }[],
+  arr: { denom: string; amountOut?: string }[],
   size = 3,
-): { denom: string; amountIn?: string }[][] => {
-  const result: { denom: string; amountIn?: string }[][] = [];
+): { denom: string; amountOut?: string }[][] => {
+  const result: { denom: string; amountOut?: string }[][] = [];
   for (let i = 0; i < arr.length; i += size) {
     result.push(arr.slice(i, i + size));
   }
