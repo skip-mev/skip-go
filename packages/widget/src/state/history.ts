@@ -46,8 +46,6 @@ export const sortedHistoryItemsAtom = atom((get): RouteDetailsWithRelatedRoutes[
     })
     .sort((a, b) => b.timestamp - a.timestamp);
 
-  console.log(sortedAndFiltered);
-
   return sortedAndFiltered;
 });
 

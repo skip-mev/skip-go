@@ -50,10 +50,7 @@ export type ExecuteMultipleRoutesOptions = SignerGetters &
      * Specify actions to perform after the route is completed
      */
     postRouteHandler?: Record<string, PostHandler>;
-    slippageTolerancePercent?: { mainRoute: string } & Record<
-      string,
-      string
-    >;
+    slippageTolerancePercent?: { mainRoute: string } & Record<string, string>;
   };
 
 /**
@@ -100,7 +97,6 @@ export const executeMultipleRoutes = async (
         `executeMultipleRoutes error: no user addresses found for route: ${routeKey}`
       );
     }
-    console.log("user addresses", userAddresses);
 
     const routeAddressList = await createValidAddressList({
       userAddresses: _userAddresses,
@@ -136,7 +132,6 @@ export const executeMultipleRoutes = async (
       });
     })
   );
-  console.log("msgsResponses", msgsResponses);
   let msgsRecord: Record<string, Awaited<ReturnType<typeof messages>>> = {};
   msgsResponses.forEach((msg, index) => {
     const routeKey = Object.keys(route)[index];
@@ -160,7 +155,6 @@ export const executeMultipleRoutes = async (
     }
     msgsRecord[routeKey] = msg;
   });
-  console.log("after appendCosmosMsgs msgsRecord", msgsRecord);
 
   let transferIndexToRouteKey: Record<number, string> | undefined = undefined;
 
@@ -202,15 +196,12 @@ export const executeMultipleRoutes = async (
       }
     }
   }
-  console.log("updated msgsRecord", msgsRecord);
   // clean data
   Object.entries(msgsRecord).forEach(([routeKey, msgs]) => {
     if (msgs?.txs?.length === 0) {
       delete msgsRecord[routeKey];
     }
   });
-
-  console.log("final result msgsRecord", msgsRecord);
 
   let mainRouteId: string | undefined = undefined;
 
@@ -239,8 +230,6 @@ export const executeMultipleRoutes = async (
         .filter(([key]) => key !== "mainRoute")
         .map(([key, route]) => ({ route, routeKey: key }));
     }
-
-    console.log("related routes", relatedRoutes);
 
     const { id: routeId } = updateRouteDetails({
       status: "unconfirmed",
@@ -297,14 +286,8 @@ export const executeMultipleRoutes = async (
     index++;
   }
 
-  console.log("Promise.all");
-
-  console.log(transactionDetailsList);
-
   await Promise.all(
     Object.entries(msgsRecord).map(([routeKey, msgsResponse], index) => {
-      console.log("executeTransaction", executeTransactionList[index]);
-
       return executeAndSubscribeToRouteStatus({
         transactionDetails: transactionDetailsList[index],
         executeTransaction: executeTransactionList[index],
