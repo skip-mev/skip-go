@@ -8,7 +8,7 @@ import { skipAssetsAtom } from "@/state/skipClient";
 import { formatUSD } from "@/utils/intl";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
-import styled, { useTheme } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 import { Row } from "./Layout";
 import { SkeletonElement } from "./Skeleton";
 import { Switch } from "./Switch";
@@ -23,9 +23,10 @@ import { track } from "@amplitude/analytics-browser";
 
 export type GasOnReceiveProps = {
   routeDetails?: Partial<RouteDetails>;
+  hideContainer?: boolean;
 };
 
-export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
+export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps = {}) => {
   const theme = useTheme();
   const [gasOnReceive, setGasOnReceive] = useAtom(gasOnReceiveAtom);
   const { data: gasRoute, isLoading: fetchingGasRoute } = useAtomValue(gasOnReceiveRouteAtom);
@@ -35,8 +36,6 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
   );
 
   const currentTransaction = useAtomValue(currentTransactionAtom);
-
-  const isGorEnabled = useAtomValue(gasOnReceiveAtom);
 
   const isFetchingBalance = isSomeDestinationFeeBalanceAvailable.isLoading;
   const gasOnReceiveAsset = useMemo(() => {
@@ -116,7 +115,7 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
   }
 
   return (
-    <GasOnReceiveContainer align="center" justify="space-between">
+    <GasOnReceiveContainer hideContainer={hideContainer} align="center" justify="space-between">
       <Row gap={8} align="center">
         {renderIcon}
         {(isFetchingBalance || fetchingGasRoute) && !routeDetails ? (
@@ -145,8 +144,12 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
   );
 };
 
-const GasOnReceiveContainer = styled(Row)`
-  background-color: ${(props) => props.theme.secondary.background.transparent};
-  padding: 15px 20px;
+const GasOnReceiveContainer = styled(Row)<{ hideContainer?: boolean }>`
+  ${({ hideContainer, theme }) =>
+    !hideContainer &&
+    css`
+      background-color: ${theme.secondary.background.transparent};
+      padding: 15px 20px;
+    `}
   border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.selectionButton)};
 `;
