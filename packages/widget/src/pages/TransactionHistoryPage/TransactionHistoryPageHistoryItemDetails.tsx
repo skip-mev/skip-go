@@ -58,8 +58,6 @@ export const TransactionHistoryPageHistoryItemDetails = ({
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
 
-  console.log("feeAssetRouteDetails", feeAssetRouteDetails);
-
   const initialTxHash = transactionDetails?.[0]?.txHash;
 
   const statusColor = useMemo(() => {

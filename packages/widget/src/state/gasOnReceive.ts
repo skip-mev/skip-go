@@ -188,8 +188,6 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
       isRouteEnabled &&
       !currentTransactionItem;
 
-    console.log("debug: queryEnabled", queryEnabled);
-
     return {
       enabled: queryEnabled,
       queryKey: [
@@ -209,17 +207,6 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
       retry: false,
       refetchInterval: false,
       queryFn: async () => {
-        console.log("qk", queryEnabled, [
-          {
-            originalRoute,
-            params,
-            destinationAddress,
-            sourceAssetChainId: gasOnReceiveRouteParams?.sourceAssetChainId,
-            sourceAssetDenom: gasOnReceiveRouteParams?.sourceAssetDenom,
-            destAssetChainId: gasOnReceiveRouteParams?.destAssetChainId,
-            destAssetDenoms: gasOnReceiveRouteParams?.destAssetDenoms,
-          },
-        ]);
         if (!params) throw new Error("No route request provided");
         let feeRoute: RouteResponse | undefined;
         if (

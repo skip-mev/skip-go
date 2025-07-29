@@ -204,7 +204,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
   set(submitSwapExecutionCallbacksAtom, {
     onRouteStatusUpdated: async (routeStatus) => {
-      console.log(routeStatus);
       const failedFeeRoute = routeStatus?.relatedRoutes?.find(
         (relatedRoute) => relatedRoute.status === "failed",
       );
