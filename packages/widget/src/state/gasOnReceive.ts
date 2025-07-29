@@ -261,7 +261,7 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
           }
         }
         if (!feeRoute?.amountOut || !originalRoute) return null;
-        params.amountIn = BigNumber(originalRoute.amountOut)
+        params.amountIn = BigNumber(originalRoute.amountIn)
           .minus(BigNumber(feeRoute?.amountIn ?? 0))
           .toString();
         params.amountOut = undefined;
