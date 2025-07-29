@@ -187,7 +187,6 @@ export const useFeeRouteAutoSetAddress = () => {
     isFeeRouteEnabled,
     feeRoute?.requiredChainAddresses,
     walletHasChanged,
-    feeRouteChainAddresses,
   ]);
 
   return {
