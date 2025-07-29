@@ -21,6 +21,8 @@ import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelect
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
 import { SkeletonElement } from "@/components/Skeleton";
+import { gasOnReceiveAtom, gasOnReceiveRouteAtom } from "@/state/gasOnReceive";
+import { skipAssetsAtom } from "@/state/skipClient";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -56,6 +58,21 @@ export const SwapExecutionPageRouteSimpleRow = ({
   const groupedAssets = useGroupedAssetByRecommendedSymbol();
   const groupedAsset = groupedAssets?.find((i) => i.id === assetDetails?.symbol);
 
+  const { data: gasRoute } = useAtomValue(gasOnReceiveRouteAtom);
+  const isGorEnabled = useAtomValue(gasOnReceiveAtom);
+  const { data: assets } = useAtomValue(skipAssetsAtom);
+
+  const gasOnReceiveAsset = useMemo(() => {
+    const gasAsset = gasRoute?.gasOnReceiveAsset;
+
+    if (!gasAsset) return;
+
+    const asset = assets?.find(
+      (a) => a.chainId === gasAsset?.chainId && a.denom === gasAsset?.denom,
+    );
+    return asset;
+  }, [assets, gasRoute?.gasOnReceiveAsset]);
+
   const chainAddresses = useAtomValue(chainAddressesAtom);
 
   const source = useMemo(() => {
@@ -89,6 +106,20 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
     return <SkeletonElement height={12} width={12} />;
   }, [source.address, source.source, walletImage]);
+
+  const renderGasRouteAmount = useMemo(() => {
+    if (!isGorEnabled) return;
+    if (context === "source") return;
+    if (!gasRoute?.gasOnReceiveAsset) return;
+
+    const amountUsd = gasRoute?.gasOnReceiveAsset?.amountUsd;
+
+    if (!amountUsd) return;
+
+    const assetSymbol = gasOnReceiveAsset?.recommendedSymbol?.toUpperCase() ?? "";
+
+    return `+ ${formatUSD(amountUsd)} in ${assetSymbol}`;
+  }, [context, gasOnReceiveAsset?.recommendedSymbol, gasRoute?.gasOnReceiveAsset, isGorEnabled]);
 
   const renderExplorerLink = useMemo(() => {
     if (!explorerLink) return;
@@ -129,7 +160,11 @@ export const SwapExecutionPageRouteSimpleRow = ({
         <StyledSymbolAndAmount>
           {formatDisplayAmount(assetDetails.amount)} {assetDetails?.symbol}
         </StyledSymbolAndAmount>
-        {usdValue && <SmallText>{formatUSD(usdValue)}</SmallText>}
+        {usdValue && (
+          <SmallText>
+            {formatUSD(usdValue)} {renderGasRouteAmount}
+          </SmallText>
+        )}
 
         <Row align="center" height={18} gap={5}>
           <StyledChainName normalTextColor textWrap="nowrap">
