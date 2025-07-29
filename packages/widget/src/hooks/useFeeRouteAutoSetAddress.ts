@@ -7,7 +7,7 @@ import {
 import { connectedAddressesAtom, walletsAtom } from "@/state/wallets";
 import { ChainType } from "@skip-go/client";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useCreateCosmosWallets } from "./useCreateCosmosWallets";
 import { useCreateEvmWallets } from "./useCreateEvmWallets";
 import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
