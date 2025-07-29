@@ -107,8 +107,15 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
         </SmallText>
       );
     }
-    return <GasIcon color={theme.primary.text.lowContrast} />;
-  }, [routeDetails?.status, theme.primary.text.lowContrast]);
+    return (
+      <GasIcon color={gasOnReceive ? theme.primary.text.normal : theme.primary.text.lowContrast} />
+    );
+  }, [
+    gasOnReceive,
+    routeDetails?.status,
+    theme.primary.text.lowContrast,
+    theme.primary.text.normal,
+  ]);
 
   if (!routeDetails && (!gasRoute?.gasOnReceiveAsset || !gasOnReceiveAsset || fetchingGasRoute)) {
     return null;
@@ -121,7 +128,15 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
         {(isFetchingBalance || fetchingGasRoute) && !routeDetails ? (
           <SkeletonElement height={20} width={300} />
         ) : (
-          <SmallText color={routeDetails?.status === "failed" ? theme.warning.text : undefined}>
+          <SmallText
+            color={
+              routeDetails?.status === "failed"
+                ? theme.warning.text
+                : gasOnReceive
+                  ? theme.primary.text.normal
+                  : undefined
+            }
+          >
             {gasOnReceiveText}
           </SmallText>
         )}
