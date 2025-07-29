@@ -7,13 +7,13 @@ description: "This document describes what new chains need to do the support Ski
 
 * New chains often want Skip Go API to add support for their chain as a source + destination for tokens because the API powers cross-chain swaps + transfers in all the major cosmos wallets (Leap, Keplr, IBC Wallet, Metamask Snap) and many popular DeFi aggregators and dapp frontends (e.g. Stargaze). As a result, being added to the Skip Go API instantly offers distribution across the interchain
 * This document covers the basic requirements chains must satisfy and steps their contributors must complete in order for Skip Go API to support them
-* **You can use [this form ](https://skip-protocol.notion.site/Request-to-add-Chain-Support-to-Skip-API-637ae5353fd3460b957eacf4c407f0d2?pvs=4)to submit information about your chain to Skip and track your progress through the required steps**
+* You can create a support ticket on our [Interchain Discord](https://discord.gg/interchain) and provide chain support information that we request
 
 
  <Info>
  **Want help at the beginning of this process?**
  
- Getting connected to IBC, Axelar, CCTP, or Hyperlane can be hard. Even choosing among them is a challenge. We're happy to provide guidance and hands-on support to serious teams early in their journey -- even before they've made a choice of interop protocol if helpful!
+ Getting connected to IBC, Axelar, CCTP, Layerzero or Hyperlane can be hard. Even choosing among them is a challenge. We're happy to provide guidance and hands-on support to serious teams early in their journey -- even before they've made a choice of interop protocol if helpful!
 </Info>
 
 
@@ -45,7 +45,7 @@ description: "This document describes what new chains need to do the support Ski
    8. Persistent peer lists  
    9. Public RPCs  
    _This metadata and the chain registry of choice might differ for EVM chains. Please use your best judgement of whats required_
-3. IBC, Axelar, and/or Hyperlane support
+3. IBC, Axelar, layerzore, Eureka, and/or hyperlane support.
 
 ## 2\. Configure IBC Machinery
 
@@ -85,16 +85,12 @@ For each chain that you want your chain to have a direct IBC transfer path to, y
  <Info>
  **What if I don't want to run my own relayers?**
  
- Get in touch with us on [our Discord](https://skip.build/discord).
+ Get in touch with us on [our Discord](https://discord.gg/interchain)
  
  We have great relationships with all the top relayer operators in the Cosmos ecosystem and can put you in touch with them.
 </Info>
 
-## 3\. Submit your chain support request to Skip!
-
-Now, submit [this form](https://skip-protocol.notion.site/Request-to-add-Chain-Support-to-Skip-API-637ae5353fd3460b957eacf4c407f0d2?pvs=4) to Skip with all the necessary information filled in
-
-## 4\. Configure support for each asset minted on your chain
+## 3\. Configure support for each asset minted on your chain
 
 For each native asset that you want to ensure users can transfer over the
 
@@ -102,6 +98,40 @@ For each native asset that you want to ensure users can transfer over the
 2. Confirm that the token successfully gets transferred to the destination chain
 3. **Leave the transferred tokens on the destination chain**
 
+## 4\. What chains will be asked for when submitting to get added to the Skip API on discord
+ 
+Please include the following:
+
+- Team Name: 
+- Team Contact Name:
+- Team Contact Telegram:
+- Team Website:
+- Swapping Venue Name** (if different from team name):  
+- Swapping Venue Website** (if different from team website):  
+- Swapping Venue Documentation:**  
+
+
+Chain supported by the Skip API 
+  - Use the [`/info/chains` endpoint](https://docs.skip.build/go/api-reference/prod/info/get-v2infochains) to verify: `/v2/info/chains`  
+  - If not listed, follow the [Chain Support Requirements](https://docs.skip.build/go/support-requirements/chain-support-requirements)  
+  - _This is a required prerequisite_
+
+CosmWasm Support  
+  - Include documentation or notes on any special setup or limitations
+
+IBC Support  
+  - Provide relevant details, especially if not using standard IBC-go
+
+IBC-hooks Support  
+  - Indicate if using upstream ibc-hooks or a modified version  
+  - [Upstream ibc-hooks](https://github.com/cosmos/ibc-apps/tree/main/modules/ibc-hooks)
+---
+
+## **Additional Chain Questions**
+
+- Does the chain support **Packet Forward Middleware (PFM)?**  
+- Is **CosmWasm contract deployment permissionless**?  
+  If not, what is the approval or governance process?
 
  <Info>
  **Why is this required?**
@@ -114,5 +144,6 @@ For each native asset that you want to ensure users can transfer over the
 <Info>
  **Have questions or feedback? Help us get better!**
  
- Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
+ Join [our Discord](https://discord.gg/interchain) and select the "Skip Go Developer" role to share your questions and feedback.
 </Info>
+
