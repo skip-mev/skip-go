@@ -24,7 +24,6 @@ const widgetPropTypes: Required<PropDescriptors> = {
   filterOut: "any",
   filterOutUnlessUserHasBalance: "any",
   walletConnect: "any",
-  enableSentrySessionReplays: "any",
   enableAmplitudeAnalytics: "any",
   connectedAddresses: "any",
   simulate: "any",
