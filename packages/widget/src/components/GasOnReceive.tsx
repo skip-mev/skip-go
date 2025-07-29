@@ -8,7 +8,7 @@ import { skipAssetsAtom } from "@/state/skipClient";
 import { formatUSD } from "@/utils/intl";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
-import styled, { useTheme } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 import { Row } from "./Layout";
 import { SkeletonElement } from "./Skeleton";
 import { Switch } from "./Switch";
@@ -23,9 +23,10 @@ import { track } from "@amplitude/analytics-browser";
 
 export type GasOnReceiveProps = {
   routeDetails?: Partial<RouteDetails>;
+  hideContainer?: boolean;
 };
 
-export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
+export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps = {}) => {
   const theme = useTheme();
   const [gasOnReceive, setGasOnReceive] = useAtom(gasOnReceiveAtom);
   const { data: gasRoute, isLoading: fetchingGasRoute } = useAtomValue(gasOnReceiveRouteAtom);
@@ -35,8 +36,6 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
   );
 
   const currentTransaction = useAtomValue(currentTransactionAtom);
-
-  const isGorEnabled = useAtomValue(gasOnReceiveAtom);
 
   const isFetchingBalance = isSomeDestinationFeeBalanceAvailable.isLoading;
   const gasOnReceiveAsset = useMemo(() => {
@@ -59,28 +58,25 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
 
   const gasOnReceiveText = useMemo(() => {
     const formattedAmountText = amountUsd
-      ? `${formatUSD(amountUsd)} in ${assetSymbol} as gas top-up`
+      ? `${formatUSD(amountUsd)} in ${assetSymbol}`
       : `${convertTokenAmountToHumanReadableAmount(amountOut, gasOnReceiveAsset?.decimals)} ${assetSymbol}`;
 
     switch (routeDetails?.status) {
       case "pending":
         return `Receiving ${formattedAmountText}`;
       case "completed":
-        return `Received ${formattedAmountText}`;
+        return `Received ${formattedAmountText} as gas top-up`;
       case "failed":
-        return `Failed to receive ${formattedAmountText}`;
+        return `Failed to receive ${formattedAmountText} as gas top-up`;
       default:
-        if (isGorEnabled) {
-          return `You'll receive ${formattedAmountText}`;
-        }
         return (
-          <Row gap={8}>
-            Enable gas top up{" "}
+          <Row align="center" gap={8}>
+            Enable gas top up
             {
               <QuestionMarkTooltip
                 content={
-                  <SmallText normalTextColor style={{ width: 160 }}>
-                    Enable to receive fee asset on destination chain
+                  <SmallText normalTextColor style={{ whiteSpace: "nowrap" }}>
+                    You'll get {formattedAmountText}
                   </SmallText>
                 }
               />
@@ -88,14 +84,7 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
           </Row>
         );
     }
-  }, [
-    amountOut,
-    amountUsd,
-    assetSymbol,
-    gasOnReceiveAsset?.decimals,
-    isGorEnabled,
-    routeDetails?.status,
-  ]);
+  }, [amountOut, amountUsd, assetSymbol, gasOnReceiveAsset?.decimals, routeDetails?.status]);
 
   const renderIcon = useMemo(() => {
     if (routeDetails?.status === "pending") {
@@ -133,7 +122,7 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
   }
 
   return (
-    <GasOnReceiveContainer align="center" justify="space-between">
+    <GasOnReceiveContainer hideContainer={hideContainer} align="center" justify="space-between">
       <Row gap={8} align="center">
         {renderIcon}
         {(isFetchingBalance || fetchingGasRoute) && !routeDetails ? (
@@ -170,8 +159,12 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
   );
 };
 
-const GasOnReceiveContainer = styled(Row)`
-  background-color: ${(props) => props.theme.secondary.background.transparent};
-  padding: 15px 20px;
+const GasOnReceiveContainer = styled(Row)<{ hideContainer?: boolean }>`
+  ${({ hideContainer, theme }) =>
+    !hideContainer &&
+    css`
+      background-color: ${theme.secondary.background.transparent};
+      padding: 15px 20px;
+    `}
   border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.selectionButton)};
 `;
