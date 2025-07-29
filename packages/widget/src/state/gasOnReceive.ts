@@ -30,7 +30,7 @@ const GAS_ON_RECEIVE_AMOUNT_USD = {
   evm_l2: 2,
 };
 
-export const gasOnReceiveAtom = atom<boolean>(false);
+export const gasOnReceiveAtom = atom<boolean | undefined>(undefined);
 export const gasOnReceiveAmountAtom = atom<string | undefined>(undefined);
 
 export const gasOnReceiveRouteRequestAtom = atom((get) => {
@@ -144,9 +144,9 @@ export const gasOnReceiveAtomEffect = atomEffect((get, set) => {
   if (currentTransactionItem) return;
   if (!gorRoute.data?.gasOnReceiveAsset) return;
   if (isSomeDestinationFeeBalanceAvailable.data) {
-    set(gasOnReceiveAtom, false);
+    set(gasOnReceiveAtom, (prev) => prev ?? false);
   } else {
-    set(gasOnReceiveAtom, true);
+    set(gasOnReceiveAtom, (prev) => prev ?? true);
   }
 });
 

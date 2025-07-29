@@ -190,7 +190,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       address: "",
     };
   });
-  set(gasOnReceiveAtom, false);
+  set(gasOnReceiveAtom, undefined);
   set(chainAddressesAtom, initialChainAddresses);
 
   set(swapExecutionStateAtom, {
