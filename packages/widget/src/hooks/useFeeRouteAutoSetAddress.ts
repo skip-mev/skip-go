@@ -7,7 +7,7 @@ import {
 import { connectedAddressesAtom, walletsAtom } from "@/state/wallets";
 import { ChainType } from "@skip-go/client";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useCreateCosmosWallets } from "./useCreateCosmosWallets";
 import { useCreateEvmWallets } from "./useCreateEvmWallets";
 import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
@@ -26,7 +26,7 @@ export const useFeeRouteAutoSetAddress = () => {
   const sourceWallet = useAtomValue(walletsAtom);
 
   const currentTransaction = useAtomValue(currentTransactionAtom);
-  const [walletHasChanged, setWalletHasChanged] = useState(false);
+  const [walletHasChanged, setWalletHasChanged] = useState(true);
 
   const [currentSourceWallets, setCurrentSourceWallets] = useState<typeof sourceWallet>();
   const [currentConnectedAddress, setCurrentConnectedAddress] =
@@ -171,9 +171,6 @@ export const useFeeRouteAutoSetAddress = () => {
   useEffect(() => {
     if (!isFeeRouteEnabled) {
       setIsLoading(false);
-      return;
-    } else {
-      setWalletHasChanged(true);
     }
   }, [isFeeRouteEnabled]);
 
