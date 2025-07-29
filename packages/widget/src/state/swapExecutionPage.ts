@@ -115,8 +115,6 @@ export const feeRouteAddressesAtomEffect = atomEffect((get, set) => {
         }));
       }
     });
-  } else {
-    set(feeRouteChainAddressesAtom, {});
   }
 });
 

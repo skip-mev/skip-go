@@ -162,6 +162,7 @@ const GasOnReceiveContainer = styled(Row)<{ hideContainer?: boolean }>`
     css`
       background-color: ${theme.secondary.background.transparent};
       padding: 15px 20px;
+      height: 40px;
     `}
   border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.selectionButton)};
 `;

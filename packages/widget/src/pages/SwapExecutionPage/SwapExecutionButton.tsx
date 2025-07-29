@@ -23,6 +23,7 @@ import { MutateFunction } from "jotai-tanstack-query";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { svmWalletAtom } from "@/state/wallets";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -81,7 +82,9 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     route?.txsRequired,
   ]);
 
-  switch (swapExecutionState) {
+  const debouncedSwapExecutionState = useDebouncedValue(swapExecutionState, 150);
+
+  switch (debouncedSwapExecutionState) {
     case SwapExecutionState.recoveryAddressUnset:
       return (
         <MainButton
