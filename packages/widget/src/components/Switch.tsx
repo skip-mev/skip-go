@@ -10,7 +10,7 @@ const SwitchWrapper = styled.div<{ checked: boolean }>`
     checked ? theme.brandColor : theme.secondary.background.transparent};
   display: flex;
   align-items: center;
-  padding: 4px;
+  padding: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
   user-select: none;
