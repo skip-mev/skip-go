@@ -531,12 +531,16 @@ const updateRelatedRoutes = ({
       const status = convertTransactionStatusToRouteStatus(
         getTransactionStatus(state)
       );
+      const transferAssetRelease = transaction?.statusResponse?.transfers?.[index]?.transferAssetRelease;
 
       const targetRoute = updatedRelatedRoutes.find(
         (r) => r.routeKey === routeKey
       );
       if (targetRoute && status && state) {
         targetRoute.status = status;
+      }
+      if (targetRoute && transferAssetRelease) {
+        targetRoute.transferAssetRelease = transferAssetRelease
       }
     });
   });

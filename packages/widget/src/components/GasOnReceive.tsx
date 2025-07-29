@@ -61,12 +61,21 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
         ? `${formatUSD(amountUsd)} in ${assetSymbol}`
         : `${convertTokenAmountToHumanReadableAmount(amountOut, gasOnReceiveAsset?.decimals)} ${assetSymbol}`;
 
+    const transferAssetRelease = routeDetails?.transferAssetRelease;
+
+    const transferAssetReleaseDetails = assets?.find(
+      (a) => a.chainId === transferAssetRelease?.chainId && a.denom === transferAssetRelease?.denom,
+    );
+
     switch (routeDetails?.status) {
       case "pending":
         return `Receiving ${formattedAmountText}`;
       case "completed":
         return `Received ${formattedAmountText} as gas top-up`;
       case "failed":
+        if (transferAssetReleaseDetails) {
+          return `Gas top-up failed. Assets released as ${transferAssetRelease?.amount ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount, transferAssetReleaseDetails?.decimals) : undefined} ${transferAssetReleaseDetails?.recommendedSymbol?.toUpperCase()}`;
+        }
         return `Failed to receive ${formattedAmountText} as gas top-up`;
       default:
         return (
@@ -84,7 +93,7 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
           </Row>
         );
     }
-  }, [amountOut, amountUsd, assetSymbol, gasOnReceiveAsset?.decimals, routeDetails?.status]);
+  }, [amountOut, amountUsd, assetSymbol, assets, gasOnReceiveAsset?.decimals, routeDetails]);
 
   const renderIcon = useMemo(() => {
     if (routeDetails?.status === "pending") {
