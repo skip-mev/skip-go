@@ -58,6 +58,10 @@ export function useSwapExecutionState({
 
     const lastChainAddress = chainAddresses[requiredChainAddresses.length - 1]?.address;
 
+    if (currentTransaction?.status === "failed") {
+      return SwapExecutionState.pendingError;
+    }
+
     if (currentTransaction?.status === "completed") {
       return SwapExecutionState.confirmed;
     }

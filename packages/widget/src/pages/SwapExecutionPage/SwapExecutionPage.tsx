@@ -27,6 +27,7 @@ import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { usePreventPageUnload } from "@/hooks/usePreventPageUnload";
 import { currentTransactionAtom } from "@/state/history";
 import {
+  gasOnReceiveAtom,
   gasOnReceiveAtomEffect,
   gasOnReceiveRouteAtom,
   isSomeDestinationFeeBalanceAvailableAtom,
@@ -49,6 +50,7 @@ export enum SwapExecutionState {
   pendingGettingDestinationBalance,
   pendingGettingFeeRouteAddresses,
   feeRouteRecoveryAddressUnset,
+  pendingError,
 }
 
 export const SwapExecutionPage = () => {
@@ -69,6 +71,7 @@ export const SwapExecutionPage = () => {
     isSomeDestinationFeeBalanceAvailableAtom,
   );
   const { data: gasRoute, isLoading: isGasRouteLoading } = useAtomValue(gasOnReceiveRouteAtom);
+  const gasRouteEnabled = useAtomValue(gasOnReceiveAtom);
   const isFetchingDestinationBalance =
     isSomeDestinationFeeBalanceAvailable.isLoading || isGasRouteLoading;
 
@@ -99,7 +102,7 @@ export const SwapExecutionPage = () => {
     isGettingFeeRouteAddressesLoading: isGettingFeeRouteAddressesLoading,
     isFetchingDestinationBalance,
   });
-
+  console.log("swapExecutionState", swapExecutionState);
   const isSafeToleave = route?.txsRequired === currentTransaction?.transactionDetails.length;
 
   usePreventPageUnload(
@@ -174,7 +177,27 @@ export const SwapExecutionPage = () => {
     lastTxHash &&
     lastTxChainId &&
     route?.txsRequired === currentTransaction?.transactionDetails.length;
-  console.log("ct", currentTransaction);
+
+  const gasOnReceiveComponent = useMemo(() => {
+    return ((gasRoute || feeRoute) &&
+      !isGasRouteLoading &&
+      !currentTransaction &&
+      !isFetchingDestinationBalance) ||
+      (currentTransaction && gasRouteEnabled) ? (
+      <Column>
+        <Spacer height={30} showLine lineColor={theme.secondary.background.transparent} />
+        <GasOnReceive routeDetails={currentTransaction?.relatedRoutes?.[0]} />
+      </Column>
+    ) : null;
+  }, [
+    currentTransaction,
+    feeRoute,
+    gasRoute,
+    gasRouteEnabled,
+    isFetchingDestinationBalance,
+    isGasRouteLoading,
+    theme.secondary.background.transparent,
+  ]);
   return (
     <Column gap={5}>
       <PageHeader
@@ -224,15 +247,7 @@ export const SwapExecutionPage = () => {
         swapExecutionState={swapExecutionState}
         firstOperationStatus={firstOperationStatus}
         secondOperationStatus={secondOperationStatus}
-        bottomContent={
-          (gasRoute || feeRoute) &&
-          !isGasRouteLoading && (
-            <Column>
-              <Spacer height={30} showLine lineColor={theme.secondary.background.transparent} />
-              <GasOnReceive routeDetails={currentTransaction?.relatedRoutes?.[0]} />
-            </Column>
-          )
-        }
+        bottomContent={gasOnReceiveComponent}
       />
       <SwapExecutionButton
         swapExecutionState={swapExecutionState}

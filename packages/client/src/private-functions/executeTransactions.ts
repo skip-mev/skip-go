@@ -10,7 +10,7 @@ import { GAS_STATION_CHAIN_IDS } from "src/constants/constants";
 import { venues } from "src/api/getVenues";
 import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
 import { signSvmTransaction } from "./svm/signSvmTransaction";
-import { executeAndSubscribeToRouteStatus, updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
+import { updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
 import { submitTransaction } from "src/api/postSubmitTransaction";
 import { getAccountNumberAndSequence } from "./getAccountNumberAndSequence";
 import { getChainIdsFromTxs } from "./getChainIdsFromTxs";
