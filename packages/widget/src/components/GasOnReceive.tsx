@@ -8,7 +8,7 @@ import { skipAssetsAtom } from "@/state/skipClient";
 import { formatUSD } from "@/utils/intl";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Row } from "./Layout";
 import { SkeletonElement } from "./Skeleton";
 import { Switch } from "./Switch";
@@ -17,6 +17,8 @@ import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { RouteDetails } from "@skip-go/client";
 import { currentTransactionAtom } from "@/state/history";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
+import { convertToPxValue } from "@/utils/style";
+import { QuestionMarkTooltip } from "./QuestionMarkTooltip";
 
 export type GasOnReceiveProps = {
   routeDetails?: Partial<RouteDetails>;
@@ -70,7 +72,20 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
         if (isGorEnabled) {
           return `You'll receive ${formattedAmountText}`;
         }
-        return "Enable to receive fee asset on destination chain";
+        return (
+          <Row gap={8}>
+            Enable gas top up{" "}
+            {
+              <QuestionMarkTooltip
+                content={
+                  <SmallText normalTextColor style={{ width: 160 }}>
+                    Enable to receive fee asset on destination chain
+                  </SmallText>
+                }
+              />
+            }
+          </Row>
+        );
     }
   }, [
     amountOut,
@@ -117,7 +132,7 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
   }
 
   return (
-    <Row align="center" justify="space-between">
+    <GasOnReceiveContainer align="center" justify="space-between">
       <Row gap={8} align="center">
         {renderIcon}
         {(isFetchingBalance || fetchingGasRoute) && !routeDetails ? (
@@ -147,6 +162,12 @@ export const GasOnReceive = ({ routeDetails }: GasOnReceiveProps = {}) => {
               }}
             />
           )}
-    </Row>
+    </GasOnReceiveContainer>
   );
 };
+
+const GasOnReceiveContainer = styled(Row)`
+  background-color: ${(props) => props.theme.secondary.background.transparent};
+  padding: 15px 20px;
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.selectionButton)};
+`;
