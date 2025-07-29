@@ -20,6 +20,7 @@ import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { convertToPxValue } from "@/utils/style";
 import { QuestionMarkTooltip } from "./QuestionMarkTooltip";
 import { track } from "@amplitude/analytics-browser";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 export type GasOnReceiveProps = {
   routeDetails?: Partial<RouteDetails>;
@@ -29,7 +30,8 @@ export type GasOnReceiveProps = {
 export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps = {}) => {
   const theme = useTheme();
   const [gasOnReceive, setGasOnReceive] = useAtom(gasOnReceiveAtom);
-  const { data: gasRoute, isLoading: fetchingGasRoute } = useAtomValue(gasOnReceiveRouteAtom);
+  const { isLoading: fetchingGasRoute } = useAtomValue(gasOnReceiveRouteAtom);
+  const { feeRoute } = useAtomValue(swapExecutionStateAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const isSomeDestinationFeeBalanceAvailable = useAtomValue(
     isSomeDestinationFeeBalanceAvailableAtom,
@@ -39,9 +41,10 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
 
   const isFetchingBalance = isSomeDestinationFeeBalanceAvailable.isLoading;
   const gasOnReceiveAsset = useMemo(() => {
-    const gasAsset = routeDetails
-      ? { chainId: routeDetails.route?.destAssetChainId, denom: routeDetails.route?.destAssetDenom }
-      : gasRoute?.gasOnReceiveAsset;
+    const gasAsset = {
+      chainId: routeDetails?.route?.destAssetChainId ?? feeRoute?.destAssetChainId,
+      denom: routeDetails?.route?.destAssetDenom ?? feeRoute?.destAssetDenom,
+    };
 
     if (!gasAsset) return;
 
@@ -49,10 +52,16 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
       (a) => a.chainId === gasAsset?.chainId && a.denom === gasAsset?.denom,
     );
     return asset;
-  }, [assets, gasRoute?.gasOnReceiveAsset, routeDetails]);
+  }, [
+    assets,
+    feeRoute?.destAssetChainId,
+    feeRoute?.destAssetDenom,
+    routeDetails?.route?.destAssetChainId,
+    routeDetails?.route?.destAssetDenom,
+  ]);
 
-  const amountUsd = routeDetails?.route?.usdAmountOut ?? gasRoute?.gasOnReceiveAsset?.amountUsd;
-  const amountOut = routeDetails?.route?.amountOut ?? gasRoute?.gasOnReceiveAsset?.amountOut ?? "";
+  const amountUsd = routeDetails?.route?.usdAmountOut ?? feeRoute?.usdAmountOut;
+  const amountOut = routeDetails?.route?.amountOut ?? feeRoute?.amountOut ?? "";
   const assetSymbol = gasOnReceiveAsset?.recommendedSymbol?.toUpperCase() ?? "";
 
   const gasOnReceiveText = useMemo(() => {
@@ -125,7 +134,7 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
     );
   }, [routeDetails?.status, theme.primary.text.lowContrast, theme.warning.text]);
 
-  if (!routeDetails && (!gasRoute?.gasOnReceiveAsset || !gasOnReceiveAsset || fetchingGasRoute)) {
+  if (!routeDetails && (!feeRoute || !gasOnReceiveAsset)) {
     return null;
   }
 

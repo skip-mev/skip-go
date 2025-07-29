@@ -35,8 +35,9 @@ export const sortedHistoryItemsAtom = atom((get): RouteDetailsWithRelatedRoutes[
     )
     .map((historyItem) => {
       const relatedRoutes = [
-        ...(historyItem.relatedRoutes ?? []),
-        ...(history.filter((item) => item.mainRouteId === historyItem.id) ?? []),
+        ...(history.filter((item) => item.mainRouteId === historyItem.id) ??
+          historyItem.relatedRoutes ??
+          []),
       ];
 
       return {
@@ -64,7 +65,7 @@ export const setTransactionHistoryAtom = atom(
       const oldItem = newHistory[index];
       newHistory[index] = { ...oldItem, ...historyItem };
     } else {
-      if (historyItem.id) {
+      if (historyItem.id && historyItem.mainRouteId === undefined) {
         set(setCurrentTransactionIdAtom, historyItem.id);
         newHistory.push(historyItem as RouteDetails);
       }
