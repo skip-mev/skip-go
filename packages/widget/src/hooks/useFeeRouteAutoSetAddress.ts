@@ -21,19 +21,16 @@ import { currentTransactionAtom } from "@/state/history";
 export const useFeeRouteAutoSetAddress = () => {
   const [feeRouteChainAddresses, setFeeRouteChainAddresses] = useAtom(feeRouteChainAddressesAtom);
   const { feeRoute, isFeeRouteEnabled } = useAtomValue(swapExecutionStateAtom);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const connectedAddress = useAtomValue(connectedAddressesAtom);
   const sourceWallet = useAtomValue(walletsAtom);
 
   const currentTransaction = useAtomValue(currentTransactionAtom);
-  const [walletHasChanged, setWalletHasChanged] = useState(true);
+  const [walletHasChanged, setWalletHasChanged] = useState(false);
 
   const [currentSourceWallets, setCurrentSourceWallets] = useState<typeof sourceWallet>();
   const [currentConnectedAddress, setCurrentConnectedAddress] =
     useState<Record<string, string | undefined>>();
-
-  const allAddressesSet =
-    Object.values(feeRouteChainAddresses).length === feeRoute?.requiredChainAddresses?.length;
 
   const { createCosmosWallets } = useCreateCosmosWallets();
   const { createEvmWallets } = useCreateEvmWallets();
@@ -174,11 +171,14 @@ export const useFeeRouteAutoSetAddress = () => {
   useEffect(() => {
     if (!isFeeRouteEnabled) {
       setIsLoading(false);
+      return;
+    } else {
+      setWalletHasChanged(true);
     }
   }, [isFeeRouteEnabled]);
 
   useEffect(() => {
-    if ((walletHasChanged || !allAddressesSet) && isFeeRouteEnabled) {
+    if (walletHasChanged && isFeeRouteEnabled) {
       connectRequiredChains();
       setWalletHasChanged(false);
     }
@@ -187,7 +187,6 @@ export const useFeeRouteAutoSetAddress = () => {
     isFeeRouteEnabled,
     feeRoute?.requiredChainAddresses,
     walletHasChanged,
-    allAddressesSet,
     feeRouteChainAddresses,
   ]);
 
