@@ -156,7 +156,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
         <StyledHistoryItemDetailRow align="center">
           <Column width="100%">
             <Spacer height={20} showLine lineColor={theme.secondary.background.transparent} />
-            <GasOnReceive routeDetails={feeAssetRouteDetails} />
+            <GasOnReceive hideContainer routeDetails={feeAssetRouteDetails} />
           </Column>
         </StyledHistoryItemDetailRow>
       )}
