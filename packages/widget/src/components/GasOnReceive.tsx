@@ -108,14 +108,13 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
       );
     }
     return (
-      <GasIcon color={gasOnReceive ? theme.primary.text.normal : theme.primary.text.lowContrast} />
+      <GasIcon
+        color={
+          routeDetails?.status === "failed" ? theme.warning.text : theme.primary.text.lowContrast
+        }
+      />
     );
-  }, [
-    gasOnReceive,
-    routeDetails?.status,
-    theme.primary.text.lowContrast,
-    theme.primary.text.normal,
-  ]);
+  }, [routeDetails?.status, theme.primary.text.lowContrast, theme.warning.text]);
 
   if (!routeDetails && (!gasRoute?.gasOnReceiveAsset || !gasOnReceiveAsset || fetchingGasRoute)) {
     return null;
@@ -132,9 +131,7 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
             color={
               routeDetails?.status === "failed"
                 ? theme.warning.text
-                : gasOnReceive
-                  ? theme.primary.text.normal
-                  : undefined
+                : theme.primary.text.lowContrast
             }
           >
             {gasOnReceiveText}
