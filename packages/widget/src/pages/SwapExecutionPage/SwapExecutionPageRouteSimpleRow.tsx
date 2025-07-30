@@ -10,7 +10,7 @@ import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ClientOperation } from "@/utils/clientType";
-import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtomValue } from "jotai";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
@@ -58,12 +58,15 @@ export const SwapExecutionPageRouteSimpleRow = ({
   const groupedAssets = useGroupedAssetByRecommendedSymbol();
   const groupedAsset = groupedAssets?.find((i) => i.id === assetDetails?.symbol);
 
-  const { data: gasRoute } = useAtomValue(gasOnReceiveRouteAtom);
+  const { feeRoute } = useAtomValue(swapExecutionStateAtom);
   const isGorEnabled = useAtomValue(gasOnReceiveAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
 
   const gasOnReceiveAsset = useMemo(() => {
-    const gasAsset = gasRoute?.gasOnReceiveAsset;
+    const gasAsset = {
+      chainId: feeRoute?.destAssetChainId,
+      denom: feeRoute?.destAssetDenom,
+    };
 
     if (!gasAsset) return;
 
@@ -71,7 +74,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
       (a) => a.chainId === gasAsset?.chainId && a.denom === gasAsset?.denom,
     );
     return asset;
-  }, [assets, gasRoute?.gasOnReceiveAsset]);
+  }, [assets, feeRoute?.destAssetChainId, feeRoute?.destAssetDenom]);
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
 
@@ -110,16 +113,16 @@ export const SwapExecutionPageRouteSimpleRow = ({
   const renderGasRouteAmount = useMemo(() => {
     if (!isGorEnabled) return;
     if (context === "source") return;
-    if (!gasRoute?.gasOnReceiveAsset) return;
+    if (!gasOnReceiveAsset) return;
 
-    const amountUsd = gasRoute?.gasOnReceiveAsset?.amountUsd;
+    const amountUsd = feeRoute?.usdAmountOut;
 
     if (!amountUsd) return;
 
     const assetSymbol = gasOnReceiveAsset?.recommendedSymbol?.toUpperCase() ?? "";
 
     return `+ ${formatUSD(amountUsd)} in ${assetSymbol}`;
-  }, [context, gasOnReceiveAsset?.recommendedSymbol, gasRoute?.gasOnReceiveAsset, isGorEnabled]);
+  }, [context, feeRoute?.usdAmountOut, gasOnReceiveAsset, isGorEnabled]);
 
   const renderExplorerLink = useMemo(() => {
     if (!explorerLink) return;

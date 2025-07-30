@@ -20,6 +20,7 @@ import {
   executeAndSubscribeToRouteStatus,
   updateRouteDetails,
   type RouteDetails,
+  type RouteStatus,
 } from "./subscribeToRouteStatus";
 import {
   createValidAddressList,
@@ -233,15 +234,6 @@ export const executeMultipleRoutes = async (
     Object.entries(msgsRecord).length !== Object.entries(route).length;
 
   for (const [routeKey, msgsResponse] of Object.entries(msgsRecord)) {
-    let relatedRoutes: Partial<RouteDetails>[] | undefined;
-    if (routeKey === "mainRoute" || mergedMainAndSecondaryRoutes) {
-      relatedRoutes = Object.entries(route)
-        .filter(([key]) => key !== "mainRoute")
-        .map(([key, route]) => ({ route, routeKey: key, status: "pending" }));
-    }
-
-    console.log("related routes", relatedRoutes);
-
     const { id: routeId } = updateRouteDetails({
       status: "unconfirmed",
       options: {
@@ -250,7 +242,6 @@ export const executeMultipleRoutes = async (
       },
       mainRouteId,
       transferIndexToRouteKey,
-      relatedRoutes,
     });
 
     msgsRecordIndexToRouteId[index] = routeId;
@@ -259,7 +250,7 @@ export const executeMultipleRoutes = async (
       mainRouteId = routeId;
     }
 
-    const { transactionDetails, executeTransaction } =
+    const { transactionDetails, executeTransaction: _executeTransaction } =
       await executeTransactions({
         ...restOptions,
         routeId,
@@ -268,6 +259,26 @@ export const executeMultipleRoutes = async (
         userAddresses: userAddresses[routeKey]!,
         isMultiRoutes: true,
       });
+
+    const executeTransaction = async (index: number) => {
+      const txResult = await _executeTransaction(index);
+
+      if (routeKey !== "mainRoute" || mergedMainAndSecondaryRoutes) {
+        const relatedRoutes = Object.entries(route)
+        .filter(([key]) => key !== "mainRoute")
+        .map(([key, route]) => ({ route, routeKey: key, status: "pending" as RouteStatus }));
+        updateRouteDetails({
+          options: {
+            route: route[routeKey],
+            ...restOptions,
+          },
+          routeId: mainRouteId,
+          transferIndexToRouteKey,
+          relatedRoutes,
+        });
+      }
+      return txResult;
+    };
 
     if (transactionDetails[0]?.chainType === ChainType.Evm) {
       for (const [index, transactionDetail] of transactionDetails.entries()) {
@@ -313,6 +324,28 @@ export const executeMultipleRoutes = async (
           route: route[routeKey]!,
           userAddresses: userAddresses[routeKey]!,
           ...restOptions,
+          onRouteStatusUpdated: (routeStatus) => {
+            console.log(`[onRouteStatusUpdated] ${routeKey}`, routeStatus);
+  
+            const relatedRoutes = Object.entries(route)
+            .filter(([key]) => key !== "mainRoute")
+            .map(([key, route]) => ({ route, routeKey: key, status: routeStatus.status }));
+  
+  
+            if (routeKey !== "mainRoute") {
+              console.log('route status not main route', routeStatus, relatedRoutes);
+              updateRouteDetails({
+                options: {
+                  route: route[routeKey],
+                  ...restOptions,
+                },
+                routeId: mainRouteId,
+                transferIndexToRouteKey,
+                relatedRoutes,
+              });
+            }
+            options.onRouteStatusUpdated?.(routeStatus);
+          },
         },
       });
     })
