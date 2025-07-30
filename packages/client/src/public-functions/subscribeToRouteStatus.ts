@@ -439,11 +439,6 @@ export const updateRouteDetails = ({
   const previousRouteStatus =
     getRouteDetailsWithSimpleTransactionDetailsStatus(currentRouteDetails);
 
-  console.log('relatedRoutes', relatedRoutes);
-
-  console.log('newRouteStatus', newRouteStatus);
-  console.log('previousRouteStatus', previousRouteStatus);
-
   if (
     options?.onRouteStatusUpdated &&
     JSON.stringify(newRouteStatus) !== JSON.stringify(previousRouteStatus)
@@ -542,7 +537,7 @@ const updateRelatedRoutes = ({
         (r) => r.routeKey === routeKey
       );
       if (targetRoute && state) {
-        targetRoute.status = status ?? "failed";
+        targetRoute.status = status;
       }
       if (targetRoute && transferAssetRelease) {
         targetRoute.transferAssetRelease = transferAssetRelease
