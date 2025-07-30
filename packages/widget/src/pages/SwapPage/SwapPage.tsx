@@ -43,6 +43,7 @@ import { useGetBalance } from "@/hooks/useGetBalance";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { useConnectToMissingCosmosChain } from "./useConnectToMissingCosmosChain";
 import { callbacksAtom } from "@/state/callbacks";
+import { startAmplitudeSessionReplay } from "@/widget/initAmplitude";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -294,6 +295,7 @@ export const SwapPage = () => {
     }
 
     const onClick = () => {
+      startAmplitudeSessionReplay();
       track("swap page: continue button - clicked", {
         route,
         type: isSwapOperation ? "swap" : "send",
