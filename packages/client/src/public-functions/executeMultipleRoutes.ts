@@ -310,7 +310,6 @@ export const executeMultipleRoutes = async (
           userAddresses: userAddresses[routeKey]!,
           ...restOptions,
           onRouteStatusUpdated: (routeStatus) => {
-            console.log(`[onRouteStatusUpdated] ${routeKey}`, routeStatus);
   
             const relatedRoutes = Object.entries(route)
             .filter(([key]) => key !== "mainRoute")
@@ -318,7 +317,6 @@ export const executeMultipleRoutes = async (
   
   
             if (routeKey !== "mainRoute") {
-              console.log('route status not main route', routeStatus, relatedRoutes);
               updateRouteDetails({
                 options: {
                   route: route[routeKey],
