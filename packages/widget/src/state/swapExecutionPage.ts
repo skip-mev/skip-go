@@ -1,6 +1,6 @@
 import { atomWithMutation } from "jotai-tanstack-query";
 import { skipChainsAtom } from "@/state/skipClient";
-import { routeConfigAtom, skipRouteAtom, SwapRoute } from "@/state/route";
+import { routeConfigAtom, skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
 import {
   DEEPLINK_CHOICE,
@@ -193,7 +193,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
   set(swapExecutionStateAtom, {
     userAddresses: [],
-    transactionDetailsArray: [],
     route,
     originalRoute: route,
     feeRoute: undefined,

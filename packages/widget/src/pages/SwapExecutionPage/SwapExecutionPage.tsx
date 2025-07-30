@@ -4,8 +4,7 @@ import { PageHeader } from "@/components/PageHeader";
 import React, { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
-import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
+import { SwapExecutionPageRouteContainer } from "./SwapExecutionPageRouteContainer";
 import { currentPageAtom, Routes } from "@/state/router";
 import {
   chainAddressesAtom,
@@ -168,10 +167,6 @@ export const SwapExecutionPage = () => {
     };
   }, [swapExecutionState, lastOperation.signRequired, lastOperation.fromChain, route]);
 
-  const SwapExecutionPageRoute = simpleRoute
-    ? SwapExecutionPageRouteSimple
-    : SwapExecutionPageRouteDetailed;
-
   const shouldRenderTrackProgressButton =
     lastTxHash &&
     lastTxChainId &&
@@ -239,7 +234,8 @@ export const SwapExecutionPage = () => {
           },
         }}
       />
-      <SwapExecutionPageRoute
+      <SwapExecutionPageRouteContainer
+        showDetailed={!simpleRoute}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
         operations={clientOperations}
         statusData={currentTransaction}
