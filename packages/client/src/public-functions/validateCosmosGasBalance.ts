@@ -37,7 +37,7 @@ export const validateCosmosGasBalance = async ({
   txIndex,
   simulate,
   getCosmosPriorityFeeDenom,
-  isMultiRoutes
+  isMultiRoutes,
 }: ValidateCosmosGasBalanceProps) => {
   const skipAssets = (await ClientState.getSkipAssets({ chainId }))?.[chainId];
   const skipChains = await ClientState.getSkipChains();
@@ -69,7 +69,6 @@ export const validateCosmosGasBalance = async ({
         chainId,
         messages
       );
-      console.log("estimatedGas", estimatedGas);
       return estimatedGas;
     } catch (e) {
       const error = e as Error;
@@ -111,8 +110,11 @@ export const validateCosmosGasBalance = async ({
     }
     if (chainId === "noble-1") {
       if (isMultiRoutes && txIndex === 0) {
-        return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);
-       }
+        return calculateFee(
+          Math.ceil(parseFloat(estimatedGasAmount)),
+          gasPrice
+        );
+      }
       if (
         asset.denom.toLowerCase() ===
         "ibc/EF48E6B1A1A19F47ECAEA62F5670C37C0580E86A9E88498B7E393EB6F49F33C0".toLowerCase()

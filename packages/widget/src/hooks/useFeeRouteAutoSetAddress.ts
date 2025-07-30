@@ -40,7 +40,6 @@ export const useFeeRouteAutoSetAddress = () => {
 
   const connectRequiredChains = useCallback(
     async (openModal?: boolean) => {
-      console.log("Connecting required chains for fee route...");
       setIsLoading(true);
       const createWallets = {
         [ChainType.Cosmos]: createCosmosWallets,
@@ -68,14 +67,7 @@ export const useFeeRouteAutoSetAddress = () => {
               const wallets = createWallets[chainAddress.chainType](chainAddress.chainId);
               const walletName = sourceWallet[chainAddress.chainType]?.walletName;
               const wallet = wallets.find((w) => w.walletName === walletName);
-              console.log(
-                "Connecting wallet:",
-                wallet?.walletName,
-                "for chain:",
-                chainAddress.chainId,
-              );
               const response = await wallet?.getAddress?.({});
-              console.log("Response from getAddress:", response);
               const getLogo = () => {
                 if (wallet?.walletChainType === "evm" && wallet?.walletName === "app.keplr") {
                   return getCosmosWalletInfo(WalletType.KEPLR).imgSrc;

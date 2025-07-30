@@ -102,7 +102,6 @@ export const SwapExecutionPage = () => {
     isGettingFeeRouteAddressesLoading: isGettingFeeRouteAddressesLoading,
     isFetchingDestinationBalance,
   });
-  console.log("swapExecutionState", swapExecutionState);
   const isSafeToleave = route?.txsRequired === currentTransaction?.transactionDetails.length;
 
   usePreventPageUnload(

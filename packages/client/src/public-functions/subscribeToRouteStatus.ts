@@ -261,13 +261,6 @@ export const executeAndSubscribeToRouteStatus = async ({
     }
 
     while (true) {
-      console.log(
-        "polling transaction status",
-        transaction.txHash,
-        transaction.chainId,
-        routeId
-      );
-
       const updatedRouteDetails = routeDetailsMap.get(routeId ?? "");
       const allRelatedRoutesFinal = updatedRouteDetails?.relatedRoutes?.every(
         (relatedRoute) =>
@@ -314,7 +307,6 @@ export const executeAndSubscribeToRouteStatus = async ({
               isFinalRouteStatus(relatedRoute as RouteDetails)
             )
           ) {
-            console.log("all related routes are finalized");
             break;
           }
         }
@@ -531,7 +523,8 @@ const updateRelatedRoutes = ({
       const status = convertTransactionStatusToRouteStatus(
         getTransactionStatus(state)
       );
-      const transferAssetRelease = transaction?.statusResponse?.transfers?.[index]?.transferAssetRelease;
+      const transferAssetRelease =
+        transaction?.statusResponse?.transfers?.[index]?.transferAssetRelease;
 
       const targetRoute = updatedRelatedRoutes.find(
         (r) => r.routeKey === routeKey
@@ -540,7 +533,7 @@ const updateRelatedRoutes = ({
         targetRoute.status = status;
       }
       if (targetRoute && transferAssetRelease) {
-        targetRoute.transferAssetRelease = transferAssetRelease
+        targetRoute.transferAssetRelease = transferAssetRelease;
       }
     });
   });
