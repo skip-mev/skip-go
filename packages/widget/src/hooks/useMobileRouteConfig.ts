@@ -9,9 +9,9 @@ export const useMobileRouteConfig = () => {
   const setRouteConfig = useSetAtom(routeConfigAtom);
 
   useEffect(() => {
-      setRouteConfig((prev: WidgetRouteConfig) => ({
-        ...prev,
-        allowMultiTx: !isMobile,
-      }));
+    setRouteConfig((prev: WidgetRouteConfig) => ({
+      ...prev,
+      allowMultiTx: !isMobile,
+    }));
   }, [isMobile, setRouteConfig]);
 };

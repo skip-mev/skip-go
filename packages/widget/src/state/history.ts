@@ -35,7 +35,7 @@ export const sortedHistoryItemsAtom = atom((get): RouteDetailsWithRelatedRoutes[
     )
     .map((historyItem) => {
       const relatedRoutes = [
-        ...(historyItem.relatedRoutes ?? []),
+        ...((historyItem.relatedRoutes ?? []) as RouteDetails[]),
         ...(history.filter((item) => item.mainRouteId === historyItem.id) ?? []),
       ];
 
