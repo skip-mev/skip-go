@@ -529,7 +529,7 @@ const updateRelatedRoutes = ({
       const targetRoute = updatedRelatedRoutes.find(
         (r) => r.routeKey === routeKey
       );
-      if (targetRoute && state) {
+      if (targetRoute && status && state) {
         targetRoute.status = status;
       }
       if (targetRoute && transferAssetRelease) {
