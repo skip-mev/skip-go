@@ -44,7 +44,10 @@ export const gasOnReceiveRouteRequestAtom = atom((get) => {
   const destinationChain = chains.data?.find((c) => c.chainId === destinationAsset?.chainId);
 
   const amountUsd = (() => {
-    if (_amount !== undefined) return parseFloat(_amount);
+    if (_amount !== undefined) {
+      const parsedAmount = Number(_amount);
+      if (!isNaN(parsedAmount)) return parsedAmount;
+    }
     if (destinationChain?.chainType === ChainType.Evm) {
       return GAS_ON_RECEIVE_AMOUNT_USD.evm_l2;
     }
@@ -79,7 +82,7 @@ export const gasOnReceiveRouteRequestAtom = atom((get) => {
   const sourceAssetUsdPrice =
     balances?.data?.chains?.[sourceAsset?.chainId]?.denoms?.[sourceAsset?.denom]?.price;
   if (!sourceAssetUsdPrice) return;
-  const amount = Number(sourceAssetUsdPrice) * amountUsd;
+  const amount = BigNumber(sourceAssetUsdPrice).multipliedBy(amountUsd).toString();
 
   return {
     amountIn: convertHumanReadableAmountToCryptoAmount(amount, destinationAsset?.decimals),

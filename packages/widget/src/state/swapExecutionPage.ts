@@ -193,7 +193,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
   set(swapExecutionStateAtom, {
     userAddresses: [],
-    transactionDetailsArray: [],
     route,
     originalRoute: route,
     feeRoute: undefined,

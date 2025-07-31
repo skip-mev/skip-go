@@ -8,7 +8,6 @@ import { ClientOperation } from "@/utils/clientType";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { useMemo } from "react";
-import { convertToPxValue } from "@/utils/style";
 import { RouteDetails, TransferEventStatus } from "@skip-go/client";
 
 export type SwapExecutionPageRouteProps = {
@@ -95,7 +94,5 @@ const StyledBridgeArrowIcon = styled(BridgeArrowIcon)`
 
 const StyledSwapExecutionPageRoute = styled(Column)`
   padding: 30px;
-  background: ${({ theme }) => theme.primary.background.normal};
-  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.main)};
   min-height: 225px;
 `;
