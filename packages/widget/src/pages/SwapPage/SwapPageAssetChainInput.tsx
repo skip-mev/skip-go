@@ -33,7 +33,7 @@ export type AssetChainInputProps = {
   isWaitingToUpdateInputValue?: boolean;
   badPriceWarning?: boolean;
   disabled?: boolean;
-  feeLabel?: string;
+  feeLabel?: React.ReactNode;
   feeWarning?: boolean;
 };
 
@@ -251,8 +251,8 @@ export const SwapPageAssetChainInput = ({
             <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>
           )}
           {usdValue && feeLabel && (
-            <Row align="center" gap={4}>
-              <SmallText color={feeColor}>{feeLabel}</SmallText>
+            <Row style={{ color: feeColor }} align="center" gap={4}>
+              {typeof feeLabel === "string" ? <SmallText>{feeLabel}</SmallText> : feeLabel}
             </Row>
           )}
         </Row>

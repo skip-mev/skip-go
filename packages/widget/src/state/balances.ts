@@ -20,7 +20,14 @@ export const skipAllBalancesAtom = atomWithQuery((get) => {
       if (Object.keys(params?.chains ?? {}).length === 0) {
         return { chains: {} };
       }
-      return balances({ ...params, abortDuplicateRequests: true });
+      const res = await balances({ ...params, abortDuplicateRequests: true });
+      if (res === undefined) {
+        return { chains: {} };
+      }
+      if (res.chains === undefined) {
+        return { chains: {} };
+      }
+      return res;
     },
     enabled,
     refetchInterval: 1000 * 60,
