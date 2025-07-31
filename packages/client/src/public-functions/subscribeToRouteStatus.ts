@@ -165,12 +165,15 @@ export const subscribeToRouteStatus = (props: subscribeToRouteStatusProps) => {
   const routeList = Array.isArray(routeDetails) ? routeDetails : [routeDetails];
 
   const cancelFlags = new Map<string, { cancelled: boolean }>();
-
   const unsubscribers: (() => void)[] = [];
+  const subscribedRouteIds = new Set<string>();
 
-  for (const route of routeList) {
+  const subscribeToRoute = (route?: RouteDetails) => {
+    if (!route?.id || subscribedRouteIds.has(route.id)) return;
+    
+    subscribedRouteIds.add(route.id);
     const cancelFlag = { cancelled: false };
-    cancelFlags.set(route?.id ?? uuidv4(), cancelFlag);
+    cancelFlags.set(route.id, cancelFlag);
 
     const unsubscribe = () => {
       cancelFlag.cancelled = true;
@@ -180,15 +183,29 @@ export const subscribeToRouteStatus = (props: subscribeToRouteStatusProps) => {
 
     void executeAndSubscribeToRouteStatus({
       routeDetails: route,
-      onRouteStatusUpdated,
+      onRouteStatusUpdated: (routeStatus) => {
+        routeStatus?.relatedRoutes?.forEach((relatedRoute) => {
+          if (relatedRoute?.id && !subscribedRouteIds.has(relatedRoute.id)) {
+            subscribeToRoute(relatedRoute as RouteDetails);
+          }
+        });
+
+        onRouteStatusUpdated?.(routeStatus);
+      },
       isCancelled: () => cancelFlag.cancelled,
     });
+  };
+
+  for (const route of routeList) {
+    subscribeToRoute(route);
   }
 
   const unsubscribeAll = () => {
     for (const unsubscribe of unsubscribers) {
       unsubscribe();
     }
+    subscribedRouteIds.clear();
+    cancelFlags.clear();
   };
 
   return unsubscribeAll;
@@ -262,12 +279,10 @@ export const executeAndSubscribeToRouteStatus = async ({
 
     while (true) {
       const updatedRouteDetails = routeDetailsMap.get(routeId ?? "");
-      const allRelatedRoutesFinal = updatedRouteDetails?.relatedRoutes?.every(
-        (relatedRoute) =>
-          relatedRoute && isFinalRouteStatus(relatedRoute as RouteDetails)
-      );
 
-      if (isFinalState(transaction) && allRelatedRoutesFinal) {
+      const isCurrentTransactionFinal = isFinalState(transaction);
+      
+      if (isCurrentTransactionFinal) {
         break;
       }
 
@@ -295,25 +310,72 @@ export const executeAndSubscribeToRouteStatus = async ({
           relatedRoutes: routeDetails?.relatedRoutes,
         });
 
-        if (isFinalState(transaction)) {
+        if (isCurrentTransactionFinal) {
           onTransactionCompleted?.({
             chainId: transaction.chainId,
             txHash: transaction.txHash,
             status: statusResponse as TransferStatus,
           });
-
-          if (
-            routeDetails?.relatedRoutes?.every((relatedRoute) =>
-              isFinalRouteStatus(relatedRoute as RouteDetails)
-            )
-          ) {
-            break;
-          }
         }
       } catch (error) {
         console.error(error);
       } finally {
         await wait(1000);
+      }
+    }
+  }
+
+  if (routeDetails?.relatedRoutes?.length) {
+    const relatedRouteTransactions = routeDetails.relatedRoutes
+      .filter((relatedRoute) => !isFinalRouteStatus(relatedRoute as RouteDetails))
+      .flatMap((relatedRoute) => relatedRoute.transactionDetails || []);
+
+    for (const transaction of relatedRouteTransactions) {
+      if (!transaction.txHash || isFinalState(transaction)) continue;
+
+      while (true) {
+        const updatedRouteDetails = routeDetailsMap.get(routeId ?? "");
+        const allRelatedRoutesFinal = updatedRouteDetails?.relatedRoutes?.every(
+          (relatedRoute) =>
+            relatedRoute && isFinalRouteStatus(relatedRoute as RouteDetails)
+        );
+
+        if (allRelatedRoutesFinal) {
+          break;
+        }
+
+        if (isCancelled?.()) {
+          console.info(`Related routes polling cancelled for route ${routeId}`);
+          break;
+        }
+
+        try {
+          const statusResponse = await transactionStatus({
+            chainId: transaction.chainId,
+            txHash: transaction.txHash,
+          });
+
+          transaction.statusResponse = statusResponse;
+
+          updateRouteDetails({
+            routeId,
+            routeDetails,
+            transactionDetails,
+            options: {
+              onRouteStatusUpdated,
+              ...options,
+            },
+            relatedRoutes: routeDetails?.relatedRoutes,
+          });
+
+          if (isFinalState(transaction)) {
+            break;
+          }
+        } catch (error) {
+          console.error(error);
+        } finally {
+          await wait(1000);
+        }
       }
     }
   }
