@@ -10,7 +10,7 @@ import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ClientOperation } from "@/utils/clientType";
-import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtomValue } from "jotai";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
@@ -21,6 +21,8 @@ import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelect
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
 import { SkeletonElement } from "@/components/Skeleton";
+import { gasOnReceiveAtom } from "@/state/gasOnReceive";
+import { skipAssetsAtom } from "@/state/skipClient";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -56,6 +58,24 @@ export const SwapExecutionPageRouteSimpleRow = ({
   const groupedAssets = useGroupedAssetByRecommendedSymbol();
   const groupedAsset = groupedAssets?.find((i) => i.id === assetDetails?.symbol);
 
+  const { feeRoute } = useAtomValue(swapExecutionStateAtom);
+  const isGorEnabled = useAtomValue(gasOnReceiveAtom);
+  const { data: assets } = useAtomValue(skipAssetsAtom);
+
+  const gasOnReceiveAsset = useMemo(() => {
+    const gasAsset = {
+      chainId: feeRoute?.destAssetChainId,
+      denom: feeRoute?.destAssetDenom,
+    };
+
+    if (!gasAsset) return;
+
+    const asset = assets?.find(
+      (a) => a.chainId === gasAsset?.chainId && a.denom === gasAsset?.denom,
+    );
+    return asset;
+  }, [assets, feeRoute?.destAssetChainId, feeRoute?.destAssetDenom]);
+
   const chainAddresses = useAtomValue(chainAddressesAtom);
 
   const source = useMemo(() => {
@@ -89,6 +109,20 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
     return <SkeletonElement height={12} width={12} />;
   }, [source.address, source.source, walletImage]);
+
+  const renderGasRouteAmount = useMemo(() => {
+    if (!isGorEnabled) return;
+    if (context === "source") return;
+    if (!gasOnReceiveAsset) return;
+
+    const amountUsd = feeRoute?.usdAmountOut;
+
+    if (!amountUsd) return;
+
+    const assetSymbol = gasOnReceiveAsset?.recommendedSymbol?.toUpperCase() ?? "";
+
+    return `+ ${formatUSD(amountUsd)} in ${assetSymbol}`;
+  }, [context, feeRoute?.usdAmountOut, gasOnReceiveAsset, isGorEnabled]);
 
   const renderExplorerLink = useMemo(() => {
     if (!explorerLink) return;
@@ -129,7 +163,11 @@ export const SwapExecutionPageRouteSimpleRow = ({
         <StyledSymbolAndAmount>
           {formatDisplayAmount(assetDetails.amount)} {assetDetails?.symbol}
         </StyledSymbolAndAmount>
-        {usdValue && <SmallText>{formatUSD(usdValue)}</SmallText>}
+        {usdValue && (
+          <SmallText>
+            {formatUSD(usdValue)} {renderGasRouteAmount}
+          </SmallText>
+        )}
 
         <Row align="center" height={18} gap={5}>
           <StyledChainName normalTextColor textWrap="nowrap">

@@ -8,12 +8,12 @@ import { skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { Fragment, useMemo } from "react";
 import { getFeeList } from "@/utils/fees";
-import SlippageSelector from "@/pages/SwapPage/SlippageSelector";
-import RoutePreferenceSelector from "@/pages/SwapPage/RoutePreferenceSelector";
+import SlippageSelector from "@/modals/SwapSettingsDrawer/SlippageSelector";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { track } from "@amplitude/analytics-browser";
 import { convertToPxValue } from "@/utils/style";
+import RoutePreferenceSelector from "./RoutePreferenceSelector";
 
 export const SwapSettingsDrawer = createModal(() => {
   const theme = useTheme();
@@ -32,26 +32,26 @@ export const SwapSettingsDrawer = createModal(() => {
   return (
     <StyledSwapPageSettings gap={15}>
       <Column gap={10}>
-       {route && (
-        <Row justify="space-between" align="center">
-          <SwapDetailText>Route</SwapDetailText>
-          <Row align="center" gap={5}>
-            {chainsRoute?.map((chain, index) => (
-              <Fragment key={index}>
-                <img
-                  width="25"
-                  height="25"
-                  src={chain?.logoUri}
-                  alt={chain?.prettyName}
-                  title={chain?.prettyName}
-                />
-                {index !== chainsRoute.length - 1 && (
-                  <RouteArrow color={theme?.primary?.text.normal} />
-                )}
-              </Fragment>
-            ))}
+        {route && (
+          <Row justify="space-between" align="center">
+            <SwapDetailText>Route</SwapDetailText>
+            <Row align="center" gap={5}>
+              {chainsRoute?.map((chain, index) => (
+                <Fragment key={index}>
+                  <img
+                    width="25"
+                    height="25"
+                    src={chain?.logoUri}
+                    alt={chain?.prettyName}
+                    title={chain?.prettyName}
+                  />
+                  {index !== chainsRoute.length - 1 && (
+                    <RouteArrow color={theme?.primary?.text.normal} />
+                  )}
+                </Fragment>
+              ))}
+            </Row>
           </Row>
-        </Row>
         )}
         {Boolean(route?.swapPriceImpactPercent) && (
           <Row justify="space-between" align="center">
@@ -62,6 +62,7 @@ export const SwapSettingsDrawer = createModal(() => {
           </Row>
         )}
       </Column>
+
       {fees.length > 0 && (
         <Column gap={10}>
           {fees.map(({ label, fee }, index) => (
@@ -113,7 +114,7 @@ const StyledSwapPageSettings = styled(Column)`
   background: ${(props) => props.theme.primary.background.normal};
 `;
 
-const SwapDetailText = styled(Row).attrs({
+export const SwapDetailText = styled(Row).attrs({
   as: SmallText,
   normalTextColor: true,
 })`

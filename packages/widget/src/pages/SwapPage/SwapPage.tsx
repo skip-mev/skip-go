@@ -19,7 +19,11 @@ import {
   isInvertingSwapAtom,
   preloadSigningStargateClientEffect,
 } from "@/state/swapPage";
-import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
+import {
+  setSwapExecutionStateAtom,
+  chainAddressesAtom,
+  feeRouteChainAddressesAtom,
+} from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance, useMaxAmountTokenMinusFees } from "./useSetMaxAmount";
@@ -43,6 +47,7 @@ import { useGetBalance } from "@/hooks/useGetBalance";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { useConnectToMissingCosmosChain } from "./useConnectToMissingCosmosChain";
 import { callbacksAtom } from "@/state/callbacks";
+import { SmallText } from "@/components/Typography";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -75,6 +80,8 @@ export const SwapPage = () => {
   const callbacks = useAtomValue(callbacksAtom);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
+  const setFeeRouteChainAddresses = useSetAtom(feeRouteChainAddressesAtom);
+
   useFetchAllBalances();
   useCleanupDebouncedAtoms();
   useUpdateAmountWhenRouteChanges();
@@ -204,11 +211,20 @@ export const SwapPage = () => {
   const fees = useMemo(() => (route ? getFeeList(route) : []), [route]);
   const feeLabel = useMemo(() => {
     const formattedUsdAmount = getTotalFees(fees)?.formattedUsdAmount;
+
     if (formattedUsdAmount) {
-      return `${formattedUsdAmount} in fees`;
+      return (
+        <>
+          <SmallText color="inherit">{formattedUsdAmount} in fees</SmallText>
+        </>
+      );
     }
 
-    return "no fees";
+    return (
+      <>
+        <SmallText color="inherit">no fees</SmallText>
+      </>
+    );
   }, [fees]);
 
   const feeWarning = useMemo(() => {
@@ -305,6 +321,7 @@ export const SwapPage = () => {
         startTransition(() => {
           setError(undefined);
           setChainAddresses({});
+          setFeeRouteChainAddresses({});
           setSwapExecutionState();
           setCurrentPage(Routes.SwapExecutionPage);
         });
@@ -399,6 +416,7 @@ export const SwapPage = () => {
     showGoFastWarning,
     isGoFast,
     setChainAddresses,
+    setFeeRouteChainAddresses,
     setCurrentPage,
     setSwapExecutionState,
     setError,

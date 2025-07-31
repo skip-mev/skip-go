@@ -20,10 +20,11 @@ import { Tooltip } from "@/components/Tooltip";
 import { CircleSkeletonElement } from "@/components/Skeleton";
 import { convertToPxValue } from "@/utils/style";
 import { RouteDetails } from "@skip-go/client";
+import { BigNumber } from "bignumber.js";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
-  txHistoryItem: RouteDetails;
+  txHistoryItem: RouteDetails & { relatedRoutes?: RouteDetails[] };
   showDetails?: boolean;
   onClickRow?: () => void;
   onClickDelete?: () => void;
@@ -64,10 +65,24 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
       transactionDetails,
     } = txHistoryItem;
 
+    const totalSourceTokenAmount = useMemo(() => {
+      const totalRelatedRouteSourceAmount =
+        txHistoryItem?.relatedRoutes?.reduce(
+          (acc, routeDetail) =>
+            BigNumber(acc)
+              .plus(BigNumber(routeDetail.route?.amountIn || 0))
+              .toNumber(),
+          0,
+        ) ?? 0;
+      return BigNumber(amountIn ?? 0)
+        .plus(BigNumber(totalRelatedRouteSourceAmount))
+        .toString();
+    }, [amountIn, txHistoryItem]);
+
     const sourceAssetDetails = useGetAssetDetails({
       assetDenom: sourceAssetDenom,
       chainId: sourceAssetChainId,
-      tokenAmount: amountIn,
+      tokenAmount: totalSourceTokenAmount,
     });
 
     const destinationAssetDetails = useGetAssetDetails({
@@ -89,6 +104,10 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
       assetImage: destinationAssetDetails.assetImage ?? "",
       chainName: destinationAssetDetails.chainName,
     };
+
+    const feeAssetRouteDetails = useMemo(() => {
+      return historyItem?.relatedRoutes?.[0] || txHistoryItem?.relatedRoutes?.[0];
+    }, [historyItem, txHistoryItem]);
 
     const renderStatus = useMemo(() => {
       switch (historyItem?.status) {
@@ -197,6 +216,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
               onClickDelete?.();
             }}
             transferAssetRelease={historyItem?.transferAssetRelease}
+            feeAssetRouteDetails={feeAssetRouteDetails}
             senderAddress={senderAddress}
             receiverAddress={receiverAddress}
           />

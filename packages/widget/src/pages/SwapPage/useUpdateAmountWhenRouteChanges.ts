@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { swapDirectionAtom, sourceAssetAtom, destinationAssetAtom } from "@/state/swapPage";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { skipRouteAtom } from "@/state/route";
 import { formatDisplayAmount, removeTrailingZeros } from "@/utils/number";
 
 export const useUpdateAmountWhenRouteChanges = () => {
-  const [route] = useAtom(skipRouteAtom);
-  const [direction] = useAtom(swapDirectionAtom);
+  const route = useAtomValue(skipRouteAtom);
+  const direction = useAtomValue(swapDirectionAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
 
