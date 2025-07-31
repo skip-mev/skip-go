@@ -21,7 +21,7 @@ import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelect
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
 import { SkeletonElement } from "@/components/Skeleton";
-import { gasOnReceiveAtom, gasOnReceiveRouteAtom } from "@/state/gasOnReceive";
+import { gasOnReceiveAtom } from "@/state/gasOnReceive";
 import { skipAssetsAtom } from "@/state/skipClient";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
