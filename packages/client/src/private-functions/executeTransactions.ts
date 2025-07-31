@@ -10,13 +10,17 @@ import { GAS_STATION_CHAIN_IDS } from "src/constants/constants";
 import { venues } from "src/api/getVenues";
 import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
 import { signSvmTransaction } from "./svm/signSvmTransaction";
-import { executeAndSubscribeToRouteStatus, updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
+import { updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
 import { submitTransaction } from "src/api/postSubmitTransaction";
 import { getAccountNumberAndSequence } from "./getAccountNumberAndSequence";
 import { getChainIdsFromTxs } from "./getChainIdsFromTxs";
 
 export const executeTransactions = async (
-  options: ExecuteRouteOptions & { txs?: Tx[], routeId: string }
+  options: ExecuteRouteOptions & {
+    txs?: Tx[];
+    routeId: string;
+    isMultiRoutes?: boolean;
+  }
 ) => {
   const {
     txs,
@@ -30,6 +34,7 @@ export const executeTransactions = async (
     trackTxPollingOptions,
     batchSignTxs = true,
     routeId,
+    isMultiRoutes,
   } = options;
 
   if (txs === undefined) {
@@ -40,13 +45,18 @@ export const executeTransactions = async (
 
   const chainIds = getChainIdsFromTxs(txs);
 
-  const transactionDetails = txs.map(tx => {
+  const transactionDetails: {
+    chainId: string;
+    chainType: ChainType;
+    txHash?: string;
+    explorerLink?: string;
+  }[] = txs.map((tx) => {
     if ("cosmosTx" in tx) {
-      return { chainId: tx.cosmosTx?.chainId }
+      return { chainId: tx.cosmosTx?.chainId, chainType: ChainType.Cosmos };
     } else if ("evmTx" in tx) {
-      return { chainId: tx.evmTx?.chainId }
+      return { chainId: tx.evmTx?.chainId, chainType: ChainType.Evm };
     } else if ("svmTx" in tx) {
-      return { chainId: tx.svmTx?.chainId }
+      return { chainId: tx.svmTx?.chainId, chainType: ChainType.Svm };
     } else {
       throw new Error("executeRoute error: invalid message type");
     }
@@ -83,6 +93,7 @@ export const executeTransactions = async (
     getCosmosPriorityFeeDenom: options.getCosmosPriorityFeeDenom,
     options,
     routeId,
+    isMultiRoutes,
   });
 
   const validateEnabledChainIds = async (chainId: string) => {
@@ -97,6 +108,7 @@ export const executeTransactions = async (
       getCosmosPriorityFeeDenom: options.getCosmosPriorityFeeDenom,
       options,
       routeId,
+      isMultiRoutes,
     });
   };
 
@@ -119,19 +131,24 @@ export const executeTransactions = async (
         await validateEnabledChainIds(tx.cosmosTx?.chainId ?? "");
         const isAllowedToBatchSignTxsUpfront = await (async () => {
           try {
-            const currentUserAddress = options.userAddresses.find((x) => x.chainId === tx.cosmosTx?.chainId)?.address;
+            const currentUserAddress = options.userAddresses.find(
+              (x) => x.chainId === tx.cosmosTx?.chainId
+            )?.address;
             if (!currentUserAddress) {
               return false;
             }
-            const { accountNumber } = await getAccountNumberAndSequence(currentUserAddress, tx.cosmosTx?.chainId)
+            const { accountNumber } = await getAccountNumberAndSequence(
+              currentUserAddress,
+              tx.cosmosTx?.chainId
+            );
             if (accountNumber) {
               return true;
             }
-            return false
+            return false;
           } catch (_error) {
             return false;
           }
-        })()
+        })();
 
         if (!isAllowedToBatchSignTxsUpfront) {
           continue;
@@ -152,7 +169,12 @@ export const executeTransactions = async (
       }
       if ("svmTx" in tx) {
         await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
-        const signedTx = await signSvmTransaction({ tx, options, index: i, routeId });
+        const signedTx = await signSvmTransaction({
+          tx,
+          options,
+          index: i,
+          routeId,
+        });
         if (!signedTx) {
           throw new Error(`executeRoute error: signedTx is undefined`);
         }
@@ -185,7 +207,7 @@ export const executeTransactions = async (
       txResult = {
         chainId: txSigned.chainId,
         txHash: txResponse?.txHash ?? "",
-        explorerLink: txResponse?.explorerLink ?? '',
+        explorerLink: txResponse?.explorerLink ?? "",
       };
       // If the tx not signed we will execute the transaction normally
     } else {
@@ -199,7 +221,12 @@ export const executeTransactions = async (
         });
       } else if ("evmTx" in tx) {
         await validateEnabledChainIds(tx.evmTx?.chainId ?? "");
-        const txResponse = await executeEvmTransaction(tx, options, index, routeId);
+        const txResponse = await executeEvmTransaction(
+          tx,
+          options,
+          index,
+          routeId
+        );
         txResult = {
           chainId: tx?.evmTx?.chainId ?? "",
           txHash: txResponse.transactionHash,
@@ -215,14 +242,12 @@ export const executeTransactions = async (
     await onTransactionBroadcast?.({ ...txResult });
 
     return txResult;
-  }
+  };
 
-  await executeAndSubscribeToRouteStatus({
-    transactionDetails: transactionDetails,
+  return {
+    transactionDetails,
     executeTransaction,
-    routeId,
-    options
-  });
+  };
 };
 
 const EVM_GAS_AMOUNT = 150_000;

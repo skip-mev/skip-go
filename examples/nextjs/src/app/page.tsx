@@ -5,7 +5,7 @@ import {
   resetWidget,
   setAsset,
 } from "@skip-go/widget";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useQueryParams } from "@/hooks/useURLQueryParams";
 import {
   venues,
@@ -16,6 +16,7 @@ import {
   BridgeType,
 } from "@skip-go/client";
 import { useQuery } from "@tanstack/react-query";
+type ApiUrlOption = "prod" | "dev" | "local";
 
 export default function Home() {
   // optional query params, not necessary for the widget to work
@@ -25,16 +26,35 @@ export default function Home() {
   // optional theme, widget will be dark mode be default
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [disableShadowDom, setDisableShadowDom] = useState(false);
-  const [apiUrl, setApiUrl] = useState<"prod" | "dev">("prod");
+  const [apiUrl, setApiUrl] = useState<ApiUrlOption>("prod");
   const [testnet, setTestnet] = useState<boolean>(false);
+  const [apiKey, setApiKey] = useState<string | undefined>();
 
   const [swapVenues, setSwapVenues] = useState<SwapVenue[]>();
   const [bridges, setBridges] = useState<Bridge[]>();
+  
+ const computedApiUrl = useMemo(() => {
+    if (apiUrl === "local") {
+      return "http://localhost:8080";
+    }
+    const isProd = apiUrl === "prod";
+    if (apiKey) {
+      return isProd
+        ? "https://api.skip.build"
+        : "https://api.dev.skip.build";
+    }
+    return isProd
+      ? "https://go.skip.build/api/skip"
+      : "https://dev.go.skip.build/api/skip";
+  }, [apiUrl, apiKey]);
+
+  useEffect(() => {
+    setApiOptions({ apiUrl: computedApiUrl });
+  }, [computedApiUrl]);
 
   useLayoutEffect(() => {
     if (otherParams !== undefined) {
       const { api, testnet, shadowDom, theme } = otherParams;
-      if (api !== undefined) setApiUrl(api);
       if (testnet !== undefined) setTestnet(testnet);
       if (shadowDom !== undefined) setDisableShadowDom(!shadowDom);
       if (theme !== undefined) setTheme(theme);
@@ -302,15 +322,26 @@ export default function Home() {
         >
           {testnet ? "testnet" : "mainnet"}
         </button>
-        <button
-          onClick={() => {
-            const newApiUrl = apiUrl === "prod" ? "dev" : "prod";
-            setApiUrl(newApiUrl);
-            updateURLParam("api", newApiUrl);
-          }}
-        >
-          {apiUrl}
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <label htmlFor="api-select">API URL:</label>
+          <select
+            id="api-select"
+            value={apiUrl}
+            onChange={(e) => {
+              const val = e.target.value as ApiUrlOption;
+              setApiUrl(val);
+              updateURLParam("api", val);
+            }}
+          >
+            <option value="prod">Production</option>
+            <option value="dev">Development</option>
+            <option value="local">Local (localhost:8080)</option>
+          </select>
+        </div>
+        <div>
+          <label>API Key: </label>
+          <input value={apiKey ?? ""} onChange={(e) => setApiKey(e.target.value)} />
+        </div>
       </div>
       <div
         style={{
@@ -337,6 +368,7 @@ export default function Home() {
             <Widget
               theme={theme}
               defaultRoute={defaultRoute}
+              apiKey={apiKey}
               onWalletConnected={(props) =>
                 console.log("onWalletConnected", { ...props })
               }
@@ -366,11 +398,7 @@ export default function Home() {
                 swapVenues: swapVenues,
                 bridges: bridges?.map(i => i.id as BridgeType),
               }}
-              apiUrl={
-                apiUrl === "prod"
-                  ? "https://go.skip.build/api/skip"
-                  : "https://dev.go.skip.build/api/skip"
-              }
+              apiUrl={computedApiUrl}
               filterOut={{
                 destination: {
                   "pacific-1": [

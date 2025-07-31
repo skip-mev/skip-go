@@ -27,6 +27,8 @@ export type { TxStatusResponse } from "./api/postTransactionStatus";
 
 export { executeRoute } from "./public-functions/executeRoute";
 export type { ExecuteRouteOptions } from "./public-functions/executeRoute";
+export { executeMultipleRoutes } from "./public-functions/executeMultipleRoutes";
+export type { ExecuteMultipleRoutesOptions } from "./public-functions/executeMultipleRoutes";
 
 export { getSigningStargateClient } from "./public-functions/getSigningStargateClient";
 export type { getSigningStargateClientProps } from "./public-functions/getSigningStargateClient";
@@ -43,7 +45,7 @@ export { getEVMGasAmountForMessage } from "./public-functions/getEvmGasAmountFor
 export { validateCosmosGasBalance } from "./public-functions/validateCosmosGasBalance";
 
 export { subscribeToRouteStatus } from "./public-functions/subscribeToRouteStatus";
-export type { RouteDetails, TransactionDetails, RouteStatus } from "./public-functions/subscribeToRouteStatus";
+export type { RouteDetails, TransactionDetails, RouteStatus, TransactionStatus } from "./public-functions/subscribeToRouteStatus";
 export type { TransferEventStatus } from "./utils/clientType"
 
 export type { SkipClientOptions } from "./state/clientState";

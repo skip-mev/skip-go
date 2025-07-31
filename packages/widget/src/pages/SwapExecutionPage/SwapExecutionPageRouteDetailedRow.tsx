@@ -86,10 +86,19 @@ export const SwapExecutionPageRouteDetailedRow = ({
         (selectedChainAddress?.source === "wallet" &&
           selectedChainAddress?.wallet?.walletInfo.logo) ||
         undefined,
+      source: selectedChainAddress?.source,
     };
   }, [chainAddresses, chainId, context]);
 
   const walletImage = useCroppedImage(chainAddressWallet.image);
+
+  const renderWalletImage = useMemo(() => {
+    if (chainAddressWallet?.source === "injected" || chainAddressWallet?.source === "input") return;
+    if (!chainAddressWallet.address) return;
+    if (walletImage) return <img height="100%" src={walletImage} />;
+
+    return <SkeletonElement height={18} width={18} />;
+  }, [chainAddressWallet.address, chainAddressWallet?.source, walletImage]);
 
   const renderAddress = useMemo(() => {
     const Container = shouldRenderEditDestinationWallet
@@ -115,16 +124,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
     return (
       <Container>
         <AddressPillButton onClick={() => copyAddress(chainAddressWallet?.address)}>
-          {walletImage ? (
-            <img
-              src={walletImage}
-              style={{
-                height: "100%",
-              }}
-            />
-          ) : (
-            <SkeletonElement height={18} width={18} />
-          )}
+          {renderWalletImage}
           {renderContent()}
         </AddressPillButton>
         {shouldRenderEditDestinationWallet && (
@@ -141,7 +141,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   }, [
     shouldRenderEditDestinationWallet,
     chainAddressWallet.address,
-    walletImage,
+    renderWalletImage,
     isMobileScreenSize,
     onClickEditDestinationWallet,
     theme.primary.text.lowContrast,
@@ -196,7 +196,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
         justify="space-between"
       >
         <Row align="center">
-          <LeftContent>
+          <LeftContent gap={5}>
             <Row gap={5} align="center">
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
                 {formatDisplayAmount(assetDetails?.amount)}
