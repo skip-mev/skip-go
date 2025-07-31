@@ -57,7 +57,7 @@ export const validateEvmGasBalance = async ({
 
   const { requiredErc20Approvals } = tx;
 
-  if (!bypassApprovalCheck &&requiredErc20Approvals) {
+  if (!bypassApprovalCheck && requiredErc20Approvals) {
     try {
       await validateEvmTokenApproval({
         requiredErc20Approvals,
