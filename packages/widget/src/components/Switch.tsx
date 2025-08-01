@@ -31,14 +31,14 @@ type SwitchProps = {
   onChange?: (val: boolean) => void;
 };
 
-export const Switch = ({ checked, onChange }: SwitchProps) => {
+export const Switch = ({ checked = false, onChange }: SwitchProps) => {
   const toggle = () => {
     onChange?.(!checked);
   };
 
   return (
-    <SwitchWrapper checked={!!checked} onClick={toggle}>
-      <SwitchThumb checked={!!checked} />
+    <SwitchWrapper checked={checked} onClick={toggle}>
+      <SwitchThumb checked={checked} />
     </SwitchWrapper>
   );
 };
