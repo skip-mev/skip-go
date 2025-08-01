@@ -1,0 +1,426 @@
+syntax = "proto3";
+
+option go_package = "github.com/skip-mev/cns/api/types";
+import "google/protobuf/timestamp.proto";
+
+package api;
+
+message IBCAddress {
+    string address = 1;  // the bech32 address
+    string chain_id = 2; // the chain ID, e.g. `juno-1`
+}
+
+message RepeatedAsset {
+    repeated Asset assets = 1;
+}
+
+message ApiError {
+    string message = 1;
+}
+
+message AssetOrError {
+    oneof asset_or_error {
+        Asset asset = 1;
+        ApiError error = 2;
+    }
+}
+
+message Asset {
+    string denom = 1;
+    string chain_id = 2;
+
+    string origin_denom = 3;
+    string origin_chain_id = 4;
+    string trace = 5;
+    bool is_cw20 = 6;
+    bool is_evm = 12;
+    bool is_svm = 16;
+
+    optional string symbol = 7;
+    optional string name = 8;
+    optional string logo_uri = 9;
+    optional int32 decimals = 10;
+    optional string token_contract = 11;
+    optional string description = 13;
+    optional string coingecko_id = 14;
+    optional string recommended_symbol = 15;
+}
+
+message Transfer {
+    string port = 1;    // the port to transfer the IBC packet on
+    string channel = 2; // the channel to transfer the IBC packet on
+    string from_chain_id = 11;
+    string to_chain_id = 12;
+    bool pfm_enabled = 4;
+    bool supports_memo = 6;
+
+    string denom_in = 13;
+    string denom_out = 14;
+
+    optional string fee_amount = 7;
+    optional string usd_fee_amount = 8;
+    optional Asset fee_asset = 9;
+
+    BridgeType bridge_id = 10;
+    bool smart_relay = 15;
+
+    optional string to_chain_callback_contract_address = 16;
+    optional string to_chain_entry_contract_address = 17;
+
+    // Deprecated fields (do not use)
+    string chain_id = 3;    // use from_chain_id or to_chain_id instead
+    string dest_denom = 5;  // use denom_out instead
+    
+}
+
+message AxelarTransfer {
+    string from_chain_id = 7;
+    string to_chain_id = 8;
+    string asset = 3;
+    bool should_unwrap = 4;
+
+    string denom_in = 13;
+    string denom_out = 14;
+
+    string fee_amount = 5;
+    optional string usd_fee_amount = 10;
+    Asset fee_asset = 9;
+    
+    bool is_testnet = 6;
+
+    optional Transfer ibc_transfer_to_axelar = 12;
+
+    BridgeType bridge_id = 11;
+    bool smart_relay = 15;
+
+    // Deprecated fields (do not use)
+    string from_chain = 1;  // use from_chain_id instead
+    string to_chain = 2;    // use to_chain_id instead
+}
+
+message CCTPTransfer {
+    string from_chain_id = 1;
+    string to_chain_id = 2;
+    string burn_token = 3;
+
+    string denom_in = 5;
+    string denom_out = 6;
+
+    BridgeType bridge_id = 4;
+    bool smart_relay = 7;
+    optional SmartRelayFeeQuote smart_relay_fee_quote = 8;
+}
+
+message SmartRelayFeeQuote {
+    string fee_amount = 1;
+    string relayer_address = 4;
+    google.protobuf.Timestamp expiration = 5;
+    string fee_denom = 6;
+    string fee_payment_address = 7;
+}
+
+message RelayInfo {
+    string fee_amount = 1;
+    optional string usd_fee_amount = 2;
+    Asset fee_asset = 3;
+    optional string fee_address = 4;
+}
+
+message HyperlaneTransfer {
+    string from_chain_id = 1;
+    string to_chain_id = 2;
+    
+    string denom_in = 3;
+    string denom_out = 4;
+    string hyperlane_contract_address = 5;
+
+    string fee_amount = 6;
+    optional string usd_fee_amount = 7;
+    Asset fee_asset = 8;
+
+    BridgeType bridge_id = 9;
+    bool smart_relay = 10;
+}
+
+message OPInitTransfer {
+    string from_chain_id = 1;
+    string to_chain_id = 2;
+
+    string denom_in = 3;
+    string denom_out = 4;
+
+    string op_init_bridge_id = 5;
+
+    BridgeType bridge_id = 6;
+    bool smart_relay = 7;
+}
+
+message GoFastTransfer {
+    string from_chain_id = 1;
+
+    string to_chain_id = 2;
+
+    GoFastFee fee = 3;
+
+    BridgeType bridge_id = 4;
+
+    string denom_in = 5;
+    string denom_out = 6;
+
+    string source_domain = 7;
+    string destination_domain = 8;
+}
+
+message GoFastFee {
+    Asset fee_asset = 3;
+
+    string bps_fee = 4;
+    string bps_fee_amount = 5;
+    string bps_fee_usd = 6;
+
+    string source_chain_fee_amount = 7;
+    string source_chain_fee_usd = 8;
+
+    string destination_chain_fee_amount = 9;
+    string destination_chain_fee_usd = 10;
+}
+
+message StargateTransfer {
+    string from_chain_id = 1;
+    string to_chain_id = 2;
+    string denom_in = 3;
+    string denom_out = 4;
+
+    string pool_address = 5;
+    int32 destination_endpoint_id = 6;
+    
+    Asset oft_fee_asset = 7;
+    string oft_fee_amount = 8;
+    string oft_fee_amount_usd = 9;
+
+    Asset messaging_fee_asset = 10;
+    string messaging_fee_amount = 11;
+    string messaging_fee_amount_usd = 12;
+    
+    BridgeType bridge_id = 13;
+}
+
+message LayerZeroTransfer {
+    string from_chain_id = 1;
+    string to_chain_id = 2;
+    string denom_in = 3;
+    string denom_out = 4;
+
+    string source_oft_contract_address = 5;
+    int32 destination_endpoint_id = 6;
+
+    Asset messaging_fee_asset = 7;
+    string messaging_fee_amount = 8;
+    string messaging_fee_amount_usd = 9;
+    
+    BridgeType bridge_id = 10;
+}
+
+message EurekaTransfer {
+    string destination_port = 1;
+    string source_client = 2;
+    string from_chain_id = 3;
+    string to_chain_id = 4;
+    bool pfm_enabled = 5;
+    bool supports_memo = 11;
+
+    string denom_in = 6;
+    string denom_out = 7;
+
+    string entry_contract_address = 12;
+    optional string callback_adapter_contract_address = 13;
+
+    BridgeType bridge_id = 8;
+
+    bool smart_relay = 9;
+    optional SmartRelayFeeQuote smart_relay_fee_quote = 10;
+    optional string to_chain_callback_contract_address = 14;
+    optional string to_chain_entry_contract_address = 15;
+}
+
+message BankSend {
+    string chain_id = 1;
+    string denom = 2;
+}
+
+message Erc20Approval {
+    string token_contract = 1;
+    string spender = 2;
+    string amount = 3;
+}
+
+message EvmTx {
+    string chain_id = 1;
+    string to = 2;
+    string value = 3;
+    string data = 4;
+    repeated Erc20Approval required_erc20_approvals = 5;
+    string signer_address = 6;
+}
+
+message CosmosMsg {
+    string msg = 1;
+    string msg_type_url = 2;
+}
+
+message CosmosTx {
+    string chain_id = 1;
+    repeated string path = 2;
+    repeated CosmosMsg msgs = 3;
+    string signer_address = 4;
+}
+
+message MultiChainMsg {
+    string chain_id = 1;
+    repeated string path = 2;
+    string msg = 3;
+    string msg_type_url = 4;
+}
+
+message SvmTx {
+    string chain_id = 1;
+    string tx = 2; // Base64 encoded unsigned transaction
+    string signer_address = 3;
+}
+
+message SwapVenue {
+    string name = 1;     // name of the swap venue, e.g. `terra-astroport`
+    string chain_id = 2; // chain-id of the venue, e.g. `phoenix-1`
+    string logo_uri = 3; // logo of the venue
+}
+
+message SwapOperation {
+    string pool = 1;
+    string denom_in = 2;
+    string denom_out = 3;
+    optional string interface = 4;
+}
+
+message SwapExactCoinOut {
+    SwapVenue swap_venue = 1;                   // the venue on which the swap will occur
+    repeated SwapOperation swap_operations = 2; // swap operations to perform on the venue
+    string swap_amount_out = 3;                 // the amount to get out from swap
+    optional string price_impact_percent = 4;            // the price impact of the swap
+}
+
+message SwapExactCoinIn {
+    SwapVenue swap_venue = 1;                   // the venue on which the swap will occur
+    repeated SwapOperation swap_operations = 2; // swap operations to perform on the venue
+    optional string swap_amount_in = 3;         // the amount to put in to the swap
+    optional string price_impact_percent = 4;   // the price impact of the swap
+    optional string estimated_amount_out = 5;   // the estimated amount to get out from swap
+}
+
+message SwapRoute {
+    string swap_amount_in = 1;
+    string denom_in = 2;
+    repeated SwapOperation swap_operations = 3; 
+}
+
+message SmartSwapExactCoinIn {
+    SwapVenue swap_venue = 1;
+    repeated SwapRoute swap_routes = 2;
+    optional string estimated_amount_out = 3;
+}
+
+message Swap {
+    oneof swap_type {
+        SwapExactCoinIn swap_in = 1;
+        SwapExactCoinOut swap_out = 2;
+        SmartSwapExactCoinIn smart_swap_in = 8;
+    }
+    optional string estimated_affiliate_fee = 3;
+    string from_chain_id = 7;
+    string chain_id = 4;
+    string denom_in = 5;
+    string denom_out = 6;
+    repeated SwapVenue swap_venues = 9;
+}
+
+message EvmSwap {
+    string input_token = 1;
+    string amount_in = 2;
+    string swap_calldata = 4;
+
+    string amount_out = 6;
+
+    string from_chain_id = 7;
+    string denom_in = 8;
+    string denom_out = 9;
+    repeated SwapVenue swap_venues = 10;
+}
+
+message Affiliate {
+    string basis_points_fee = 1; // fee in bps
+    string address = 2;          // recipient of fee
+}
+
+message ChainAffiliates {
+    repeated Affiliate affiliates = 1;
+}
+
+enum Reason {
+    UNKNOWN = 0;
+    BASE_TOKEN = 1;
+    MOST_LIQUID = 2;
+    DIRECT = 3;
+}
+
+message VenuesRequest {
+    string client_id = 1;
+    bool only_testnets = 2;
+}
+
+message VenuesResponse {
+    repeated SwapVenue venues = 1;
+}
+
+message CosmWasmContractMsg {
+    string contract_address = 1;
+    string msg = 2;
+}
+
+enum AutopilotAction {
+    LIQUID_STAKE = 0;
+    CLAIM = 1;
+}
+
+message AutopilotMsg {
+    string receiver = 1;
+    AutopilotAction action = 2;
+}
+
+message PostHandler {
+    oneof handler {
+        CosmWasmContractMsg wasm_msg = 1;
+        AutopilotMsg autopilot_msg = 2;
+    }
+}
+
+message DenomWithChainID {
+    string denom = 1;
+    string chain_id = 2;
+}
+
+enum BridgeType {
+    IBC = 0;
+    AXELAR = 1;
+    CCTP = 2;
+    HYPERLANE = 3;
+    OPINIT = 4;
+    GO_FAST = 5;
+    STARGATE = 6;
+    LAYER_ZERO = 7;
+    EUREKA = 8;
+}
+
+message SmartSwapOptions {
+    bool split_routes = 1;
+    bool evm_swaps = 2;
+    string evm_slippage_tolerance_percent = 3;
+}

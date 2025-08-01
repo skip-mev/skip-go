@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+option go_package="github.com/skip-mev/cns/api/keys/types";
+
+package api;
+
+import "google/api/annotations.proto";
+
+service SkipApiKeys {
+    rpc CreateClient(CreateClientRequest) returns (CreateClientResponse) {
+        option (google.api.http) = {
+            post: "/keys/create_client"
+            body: "*"
+        };
+    }
+
+    rpc GetClients(GetClientsRequest) returns (GetClientsResponse) {
+        option (google.api.http) = {
+            get: "/keys/get_clients"
+        };
+    }
+
+    rpc UpdateClient(UpdateClientRequest) returns (UpdateClientResponse) {
+        option (google.api.http) = {
+            post: "/keys/update_client"
+            body: "*"
+        };
+    }
+
+    rpc ToggleClient(ToggleClientRequest) returns (ToggleClientResponse) {
+        option (google.api.http) = {
+            post: "/keys/toggle_client"
+            body: "*"
+        };
+    }
+
+    rpc GetClientByApiKey(GetClientByApiKeyRequest) returns (GetClientByApiKeyResponse) {
+        option (google.api.http) = {
+            post: "/keys/get_client_by_api_key"
+            body: "*"
+        };
+    }
+}
+
+message Client {
+    string name = 1;
+    string tags = 2;
+    bool enabled = 3;
+}
+
+message CreateClientRequest {
+    string name = 1;
+    string tags = 2;
+}
+
+message CreateClientResponse {
+    Client client = 1;
+    string key = 2;
+}
+
+message GetClientsRequest {
+}
+
+message GetClientsResponse {
+    repeated Client clients = 1;
+}
+
+message UpdateClientRequest {
+    string name = 1;
+    string tags = 2;
+}
+
+message UpdateClientResponse {
+    Client client = 1;
+}
+
+message ToggleClientRequest {
+    string name = 1;
+}
+
+message ToggleClientResponse {
+}
+
+message GetClientByApiKeyRequest {
+    string key = 1;
+}
+
+message GetClientByApiKeyResponse {
+    Client client = 1;
+}

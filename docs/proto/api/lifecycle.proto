@@ -1,0 +1,445 @@
+syntax = "proto3";
+
+option go_package="github.com/skip-mev/cns/api/types";
+
+package api;
+
+import "google/api/annotations.proto";
+import "api/shared.proto";
+import "google/protobuf/timestamp.proto";
+
+service Lifecycle {
+    rpc SubmitTx (SubmitTxRequest) returns (SubmitTxResponse) {
+        option (google.api.http) = {
+            post: "/v1/tx/submit"
+            body: "*"
+            // no additional_bindings, v2 implemented seperately
+        };
+    }
+
+    rpc SubmitTxV2 (SubmitTxRequest) returns (SubmitTxResponse) {
+        option (google.api.http) = {
+            post: "/v2/tx/submit"
+            body: "*"
+        };
+    }
+
+    rpc Status(StatusRequest) returns (StatusResponse) {
+        option (google.api.http) = {
+            get: "/v1/tx/status"
+            // no additional_bindings, v2 implemented seperately
+        };
+    }
+
+    rpc StatusV2(StatusRequest) returns (StatusV2Response) {
+        option (google.api.http) = {
+            get: "/v2/tx/status"
+        };
+    }
+
+    rpc Track(TrackRequest) returns (TrackResponse) {
+        option (google.api.http) = {
+            post: "/v1/tx/track"
+            body: "*"
+            // no additional_bindings, v2 implemented seperately
+        };
+    }
+
+    rpc TrackV2(TrackRequest) returns (TrackResponse) {
+        option (google.api.http) = {
+            post: "/v2/tx/track"
+            body: "*"
+        };
+    }
+
+    rpc RetryTrack(TrackRequest) returns (TrackResponse) {
+        option (google.api.http) = {
+            post: "/v2/tx/retry_track"
+            body: "*"
+        };
+    }
+}
+
+message SubmitTxRequest {
+    string tx = 1;
+    string chain_id = 2;
+
+    string client_id = 3;
+}
+
+message SubmitTxResponse {
+    string tx_hash = 1;
+    string explorer_link = 2;
+}
+
+enum StatusState {
+    STATE_UNKNOWN = 0;
+    STATE_SUBMITTED = 1;
+    STATE_PENDING = 2;
+    STATE_RECEIVED = 3;
+    STATE_COMPLETED = 4;
+    STATE_ABANDONED = 5;
+    STATE_COMPLETED_SUCCESS = 6;
+    STATE_COMPLETED_ERROR = 7;
+    STATE_PENDING_ERROR = 8;
+}
+
+enum BlockingTransferState {
+    TRANSFER_PROPAGATING = 0;
+    ERROR_PROPAGATING = 1;
+}
+
+message NextBlockingTransfer {
+    uint32 transfer_sequence_index = 1;
+}
+
+message StatusRequest {
+    string tx_hash = 1;
+    string chain_id = 2;
+
+    string client_id = 3;
+}
+
+enum TransferState {
+    TRANSFER_UNKNOWN = 0;
+    TRANSFER_PENDING = 1;
+    TRANSFER_RECEIVED = 2;
+    TRANSFER_SUCCESS = 3;
+    TRANSFER_FAILURE= 4;
+}
+
+message TransferInfo {
+    string from_chain_id = 5;
+    string to_chain_id = 6;
+    TransferState state = 3;
+    Packet packet_txs = 4;
+
+    // Deprecated fields (do not use)
+    string src_chain_id = 1;
+    string dst_chain_id = 2;
+}
+
+message TransferAssetRelease {
+    string chain_id = 1;
+    string denom = 2;
+    optional string amount = 4;
+    bool released = 3;
+}
+
+// Deprecated message (do not use)
+message StatusResponse {
+    StatusState status = 1;
+    repeated TransferInfo transfer_sequence = 2;
+    NextBlockingTransfer next_blocking_transfer = 3;
+    TransferAssetRelease transfer_asset_release = 4;
+
+    StatusError error = 5;
+    StatusState state = 6;
+}
+
+message StatusV2Response {
+    repeated TransferStatus transfers = 7;
+    StatusState state = 6;
+
+    NextBlockingTransfer next_blocking_transfer = 3;
+    TransferAssetRelease transfer_asset_release = 4;
+
+    StatusError error = 5;
+
+    // Deprecated fields (do not use)
+    repeated TransferEvent transfer_sequence = 2;
+    StatusState status = 1;
+}
+
+message TransferStatus {
+    StatusState state = 1;
+    repeated TransferEvent transfer_sequence = 2;
+    NextBlockingTransfer next_blocking_transfer = 3;
+    TransferAssetRelease transfer_asset_release = 4;
+
+    StatusError error = 5;
+}
+
+enum AxelarTransferType {
+    AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN = 0;
+    AXELAR_TRANSFER_SEND_TOKEN = 1;
+}
+
+enum AxelarTransferState {
+    AXELAR_TRANSFER_UNKNOWN = 0;
+    AXELAR_TRANSFER_PENDING_CONFIRMATION = 1;
+    AXELAR_TRANSFER_PENDING_RECEIPT = 2;
+    AXELAR_TRANSFER_SUCCESS = 3;
+    AXELAR_TRANSFER_FAILURE= 4;
+}
+
+message AxelarTransferTransactions {
+    oneof txs {
+        ContractCallWithTokenTransactions contract_call_with_token_txs = 1;
+        SendTokenTransactions send_token_txs = 2;
+    }
+}
+
+message SendTokenTransactions {
+    ChainTransaction send_tx = 1;
+    ChainTransaction confirm_tx = 3;
+    ChainTransaction execute_tx = 5;
+    SendTokenError error = 6;
+}
+
+enum SendTokenErrorType {
+    SEND_TOKEN_EXECUTION_ERROR = 0;
+}
+
+message SendTokenError {
+    string message = 1;
+    SendTokenErrorType type = 2;
+}
+
+message ContractCallWithTokenTransactions {
+    ChainTransaction send_tx = 1;
+    ChainTransaction gas_paid_tx = 2;
+    ChainTransaction confirm_tx = 3;
+    ChainTransaction approve_tx = 4;
+    ChainTransaction execute_tx = 5;
+    ContractCallWithTokenError error = 6;
+}
+
+enum ContractCallWithTokenErrorType {
+    CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR = 0;
+}
+
+message ContractCallWithTokenError {
+    string message = 1;
+    ContractCallWithTokenErrorType type = 2;
+}
+
+message AxelarTransferInfo {
+    string from_chain_id = 7;
+    string to_chain_id = 8;
+    AxelarTransferType type = 3;
+    AxelarTransferState state = 4;
+    AxelarTransferTransactions txs = 5;
+    string axelar_scan_link = 6;
+
+    // Deprecated fields (do not use)
+    string src_chain_id = 1;
+    string dst_chain_id = 2;
+}
+
+enum CCTPTransferState {
+    CCTP_TRANSFER_UNKNOWN = 0;
+    CCTP_TRANSFER_SENT = 1;
+    CCTP_TRANSFER_PENDING_CONFIRMATION = 2;
+    CCTP_TRANSFER_CONFIRMED = 3;
+    CCTP_TRANSFER_RECEIVED= 4;
+}
+
+message CCTPTransferTransactions {
+    ChainTransaction send_tx = 1;
+    ChainTransaction receive_tx = 2;
+}
+
+message CCTPTransferInfo {
+    string from_chain_id = 6;
+    string to_chain_id = 7;
+    CCTPTransferState state = 4;
+    CCTPTransferTransactions txs = 5;
+
+    // Deprecated fields (do not use)
+    string src_chain_id = 1;
+    string dst_chain_id = 2;
+}
+
+enum OPInitTransferState {
+    OPINIT_TRANSFER_UNKNOWN = 0;
+    OPINIT_TRANSFER_SENT = 1;
+    OPINIT_TRANSFER_RECEIVED= 2;
+}
+
+message OPInitTransferTransactions {
+    ChainTransaction send_tx = 1;
+    ChainTransaction receive_tx = 2;
+}
+
+message OPInitTransferInfo {
+    string from_chain_id = 6;
+    string to_chain_id = 7;
+    OPInitTransferState state = 4;
+    OPInitTransferTransactions txs = 5;
+}
+
+enum HyperlaneTransferState {
+    HYPERLANE_TRANSFER_UNKNOWN = 0;
+    HYPERLANE_TRANSFER_SENT = 1;
+    HYPERLANE_TRANSFER_FAILED = 2;
+    HYPERLANE_TRANSFER_RECEIVED= 3;
+}
+
+message HyperlaneTransferTransactions {
+    ChainTransaction send_tx = 1;
+    ChainTransaction receive_tx = 2;
+}
+
+message HyperlaneTransferInfo {
+    string from_chain_id = 1;
+    string to_chain_id = 2;
+    HyperlaneTransferState state = 3;
+    HyperlaneTransferTransactions txs = 4;
+}
+
+message GoFastTransferInfo {
+    string from_chain_id = 1;
+    string to_chain_id = 2;
+    GoFastTransferState state = 4;
+    GoFastTransferTransactions txs = 5;
+    string error_message = 6;
+}
+
+enum GoFastTransferState {
+    GO_FAST_TRANSFER_UNKNOWN = 0;
+    GO_FAST_TRANSFER_SENT = 1;
+    GO_FAST_POST_ACTION_FAILED = 2;
+    GO_FAST_TRANSFER_TIMEOUT = 3;
+    GO_FAST_TRANSFER_FILLED = 4;
+    GO_FAST_TRANSFER_REFUNDED = 5;
+}
+
+message GoFastTransferTransactions {
+    ChainTransaction order_submitted_tx = 1;
+    ChainTransaction order_filled_tx = 2;
+    ChainTransaction order_refunded_tx = 3;
+    ChainTransaction order_timeout_tx = 4;
+}
+
+message StargateTransferInfo {
+    string from_chain_id = 1;
+    string to_chain_id = 2;
+    StargateTransferState state = 3;
+    StargateTransferTransactions txs = 4;
+}
+
+enum StargateTransferState {
+    STARGATE_TRANSFER_UNKNOWN = 0;
+    STARGATE_TRANSFER_SENT = 1;
+    STARGATE_TRANSFER_RECEIVED= 2;
+    STARGATE_TRANSFER_FAILED = 3;
+}
+
+message StargateTransferTransactions {
+    ChainTransaction send_tx = 1;
+    ChainTransaction receive_tx = 2;
+    ChainTransaction error_tx = 3;
+}
+
+message LayerZeroTransferInfo {
+    string from_chain_id = 1;
+    string to_chain_id = 2;
+    LayerZeroTransferState state = 3;
+    LayerZeroTransferTransactions txs = 4;
+}
+
+enum LayerZeroTransferState {
+    LAYER_ZERO_TRANSFER_UNKNOWN = 0;
+    LAYER_ZERO_TRANSFER_SENT = 1;
+    LAYER_ZERO_TRANSFER_RECEIVED= 2;
+    LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE = 3;
+    LAYER_ZERO_TRANSFER_FAILED = 4;
+}
+
+message LayerZeroTransferTransactions {
+    ChainTransaction send_tx = 1;
+    ChainTransaction receive_tx = 2;
+    ChainTransaction compose_tx = 3;
+    ChainTransaction error_tx = 4;
+}
+
+message EurekaTransferInfo {
+    string from_chain_id = 5;
+    string to_chain_id = 6;
+    TransferState state = 3;
+    Packet packet_txs = 4;
+}
+
+message TransferEvent {
+    oneof transfer {
+        TransferInfo ibc_transfer = 1;
+        AxelarTransferInfo axelar_transfer = 2;
+        CCTPTransferInfo cctp_transfer = 3;
+        HyperlaneTransferInfo hyperlane_transfer = 4;
+        OPInitTransferInfo op_init_transfer = 5;
+        GoFastTransferInfo go_fast_transfer = 6;
+        StargateTransferInfo stargate_transfer = 7;
+        LayerZeroTransferInfo layer_zero_transfer = 8;
+        EurekaTransferInfo eureka_transfer = 9;
+    }
+}
+
+message Packet {
+    ChainTransaction send_tx = 1;
+    ChainTransaction receive_tx = 2;
+    ChainTransaction acknowledge_tx = 3;
+    ChainTransaction timeout_tx = 4;
+
+    PacketError error = 5;
+}
+
+enum StatusErrorType {
+    STATUS_ERROR_UNKNOWN = 0;
+    STATUS_ERROR_TRANSACTION_EXECUTION = 1;
+    STATUS_ERROR_INDEXING = 2;
+    STATUS_ERROR_TRANSFER = 3;
+}
+
+message TransactionExecutionError {
+    uint32 code = 1;
+    string message = 2;
+}
+
+message StatusError {
+    int32 code = 1;
+    string message = 2;
+    StatusErrorType type = 3;
+    oneof details {
+        TransactionExecutionError transaction_execution_error = 4;
+    }
+}
+
+enum PacketErrorType {
+    PACKET_ERROR_UNKNOWN = 0;
+    PACKET_ERROR_ACKNOWLEDGEMENT = 1;
+    PACKET_ERROR_TIMEOUT = 2;
+}
+
+message AcknowledgementError {
+    string message = 1;
+    uint32 code = 2;
+}
+
+message PacketError {
+    int32 code = 1;
+    string message = 2;
+    PacketErrorType type = 3;
+    oneof details {
+        AcknowledgementError acknowledgement_error = 4;
+    }
+}
+
+message ChainTransaction {
+    string chain_id = 1;
+    string tx_hash = 2;
+    string explorer_link = 3;
+    google.protobuf.Timestamp on_chain_at = 4;
+}
+
+message TrackRequest {
+    string tx_hash = 1;
+    string chain_id = 2;
+
+    string client_id = 3;
+}
+
+message TrackResponse {
+    string tx_hash = 1;
+    string explorer_link = 2;
+}

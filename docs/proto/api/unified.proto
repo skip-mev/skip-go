@@ -1,0 +1,542 @@
+syntax = "proto3";
+
+option go_package="github.com/skip-mev/cns/api/types";
+
+package api;
+
+import "google/api/annotations.proto";
+import "api/shared.proto";
+import "api/chain.proto";
+
+service SkipApi {
+    rpc Route (RouteRequest) returns (RouteResponse) {
+        option (google.api.http) = {
+            post: "/v1/fungible/route"
+            body: "*"
+            // no additional_bindings, v2 implemented seperately
+        };
+    }
+    rpc RouteV2 (RouteV2Request) returns (RouteResponse) {
+        option (google.api.http) = {
+            post: "/v2/fungible/route"
+            body: "*"
+        };
+    }
+    rpc Msgs (MsgsRequest) returns (MsgsResponse) {
+        option (google.api.http) = {
+            post: "/v1/fungible/msgs"
+            body: "*"
+            // no additional_bindings, v2 implemented seperately
+        };
+    }
+    rpc MsgsV2 (MsgsRequest) returns (MsgsV2Response) {
+        option (google.api.http) = {
+            post: "/v2/fungible/msgs"
+            body: "*"
+        };
+    }
+    rpc MsgsDirect (MsgsDirectRequest) returns (MsgsDirectResponse) {
+        option (google.api.http) = {
+            post: "/v1/fungible/msgs_direct"
+            body: "*"
+            // no additional_bindings, v2 implemented seperately
+        };
+    }
+    rpc MsgsDirectV2 (MsgsDirectRequest) returns (MsgsDirectV2Response) {
+        option (google.api.http) = {
+            post: "/v2/fungible/msgs_direct"
+            body: "*"
+        };
+    }
+    rpc Chains(ChainsRequest) returns (ChainsResponse) {
+        option (google.api.http) = {
+            get: "/v1/info/chains"
+            additional_bindings {
+                get: "/v2/info/chains"
+            }
+        };
+    };
+    rpc Assets (AssetsRequest) returns (AssetsResponse) {
+        option (google.api.http) = {
+            get: "/v1/fungible/assets"
+            additional_bindings {
+                get: "/v2/fungible/assets"
+            }
+        };
+    }
+    rpc AssetsFromSource (AssetsFromSourceRequest) returns (AssetsFromSourceResponse) {
+        option (google.api.http) = {
+            post: "/v1/fungible/assets_from_source"
+            body: "*"
+            additional_bindings {
+                post: "/v2/fungible/assets_from_source"
+                body: "*"
+            }
+        };
+    }
+    rpc Venues (VenuesRequest) returns (VenuesResponse) {
+        option (google.api.http) = {
+            get: "/v1/fungible/venues"
+            additional_bindings {
+                get: "/v2/fungible/venues"
+            }
+        };
+    }
+    rpc RecommendAssets (RecommendAssetsRequest) returns (RecommendAssetsResponse) {
+        option (google.api.http) = {
+            post: "/v1/fungible/recommend_assets"
+            body: "*"
+            additional_bindings {
+                post: "/v2/fungible/recommend_assets"
+                body: "*"
+            }
+        };
+    }
+    rpc OriginAssets (OriginAssetsRequest) returns (OriginAssetsResponse) {
+        option (google.api.http) = {
+            post: "/v1/fungible/ibc_origin_assets"
+            body: "*"
+            additional_bindings {
+                post: "/v2/fungible/ibc_origin_assets"
+                body: "*"
+            }
+        };
+    }
+    rpc AssetsBetweenChains (AssetsBetweenChainsRequest) returns (AssetsBetweenChainsResponse) {
+        option (google.api.http) = {
+            post: "/v2/fungible/assets_between_chains"
+            body: "*"
+        };
+    }
+    rpc Bridges (BridgesRequest) returns (BridgesResponse) {
+        option (google.api.http) = {
+            get: "/v2/info/bridges"
+        };
+    }
+    rpc Balance (BalanceRequest) returns (BalanceResponse) {
+        option (google.api.http) = {
+            post: "/v2/info/balances"
+            body: "*"
+        };
+    }
+}
+
+message Operation {
+    oneof operation_type {
+        Transfer transfer = 1;
+        Swap swap = 2;
+        AxelarTransfer axelar_transfer = 3;
+        BankSend bank_send = 4;
+        CCTPTransfer cctp_transfer = 5;
+        HyperlaneTransfer hyperlane_transfer = 6;
+        EvmSwap evm_swap = 10;
+        OPInitTransfer op_init_transfer = 11;
+        GoFastTransfer go_fast_transfer = 12;
+        StargateTransfer stargate_transfer = 13;
+        LayerZeroTransfer layer_zero_transfer = 14;
+        EurekaTransfer eureka_transfer = 15;
+    }
+    int32 tx_index = 7;
+    string amount_in = 8;
+    string amount_out = 9;
+}
+
+message RouteRequest {
+    string source_asset_denom = 1;
+    string source_asset_chain_id = 2;
+    string dest_asset_denom = 3;
+    string dest_asset_chain_id = 4;
+    string amount_in = 5;
+    string amount_out = 6;
+
+    optional string cumulative_affiliate_fee_bps = 7;
+    repeated SwapVenue swap_venues = 13;
+
+    bool internal = 9; // whether the request originates from external or internal clients
+
+    bool allow_multi_tx = 12;
+
+    optional bool allow_unsafe = 11;
+
+    // Deprecated fields (do not use)
+    optional SwapVenue swap_venue = 8;
+    string client_id = 10;
+}
+
+message RouteV2Request {
+    string source_asset_denom = 1;
+    string source_asset_chain_id = 2;
+    string dest_asset_denom = 3;
+    string dest_asset_chain_id = 4;
+    string amount_in = 5;
+    string amount_out = 6;
+
+    optional string cumulative_affiliate_fee_bps = 7;
+    repeated SwapVenue swap_venues = 16;
+
+    bool internal = 9; // whether the request originates from external or internal clients
+
+    optional bool allow_unsafe = 11;
+    repeated string experimental_features = 12;
+    bool allow_multi_tx = 14;
+
+    repeated BridgeType bridges = 13;
+    optional bool smart_relay = 15;
+
+    SmartSwapOptions smart_swap_options = 17;
+    optional bool allow_swaps = 18;
+
+    bool go_fast = 19;
+
+    // Deprecated fields (do not use)
+    optional SwapVenue swap_venue = 8;
+    string client_id = 10;
+}
+
+enum RouteWarningType {
+    LOW_INFO_WARNING = 0;
+    BAD_PRICE_WARNING = 1;
+}
+
+message RouteWarning {
+    RouteWarningType type = 1;
+    string message = 2;
+}
+
+enum MsgsWarningType {
+    INSUFFICIENT_GAS_AT_DEST_EOA = 0;
+    INSUFFICIENT_GAS_AT_INTERMEDIATE = 1;
+}
+
+message MsgsWarning {
+    MsgsWarningType type = 1;
+    string message = 2;
+}
+
+enum FeeType {
+    SMART_RELAY = 0;
+    BRIDGE = 1;
+}
+
+enum FeeBehavior {
+    FEE_BEHAVIOR_DEDUCTED = 0;   // Fee is deducted from the transfer amount (default, Cosmos behavior)
+    FEE_BEHAVIOR_ADDITIONAL = 1;  // Fee is charged additionally on top of the transfer amount (EVM with native token)
+}
+
+message Fee {
+    FeeType fee_type = 1;
+    BridgeType bridge_id = 2;
+    string amount = 3;
+    optional string usd_amount = 4;
+    Asset origin_asset = 5;
+    string chain_id = 6;
+    int32 tx_index = 7;
+    optional int32 operation_index = 8;
+    FeeBehavior fee_behavior = 9;  // Indicates whether fee is deducted or additional
+}
+
+message RouteResponse {
+    string source_asset_denom = 1;
+    string source_asset_chain_id = 2;
+    string dest_asset_denom = 3;
+    string dest_asset_chain_id = 4;
+    string amount_in = 5;
+    string amount_out = 6;
+
+    repeated Operation operations = 7;
+    repeated string chain_ids = 8;
+
+    bool does_swap = 9;
+    optional string estimated_amount_out = 10;
+    repeated SwapVenue swap_venues = 18;
+
+    int32 txs_required = 12;
+
+    optional string usd_amount_in = 13; // the amount of the source denom to swap in, converted to USD
+    optional string usd_amount_out = 14; // the amount of the destination denom to receive from the swap, converted to USD
+
+    optional string swap_price_impact_percent = 15; // the price impact of the user swap, if present
+    optional RouteWarning warning = 16;
+    repeated Fee estimated_fees = 17;
+
+    repeated string required_chain_addresses = 19;
+
+    int32 estimated_route_duration_seconds = 20;
+
+    // Deprecated fields (do not use)
+    optional SwapVenue swap_venue = 11;
+}
+
+message MsgsRequest {
+    string source_asset_denom = 1;
+    string source_asset_chain_id = 2;
+    string dest_asset_denom = 3;
+    string dest_asset_chain_id = 4;
+    string amount_in = 5;
+    string amount_out = 6;
+    repeated string address_list = 7;
+    map<string, string> chain_ids_to_addresses = 8;
+    repeated Operation operations = 9;
+
+    optional string estimated_amount_out = 10;
+    optional string slippage_tolerance_percent = 11;
+    map<string, ChainAffiliates> chain_ids_to_affiliates = 17;
+    PostHandler post_route_handler = 13;
+
+    string timeout_seconds = 15;
+
+    bool internal = 16;
+    bool enable_gas_warnings = 18;
+    optional string fee_payer_address = 19;
+
+    // Deprecated fields (do not use)
+    repeated Affiliate affiliates = 12;
+    string client_id = 14;
+}
+
+message Msg {
+    oneof msg_type {
+        MultiChainMsg multi_chain_msg = 1;
+        EvmTx evm_tx = 2;
+        CosmosTx cosmos_tx = 3;
+        SvmTx svm_tx = 4;
+    }
+}
+
+message Tx {
+    oneof tx_type {
+        EvmTx evm_tx = 1;
+        CosmosTx cosmos_tx = 2;
+        SvmTx svm_tx = 3;
+    }
+    repeated int32 operations_indices = 4;
+}
+
+// Deprecated message (do not use)
+message MsgsResponse {
+    repeated MultiChainMsg msgs = 1;
+}
+
+message MsgsV2Response {
+    repeated Msg msgs = 1;
+    repeated Tx txs = 2;
+    optional MsgsWarning warning = 3;
+    repeated Fee estimated_fees = 17; // accidental index jump, don't change
+    string min_amount_out = 18;
+}
+
+message MsgsDirectRequest {
+    string source_asset_denom = 1;
+    string source_asset_chain_id = 2;
+    string dest_asset_denom = 3;
+    string dest_asset_chain_id = 4;
+    string amount_in = 5;
+    string amount_out = 6;
+    map<string, string> chain_ids_to_addresses = 7;
+
+    repeated SwapVenue swap_venues = 19;
+    optional string slippage_tolerance_percent = 9;
+    map<string, ChainAffiliates> chain_ids_to_affiliates = 23;
+    PostHandler post_route_handler = 11;
+
+    string timeout_seconds = 13;
+
+    optional bool allow_unsafe = 14;
+    repeated string experimental_features = 15;
+    bool allow_multi_tx = 17;
+
+    repeated BridgeType bridges = 16;
+    optional bool smart_relay = 18;
+
+    SmartSwapOptions smart_swap_options = 21;
+    optional bool allow_swaps = 22;
+
+    bool enable_gas_warnings = 24;
+
+    bool go_fast = 25;
+
+    bool internal = 20;
+    optional string fee_payer_address = 26;
+
+    // Deprecated fields (do not use)
+    repeated Affiliate affiliates = 10;
+    optional SwapVenue swap_venue = 8;
+    string client_id = 12;
+}
+
+// Deprecated message (do not use)
+message MsgsDirectResponse {
+    repeated MultiChainMsg msgs = 1;
+    RouteResponse route = 2;
+}
+
+message MsgsDirectV2Response {
+    repeated Msg msgs = 1;
+    RouteResponse route = 2;
+    repeated Tx txs = 3;
+    optional MsgsWarning warning = 4;
+    string min_amount_out = 5;
+}
+
+message ChainsRequest {
+    repeated string chain_ids = 7;
+    bool include_evm = 1;
+    bool include_svm = 5;
+    bool internal = 2;
+    bool only_testnets = 6;
+    
+    // Deprecated fields (do not use)
+    bool include_testnets = 4;
+    string client_id = 3;
+    optional bool include_initia_mainnet = 8;
+}
+
+message ChainsResponse {
+    repeated Chain chains = 1;
+}
+
+message AssetsRequest {
+    repeated string chain_ids = 9;
+    optional bool native_only = 2;
+    bool include_no_metadata_assets = 3;
+    bool include_cw20_assets = 4;
+    bool include_evm_assets = 6;
+    bool include_svm_assets = 7;
+    bool only_testnets = 8;
+
+    // Deprecated fields (do not use)
+    optional string chain_id = 1;
+    string client_id = 5;
+    optional bool include_initia_mainnet = 10;
+}
+
+message AssetsResponse {
+    map<string, RepeatedAsset> chain_to_assets_map = 1;
+}
+
+message AssetsFromSourceRequest {
+    string source_asset_denom = 1;
+    string source_asset_chain_id = 2;
+
+    optional bool allow_multi_tx = 3;
+    optional Reason recommendation_reason = 4;
+    optional bool include_swaps = 5;
+    repeated SwapVenue swap_venues = 6;
+    optional bool native_only = 7;
+    optional string group_by = 8;
+    bool include_cw20_assets = 9;
+
+    // Deprecated fields (do not use)
+    string client_id = 10;
+    optional bool include_initia_mainnet = 11;
+}
+
+message AssetsFromSourceResponse {
+    map<string, RepeatedAsset> dest_assets = 1;
+}
+
+message AssetRecommendationRequest {
+    string source_asset_denom = 1;
+    string source_asset_chain_id = 2;
+    string dest_chain_id = 3;
+    optional Reason reason = 4;
+}
+
+message RecommendAssetsRequest {
+    string source_asset_denom = 1;
+    string source_asset_chain_id = 2;
+    string dest_chain_id = 3;
+    optional Reason reason = 4;
+
+    repeated AssetRecommendationRequest requests = 6;
+
+    // Deprecated fields (do not use)
+    string client_id = 5;
+}
+
+message RecommendationEntry {
+    repeated AssetRecommendation recommendations = 1;
+    optional ApiError error = 2;
+}
+
+message RecommendAssetsResponse {
+    repeated AssetRecommendation recommendations = 1;
+    repeated RecommendationEntry recommendation_entries = 2;
+}
+
+message AssetRecommendation {
+    Asset asset = 1;
+    Reason reason = 2;
+}
+
+message OriginAssetsRequest {
+    repeated DenomWithChainID assets = 1;
+}
+
+message OriginAssetsResponse {
+    repeated AssetOrError origin_assets = 1;
+}
+
+message AssetBetweenChains {
+    Asset asset_on_source = 1;
+    Asset asset_on_dest = 2;
+    int32 txs_required = 3;
+    repeated BridgeType bridges = 4;
+}
+
+message AssetsBetweenChainsRequest {
+    string source_chain_id = 1;
+    string dest_chain_id = 2;
+
+    bool include_no_metadata_assets = 3;
+    bool include_cw20_assets = 4;
+    bool include_evm_assets = 5;
+
+    bool allow_multi_tx = 6;
+}
+
+message AssetsBetweenChainsResponse {
+    repeated AssetBetweenChains assets_between_chains = 1;
+}
+
+message BalanceRequestChainEntry {
+    string address = 1;
+    repeated string denoms = 2;
+}
+
+message BalanceRequest {
+    map<string, BalanceRequestChainEntry> chains = 1;
+}
+
+message BalanceResponseDenomEntry {
+    string amount = 1;
+    optional int32 decimals = 2;
+    string formatted_amount = 3;
+    optional string price = 5;
+    optional string value_usd = 6;
+
+    optional ApiError error = 4;
+}
+
+message BalanceResponseChainEntry {
+    map<string, BalanceResponseDenomEntry> denoms = 1;
+}
+
+message BalanceResponse {
+    map<string, BalanceResponseChainEntry> chains = 1;
+}
+
+message BridgesRequest {
+    // Deprecated fields (do not use)
+    string client_id = 1;
+}
+
+message BridgesResponse {
+    repeated Bridge bridges = 1;
+}
+
+message Bridge {
+    BridgeType id = 1;
+    string name = 2;
+    string logo_uri = 3;
+}
