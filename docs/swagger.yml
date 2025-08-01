@@ -2423,6 +2423,12 @@ components:
         denom_out:
           description: Denom of the output asset
           type: string
+        source_domain:
+          description: Source domain ID of the transfer
+          type: string
+        destination_domain:
+          description: Destination domain ID of the transfer
+          type: string
         fee:
           $ref: '#/components/schemas/GoFastFee'
 
@@ -3992,6 +3998,28 @@ components:
           type: boolean
           description: Whether to include recommendations requiring multiple transactions to reach the destination
           default: false
+        recommendation_reason:
+          $ref: '#/components/schemas/Reason'
+          description: Optional reason for recommending assets
+          nullable: true
+        include_swaps:
+          type: boolean
+          description: Whether to include swap routes
+          default: false
+        swap_venues:
+          type: array
+          description: Swap venues to consider if including swap routes
+          items:
+            $ref: '#/components/schemas/SwapVenue'
+          nullable: true
+        native_only:
+          type: boolean
+          description: Whether to only return native assets
+          default: false
+        group_by:
+          type: string
+          description: Optional grouping key for results
+          nullable: true
         include_cw20_assets:
           type: boolean
           description: Whether to include CW20 tokens
