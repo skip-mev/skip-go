@@ -22,6 +22,8 @@ import { Adapter } from "@solana/wallet-adapter-base";
 import { MutateFunction } from "jotai-tanstack-query";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { svmWalletAtom } from "@/state/wallets";
+import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -29,6 +31,7 @@ type SwapExecutionButtonProps = {
   signaturesRemaining: number;
   lastOperation: ClientOperation;
   connectRequiredChains: (openModal?: boolean) => Promise<void>;
+  connectFeeRouteRequiredChains?: (openModal?: boolean) => Promise<void>;
   submitExecuteRouteMutation: MutateFunction<
     null | undefined,
     unknown,
@@ -45,12 +48,15 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   signaturesRemaining,
   lastOperation,
   connectRequiredChains,
+  connectFeeRouteRequiredChains,
   submitExecuteRouteMutation,
 }) => {
   const countdown = useCountdown({
     estimatedRouteDurationSeconds: route?.estimatedRouteDurationSeconds,
     enabled: swapExecutionState === SwapExecutionState.pending,
   });
+
+  const chainAddresses = useAtomValue(chainAddressesAtom);
 
   const { wallets: solanaWallets } = useWallet();
   const svmWallet = useAtomValue(svmWalletAtom);
@@ -76,7 +82,9 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     route?.txsRequired,
   ]);
 
-  switch (swapExecutionState) {
+  const debouncedSwapExecutionState = useDebouncedValue(swapExecutionState, 150);
+
+  switch (debouncedSwapExecutionState) {
     case SwapExecutionState.recoveryAddressUnset:
       return (
         <MainButton
@@ -85,6 +93,17 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           onClick={() => {
             track("swap execution page: set recovery address button - clicked");
             connectRequiredChains(true);
+          }}
+        />
+      );
+    case SwapExecutionState.feeRouteRecoveryAddressUnset:
+      return (
+        <MainButton
+          label="Set intermediary address"
+          icon={ICONS.rightArrow}
+          onClick={() => {
+            track("swap execution page: set recovery address button - clicked");
+            connectFeeRouteRequiredChains?.(true);
           }}
         />
       );
@@ -107,7 +126,11 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
         />
       );
     case SwapExecutionState.ready: {
-      track("swap execution page: confirm button - clicked", { route });
+      const destinationWalletSource =
+        route?.requiredChainAddresses?.length &&
+        chainAddresses[route?.requiredChainAddresses?.length - 1]?.source;
+
+      track("swap execution page: confirm button - clicked", { route, destinationWalletSource });
       const onClickConfirmSwap = () => {
         if (route?.txsRequired && route.txsRequired > 1) {
           track("warning page: additional signing required", { route });
@@ -129,6 +152,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           });
           return;
         }
+
         submitExecuteRouteMutation({
           getSvmSigner: async () => {
             const wallet = solanaWallets.find((w) => w.adapter.name === svmWallet?.walletName);
@@ -183,7 +207,10 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
       );
     case SwapExecutionState.pendingGettingAddresses:
       return <MainButton label="Getting addresses" loading />;
-
+    case SwapExecutionState.pendingGettingDestinationBalance:
+      return <MainButton label="Getting destination balance" loading />;
+    case SwapExecutionState.pendingError:
+      return <MainButton label="Awaiting result" loading />;
     default:
       return null;
   }

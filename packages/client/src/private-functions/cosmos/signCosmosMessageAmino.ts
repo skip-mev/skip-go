@@ -12,7 +12,7 @@ import { fromBase64 } from "@cosmjs/encoding";
 import type { SignCosmosMessageAminoOptions } from "src/types/client-types";
 
 export const signCosmosMessageAmino = async (
-  options: SignCosmosMessageAminoOptions,
+  options: SignCosmosMessageAminoOptions
 ): Promise<TxRawType> => {
   const {
     signer,
@@ -24,20 +24,31 @@ export const signCosmosMessageAmino = async (
   } = options;
 
   const accounts = await signer.getAccounts();
-  const accountFromSigner = accounts.find((account) => account.address === signerAddress);
+  const accountFromSigner = accounts.find(
+    (account) => account.address === signerAddress
+  );
 
   if (!accountFromSigner) {
-    throw new Error("signCosmosMessageAmino: failed to retrieve account from signer");
+    throw new Error(
+      "signCosmosMessageAmino: failed to retrieve account from signer"
+    );
   }
 
-  const messages = cosmosMsgs.map((cosmosMsg) => getEncodeObjectFromCosmosMessage(cosmosMsg));
+  const messages = cosmosMsgs.map((cosmosMsg) =>
+    getEncodeObjectFromCosmosMessage(cosmosMsg)
+  );
 
   const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
   const msgs = messages.map((msg) => ClientState.aminoTypes.toAmino(msg));
 
-  console.log("sign cosmos message amino", msgs, fee, signerChainId, "", accountNumber, sequence);
-
-  const signDoc = makeSignDoc(msgs, fee, signerChainId, "", accountNumber, sequence);
+  const signDoc = makeSignDoc(
+    msgs,
+    fee,
+    signerChainId,
+    "",
+    accountNumber,
+    sequence
+  );
 
   const { signature, signed } = await signer.signAmino(signerAddress, signDoc);
 
@@ -54,7 +65,9 @@ export const signCosmosMessageAmino = async (
     value: signedTxBody,
   };
 
-  const signedTxBodyBytes = ClientState.registry.encode(signedTxBodyEncodeObject);
+  const signedTxBodyBytes = ClientState.registry.encode(
+    signedTxBodyEncodeObject
+  );
 
   const signedGasLimit = Int53.fromString(signed.fee.gas).toNumber();
   const signedSequence = Int53.fromString(signed.sequence).toNumber();
@@ -67,7 +80,7 @@ export const signCosmosMessageAmino = async (
     signedGasLimit,
     signed.fee.granter,
     signed.fee.payer,
-    signMode,
+    signMode
   );
 
   return TxRaw.fromPartial({

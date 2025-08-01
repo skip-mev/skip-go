@@ -13,7 +13,7 @@ import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React, { useCallback, useMemo } from "react";
 import { Tooltip } from "@/components/Tooltip";
 import { useIsGasStationTx } from "./useIsGasStationTx";
-import { convertToPxValue } from "@/utils/style";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 type operationTypeToIcon = Record<OperationType, React.ReactElement>;
 
@@ -57,11 +57,12 @@ export const SwapExecutionPageRouteDetailed = ({
   swapExecutionState,
   firstOperationStatus,
   secondOperationStatus,
+  bottomContent,
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
+  const { originalRoute } = useAtomValue(swapExecutionStateAtom);
   const isGasStationTx = useIsGasStationTx();
-  const firstOperation = operations[0];
   const status = statusData?.transferEvents;
 
   const getBridgeSwapVenue = useCallback(
@@ -188,9 +189,9 @@ export const SwapExecutionPageRouteDetailed = ({
     <StyledSwapExecutionPageRoute>
       <Column>
         <SwapExecutionPageRouteDetailedRow
-          tokenAmount={firstOperation.amountIn}
-          denom={firstOperation.denomIn}
-          chainId={firstOperation.fromChainId}
+          tokenAmount={originalRoute?.amountIn ?? ""}
+          denom={originalRoute?.sourceAssetDenom}
+          chainId={originalRoute?.sourceAssetChainId}
           explorerLink={status?.[0]?.fromExplorerLink}
           status={firstOperationStatus}
           context="source"
@@ -204,6 +205,7 @@ export const SwapExecutionPageRouteDetailed = ({
           </StyledGasStationTxText>
         )}
       </Column>
+      {bottomContent}
     </StyledSwapExecutionPageRoute>
   );
 };
@@ -219,9 +221,7 @@ const OperationTypeIconContainer = styled(Column).attrs({
 
 const StyledSwapExecutionPageRoute = styled(Column)`
   padding: 25px;
-  gap: 20px;
-  background: ${({ theme }) => theme.primary.background.normal};
-  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.main)};
+  gap: 5px;
   min-height: 225px;
 `;
 
