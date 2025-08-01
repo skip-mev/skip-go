@@ -383,6 +383,7 @@ export const batchSignTxsAtom = atom<boolean>(true);
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const { userAddresses, route, mainRoute, feeRoute, isFeeRouteEnabled, feeRouteUserAddresses } =
     get(swapExecutionStateAtom);
+  const gorRoute = get(gasOnReceiveRouteAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const simulateTx = get(simulateTxAtom);
   const batchSignTxs = get(batchSignTxsAtom);
@@ -469,6 +470,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
 
           track("execute route", {
             gasOnReceive: true,
+            isFeeRouteAvailable: true,
             isDestinationFeeBalanceAvailable: isDestinationFeeBalanceAvailable.data,
             mainRoute,
             feeRoute,
@@ -495,6 +497,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
 
           track("execute route", {
             gasOnReceive: false,
+            isFeeRouteAvailable: !!gorRoute.data?.gasOnReceiveAsset,
             isDestinationFeeBalanceAvailable: isDestinationFeeBalanceAvailable.data,
             mainRoute: route,
           });
