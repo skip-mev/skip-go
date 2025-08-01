@@ -1,24 +1,26 @@
 # Skip Go
 
+Skip Go is the official monorepo for the Skip cross-chain swap ecosystem. It contains
+both the TypeScript client library and the React widget used to embed Skip's
+swap functionality in web applications. An example Next.js project is provided
+for reference.
+
 ## Project Structure
 
-```sh
-├── examples
-│   └── nextjs
+```text
 ├── packages
-│   ├── client
-│   └── widget
+│   ├── client   # `@skip-go/client` library
+│   └── widget   # `@skip-go/widget` React component
+├── examples
+│   └── nextjs   # Example application
+└── docs         # Local copy of documentation
 ```
 
-- `client` (@skip-go/client): The core package of the project. Contains the core logic, api fetch and types, helper functions, signing, etc.
-- `widget` (@skip-go/widget): React library that contains the widget component.
-- `examples`: The example app of the project
+### Package Relationship
 
-### How the package consumed
+`@skip-go/client` → `@skip-go/widget` → `examples/nextjs`
 
-`@skip-go/client` -> `@skip-go/widget` -> `examples/nextjs`
-
-## Dev Setup
+## Getting Started
 
 ### Install dependencies
 
@@ -26,32 +28,62 @@
 yarn
 ```
 
-### Start the development server
+### Start the development environment
 
-It will run the example app on `http://localhost:3000`
+Runs the client and widget in watch mode and launches the example app on
+`http://localhost:3000`.
 
 ```bash
 yarn dev
 ```
 
-### Build the packages
+### Build all packages
 
 ```bash
 yarn build
 ```
 
-### Updating changelog
+### Running tests
 
+Client tests:
+
+```bash
+yarn test
 ```
+
+Widget tests:
+
+```bash
+yarn test-widget
+```
+
+### Updating the changelog
+
+Generate a Changeset entry before submitting a pull request:
+
+```bash
 npx changeset
 ```
 
-## Docs
+## Documentation
 
-- [Client](./packages/client/README.md)
-- [Widget](./packages/widget/README.md)
+Full documentation is available at [docs.skip.build](https://docs.skip.build).
+Useful starting points:
+
+- [Client README](./packages/client/README.md)
+- [Widget README](./packages/widget/README.md)
 
 ## Examples
 
-- Widget: https://github.com/skip-mev/go-widget-example-next-js-app
-- Client: https://github.com/skip-mev/skip-next-simple-example
+- Widget Example: <https://github.com/skip-mev/go-widget-example-next-js-app>
+- Client Example: <https://github.com/skip-mev/skip-next-simple-example>
+
+## Contributing
+
+See [AGENTS.md](./AGENTS.md) for development guidelines, testing standards and
+pull request requirements.
+
+## License
+
+This project is licensed under the terms of the [Apache 2.0](./LICENSE.txt)
+license.
