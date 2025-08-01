@@ -23,6 +23,7 @@ import { MutateFunction } from "jotai-tanstack-query";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { svmWalletAtom } from "@/state/wallets";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -30,6 +31,7 @@ type SwapExecutionButtonProps = {
   signaturesRemaining: number;
   lastOperation: ClientOperation;
   connectRequiredChains: (openModal?: boolean) => Promise<void>;
+  connectFeeRouteRequiredChains?: (openModal?: boolean) => Promise<void>;
   submitExecuteRouteMutation: MutateFunction<
     null | undefined,
     unknown,
@@ -46,6 +48,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   signaturesRemaining,
   lastOperation,
   connectRequiredChains,
+  connectFeeRouteRequiredChains,
   submitExecuteRouteMutation,
 }) => {
   const countdown = useCountdown({
@@ -79,7 +82,9 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     route?.txsRequired,
   ]);
 
-  switch (swapExecutionState) {
+  const debouncedSwapExecutionState = useDebouncedValue(swapExecutionState, 150);
+
+  switch (debouncedSwapExecutionState) {
     case SwapExecutionState.recoveryAddressUnset:
       return (
         <MainButton
@@ -88,6 +93,17 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           onClick={() => {
             track("swap execution page: set recovery address button - clicked");
             connectRequiredChains(true);
+          }}
+        />
+      );
+    case SwapExecutionState.feeRouteRecoveryAddressUnset:
+      return (
+        <MainButton
+          label="Set intermediary address"
+          icon={ICONS.rightArrow}
+          onClick={() => {
+            track("swap execution page: set recovery address button - clicked");
+            connectFeeRouteRequiredChains?.(true);
           }}
         />
       );
@@ -191,7 +207,10 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
       );
     case SwapExecutionState.pendingGettingAddresses:
       return <MainButton label="Getting addresses" loading />;
-
+    case SwapExecutionState.pendingGettingDestinationBalance:
+      return <MainButton label="Getting destination balance" loading />;
+    case SwapExecutionState.pendingError:
+      return <MainButton label="Awaiting result" loading />;
     default:
       return null;
   }

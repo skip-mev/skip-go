@@ -1,96 +1,41 @@
-import { PublicKey } from "@solana/web3.js";
-import { ClientState } from "../state/clientState";
 import type { TransactionCallbacks } from "../types/callbacks";
-import { ChainType } from "../types/swaggerTypes";
 import type {
   CosmosMsg,
   RouteResponse,
   PostHandler,
 } from "../types/swaggerTypes";
 import type { ApiRequest } from "../utils/generateApi";
-import { bech32m, bech32 } from "bech32";
 import { executeTransactions } from "../private-functions/executeTransactions";
 import { messages } from "../api/postMessages";
-import { isAddress } from "viem";
 import type {
   SignerGetters,
   GasOptions,
   UserAddress,
+  BaseSettings,
 } from "src/types/client-types";
 import { ApiState } from "src/state/apiState";
-import type { TrackTxPollingProps } from "src/api/postTrackTransaction";
-import { updateRouteDetails } from "./subscribeToRouteStatus";
+import { executeAndSubscribeToRouteStatus, updateRouteDetails } from "./subscribeToRouteStatus";
+import { createValidAddressList } from "src/utils/address";
 
 /** Execute Route Options */
 export type ExecuteRouteOptions = SignerGetters &
   GasOptions &
   TransactionCallbacks &
+  BaseSettings &
   Pick<ApiRequest<"msgs">, "timeoutSeconds"> & {
     route: RouteResponse;
     /**
-     * Addresses should be in the same order with the `chainIDs` in the `route`
+     * Addresses should be in the same order with the `requiredChainAddresses` in the `route`
      */
     userAddresses: UserAddress[];
-    simulate?: boolean;
-    slippageTolerancePercent?: string;
     /**
      * If `appendCosmosMsgs` is provided, it will append the specified Cosmos messages to the transactions.
      */
     appendCosmosMsgs?: Record<string, CosmosMsg[]>
     /**
-     * Set allowance amount to max if EVM transaction requires allowance approval.
-     */
-    useUnlimitedApproval?: boolean;
-    /**
-    /**
-     * If `skipApproval` is set to `true`, the router will bypass checking whether
-     * the signer has granted approval for the specified token contract on an EVM chain.
-     * This can be useful if approval has already been handled externally or there are race conditions.
-     */
-    bypassApprovalCheck?: boolean;
-    /**
-     * defaults to true
-     * If `batchSimulate` is set to `true`, it will simulate all messages in a batch before the first tx run.
-     * If `batchSimulate` is set to `false`, it will simulate each message one by one.
-     */
-    batchSimulate?: boolean;
-    /**
-     * Optional configuration for transaction polling behavior.
-     * - `maxRetries`: Maximum number of polling attempts (default: 5)
-     * - `retryInterval`: Retry interval in milliseconds (default: 1000)
-     * - `backoffMultiplier`: Exponential backoff multiplier for increasing delay between retries (default: 2.5)
-     * Example backoff with retryInterval = 1000 and backoffMultiplier = 2:
-     * 1st retry: 1000ms → 2nd: 2000ms → 3rd: 4000ms → 4th: 8000ms ...
-     */
-    trackTxPollingOptions?: TrackTxPollingProps;
-    /**
-     * If `batchSignTxs` is set to `true`, it will sign all transactions in a batch up front.
-     * If `batchSignTxs` is set to `false`, it will sign each transaction one by one.
-     */
-    batchSignTxs?: boolean;
-    /**
      * Specify actions to perform after the route is completed
      */
     postRouteHandler?: PostHandler;
-    /**
-     * If `cosmosPriorityFeeDenom` is provided, it will be used to set the priority fee for Cosmos transactions.
-     * It should be a function that takes a chainId and returns the denom for the priority fee.
-     */
-    getCosmosPriorityFeeDenom?: (
-      chainId: string
-    ) => Promise<string | undefined>;
-    /**
-     * SVM Fee Payer
-     *
-     * This is used to pay for the transaction fees on SVM chains.
-     * It should be an object with the following properties:
-     * `address`: The address of the fee payer.
-     * `signTransaction`: A function that takes the data to sign and returns a Promise that resolves to the signed transaction.
-     */
-    svmFeePayer?: {
-      address: string;
-      signTransaction: (dataToSign: Buffer) => Promise<Uint8Array>;
-    };
   };
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {
@@ -98,35 +43,13 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
 
   const { id: routeId } = updateRouteDetails({
     status: "unconfirmed",
-    options
+    options,
   });
 
-  let addressList: string[] = [];
-  userAddresses.forEach((userAddress, index) => {
-    const requiredChainAddress = route.requiredChainAddresses[index];
-
-    if (requiredChainAddress === userAddress?.chainId) {
-      addressList.push(userAddress.address);
-    }
+  const addressList = await createValidAddressList({
+    userAddresses,
+    route,
   });
-
-  if (addressList.length !== route.requiredChainAddresses.length) {
-    addressList = userAddresses.map((x) => x.address);
-  }
-
-  const validLength =
-    addressList.length === route.requiredChainAddresses.length ||
-    addressList.length === route.chainIds?.length;
-
-  if (!validLength) {
-    throw new Error("executeRoute error: invalid address list");
-  }
-
-  const isUserAddressesValid = await validateUserAddresses(userAddresses);
-
-  if (!isUserAddressesValid) {
-    throw new Error("executeRoute error: invalid user addresses");
-  }
 
   const response = await messages({
     timeoutSeconds,
@@ -157,56 +80,12 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     })
   }
 
-  await executeTransactions({ ...options, routeId, txs: response?.txs });
-};
+  const { transactionDetails, executeTransaction } = await executeTransactions({ ...options, routeId, txs: response?.txs });
 
-const validateUserAddresses = async (userAddresses: UserAddress[]) => {
-  const chains = await ClientState.getSkipChains();
-  const validations = userAddresses.map((userAddress) => {
-    const chain = chains.find((chain) => chain.chainId === userAddress.chainId);
-
-    switch (chain?.chainType) {
-      case ChainType.Cosmos:
-        try {
-          if (chain.chainId?.includes("penumbra")) {
-            try {
-              return (
-                chain.bech32Prefix ===
-                bech32m.decode(userAddress.address, 143)?.prefix
-              );
-            } catch {
-              // The temporary solution to route around Noble address breakage.
-              // This can be entirely removed once `noble-1` upgrades.
-              return ["penumbracompat1", "tpenumbra"].includes(
-                bech32.decode(userAddress.address, 1023).prefix
-              );
-            }
-          }
-          return (
-            chain.bech32Prefix ===
-            bech32.decode(userAddress.address, 1023).prefix
-          );
-        } catch {
-          return false;
-        }
-
-      case ChainType.Evm:
-        try {
-          return isAddress(userAddress.address);
-        } catch (_error) {
-          return false;
-        }
-      case ChainType.Svm:
-        try {
-          const publicKey = new PublicKey(userAddress.address);
-          return PublicKey.isOnCurve(publicKey);
-        } catch (_error) {
-          return false;
-        }
-      default:
-        return false;
-    }
+  await executeAndSubscribeToRouteStatus({
+    transactionDetails,
+    executeTransaction,
+    routeId,
+    options,
   });
-
-  return validations.every((validation) => validation);
 };
