@@ -385,6 +385,10 @@ export interface GoFastTransferJson {
   denom_in?: string;
   /** Denom of the output asset */
   denom_out?: string;
+  /** Source domain ID of the transfer */
+  source_domain?: string;
+  /** Destination domain ID of the transfer */
+  destination_domain?: string;
   /** Go fast Fee */
   fee?: GoFastFeeJson;
 }
@@ -1598,6 +1602,22 @@ export interface AssetsFromSourceRequestJson {
    * @default false
    */
   allow_multi_tx?: boolean;
+  /** Optional reason for recommending assets */
+  recommendation_reason?: ReasonJson | null;
+  /**
+   * Whether to include swap routes
+   * @default false
+   */
+  include_swaps?: boolean;
+  /** Swap venues to consider if including swap routes */
+  swap_venues?: SwapVenueJson[] | null;
+  /**
+   * Whether to only return native assets
+   * @default false
+   */
+  native_only?: boolean;
+  /** Optional grouping key for results */
+  group_by?: string | null;
   /**
    * Whether to include CW20 tokens
    * @default false
