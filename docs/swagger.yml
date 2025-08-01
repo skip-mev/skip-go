@@ -134,12 +134,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                chains:
-                  type: object
-                  additionalProperties:
-                    $ref: '#/components/schemas/BalanceRequestChainEntry'
+              $ref: '#/components/schemas/BalancesRequest'
             example:
               chains:
                 137:
@@ -430,25 +425,7 @@ paths:
                   allow_multi_tx: false
                 summary: 'Get transfer assets that can be reached from ASTRO on Terra'
             schema:
-              type: object
-              required:
-                - source_asset_denom
-                - source_asset_chain_id
-              properties:
-                source_asset_denom:
-                  type: string
-                  description: Denom of the source asset
-                source_asset_chain_id:
-                  type: string
-                  description: Chain-id of the source asset
-                allow_multi_tx:
-                  type: boolean
-                  description: Whether to include recommendations requiring multiple transactions to reach the destination
-                  default: false
-                include_cw20_assets:
-                  type: boolean
-                  description: Whether to include CW20 tokens
-                  default: false
+              $ref: '#/components/schemas/AssetsFromSourceRequest'
       responses:
         '200':
           description: Assets reachable from the specified source without swapping
@@ -695,64 +672,7 @@ paths:
                     evm_swaps: true
                 summary: 'Swap ETH on Arbitrum Uniswap to USDC on dYdX'
             schema:
-              type: object
-              properties:
-                amount_in:
-                  type: string
-                  description: Amount of source asset to be transferred or swapped. Only one of amount_in and amount_out should be provided.
-                amount_out:
-                  type: string
-                  description: Amount of destination asset to receive. Only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out.
-                source_asset_denom:
-                  type: string
-                  description: Denom of the source asset
-                source_asset_chain_id:
-                  type: string
-                  description: Chain-id of the source asset
-                dest_asset_denom:
-                  type: string
-                  description: Denom of the destination asset
-                dest_asset_chain_id:
-                  type: string
-                  description: Chain-id of the destination asset
-                cumulative_affiliate_fee_bps:
-                  type: string
-                  nullable: true
-                  description: Cumulative fee to be distributed to affiliates, in bps (optional)
-                swap_venues:
-                  type: array
-                  description: Swap venues to consider, if provided (optional)
-                  items:
-                    $ref: '#/components/schemas/SwapVenue'
-                allow_multi_tx:
-                  type: boolean
-                  description:
-                    Whether to allow route responses requiring multiple
-                    transactions
-                allow_unsafe:
-                  type: boolean
-                  description: Toggles whether the api should return routes that fail price safety checks.
-                experimental_features:
-                  type: array
-                  description: Array of experimental features to enable
-                  items:
-                    type: string
-                bridges:
-                  type: array
-                  description: Array of bridges to use
-                  items:
-                    $ref: '#/components/schemas/BridgeType'
-                smart_relay:
-                  type: boolean
-                  description: Indicates whether this transfer route should be relayed via Skip's Smart Relay service - true by default.
-                smart_swap_options:
-                  $ref: '#/components/schemas/SmartSwapOptions'
-                allow_swaps:
-                  type: boolean
-                  description: Whether to allow swaps in the route
-                go_fast:
-                  type: boolean
-                  description: Whether to enable Go Fast routes
+              $ref: '#/components/schemas/RouteRequest'
       responses:
         '200':
           description: Swap and transfer route summary & quote
@@ -1010,67 +930,7 @@ paths:
                     - 'init1f9qwat48ldgxrmssvpvpk3tea8l72mksvzm62v'
                 summary: 'Transfer 1 uinit from Initia to Birdee via OPInit '
             schema:
-              type: object
-              properties:
-                source_asset_denom:
-                  type: string
-                  description: Denom of the source asset
-                  required: true
-                source_asset_chain_id:
-                  type: string
-                  description: Chain-id of the source asset
-                  required: true
-                dest_asset_denom:
-                  type: string
-                  description: Denom of the destination asset
-                  required: true
-                dest_asset_chain_id:
-                  type: string
-                  description: Chain-id of the destination asset
-                  required: true
-                amount_in:
-                  type: string
-                  description: Amount of source asset to be transferred or swapped
-                  required: true
-                amount_out:
-                  type: string
-                  description: Amount of destination asset out
-                  required: true
-                address_list:
-                  type: array
-                  description: Array of receipient and/or sender address for each chain in the path, corresponding to the chain_ids array returned from a route request
-                  items:
-                    type: string
-                  required: true
-                operations:
-                  type: array
-                  description: Array of operations required to perform the transfer or swap
-                  items:
-                    $ref: '#/components/schemas/Operation'
-                  required: true
-                estimated_amount_out:
-                  type: string
-                slippage_tolerance_percent:
-                  type: string
-                  description: Percent tolerance for slippage on swap, if a swap is performed
-                timeout_seconds:
-                  type: string
-                  description: Number of seconds for the IBC transfer timeout, defaults to 5 minutes
-                post_route_handler:
-                  $ref: '#/components/schemas/PostHandler'
-                chain_ids_to_affiliates:
-                  type: object
-                  description: Map of chain-ids to arrays of affiliates. The API expects all chains to have the same cumulative affiliate fee bps for each chain specified. If any of the provided affiliate arrays does not have the same cumulative fee, the API will return an error.
-                  additionalProperties:
-                    $ref: '#/components/schemas/ChainAffiliates'
-                enable_gas_warnings:
-                  type: boolean
-                  description: Whether to enable gas warnings for intermediate and destination chains
-                  default: false
-                fee_payer_address:
-                  type: string
-                  description: Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format.
-                  defauld: false
+              $ref: '#/components/schemas/MsgsRequest'
       responses:
         '200':
           description: The messages required to execute the swap, as JSON.
@@ -1302,86 +1162,7 @@ paths:
                     evm_swaps: true
                 summary: 'Swap ETH on Arbitrum Uniswap to USDC on dYdX'
             schema:
-              type: object
-              properties:
-                source_asset_denom:
-                  type: string
-                  description: Denom of the source asset
-                source_asset_chain_id:
-                  type: string
-                  description: Chain-id of the source asset
-                dest_asset_denom:
-                  type: string
-                  description: Denom of the destination asset
-                dest_asset_chain_id:
-                  type: string
-                  description: Chain-id of the destination asset
-                amount_in:
-                  type: string
-                  description: Amount of source asset to be transferred or swapped. If this is a swap, only one of amount_in and amount_out should be provided.
-                amount_out:
-                  type: string
-                  description: Amount of destination asset out. If this is a swap, only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out.
-                chain_ids_to_addresses:
-                  type: object
-                  description: Map of chain-ids to receipient and/or sender address for each chain in the path. Since the path is not known to the caller beforehand, the caller should attempt to provide addresses for all chains in the path, and the API will return an error if the path cannot be constructed.
-                  additionalProperties:
-                    type: string
-                swap_venues:
-                  type: array
-                  description: Swap venues to consider, if provided (optional)
-                  items:
-                    $ref: '#/components/schemas/SwapVenue'
-                slippage_tolerance_percent:
-                  type: string
-                  description: Percent tolerance for slippage on swap, if a swap is performed
-                timeout_seconds:
-                  type: string
-                  description: Number of seconds for the IBC transfer timeout, defaults to 5 minutes
-                chain_ids_to_affiliates:
-                  type: object
-                  description: Map of chain-ids to arrays of affiliates. Since cumulative_affiliate_fee_bps must be provided to retrieve a route, and the swap chain is not known at this time, all chains must have the same cumulative_affiliate_fee_bps otherwise the API will return an error.
-                  additionalProperties:
-                    $ref: '#/components/schemas/ChainAffiliates'
-                post_route_handler:
-                  $ref: '#/components/schemas/PostHandler'
-                allow_multi_tx:
-                  type: boolean
-                  description:
-                    Whether to allow route responses requiring multiple
-                    transactions
-                allow_unsafe:
-                  type: boolean
-                  description: Toggles whether the api should return routes that fail price safety checks.
-                experimental_features:
-                  type: array
-                  description: Array of experimental features to enable
-                  items:
-                    type: string
-                bridges:
-                  type: array
-                  description: Array of bridges to use
-                  items:
-                    $ref: '#/components/schemas/BridgeType'
-                smart_relay:
-                  type: boolean
-                  description: Indicates whether this transfer route should be relayed via Skip's Smart Relay service
-                smart_swap_options:
-                  $ref: '#/components/schemas/SmartSwapOptions'
-                allow_swaps:
-                  type: boolean
-                  description: Whether to allow swaps in the route
-                go_fast:
-                  type: boolean
-                  description: Whether to enable Go Fast routes
-                enable_gas_warnings:
-                  type: boolean
-                  description: Whether to enable gas warnings for intermediate and destination chains
-                  default: false
-                fee_payer_address:
-                  type: string
-                  description: Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format.
-                  defauld: false
+              $ref: '#/components/schemas/MsgsDirectRequest'
       responses:
         '200':
           description: The messages required to execute the swap, as JSON.
@@ -1525,13 +1306,7 @@ paths:
                   source_asset_chain_id: axelar-dojo-1
                   dest_chain_id: osmosis-1
             schema:
-              type: object
-              properties:
-                requests:
-                  type: array
-                  description: Array where each entry corresponds to a distinct asset recommendation request.
-                  items:
-                    $ref: '#/components/schemas/RecommendationRequest'
+              $ref: '#/components/schemas/AssetRecommendationsRequest'
 
       responses:
         '200':
@@ -1615,16 +1390,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                tx:
-                  type: string
-                  description: Signed base64 encoded transaction
-                  example: base64 encoded transaction
-                chain_id:
-                  type: string
-                  description: Chain ID of the transaction
-                  example: osmosis-1
+              $ref: '#/components/schemas/SubmitTxRequest'
       responses:
         '200':
           description: The hash of the transaction.
@@ -1687,19 +1453,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - tx_hash
-                - chain_id
-              properties:
-                tx_hash:
-                  type: string
-                  description: Hex encoded hash of the transaction to track
-                  example: F30790E79987F18F3A4DA8C7A9BA9FD837043EF59D8236CA85180E1078BC607F
-                chain_id:
-                  type: string
-                  description: Chain ID of the transaction
-                  example: osmosis-1
+              $ref: '#/components/schemas/TrackTxRequest'
       responses:
         '200':
           description: The hash of the transaction and a link to its explorer page.
@@ -2048,20 +1802,7 @@ paths:
                     - denom: ibc/932D6003DA334ECBC5B23A071B4287D0A5CC97331197FE9F1C0689BA002A8421
                       chain_id: cosmoshub-4
             schema:
-              type: object
-              properties:
-                assets:
-                  type: array
-                  description: Array of assets to get origin assets for
-                  items:
-                    type: object
-                    properties:
-                      denom:
-                        type: string
-                        description: Denom of the asset
-                      chain_id:
-                        type: string
-                        description: Chain-id of the asset
+              $ref: '#/components/schemas/IbcOriginAssetsRequest'
       responses:
         '200':
           description: The origin assets of the specified denoms and chain IDs.
@@ -2131,30 +1872,7 @@ paths:
                   include_evm_assets: true
                 summary: 'Get assets between Ethereum and Cosmos Hub'
             schema:
-              type: object
-              properties:
-                source_chain_id:
-                  type: string
-                  description: Chain-id of the source chain
-                dest_chain_id:
-                  type: string
-                  description: Chain-id of the destination chain
-                include_no_metadata_assets:
-                  type: boolean
-                  description: Whether to include assets without metadata (symbol, name, logo_uri, etc.)
-                  default: false
-                include_cw20_assets:
-                  type: boolean
-                  description: Whether to include CW20 tokens
-                  default: false
-                include_evm_assets:
-                  type: boolean
-                  description: Whether to include EVM tokens
-                  default: false
-                allow_multi_tx:
-                  type: boolean
-                  description: Whether to include recommendations requiring multiple transactions to reach the destination
-                  default: false
+              $ref: '#/components/schemas/AssetsBetweenChainsRequest'
       responses:
         '200':
           description: OK
@@ -2704,6 +2422,12 @@ components:
           type: string
         denom_out:
           description: Denom of the output asset
+          type: string
+        source_domain:
+          description: Source domain ID of the transfer
+          type: string
+        destination_domain:
+          description: Destination domain ID of the transfer
           type: string
         fee:
           $ref: '#/components/schemas/GoFastFee'
@@ -4222,30 +3946,352 @@ components:
         - FEE_BEHAVIOR_DEDUCTED: Fee is subtracted from the transfer amount (default, typical for Cosmos chains)
         - FEE_BEHAVIOR_ADDITIONAL: Fee is charged on top of the transfer amount (typical for EVM chains with native tokens)
     Fee:
+        properties:
+          fee_type:
+            $ref: '#/components/schemas/FeeType'
+          bridge_id:
+            $ref: '#/components/schemas/BridgeType'
+          amount:
+            description: Amount of the fee asset to be paid
+            type: string
+          usd_amount:
+            description: The value of the fee in USD
+            type: string
+          origin_asset:
+            $ref: '#/components/schemas/Asset'
+            required: true
+          chain_id:
+            description: Chain ID of the chain where fees are collected
+            type: string
+          tx_index:
+            description: The index of the transaction in the list of transactions required to execute the transfer where fees are paid
+            type: integer
+          operation_index:
+            description: The index of the operation in the returned operations list which incurs the fee
+            type: integer
+            nullable: true
+          fee_behavior:
+            $ref: '#/components/schemas/FeeBehavior'
+            description: Indicates whether this fee is deducted from the transfer amount or charged additionally
+
+    BalancesRequest:
+      type: object
       properties:
-        fee_type:
-          $ref: '#/components/schemas/FeeType'
-        bridge_id:
-          $ref: '#/components/schemas/BridgeType'
-        amount:
-          description: Amount of the fee asset to be paid
+        chains:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/BalanceRequestChainEntry'
+
+    AssetsFromSourceRequest:
+      type: object
+      required:
+        - source_asset_denom
+        - source_asset_chain_id
+      properties:
+        source_asset_denom:
           type: string
-        usd_amount:
-          description: The value of the fee in USD
+          description: Denom of the source asset
+        source_asset_chain_id:
           type: string
-        origin_asset:
-          $ref: '#/components/schemas/Asset'
-          required: true
-        chain_id:
-          description: Chain ID of the chain where fees are collected
-          type: string
-        tx_index:
-          description: The index of the transaction in the list of transactions required to execute the transfer where fees are paid
-          type: integer
-        operation_index:
-          description: The index of the operation in the returned operations list which incurs the fee
-          type: integer
+          description: Chain-id of the source asset
+        allow_multi_tx:
+          type: boolean
+          description: Whether to include recommendations requiring multiple transactions to reach the destination
+          default: false
+        recommendation_reason:
+          $ref: '#/components/schemas/Reason'
+          description: Optional reason for recommending assets
           nullable: true
-        fee_behavior:
-          $ref: '#/components/schemas/FeeBehavior'
-          description: Indicates whether this fee is deducted from the transfer amount or charged additionally
+        include_swaps:
+          type: boolean
+          description: Whether to include swap routes
+          default: false
+        swap_venues:
+          type: array
+          description: Swap venues to consider if including swap routes
+          items:
+            $ref: '#/components/schemas/SwapVenue'
+          nullable: true
+        native_only:
+          type: boolean
+          description: Whether to only return native assets
+          default: false
+        group_by:
+          type: string
+          description: Optional grouping key for results
+          nullable: true
+        include_cw20_assets:
+          type: boolean
+          description: Whether to include CW20 tokens
+          default: false
+
+    RouteRequest:
+      type: object
+      properties:
+        amount_in:
+          type: string
+          description: Amount of source asset to be transferred or swapped. Only one of amount_in and amount_out should be provided.
+        amount_out:
+          type: string
+          description: Amount of destination asset to receive. Only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out.
+        source_asset_denom:
+          type: string
+          description: Denom of the source asset
+        source_asset_chain_id:
+          type: string
+          description: Chain-id of the source asset
+        dest_asset_denom:
+          type: string
+          description: Denom of the destination asset
+        dest_asset_chain_id:
+          type: string
+          description: Chain-id of the destination asset
+        cumulative_affiliate_fee_bps:
+          type: string
+          nullable: true
+          description: Cumulative fee to be distributed to affiliates, in bps (optional)
+        swap_venues:
+          type: array
+          description: Swap venues to consider, if provided (optional)
+          items:
+            $ref: '#/components/schemas/SwapVenue'
+        allow_multi_tx:
+          type: boolean
+          description: |
+            Whether to allow route responses requiring multiple
+            transactions
+        allow_unsafe:
+          type: boolean
+          description: Toggles whether the api should return routes that fail price safety checks.
+        experimental_features:
+          type: array
+          description: Array of experimental features to enable
+          items:
+            type: string
+        bridges:
+          type: array
+          description: Array of bridges to use
+          items:
+            $ref: '#/components/schemas/BridgeType'
+        smart_relay:
+          type: boolean
+          description: Indicates whether this transfer route should be relayed via Skip's Smart Relay service - true by default.
+        smart_swap_options:
+          $ref: '#/components/schemas/SmartSwapOptions'
+        allow_swaps:
+          type: boolean
+          description: Whether to allow swaps in the route
+        go_fast:
+          type: boolean
+          description: Whether to enable Go Fast routes
+
+    MsgsRequest:
+      type: object
+      properties:
+        source_asset_denom:
+          type: string
+          description: Denom of the source asset
+        source_asset_chain_id:
+          type: string
+          description: Chain-id of the source asset
+        dest_asset_denom:
+          type: string
+          description: Denom of the destination asset
+        dest_asset_chain_id:
+          type: string
+          description: Chain-id of the destination asset
+        amount_in:
+          type: string
+          description: Amount of source asset to be transferred or swapped
+        amount_out:
+          type: string
+          description: Amount of destination asset out
+        address_list:
+          type: array
+          description: Array of receipient and/or sender address for each chain in the path, corresponding to the chain_ids array returned from a route request
+          items:
+            type: string
+        operations:
+          type: array
+          description: Array of operations required to perform the transfer or swap
+          items:
+            $ref: '#/components/schemas/Operation'
+        estimated_amount_out:
+          type: string
+        slippage_tolerance_percent:
+          type: string
+          description: Percent tolerance for slippage on swap, if a swap is performed
+        timeout_seconds:
+          type: string
+          description: Number of seconds for the IBC transfer timeout, defaults to 5 minutes
+        post_route_handler:
+          $ref: '#/components/schemas/PostHandler'
+        chain_ids_to_affiliates:
+          type: object
+          description: Map of chain-ids to arrays of affiliates. The API expects all chains to have the same cumulative affiliate fee bps for each chain specified. If any of the provided affiliate arrays does not have the same cumulative fee, the API will return an error.
+          additionalProperties:
+            $ref: '#/components/schemas/ChainAffiliates'
+        enable_gas_warnings:
+          type: boolean
+          description: Whether to enable gas warnings for intermediate and destination chains
+          default: false
+        fee_payer_address:
+          type: string
+          description: Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format.
+          defauld: false
+
+    MsgsDirectRequest:
+      type: object
+      properties:
+        source_asset_denom:
+          type: string
+          description: Denom of the source asset
+        source_asset_chain_id:
+          type: string
+          description: Chain-id of the source asset
+        dest_asset_denom:
+          type: string
+          description: Denom of the destination asset
+        dest_asset_chain_id:
+          type: string
+          description: Chain-id of the destination asset
+        amount_in:
+          type: string
+          description: Amount of source asset to be transferred or swapped. If this is a swap, only one of amount_in and amount_out should be provided.
+        amount_out:
+          type: string
+          description: Amount of destination asset out. If this is a swap, only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out.
+        chain_ids_to_addresses:
+          type: object
+          description: Map of chain-ids to receipient and/or sender address for each chain in the path. Since the path is not known to the caller beforehand, the caller should attempt to provide addresses for all chains in the path, and the API will return an error if the path cannot be constructed.
+          additionalProperties:
+            type: string
+        swap_venues:
+          type: array
+          description: Swap venues to consider, if provided (optional)
+          items:
+            $ref: '#/components/schemas/SwapVenue'
+        slippage_tolerance_percent:
+          type: string
+          description: Percent tolerance for slippage on swap, if a swap is performed
+        timeout_seconds:
+          type: string
+          description: Number of seconds for the IBC transfer timeout, defaults to 5 minutes
+        chain_ids_to_affiliates:
+          type: object
+          description: Map of chain-ids to arrays of affiliates. Since cumulative_affiliate_fee_bps must be provided to retrieve a route, and the swap chain is not known at this time, all chains must have the same cumulative_affiliate_fee_bps otherwise the API will return an error.
+          additionalProperties:
+            $ref: '#/components/schemas/ChainAffiliates'
+        post_route_handler:
+          $ref: '#/components/schemas/PostHandler'
+        allow_multi_tx:
+          type: boolean
+          description: |
+            Whether to allow route responses requiring multiple
+            transactions
+        allow_unsafe:
+          type: boolean
+          description: Toggles whether the api should return routes that fail price safety checks.
+        experimental_features:
+          type: array
+          description: Array of experimental features to enable
+          items:
+            type: string
+        bridges:
+          type: array
+          description: Array of bridges to use
+          items:
+            $ref: '#/components/schemas/BridgeType'
+        smart_relay:
+          type: boolean
+          description: Indicates whether this transfer route should be relayed via Skip's Smart Relay service
+        smart_swap_options:
+          $ref: '#/components/schemas/SmartSwapOptions'
+        allow_swaps:
+          type: boolean
+          description: Whether to allow swaps in the route
+        go_fast:
+          type: boolean
+          description: Whether to enable Go Fast routes
+        enable_gas_warnings:
+          type: boolean
+          description: Whether to enable gas warnings for intermediate and destination chains
+          default: false
+        fee_payer_address:
+          type: string
+          description: Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format.
+          defauld: false
+
+    AssetRecommendationsRequest:
+      type: object
+      properties:
+        requests:
+          type: array
+          description: Array where each entry corresponds to a distinct asset recommendation request.
+          items:
+            $ref: '#/components/schemas/RecommendationRequest'
+
+    SubmitTxRequest:
+      type: object
+      properties:
+        tx:
+          type: string
+          description: Signed base64 encoded transaction
+        chain_id:
+          type: string
+          description: Chain ID of the transaction
+
+    TrackTxRequest:
+      type: object
+      required:
+        - tx_hash
+        - chain_id
+      properties:
+        tx_hash:
+          type: string
+          description: Hex encoded hash of the transaction to track
+        chain_id:
+          type: string
+          description: Chain ID of the transaction
+
+    IbcOriginAssetsRequest:
+      type: object
+      properties:
+        assets:
+          type: array
+          description: Array of assets to get origin assets for
+          items:
+            type: object
+            properties:
+              denom:
+                type: string
+                description: Denom of the asset
+              chain_id:
+                type: string
+                description: Chain-id of the asset
+
+    AssetsBetweenChainsRequest:
+      type: object
+      properties:
+        source_chain_id:
+          type: string
+          description: Chain-id of the source chain
+        dest_chain_id:
+          type: string
+          description: Chain-id of the destination chain
+        include_no_metadata_assets:
+          type: boolean
+          description: Whether to include assets without metadata (symbol, name, logo_uri, etc.)
+          default: false
+        include_cw20_assets:
+          type: boolean
+          description: Whether to include CW20 tokens
+          default: false
+        include_evm_assets:
+          type: boolean
+          description: Whether to include EVM tokens
+          default: false
+        allow_multi_tx:
+          type: boolean
+          description: Whether to include recommendations requiring multiple transactions to reach the destination
+          default: false
