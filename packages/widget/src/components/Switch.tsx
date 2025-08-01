@@ -1,5 +1,5 @@
 import { convertToPxValue } from "@/utils/style";
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
 const SwitchWrapper = styled.div<{ checked: boolean }>`
@@ -32,17 +32,13 @@ type SwitchProps = {
 };
 
 export const Switch = ({ checked = false, onChange }: SwitchProps) => {
-  const [isChecked, setIsChecked] = useState(checked);
-
   const toggle = () => {
-    const newVal = !isChecked;
-    setIsChecked(newVal);
-    onChange?.(newVal);
+    onChange?.(!checked);
   };
 
   return (
-    <SwitchWrapper checked={isChecked} onClick={toggle}>
-      <SwitchThumb checked={isChecked} />
+    <SwitchWrapper checked={checked} onClick={toggle}>
+      <SwitchThumb checked={checked} />
     </SwitchWrapper>
   );
 };

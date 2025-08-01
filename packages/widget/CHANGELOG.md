@@ -1,5 +1,12 @@
 ## 0.0.15
 
+## 3.14.1
+
+### Patch Changes
+
+- fdd2929: add isFeeRouteAvailable for track
+- bc9983e: numbers and switch component fix
+
 ## 3.14.0
 
 ### Minor Changes
