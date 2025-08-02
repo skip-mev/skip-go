@@ -9,6 +9,7 @@ import { skipAssetsAtom } from "@/state/skipClient";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { RouteDetails } from "@skip-go/client";
 import { currentTransactionAtom } from "@/state/history";
+import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 
 const DELAY_EXPECTING_TRANSFER_ASSET_RELEASE = 15_000;
 
@@ -59,8 +60,12 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
         onClickContinueTransaction: () => {
           setSourceAsset({
             ...sourceClientAsset,
+            amount: convertTokenAmountToHumanReadableAmount(
+              statusData?.transferAssetRelease?.amount ?? "",
+              sourceClientAsset.decimals,
+            ),
           });
-          setDebouncedSourceAssetAmount(statusData?.transferAssetRelease?.amount, undefined, true);
+
           setCurrentPage(Routes.SwapPage);
           setErrorWarning(undefined);
         },
@@ -94,7 +99,6 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
     route,
     setCurrentPage,
     setCurrentTransactionId,
-    setDebouncedSourceAssetAmount,
     setErrorWarning,
     setSourceAsset,
     statusData?.transferAssetRelease,
