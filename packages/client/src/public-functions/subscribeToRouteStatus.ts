@@ -133,8 +133,6 @@ export type executeAndSubscribeToRouteStatusProps = {
   trackTxPollingOptions?: ExecuteRouteOptions["trackTxPollingOptions"];
   onRouteStatusUpdated?: ExecuteRouteOptions["onRouteStatusUpdated"];
   executeTransaction?: (index: number) => Promise<TxResult>;
-  onTransactionTracked?: ExecuteRouteOptions["onTransactionTracked"];
-  onTransactionCompleted?: ExecuteRouteOptions["onTransactionCompleted"];
   options?: ExecuteRouteOptions;
   routeId?: string;
   isCancelled?: () => boolean;
@@ -198,8 +196,6 @@ export const executeAndSubscribeToRouteStatus = async ({
   transactionDetails,
   executeTransaction,
   trackTxPollingOptions,
-  onTransactionTracked,
-  onTransactionCompleted,
   routeDetails,
   onRouteStatusUpdated,
   options,
@@ -240,7 +236,7 @@ export const executeAndSubscribeToRouteStatus = async ({
       }
 
       transaction.explorerLink = explorerLink;
-      await onTransactionTracked?.({
+      await options?.onTransactionTracked?.({
         txHash: transaction.txHash,
         chainId: transaction.chainId,
         explorerLink,
@@ -268,6 +264,11 @@ export const executeAndSubscribeToRouteStatus = async ({
       );
 
       if (isFinalState(transaction) && allRelatedRoutesFinal) {
+        options?.onTransactionCompleted?.({
+          chainId: transaction.chainId,
+          txHash: transaction.txHash,
+          status: transaction.statusResponse as TransferStatus,
+        });
         break;
       }
 
@@ -296,17 +297,30 @@ export const executeAndSubscribeToRouteStatus = async ({
         });
 
         if (isFinalState(transaction)) {
-          onTransactionCompleted?.({
-            chainId: transaction.chainId,
-            txHash: transaction.txHash,
-            status: statusResponse as TransferStatus,
-          });
-
-          if (
-            routeDetails?.relatedRoutes?.every((relatedRoute) =>
-              isFinalRouteStatus(relatedRoute as RouteDetails)
-            )
-          ) {
+          const relatedRoutes =
+            updatedRouteDetails?.relatedRoutes &&
+            updatedRouteDetails?.relatedRoutes.length > 0
+              ? updatedRouteDetails.relatedRoutes
+              : routeDetails?.relatedRoutes;
+          if (relatedRoutes && relatedRoutes.length > 0) {
+            if (
+              relatedRoutes.every((relatedRoute) =>
+                isFinalRouteStatus(relatedRoute as RouteDetails)
+              )
+            ) {
+              options?.onTransactionCompleted?.({
+                chainId: transaction.chainId,
+                txHash: transaction.txHash,
+                status: statusResponse as TransferStatus,
+              });
+              break;
+            }
+          } else {
+            options?.onTransactionCompleted?.({
+              chainId: transaction.chainId,
+              txHash: transaction.txHash,
+              status: statusResponse as TransferStatus,
+            });
             break;
           }
         }
