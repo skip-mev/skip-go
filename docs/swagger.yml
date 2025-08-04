@@ -2130,45 +2130,39 @@ components:
     AxelarTransfer:
       description: A transfer facilitated by the Axelar bridge
       properties:
-        asset:
-          description: Axelar-name of the asset to bridge
-          type: string
-        fee_amount:
-          description: Amount of the fee asset to be paid as the Axelar bridge fee. This is denominated in the fee asset.
-          type: string
-        fee_asset:
-          $ref: '#/components/schemas/Asset'
-        from_chain:
-          description: Name for source chain of the bridge transaction used on Axelar
-          type: string
         from_chain_id:
           description: Canonical chain-id of the source chain of the bridge transaction
           type: string
-        is_testnet:
-          description: Whether the source and destination chains are both testnets
-          type: boolean
+        to_chain_id:
+          description: Canonical chain-id of the destination chain of the bridge transaction
+          type: string
+        asset:
+          description: Axelar-name of the asset to bridge
+          type: string
         should_unwrap:
           description:
             Whether to unwrap the asset at the destination chain (from ERC-20
             to native)
           type: boolean
-        to_chain:
-          description: Name for destination chain of the bridge transaction used on Axelar
-          type: string
-        to_chain_id:
-          description: Canonical chain-id of the destination chain of the bridge transaction
-          type: string
         denom_in:
           description: Denom of the input asset
           type: string
         denom_out:
           description: Denom of the output asset
           type: string
+        fee_amount:
+          description: Amount of the fee asset to be paid as the Axelar bridge fee. This is denominated in the fee asset.
+          type: string
         usd_fee_amount:
           description:
             Amount of the fee asset to be paid as the Axelar bridge fee, converted
             to USD value
           type: string
+        fee_asset:
+          $ref: '#/components/schemas/Asset'
+        is_testnet:
+          description: Whether the source and destination chains are both testnets
+          type: boolean
         ibc_transfer_to_axelar:
           $ref: '#/components/schemas/Transfer'
         bridge_id:
@@ -2176,6 +2170,14 @@ components:
         smart_relay:
           type: boolean
           description: Indicates whether this transfer is relayed via Smart Relay
+        from_chain:
+          description: Deprecated, use from_chain_id instead. Name for source chain of the bridge transaction used on Axelar
+          type: string
+          deprecated: true
+        to_chain:
+          description: Deprecated, use to_chain_id instead. Name for destination chain of the bridge transaction used on Axelar
+          type: string
+          deprecated: true
       type: object
     AxelarTransferInfo:
       properties:
