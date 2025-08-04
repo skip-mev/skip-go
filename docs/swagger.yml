@@ -1731,13 +1731,6 @@ paths:
                     $ref: '#/components/schemas/TransactionState'
                     description: The overall state reflecting the end-to-end status of all transfers initiated by the original transaction.
                     required: true
-                  transfer_sequence:
-                    description: "**DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version."
-                    deprecated: true
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TransferEvent'
-                    required: true
                   next_blocking_transfer:
                     description: Details about the next transfer in the sequence that is preventing further progress, if any.
                     nullable: true
@@ -1752,6 +1745,13 @@ paths:
                     allOf:
                       - $ref: '#/components/schemas/StatusError'
                     nullable: true
+                  transfer_sequence:
+                    description: "**DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version."
+                    deprecated: true
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TransferEvent'
+                    required: true
                   status:
                     type: string
                     description: A high-level status indicator for the transaction's completion state.
@@ -3530,9 +3530,9 @@ components:
       enum:
         - STATE_SUBMITTED
         - STATE_PENDING
+        - STATE_ABANDONED
         - STATE_COMPLETED_SUCCESS
         - STATE_COMPLETED_ERROR
-        - STATE_ABANDONED
         - STATE_PENDING_ERROR
       type: string
     OPInitTransfer:
@@ -3733,10 +3733,13 @@ components:
           type: boolean
     TransferStatus:
       properties:
-        error:
-          allOf:
-            - $ref: '#/components/schemas/StatusError'
-              nullable: true
+        state:
+          $ref: '#/components/schemas/TransactionState'
+        transfer_sequence:
+          description: Lists any IBC and Axelar transfers as they are seen.
+          items:
+            $ref: '#/components/schemas/TransferEvent'
+          type: array
         next_blocking_transfer:
           description:
             Indicates which entry in the `transfer_sequence` field that the
@@ -3749,15 +3752,12 @@ components:
                 the transfer is blocked on.
               type: integer
           type: object
-        state:
-          $ref: '#/components/schemas/TransactionState'
         transfer_asset_release:
           $ref: '#/components/schemas/TransferAssetRelease'
-        transfer_sequence:
-          description: Lists any IBC and Axelar transfers as they are seen.
-          items:
-            $ref: '#/components/schemas/TransferEvent'
-          type: array
+        error:
+          allOf:
+            - $ref: '#/components/schemas/StatusError'
+              nullable: true
       type: object
     TransferWrapper:
       properties:
