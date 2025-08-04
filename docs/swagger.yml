@@ -4038,12 +4038,6 @@ components:
     RouteRequest:
       type: object
       properties:
-        amount_in:
-          type: string
-          description: Amount of source asset to be transferred or swapped. Only one of amount_in and amount_out should be provided.
-        amount_out:
-          type: string
-          description: Amount of destination asset to receive. Only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out.
         source_asset_denom:
           type: string
           description: Denom of the source asset
@@ -4056,6 +4050,12 @@ components:
         dest_asset_chain_id:
           type: string
           description: Chain-id of the destination asset
+        amount_in:
+          type: string
+          description: Amount of source asset to be transferred or swapped. Only one of amount_in and amount_out should be provided.
+        amount_out:
+          type: string
+          description: Amount of destination asset to receive. Only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out.
         cumulative_affiliate_fee_bps:
           type: string
           nullable: true
@@ -4065,11 +4065,6 @@ components:
           description: Swap venues to consider, if provided (optional)
           items:
             $ref: '#/components/schemas/SwapVenue'
-        allow_multi_tx:
-          type: boolean
-          description: |
-            Whether to allow route responses requiring multiple
-            transactions
         allow_unsafe:
           type: boolean
           description: Toggles whether the api should return routes that fail price safety checks.
@@ -4078,6 +4073,11 @@ components:
           description: Array of experimental features to enable
           items:
             type: string
+        allow_multi_tx:
+          type: boolean
+          description: |
+            Whether to allow route responses requiring multiple
+            transactions
         bridges:
           type: array
           description: Array of bridges to use
