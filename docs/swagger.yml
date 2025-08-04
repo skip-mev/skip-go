@@ -1731,13 +1731,6 @@ paths:
                     $ref: '#/components/schemas/TransactionState'
                     description: The overall state reflecting the end-to-end status of all transfers initiated by the original transaction.
                     required: true
-                  transfer_sequence:
-                    description: "**DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version."
-                    deprecated: true
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TransferEvent'
-                    required: true
                   next_blocking_transfer:
                     description: Details about the next transfer in the sequence that is preventing further progress, if any.
                     nullable: true
@@ -1752,6 +1745,13 @@ paths:
                     allOf:
                       - $ref: '#/components/schemas/StatusError'
                     nullable: true
+                  transfer_sequence:
+                    description: "**DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version."
+                    deprecated: true
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TransferEvent'
+                    required: true
                   status:
                     type: string
                     description: A high-level status indicator for the transaction's completion state.
@@ -2008,26 +2008,32 @@ components:
       type: object
     Asset:
       properties:
-        chain_id:
-          description: Chain-id of the asset
-          type: string
-          required: true
-        coingecko_id:
-          description: Coingecko id of the asset
-          nullable: true
-          type: string
-        decimals:
-          description: Number of decimals used for amounts of the asset
-          nullable: true
-          type: number
         denom:
           description: Denom of the asset
           type: string
           required: true
-        description:
-          description: Description of the asset
-          nullable: true
+        chain_id:
+          description: Chain-id of the asset
           type: string
+          required: true
+        origin_denom:
+          description:
+            Denom of the origin of the asset. If this is an ibc denom, this
+            is the original denom that the ibc token represents
+          type: string
+          required: true
+        origin_chain_id:
+          description:
+            Chain-id of the origin of the asset. If this is an ibc denom, this
+            is the chain-id of the asset that the ibc token represents
+          type: string
+          required: true
+        trace:
+          description:
+            The forward slash delimited sequence of ibc ports and channels
+            that can be traversed to unwind an ibc token to its origin asset.
+          type: string
+          required: true
         is_cw20:
           description: Indicates whether asset is a CW20 token
           type: boolean
@@ -2040,26 +2046,36 @@ components:
           description: Indicates whether asset is an SVM token
           type: boolean
           required: true
-        logo_uri:
-          description: URI pointing to an image of the logo of the asset
+        symbol:
+          description: Symbol of the asset, e.g. ATOM for uatom
           nullable: true
           type: string
         name:
           description: Name of the asset
           nullable: true
           type: string
-        origin_chain_id:
-          description:
-            Chain-id of the origin of the asset. If this is an ibc denom, this
-            is the chain-id of the asset that the ibc token represents
+        logo_uri:
+          description: URI pointing to an image of the logo of the asset
+          nullable: true
           type: string
-          required: true
-        origin_denom:
+        decimals:
+          description: Number of decimals used for amounts of the asset
+          nullable: true
+          type: number
+        token_contract:
           description:
-            Denom of the origin of the asset. If this is an ibc denom, this
-            is the original denom that the ibc token represents
+            Address of the contract for the asset, e.g. if it is a CW20 or
+            ERC20 token
+          nullable: true
           type: string
-          required: true
+        description:
+          description: Description of the asset
+          nullable: true
+          type: string
+        coingecko_id:
+          description: Coingecko id of the asset
+          nullable: true
+          type: string
         recommended_symbol:
           description:
             Recommended symbol of the asset used to differentiate between bridged
@@ -2067,22 +2083,6 @@ components:
             Gravity USDC
           nullable: true
           type: string
-        symbol:
-          description: Symbol of the asset, e.g. ATOM for uatom
-          nullable: true
-          type: string
-        token_contract:
-          description:
-            Address of the contract for the asset, e.g. if it is a CW20 or
-            ERC20 token
-          nullable: true
-          type: string
-        trace:
-          description:
-            The forward slash delimited sequence of ibc ports and channels
-            that can be traversed to unwind an ibc token to its origin asset.
-          type: string
-          required: true
       type: object
     AssetBetweenChains:
       properties:
@@ -2130,45 +2130,39 @@ components:
     AxelarTransfer:
       description: A transfer facilitated by the Axelar bridge
       properties:
-        asset:
-          description: Axelar-name of the asset to bridge
-          type: string
-        fee_amount:
-          description: Amount of the fee asset to be paid as the Axelar bridge fee. This is denominated in the fee asset.
-          type: string
-        fee_asset:
-          $ref: '#/components/schemas/Asset'
-        from_chain:
-          description: Name for source chain of the bridge transaction used on Axelar
-          type: string
         from_chain_id:
           description: Canonical chain-id of the source chain of the bridge transaction
           type: string
-        is_testnet:
-          description: Whether the source and destination chains are both testnets
-          type: boolean
+        to_chain_id:
+          description: Canonical chain-id of the destination chain of the bridge transaction
+          type: string
+        asset:
+          description: Axelar-name of the asset to bridge
+          type: string
         should_unwrap:
           description:
             Whether to unwrap the asset at the destination chain (from ERC-20
             to native)
           type: boolean
-        to_chain:
-          description: Name for destination chain of the bridge transaction used on Axelar
-          type: string
-        to_chain_id:
-          description: Canonical chain-id of the destination chain of the bridge transaction
-          type: string
         denom_in:
           description: Denom of the input asset
           type: string
         denom_out:
           description: Denom of the output asset
           type: string
+        fee_amount:
+          description: Amount of the fee asset to be paid as the Axelar bridge fee. This is denominated in the fee asset.
+          type: string
         usd_fee_amount:
           description:
             Amount of the fee asset to be paid as the Axelar bridge fee, converted
             to USD value
           type: string
+        fee_asset:
+          $ref: '#/components/schemas/Asset'
+        is_testnet:
+          description: Whether the source and destination chains are both testnets
+          type: boolean
         ibc_transfer_to_axelar:
           $ref: '#/components/schemas/Transfer'
         bridge_id:
@@ -2176,6 +2170,14 @@ components:
         smart_relay:
           type: boolean
           description: Indicates whether this transfer is relayed via Smart Relay
+        from_chain:
+          description: Deprecated, use from_chain_id instead. Name for source chain of the bridge transaction used on Axelar
+          type: string
+          deprecated: true
+        to_chain:
+          description: Deprecated, use to_chain_id instead. Name for destination chain of the bridge transaction used on Axelar
+          type: string
+          deprecated: true
       type: object
     AxelarTransferInfo:
       properties:
@@ -2236,6 +2238,12 @@ components:
         fee_amount:
           description: The USDC fee amount
           type: string
+        relayer_address:
+          description: Address of the relayer
+          type: string
+        expiration:
+          description: Expiration time of the fee quote
+          type: string
         fee_denom:
           description: The fee asset denomination
           type: string
@@ -2243,12 +2251,6 @@ components:
           description: The address the fee should be sent to
           type: string
           nullable: true
-        relayer_address:
-          description: Address of the relayer
-          type: string
-        expiration:
-          description: Expiration time of the fee quote
-          type: string
       type: object
     CCTPTransfer:
       description: A transfer facilitated by the CCTP bridge
@@ -2337,12 +2339,10 @@ components:
         denom_out:
           description: Denom of the output asset
           type: string
-        bridge_id:
-          $ref: '#/components/schemas/BridgeType'
         pool_address:
-          type: string;
+          type: string
         destination_endpoint_id:
-          type: number;
+          type: number
         oft_fee_asset:
           $ref: '#/components/schemas/Asset'
         oft_fee_amount:
@@ -2355,6 +2355,8 @@ components:
           type: string
         messaging_fee_amount_usd:
           type: string
+        bridge_id:
+          $ref: '#/components/schemas/BridgeType'
       type: object
     StargateTransferState:
       description: |
@@ -2415,6 +2417,8 @@ components:
         to_chain_id:
           description: Canonical chain-id of the destination chain of the bridge transaction
           type: string
+        fee:
+          $ref: '#/components/schemas/GoFastFee'
         bridge_id:
           $ref: '#/components/schemas/BridgeType'
         denom_in:
@@ -2429,9 +2433,6 @@ components:
         destination_domain:
           description: Destination domain ID of the transfer
           type: string
-        fee:
-          $ref: '#/components/schemas/GoFastFee'
-
       type: object
     GoFastTransferState:
       description: |
@@ -2935,11 +2936,11 @@ components:
         fee_amount:
           description: Amount of the fee asset to be paid as the Hyperlane bridge fee. This is denominated in the fee asset.
           type: string
-        fee_asset:
-          $ref: '#/components/schemas/Asset'
         usd_fee_amount:
           description: Amount of the fee asset to be paid as the Hyperlane bridge fee, converted to USD value
           type: string
+        fee_asset:
+          $ref: '#/components/schemas/Asset'
         bridge_id:
           $ref: '#/components/schemas/BridgeType'
         smart_relay:
@@ -3060,10 +3061,10 @@ components:
         - $ref: '#/components/schemas/HyperlaneTransferWrapper'
         - $ref: '#/components/schemas/EvmSwapWrapper'
         - $ref: '#/components/schemas/OPInitTransferWrapper'
-        - $ref: '#/components/schemas/StargateTransferWrapper'
         - $ref: '#/components/schemas/GoFastTransferWrapper'
-        - $ref: '#/components/schemas/EurekaTransferWrapper'
+        - $ref: '#/components/schemas/StargateTransferWrapper'
         - $ref: '#/components/schemas/LayerZeroTransferWrapper'
+        - $ref: '#/components/schemas/EurekaTransferWrapper'
       properties:
         tx_index:
           description: Index of the tx returned from Msgs that executes this operation
@@ -3356,11 +3357,11 @@ components:
         estimated_affiliate_fee:
           description: Estimated total affiliate fee generated by the swap
           type: string
-        chain_id:
-          description: Chain ID that the swap will be executed on
-          type: string
         from_chain_id:
           description: Chain ID that the swap will be executed on (alias for chain_id)
+          type: string
+        chain_id:
+          description: Chain ID that the swap will be executed on
           type: string
         denom_in:
           description: Input denom of the swap
@@ -3377,39 +3378,43 @@ components:
     SwapExactCoinIn:
       description: Specification of a swap with an exact amount in
       properties:
-        swap_amount_in:
-          description: Amount to swap in
-          nullable: true
-          type: string
+        swap_venue:
+          allOf:
+            - $ref: '#/components/schemas/SwapVenue'
+          description: Swap venue that this swap should execute on
         swap_operations:
           description: Operations required to execute the swap
           items:
             $ref: '#/components/schemas/SwapOperation'
           type: array
-        swap_venue:
-          allOf:
-            - $ref: '#/components/schemas/SwapVenue'
-          description: Swap venue that this swap should execute on
+        swap_amount_in:
+          description: Amount to swap in
+          nullable: true
+          type: string
         price_impact_percent:
           description: Price impact of the estimated swap, if present.  Measured in percentage e.g. "0.5" is .5%
+          nullable: true
+          type: string
+        estimated_amount_out:
+          description: The estimated amount out received from the swap
           nullable: true
           type: string
       type: object
     SwapExactCoinOut:
       description: Specification of a swap with an exact amount out
       properties:
-        swap_amount_out:
-          description: Amount to get out of the swap
-          type: string
+        swap_venue:
+          allOf:
+            - $ref: '#/components/schemas/SwapVenue'
+          description: Swap venue that this swap should execute on
         swap_operations:
           description: Operations required to execute the swap
           items:
             $ref: '#/components/schemas/SwapOperation'
           type: array
-        swap_venue:
-          allOf:
-            - $ref: '#/components/schemas/SwapVenue'
-          description: Swap venue that this swap should execute on
+        swap_amount_out:
+          description: Amount to get out of the swap
+          type: string
         price_impact_percent:
           description: Price impact of the estimated swap, if present.  Measured in percentage e.g. "0.5" is .5%
           nullable: true
@@ -3467,6 +3472,10 @@ components:
           items:
             $ref: '#/components/schemas/SwapRoute'
           type: array
+        estimated_amount_out:
+          description: The estimated amount out received from the swap
+          nullable: true
+          type: string
     SmartSwapOptions:
       properties:
         split_routes:
@@ -3521,9 +3530,9 @@ components:
       enum:
         - STATE_SUBMITTED
         - STATE_PENDING
+        - STATE_ABANDONED
         - STATE_COMPLETED_SUCCESS
         - STATE_COMPLETED_ERROR
-        - STATE_ABANDONED
         - STATE_PENDING_ERROR
       type: string
     OPInitTransfer:
@@ -3611,24 +3620,21 @@ components:
     Transfer:
       description: A cross-chain transfer
       properties:
+        port:
+          description: Port to use to initiate the transfer
+          type: string
+        channel:
+          description: Channel to use to initiate the transfer
+          type: string
         from_chain_id:
           description: Chain-id on which the transfer is initiated
           type: string
         to_chain_id:
           description: Chain-id on which the transfer is received
           type: string
-        channel:
-          description: Channel to use to initiate the transfer
-          type: string
-        dest_denom:
-          description: Denom of the destination asset of the transfer
-          type: string
         pfm_enabled:
           description: Whether pfm is enabled on the chain where the transfer is initiated
           type: boolean
-        port:
-          description: Port to use to initiate the transfer
-          type: string
         supports_memo:
           description: Whether the transfer chain supports a memo
           type: boolean
@@ -3640,14 +3646,6 @@ components:
           type: string
         fee_amount:
           description: Amount of the fee asset to be paid as the transfer fee if applicable.
-          type: string
-          nullable: true
-        to_chain_entry_contract_address:
-          description: Address of the entry contract on the destination chain
-          type: string
-          nullable: true
-        to_chain_callback_contract_address:
-          description: 
           type: string
           nullable: true
         usd_fee_amount:
@@ -3665,6 +3663,18 @@ components:
         smart_relay:
           type: boolean
           description: Indicates whether this transfer is relayed via Smart Relay
+        to_chain_entry_contract_address:
+          description: Address of the entry contract on the destination chain
+          type: string
+          nullable: true
+        to_chain_callback_contract_address:
+          description: 
+          type: string
+          nullable: true
+        dest_denom:
+          description: Deprecated, use denom_out instead. Denom of the destination asset of the transfer
+          type: string
+          deprecated: true
       type: object
     TransferEvent:
       type: object
@@ -3723,10 +3733,13 @@ components:
           type: boolean
     TransferStatus:
       properties:
-        error:
-          allOf:
-            - $ref: '#/components/schemas/StatusError'
-              nullable: true
+        state:
+          $ref: '#/components/schemas/TransactionState'
+        transfer_sequence:
+          description: Lists any IBC and Axelar transfers as they are seen.
+          items:
+            $ref: '#/components/schemas/TransferEvent'
+          type: array
         next_blocking_transfer:
           description:
             Indicates which entry in the `transfer_sequence` field that the
@@ -3739,15 +3752,12 @@ components:
                 the transfer is blocked on.
               type: integer
           type: object
-        state:
-          $ref: '#/components/schemas/TransactionState'
         transfer_asset_release:
           $ref: '#/components/schemas/TransferAssetRelease'
-        transfer_sequence:
-          description: Lists any IBC and Axelar transfers as they are seen.
-          items:
-            $ref: '#/components/schemas/TransferEvent'
-          type: array
+        error:
+          allOf:
+            - $ref: '#/components/schemas/StatusError'
+              nullable: true
       type: object
     TransferWrapper:
       properties:
@@ -4028,12 +4038,6 @@ components:
     RouteRequest:
       type: object
       properties:
-        amount_in:
-          type: string
-          description: Amount of source asset to be transferred or swapped. Only one of amount_in and amount_out should be provided.
-        amount_out:
-          type: string
-          description: Amount of destination asset to receive. Only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out.
         source_asset_denom:
           type: string
           description: Denom of the source asset
@@ -4046,6 +4050,12 @@ components:
         dest_asset_chain_id:
           type: string
           description: Chain-id of the destination asset
+        amount_in:
+          type: string
+          description: Amount of source asset to be transferred or swapped. Only one of amount_in and amount_out should be provided.
+        amount_out:
+          type: string
+          description: Amount of destination asset to receive. Only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out.
         cumulative_affiliate_fee_bps:
           type: string
           nullable: true
@@ -4055,11 +4065,6 @@ components:
           description: Swap venues to consider, if provided (optional)
           items:
             $ref: '#/components/schemas/SwapVenue'
-        allow_multi_tx:
-          type: boolean
-          description: |
-            Whether to allow route responses requiring multiple
-            transactions
         allow_unsafe:
           type: boolean
           description: Toggles whether the api should return routes that fail price safety checks.
@@ -4068,6 +4073,11 @@ components:
           description: Array of experimental features to enable
           items:
             type: string
+        allow_multi_tx:
+          type: boolean
+          description: |
+            Whether to allow route responses requiring multiple
+            transactions
         bridges:
           type: array
           description: Array of bridges to use
@@ -4121,16 +4131,16 @@ components:
         slippage_tolerance_percent:
           type: string
           description: Percent tolerance for slippage on swap, if a swap is performed
-        timeout_seconds:
-          type: string
-          description: Number of seconds for the IBC transfer timeout, defaults to 5 minutes
-        post_route_handler:
-          $ref: '#/components/schemas/PostHandler'
         chain_ids_to_affiliates:
           type: object
           description: Map of chain-ids to arrays of affiliates. The API expects all chains to have the same cumulative affiliate fee bps for each chain specified. If any of the provided affiliate arrays does not have the same cumulative fee, the API will return an error.
           additionalProperties:
             $ref: '#/components/schemas/ChainAffiliates'
+        post_route_handler:
+          $ref: '#/components/schemas/PostHandler'
+        timeout_seconds:
+          type: string
+          description: Number of seconds for the IBC transfer timeout, defaults to 5 minutes
         enable_gas_warnings:
           type: boolean
           description: Whether to enable gas warnings for intermediate and destination chains
@@ -4174,9 +4184,6 @@ components:
         slippage_tolerance_percent:
           type: string
           description: Percent tolerance for slippage on swap, if a swap is performed
-        timeout_seconds:
-          type: string
-          description: Number of seconds for the IBC transfer timeout, defaults to 5 minutes
         chain_ids_to_affiliates:
           type: object
           description: Map of chain-ids to arrays of affiliates. Since cumulative_affiliate_fee_bps must be provided to retrieve a route, and the swap chain is not known at this time, all chains must have the same cumulative_affiliate_fee_bps otherwise the API will return an error.
@@ -4184,11 +4191,9 @@ components:
             $ref: '#/components/schemas/ChainAffiliates'
         post_route_handler:
           $ref: '#/components/schemas/PostHandler'
-        allow_multi_tx:
-          type: boolean
-          description: |
-            Whether to allow route responses requiring multiple
-            transactions
+        timeout_seconds:
+          type: string
+          description: Number of seconds for the IBC transfer timeout, defaults to 5 minutes
         allow_unsafe:
           type: boolean
           description: Toggles whether the api should return routes that fail price safety checks.
@@ -4197,6 +4202,11 @@ components:
           description: Array of experimental features to enable
           items:
             type: string
+        allow_multi_tx:
+          type: boolean
+          description: |
+            Whether to allow route responses requiring multiple
+            transactions
         bridges:
           type: array
           description: Array of bridges to use
@@ -4210,13 +4220,13 @@ components:
         allow_swaps:
           type: boolean
           description: Whether to allow swaps in the route
-        go_fast:
-          type: boolean
-          description: Whether to enable Go Fast routes
         enable_gas_warnings:
           type: boolean
           description: Whether to enable gas warnings for intermediate and destination chains
           default: false
+        go_fast:
+          type: boolean
+          description: Whether to enable Go Fast routes
         fee_payer_address:
           type: string
           description: Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format.
