@@ -2937,11 +2937,11 @@ components:
         fee_amount:
           description: Amount of the fee asset to be paid as the Hyperlane bridge fee. This is denominated in the fee asset.
           type: string
-        fee_asset:
-          $ref: '#/components/schemas/Asset'
         usd_fee_amount:
           description: Amount of the fee asset to be paid as the Hyperlane bridge fee, converted to USD value
           type: string
+        fee_asset:
+          $ref: '#/components/schemas/Asset'
         bridge_id:
           $ref: '#/components/schemas/BridgeType'
         smart_relay:
