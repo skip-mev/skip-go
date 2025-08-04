@@ -27,6 +27,7 @@
               "general/affiliate-fees",
               "general/fee-info",
               "contracts/skip-go-contracts",
+              "general/transaction-support",
               "general/faq"
             ]
           },
