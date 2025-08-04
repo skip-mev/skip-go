@@ -57,7 +57,7 @@
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",
     "@types/keccak": "3.0.4",
-    "chain-registry": "^2.0.34",
+    "chain-registry": "^2.0.37",
     "eslint-plugin-esm": "^0.8.1",
     "eslint-plugin-import": "^2.31.0",
     "minimatch": "^9.0.3",
