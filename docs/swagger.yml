@@ -2238,6 +2238,12 @@ components:
         fee_amount:
           description: The USDC fee amount
           type: string
+        relayer_address:
+          description: Address of the relayer
+          type: string
+        expiration:
+          description: Expiration time of the fee quote
+          type: string
         fee_denom:
           description: The fee asset denomination
           type: string
@@ -2245,12 +2251,6 @@ components:
           description: The address the fee should be sent to
           type: string
           nullable: true
-        relayer_address:
-          description: Address of the relayer
-          type: string
-        expiration:
-          description: Expiration time of the fee quote
-          type: string
       type: object
     CCTPTransfer:
       description: A transfer facilitated by the CCTP bridge
