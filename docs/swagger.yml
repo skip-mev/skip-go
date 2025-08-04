@@ -2417,6 +2417,8 @@ components:
         to_chain_id:
           description: Canonical chain-id of the destination chain of the bridge transaction
           type: string
+        fee:
+          $ref: '#/components/schemas/GoFastFee'
         bridge_id:
           $ref: '#/components/schemas/BridgeType'
         denom_in:
@@ -2431,9 +2433,6 @@ components:
         destination_domain:
           description: Destination domain ID of the transfer
           type: string
-        fee:
-          $ref: '#/components/schemas/GoFastFee'
-
       type: object
     GoFastTransferState:
       description: |
