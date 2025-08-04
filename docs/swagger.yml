@@ -3060,10 +3060,10 @@ components:
         - $ref: '#/components/schemas/HyperlaneTransferWrapper'
         - $ref: '#/components/schemas/EvmSwapWrapper'
         - $ref: '#/components/schemas/OPInitTransferWrapper'
-        - $ref: '#/components/schemas/StargateTransferWrapper'
         - $ref: '#/components/schemas/GoFastTransferWrapper'
-        - $ref: '#/components/schemas/EurekaTransferWrapper'
+        - $ref: '#/components/schemas/StargateTransferWrapper'
         - $ref: '#/components/schemas/LayerZeroTransferWrapper'
+        - $ref: '#/components/schemas/EurekaTransferWrapper'
       properties:
         tx_index:
           description: Index of the tx returned from Msgs that executes this operation
