@@ -2339,12 +2339,10 @@ components:
         denom_out:
           description: Denom of the output asset
           type: string
-        bridge_id:
-          $ref: '#/components/schemas/BridgeType'
         pool_address:
-          type: string;
+          type: string
         destination_endpoint_id:
-          type: number;
+          type: number
         oft_fee_asset:
           $ref: '#/components/schemas/Asset'
         oft_fee_amount:
@@ -2357,6 +2355,8 @@ components:
           type: string
         messaging_fee_amount_usd:
           type: string
+        bridge_id:
+          $ref: '#/components/schemas/BridgeType'
       type: object
     StargateTransferState:
       description: |
