@@ -1,5 +1,16 @@
 ## 0.0.15
 
+## 3.14.2
+
+### Patch Changes
+
+- 8630eea: update registries
+- b8f024f: fix callback
+- Updated dependencies [8630eea]
+- Updated dependencies [b8f024f]
+- Updated dependencies [419982d]
+  - @skip-go/client@1.5.1
+
 ## 3.14.1
 
 ### Patch Changes

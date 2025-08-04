@@ -1,5 +1,13 @@
 # @skip-go/client
 
+## 1.5.1
+
+### Patch Changes
+
+- 8630eea: update registries
+- b8f024f: fix callback
+- 419982d: Update swagger docs to use referenced request schemas.
+
 ## 1.5.0
 
 ### Minor Changes
