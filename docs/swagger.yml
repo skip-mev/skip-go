@@ -2008,26 +2008,32 @@ components:
       type: object
     Asset:
       properties:
-        chain_id:
-          description: Chain-id of the asset
-          type: string
-          required: true
-        coingecko_id:
-          description: Coingecko id of the asset
-          nullable: true
-          type: string
-        decimals:
-          description: Number of decimals used for amounts of the asset
-          nullable: true
-          type: number
         denom:
           description: Denom of the asset
           type: string
           required: true
-        description:
-          description: Description of the asset
-          nullable: true
+        chain_id:
+          description: Chain-id of the asset
           type: string
+          required: true
+        origin_denom:
+          description:
+            Denom of the origin of the asset. If this is an ibc denom, this
+            is the original denom that the ibc token represents
+          type: string
+          required: true
+        origin_chain_id:
+          description:
+            Chain-id of the origin of the asset. If this is an ibc denom, this
+            is the chain-id of the asset that the ibc token represents
+          type: string
+          required: true
+        trace:
+          description:
+            The forward slash delimited sequence of ibc ports and channels
+            that can be traversed to unwind an ibc token to its origin asset.
+          type: string
+          required: true
         is_cw20:
           description: Indicates whether asset is a CW20 token
           type: boolean
@@ -2040,26 +2046,36 @@ components:
           description: Indicates whether asset is an SVM token
           type: boolean
           required: true
-        logo_uri:
-          description: URI pointing to an image of the logo of the asset
+        symbol:
+          description: Symbol of the asset, e.g. ATOM for uatom
           nullable: true
           type: string
         name:
           description: Name of the asset
           nullable: true
           type: string
-        origin_chain_id:
-          description:
-            Chain-id of the origin of the asset. If this is an ibc denom, this
-            is the chain-id of the asset that the ibc token represents
+        logo_uri:
+          description: URI pointing to an image of the logo of the asset
+          nullable: true
           type: string
-          required: true
-        origin_denom:
+        decimals:
+          description: Number of decimals used for amounts of the asset
+          nullable: true
+          type: number
+        token_contract:
           description:
-            Denom of the origin of the asset. If this is an ibc denom, this
-            is the original denom that the ibc token represents
+            Address of the contract for the asset, e.g. if it is a CW20 or
+            ERC20 token
+          nullable: true
           type: string
-          required: true
+        description:
+          description: Description of the asset
+          nullable: true
+          type: string
+        coingecko_id:
+          description: Coingecko id of the asset
+          nullable: true
+          type: string
         recommended_symbol:
           description:
             Recommended symbol of the asset used to differentiate between bridged
@@ -2067,22 +2083,6 @@ components:
             Gravity USDC
           nullable: true
           type: string
-        symbol:
-          description: Symbol of the asset, e.g. ATOM for uatom
-          nullable: true
-          type: string
-        token_contract:
-          description:
-            Address of the contract for the asset, e.g. if it is a CW20 or
-            ERC20 token
-          nullable: true
-          type: string
-        trace:
-          description:
-            The forward slash delimited sequence of ibc ports and channels
-            that can be traversed to unwind an ibc token to its origin asset.
-          type: string
-          required: true
       type: object
     AssetBetweenChains:
       properties:
@@ -3611,24 +3611,21 @@ components:
     Transfer:
       description: A cross-chain transfer
       properties:
+        port:
+          description: Port to use to initiate the transfer
+          type: string
+        channel:
+          description: Channel to use to initiate the transfer
+          type: string
         from_chain_id:
           description: Chain-id on which the transfer is initiated
           type: string
         to_chain_id:
           description: Chain-id on which the transfer is received
           type: string
-        channel:
-          description: Channel to use to initiate the transfer
-          type: string
-        dest_denom:
-          description: Denom of the destination asset of the transfer
-          type: string
         pfm_enabled:
           description: Whether pfm is enabled on the chain where the transfer is initiated
           type: boolean
-        port:
-          description: Port to use to initiate the transfer
-          type: string
         supports_memo:
           description: Whether the transfer chain supports a memo
           type: boolean
@@ -3640,14 +3637,6 @@ components:
           type: string
         fee_amount:
           description: Amount of the fee asset to be paid as the transfer fee if applicable.
-          type: string
-          nullable: true
-        to_chain_entry_contract_address:
-          description: Address of the entry contract on the destination chain
-          type: string
-          nullable: true
-        to_chain_callback_contract_address:
-          description: 
           type: string
           nullable: true
         usd_fee_amount:
@@ -3665,6 +3654,18 @@ components:
         smart_relay:
           type: boolean
           description: Indicates whether this transfer is relayed via Smart Relay
+        to_chain_entry_contract_address:
+          description: Address of the entry contract on the destination chain
+          type: string
+          nullable: true
+        to_chain_callback_contract_address:
+          description: 
+          type: string
+          nullable: true
+        dest_denom:
+          description: Deprecated, use denom_out instead. Denom of the destination asset of the transfer
+          type: string
+          deprecated: true
       type: object
     TransferEvent:
       type: object
