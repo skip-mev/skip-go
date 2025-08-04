@@ -4184,9 +4184,6 @@ components:
         slippage_tolerance_percent:
           type: string
           description: Percent tolerance for slippage on swap, if a swap is performed
-        timeout_seconds:
-          type: string
-          description: Number of seconds for the IBC transfer timeout, defaults to 5 minutes
         chain_ids_to_affiliates:
           type: object
           description: Map of chain-ids to arrays of affiliates. Since cumulative_affiliate_fee_bps must be provided to retrieve a route, and the swap chain is not known at this time, all chains must have the same cumulative_affiliate_fee_bps otherwise the API will return an error.
@@ -4194,11 +4191,9 @@ components:
             $ref: '#/components/schemas/ChainAffiliates'
         post_route_handler:
           $ref: '#/components/schemas/PostHandler'
-        allow_multi_tx:
-          type: boolean
-          description: |
-            Whether to allow route responses requiring multiple
-            transactions
+        timeout_seconds:
+          type: string
+          description: Number of seconds for the IBC transfer timeout, defaults to 5 minutes
         allow_unsafe:
           type: boolean
           description: Toggles whether the api should return routes that fail price safety checks.
@@ -4207,6 +4202,11 @@ components:
           description: Array of experimental features to enable
           items:
             type: string
+        allow_multi_tx:
+          type: boolean
+          description: |
+            Whether to allow route responses requiring multiple
+            transactions
         bridges:
           type: array
           description: Array of bridges to use
@@ -4220,13 +4220,13 @@ components:
         allow_swaps:
           type: boolean
           description: Whether to allow swaps in the route
-        go_fast:
-          type: boolean
-          description: Whether to enable Go Fast routes
         enable_gas_warnings:
           type: boolean
           description: Whether to enable gas warnings for intermediate and destination chains
           default: false
+        go_fast:
+          type: boolean
+          description: Whether to enable Go Fast routes
         fee_payer_address:
           type: string
           description: Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format.
