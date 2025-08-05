@@ -14,14 +14,16 @@ export const setApiOptions = (options: SetApiOptionsProps = {}) => {
     apiHeaders: options.apiHeaders,
   });
 
-  ApiState.setClientInitialized();
-
   if (options.chainIdsToAffiliates) {
     ApiState.cumulativeAffiliateFeeBPS = validateChainIdsToAffiliates(options.chainIdsToAffiliates);
     ApiState.chainIdsToAffiliates = options.chainIdsToAffiliates;
   }
 
-  return ApiState.clientInitialized;
+  if (!options.allowOptionsUpdateAfterApiCall && ApiState.apiCalled && !ApiState.initialized) {
+    throw new Error("setApiOptions must be called before an api request is made");
+  }
+
+  ApiState.initialized = true;
 };
 
 function validateChainIdsToAffiliates(chainIdsToAffiliates: Record<string, ChainAffiliates>) {
