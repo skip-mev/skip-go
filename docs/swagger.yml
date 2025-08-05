@@ -2895,22 +2895,22 @@ components:
       description: Go fast Fee
       type: object
       properties:
-        feeAsset:
+        fee_asset:
           $ref: '#/components/schemas/Asset'
           required: true
-        bpsFee:
+        bps_fee:
           type: string
-        bpsFeeAmount:
+        bps_fee_amount:
           type: string
-        bpsFeeUsd:
+        bps_fee_usd:
           type: string
-        sourceChainFeeAmount:
+        source_chain_fee_amount:
           type: string
-        sourceChainFeeUsd:
+        source_chain_fee_usd:
           type: string
-        destinationChainFeeAmount:
+        destination_chain_fee_amount:
           type: string
-        destinationChainFeeUsd:
+        destination_chain_fee_usd:
           type: string
     GRPCStatusCode:
       description: grpc status codes as defined [here](https://grpc.github.io/grpc/core/md_doc_statuscodes.html)
