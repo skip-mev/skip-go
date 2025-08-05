@@ -20,7 +20,7 @@ export const setApiOptions = (options: SetApiOptionsProps = {}) => {
   }
 
   if (!options.allowOptionsUpdateAfterApiCall && ApiState.apiCalled && !ApiState.initialized) {
-    throw new Error("setApiOptions must be called before a request is made");
+    throw new Error("setApiOptions must be called before an api request is made");
   }
 
   ApiState.initialized = true;
