@@ -43,5 +43,9 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
     ...(options.registryTypes ?? []),
   ]);
 
-  ApiState.setClientInitialized();
+  if (!options.allowOptionsUpdateAfterApiCall && ApiState.apiCalled && !ApiState.initialized) {
+    throw new Error("setClientOptions must be called before a request is made");
+  }
+
+  ApiState.initialized = true;
 };
