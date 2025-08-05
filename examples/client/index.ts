@@ -1,6 +1,7 @@
 import { route, setApiOptions, getRecommendedGasPrice } from "@skip-go/client";
 
 const getRoute = async () => {
+  setApiOptions();
 
   const response = await route({
     sourceAssetDenom: "uatom",
@@ -15,10 +16,6 @@ const getRoute = async () => {
     goFast: true,
     amountIn: "1000000",
   });
-
-  setApiOptions({ apiUrl: "https://google.com" });
-
-
   console.log(response);
 }
 
