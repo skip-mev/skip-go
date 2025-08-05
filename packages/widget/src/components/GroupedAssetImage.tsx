@@ -24,7 +24,17 @@ export const GroupedAssetImage = ({
   const allLogoUris = [
     groupedAsset?.assets.find((asset) => asset.logoUri?.includes("chain-registry"))?.logoUri,
     ...(groupedAsset?.assets.map((asset) => asset.logoUri) ?? []),
-  ].filter((uri): uri is string => !!uri);
+  ]
+    .filter((uri): uri is string => !!uri)
+    .sort((a, b) => {
+      // Sort images from wormhole at the end to deprioritize them
+      const aHasWormhole = a.toLowerCase().includes("wormhole");
+      const bHasWormhole = b.toLowerCase().includes("wormhole");
+
+      if (aHasWormhole && !bHasWormhole) return 1;
+      if (!aHasWormhole && bHasWormhole) return -1;
+      return 0;
+    });
 
   const dedupedLogoUris = Array.from(new Set(allLogoUris));
 
