@@ -3,6 +3,8 @@ import { createDefaultAminoConverters, defaultRegistryTypes } from "@cosmjs/star
 import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
 import { circleAminoConverters, circleProtoRegistry } from "src/codegen/circle/client";
 import { evmosAminoConverters, evmosProtoRegistry } from "src/codegen/evmos/client";
+import { initiaAminoConverters } from "src/codegen/initia/client"
+import { opinitAminoConverters } from "src/codegen/opinit/client"
 import { Registry } from "@cosmjs/proto-signing";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx.js";
 import { MsgExecute } from "src/codegen/initia/move/v1/tx";
@@ -26,6 +28,8 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
     ...createWasmAminoConverters(),
     ...circleAminoConverters,
     ...evmosAminoConverters,
+    ...initiaAminoConverters,
+    ...opinitAminoConverters,
     ...(options.aminoTypes ?? {}),
   });
 
@@ -39,5 +43,9 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
     ...(options.registryTypes ?? []),
   ]);
 
-  ApiState.setClientInitialized();
+  if (!options.allowOptionsUpdateAfterApiCall && ApiState.apiCalled && !ApiState.initialized) {
+    throw new Error("setClientOptions must be called before an api request is made");
+  }
+
+  ApiState.initialized = true;
 };

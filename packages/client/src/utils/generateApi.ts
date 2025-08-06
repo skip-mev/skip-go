@@ -116,15 +116,16 @@ export function createRequest<Request, Response, TransformedResponse>({
   const request = async (options?: RequestType): Promise<TransformedResponse | undefined> => {
     const { apiKey, apiUrl, apiHeaders, abortDuplicateRequests, ...requestParams } = options ?? {};
     let fetchClient = ApiState.client;
-    if (apiUrl || apiKey) {
+
+    if (apiKey || apiUrl || apiHeaders || fetchClient === undefined) {
       fetchClient = createRequestClient({
         apiUrl: apiUrl || "https://api.skip.build",
         apiKey,
         apiHeaders,
       });
-    } else {
-      await ApiState.clientInitialized;
     }
+
+    ApiState.apiCalled = true;
 
     if (abortDuplicateRequests && controller && !controller?.signal?.aborted) {
       controller?.abort();

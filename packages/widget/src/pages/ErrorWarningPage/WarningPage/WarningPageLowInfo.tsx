@@ -54,7 +54,7 @@ export const WarningPageLowInfo = ({
       />
       <ErrorWarningPageContent
         title="Warning: Incomplete Price Data"
-          description={
+        description={
           <>
             <SmallText color={theme.warning.text} textAlign="center" textWrap="balance">
               <StyledDescriptionContent>

@@ -385,6 +385,10 @@ export interface GoFastTransferJson {
   denom_in?: string;
   /** Denom of the output asset */
   denom_out?: string;
+  /** Source domain ID of the transfer */
+  source_domain?: string;
+  /** Destination domain ID of the transfer */
+  destination_domain?: string;
   /** Go fast Fee */
   fee?: GoFastFeeJson;
 }
@@ -1582,6 +1586,221 @@ export interface FeeJson {
   operation_index?: number | null;
   /** Indicates whether this fee is deducted from the transfer amount or charged additionally */
   fee_behavior?: FeeBehaviorJson;
+}
+
+export interface BalancesRequestJson {
+  chains?: Record<string, BalanceRequestChainEntryJson>;
+}
+
+export interface AssetsFromSourceRequestJson {
+  /** Denom of the source asset */
+  source_asset_denom: string;
+  /** Chain-id of the source asset */
+  source_asset_chain_id: string;
+  /**
+   * Whether to include recommendations requiring multiple transactions to reach the destination
+   * @default false
+   */
+  allow_multi_tx?: boolean;
+  /** Optional reason for recommending assets */
+  recommendation_reason?: ReasonJson | null;
+  /**
+   * Whether to include swap routes
+   * @default false
+   */
+  include_swaps?: boolean;
+  /** Swap venues to consider if including swap routes */
+  swap_venues?: SwapVenueJson[] | null;
+  /**
+   * Whether to only return native assets
+   * @default false
+   */
+  native_only?: boolean;
+  /** Optional grouping key for results */
+  group_by?: string | null;
+  /**
+   * Whether to include CW20 tokens
+   * @default false
+   */
+  include_cw20_assets?: boolean;
+}
+
+export interface RouteRequestJson {
+  /** Amount of source asset to be transferred or swapped. Only one of amount_in and amount_out should be provided. */
+  amount_in?: string;
+  /** Amount of destination asset to receive. Only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out. */
+  amount_out?: string;
+  /** Denom of the source asset */
+  source_asset_denom?: string;
+  /** Chain-id of the source asset */
+  source_asset_chain_id?: string;
+  /** Denom of the destination asset */
+  dest_asset_denom?: string;
+  /** Chain-id of the destination asset */
+  dest_asset_chain_id?: string;
+  /** Cumulative fee to be distributed to affiliates, in bps (optional) */
+  cumulative_affiliate_fee_bps?: string | null;
+  /** Swap venues to consider, if provided (optional) */
+  swap_venues?: SwapVenueJson[];
+  /**
+   * Whether to allow route responses requiring multiple
+   * transactions
+   */
+  allow_multi_tx?: boolean;
+  /** Toggles whether the api should return routes that fail price safety checks. */
+  allow_unsafe?: boolean;
+  /** Array of experimental features to enable */
+  experimental_features?: string[];
+  /** Array of bridges to use */
+  bridges?: BridgeTypeJson[];
+  /** Indicates whether this transfer route should be relayed via Skip's Smart Relay service - true by default. */
+  smart_relay?: boolean;
+  smart_swap_options?: SmartSwapOptionsJson;
+  /** Whether to allow swaps in the route */
+  allow_swaps?: boolean;
+  /** Whether to enable Go Fast routes */
+  go_fast?: boolean;
+}
+
+export interface MsgsRequestJson {
+  /** Denom of the source asset */
+  source_asset_denom?: string;
+  /** Chain-id of the source asset */
+  source_asset_chain_id?: string;
+  /** Denom of the destination asset */
+  dest_asset_denom?: string;
+  /** Chain-id of the destination asset */
+  dest_asset_chain_id?: string;
+  /** Amount of source asset to be transferred or swapped */
+  amount_in?: string;
+  /** Amount of destination asset out */
+  amount_out?: string;
+  /** Array of receipient and/or sender address for each chain in the path, corresponding to the chain_ids array returned from a route request */
+  address_list?: string[];
+  /** Array of operations required to perform the transfer or swap */
+  operations?: OperationJson[];
+  estimated_amount_out?: string;
+  /** Percent tolerance for slippage on swap, if a swap is performed */
+  slippage_tolerance_percent?: string;
+  /** Number of seconds for the IBC transfer timeout, defaults to 5 minutes */
+  timeout_seconds?: string;
+  post_route_handler?: PostHandlerJson;
+  /** Map of chain-ids to arrays of affiliates. The API expects all chains to have the same cumulative affiliate fee bps for each chain specified. If any of the provided affiliate arrays does not have the same cumulative fee, the API will return an error. */
+  chain_ids_to_affiliates?: Record<string, ChainAffiliatesJson>;
+  /**
+   * Whether to enable gas warnings for intermediate and destination chains
+   * @default false
+   */
+  enable_gas_warnings?: boolean;
+  /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format. */
+  fee_payer_address?: string;
+}
+
+export interface MsgsDirectRequestJson {
+  /** Denom of the source asset */
+  source_asset_denom?: string;
+  /** Chain-id of the source asset */
+  source_asset_chain_id?: string;
+  /** Denom of the destination asset */
+  dest_asset_denom?: string;
+  /** Chain-id of the destination asset */
+  dest_asset_chain_id?: string;
+  /** Amount of source asset to be transferred or swapped. If this is a swap, only one of amount_in and amount_out should be provided. */
+  amount_in?: string;
+  /** Amount of destination asset out. If this is a swap, only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out. */
+  amount_out?: string;
+  /** Map of chain-ids to receipient and/or sender address for each chain in the path. Since the path is not known to the caller beforehand, the caller should attempt to provide addresses for all chains in the path, and the API will return an error if the path cannot be constructed. */
+  chain_ids_to_addresses?: Record<string, string>;
+  /** Swap venues to consider, if provided (optional) */
+  swap_venues?: SwapVenueJson[];
+  /** Percent tolerance for slippage on swap, if a swap is performed */
+  slippage_tolerance_percent?: string;
+  /** Number of seconds for the IBC transfer timeout, defaults to 5 minutes */
+  timeout_seconds?: string;
+  /** Map of chain-ids to arrays of affiliates. Since cumulative_affiliate_fee_bps must be provided to retrieve a route, and the swap chain is not known at this time, all chains must have the same cumulative_affiliate_fee_bps otherwise the API will return an error. */
+  chain_ids_to_affiliates?: Record<string, ChainAffiliatesJson>;
+  post_route_handler?: PostHandlerJson;
+  /**
+   * Whether to allow route responses requiring multiple
+   * transactions
+   */
+  allow_multi_tx?: boolean;
+  /** Toggles whether the api should return routes that fail price safety checks. */
+  allow_unsafe?: boolean;
+  /** Array of experimental features to enable */
+  experimental_features?: string[];
+  /** Array of bridges to use */
+  bridges?: BridgeTypeJson[];
+  /** Indicates whether this transfer route should be relayed via Skip's Smart Relay service */
+  smart_relay?: boolean;
+  smart_swap_options?: SmartSwapOptionsJson;
+  /** Whether to allow swaps in the route */
+  allow_swaps?: boolean;
+  /** Whether to enable Go Fast routes */
+  go_fast?: boolean;
+  /**
+   * Whether to enable gas warnings for intermediate and destination chains
+   * @default false
+   */
+  enable_gas_warnings?: boolean;
+  /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format. */
+  fee_payer_address?: string;
+}
+
+export interface AssetRecommendationsRequestJson {
+  /** Array where each entry corresponds to a distinct asset recommendation request. */
+  requests?: RecommendationRequestJson[];
+}
+
+export interface SubmitTxRequestJson {
+  /** Signed base64 encoded transaction */
+  tx?: string;
+  /** Chain ID of the transaction */
+  chain_id?: string;
+}
+
+export interface TrackTxRequestJson {
+  /** Hex encoded hash of the transaction to track */
+  tx_hash: string;
+  /** Chain ID of the transaction */
+  chain_id: string;
+}
+
+export interface IbcOriginAssetsRequestJson {
+  /** Array of assets to get origin assets for */
+  assets?: {
+    /** Denom of the asset */
+    denom?: string;
+    /** Chain-id of the asset */
+    chain_id?: string;
+  }[];
+}
+
+export interface AssetsBetweenChainsRequestJson {
+  /** Chain-id of the source chain */
+  source_chain_id?: string;
+  /** Chain-id of the destination chain */
+  dest_chain_id?: string;
+  /**
+   * Whether to include assets without metadata (symbol, name, logo_uri, etc.)
+   * @default false
+   */
+  include_no_metadata_assets?: boolean;
+  /**
+   * Whether to include CW20 tokens
+   * @default false
+   */
+  include_cw20_assets?: boolean;
+  /**
+   * Whether to include EVM tokens
+   * @default false
+   */
+  include_evm_assets?: boolean;
+  /**
+   * Whether to include recommendations requiring multiple transactions to reach the destination
+   * @default false
+   */
+  allow_multi_tx?: boolean;
 }
 
 export interface ChainsRequestJson {

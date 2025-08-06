@@ -4,10 +4,9 @@ import { routePreferenceAtom } from "@/state/swapPage";
 import { ROUTE_PREFERENCE_OPTIONS } from "@/constants/widget";
 import { Column, Row, Spacer } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
-import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 import styled from "styled-components";
 import { StyledSettingsOptionLabel } from "./SlippageSelector";
-import { Tooltip } from "@/components/Tooltip";
+import { QuestionMarkTooltip } from "@/components/QuestionMarkTooltip";
 import { track } from "@amplitude/analytics-browser";
 
 const RoutePreferenceSelector: React.FC = () => {
@@ -18,7 +17,7 @@ const RoutePreferenceSelector: React.FC = () => {
       <PreferenceText align="center">
         Route Preference
         <Spacer width={5} />
-        <Tooltip
+        <QuestionMarkTooltip
           content={
             <SmallText normalTextColor style={{ width: 250 }}>
               Choose if faster or cheaper routes should be prioritized. Fast routes require a $50
@@ -26,9 +25,7 @@ const RoutePreferenceSelector: React.FC = () => {
               an asset.
             </SmallText>
           }
-        >
-          <QuestionMarkIcon />
-        </Tooltip>
+        />
       </PreferenceText>
       <OptionsContainer gap={5}>
         {ROUTE_PREFERENCE_OPTIONS.map((option) => (

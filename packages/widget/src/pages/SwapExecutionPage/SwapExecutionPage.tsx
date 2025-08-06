@@ -1,14 +1,16 @@
-import { Column } from "@/components/Layout";
+import { Column, Spacer } from "@/components/Layout";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { PageHeader } from "@/components/PageHeader";
 import React, { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
-import { useAtomValue, useSetAtom } from "jotai";
-import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
-import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { SwapExecutionPageRouteContainer } from "./SwapExecutionPageRouteContainer";
 import { currentPageAtom, Routes } from "@/state/router";
 import {
   chainAddressesAtom,
+  feeRouteAddressesAtomEffect,
+  feeRouteChainAddressesAtom,
+  gasRouteEffect,
   skipSubmitSwapExecutionAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
@@ -23,6 +25,15 @@ import { track } from "@amplitude/analytics-browser";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { usePreventPageUnload } from "@/hooks/usePreventPageUnload";
 import { currentTransactionAtom } from "@/state/history";
+import {
+  gasOnReceiveAtom,
+  gasOnReceiveAtomEffect,
+  gasOnReceiveRouteAtom,
+  isSomeDestinationFeeBalanceAvailableAtom,
+} from "@/state/gasOnReceive";
+import { GasOnReceive } from "@/components/GasOnReceive";
+import { useFeeRouteAutoSetAddress } from "@/hooks/useFeeRouteAutoSetAddress";
+import { useTheme } from "styled-components";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -35,15 +46,37 @@ export enum SwapExecutionState {
   validatingGasBalance,
   approving,
   pendingGettingAddresses,
+  pendingGettingDestinationBalance,
+  pendingGettingFeeRouteAddresses,
+  feeRouteRecoveryAddressUnset,
+  pendingError,
 }
 
 export const SwapExecutionPage = () => {
+  const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, clientOperations } = useAtomValue(swapExecutionStateAtom);
+  const { route, clientOperations, feeRoute } = useAtomValue(swapExecutionStateAtom);
   const currentTransaction = useAtomValue(currentTransactionAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
-  const { connectRequiredChains, isLoading } = useAutoSetAddress();
+  const feeRouteChainAddresses = useAtomValue(feeRouteChainAddressesAtom);
+  const { connectRequiredChains, isLoading: isGettingAddressesLoading } = useAutoSetAddress();
+  const {
+    connectRequiredChains: connectFeeRouteRequiredChains,
+    isLoading: isGettingFeeRouteAddressesLoading,
+  } = useFeeRouteAutoSetAddress();
+
   const [simpleRoute, setSimpleRoute] = useState(true);
+  const isSomeDestinationFeeBalanceAvailable = useAtomValue(
+    isSomeDestinationFeeBalanceAvailableAtom,
+  );
+  const { data: gasRoute, isLoading: isGasRouteLoading } = useAtomValue(gasOnReceiveRouteAtom);
+  const gasRouteEnabled = useAtomValue(gasOnReceiveAtom);
+  const isFetchingDestinationBalance =
+    isSomeDestinationFeeBalanceAvailable.isLoading || isGasRouteLoading;
+
+  useAtom(gasRouteEffect);
+  useAtom(feeRouteAddressesAtomEffect);
+  useAtom(gasOnReceiveAtomEffect);
 
   const { mutate: submitExecuteRouteMutation, error } = useAtomValue(skipSubmitSwapExecutionAtom);
 
@@ -61,10 +94,13 @@ export const SwapExecutionPage = () => {
 
   const swapExecutionState = useSwapExecutionState({
     chainAddresses,
-    route,
-    isLoading,
+    requiredChainAddresses: route?.requiredChainAddresses,
+    feeRouteChainAddresses: feeRouteChainAddresses,
+    feeRouteRequiredChainAddresses: feeRoute?.requiredChainAddresses,
+    isGettingAddressesLoading: isGettingAddressesLoading,
+    isGettingFeeRouteAddressesLoading: isGettingFeeRouteAddressesLoading,
+    isFetchingDestinationBalance,
   });
-
   const isSafeToleave = route?.txsRequired === currentTransaction?.transactionDetails.length;
 
   usePreventPageUnload(
@@ -131,15 +167,31 @@ export const SwapExecutionPage = () => {
     };
   }, [swapExecutionState, lastOperation.signRequired, lastOperation.fromChain, route]);
 
-  const SwapExecutionPageRoute = simpleRoute
-    ? SwapExecutionPageRouteSimple
-    : SwapExecutionPageRouteDetailed;
-
   const shouldRenderTrackProgressButton =
     lastTxHash &&
     lastTxChainId &&
     route?.txsRequired === currentTransaction?.transactionDetails.length;
 
+  const gasOnReceiveComponent = useMemo(() => {
+    return ((gasRoute || feeRoute) &&
+      !isGasRouteLoading &&
+      !currentTransaction &&
+      !isFetchingDestinationBalance) ||
+      (currentTransaction && gasRouteEnabled) ? (
+      <Column>
+        <Spacer height={30} showLine lineColor={theme.secondary.background.transparent} />
+        <GasOnReceive routeDetails={currentTransaction?.relatedRoutes?.[0]} />
+      </Column>
+    ) : null;
+  }, [
+    currentTransaction,
+    feeRoute,
+    gasRoute,
+    gasRouteEnabled,
+    isFetchingDestinationBalance,
+    isGasRouteLoading,
+    theme.secondary.background.transparent,
+  ]);
   return (
     <Column gap={5}>
       <PageHeader
@@ -182,13 +234,15 @@ export const SwapExecutionPage = () => {
           },
         }}
       />
-      <SwapExecutionPageRoute
+      <SwapExecutionPageRouteContainer
+        showDetailed={!simpleRoute}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
         operations={clientOperations}
         statusData={currentTransaction}
         swapExecutionState={swapExecutionState}
         firstOperationStatus={firstOperationStatus}
         secondOperationStatus={secondOperationStatus}
+        bottomContent={gasOnReceiveComponent}
       />
       <SwapExecutionButton
         swapExecutionState={swapExecutionState}
@@ -196,6 +250,7 @@ export const SwapExecutionPage = () => {
         signaturesRemaining={signaturesRemaining}
         lastOperation={lastOperation}
         connectRequiredChains={connectRequiredChains}
+        connectFeeRouteRequiredChains={connectFeeRouteRequiredChains}
         submitExecuteRouteMutation={submitExecuteRouteMutation}
       />
       <SwapPageFooter />

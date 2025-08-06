@@ -1,5 +1,43 @@
 ## 0.0.15
 
+## 3.14.2
+
+### Patch Changes
+
+- 8630eea: update registries
+- b8f024f: fix callback
+- Updated dependencies [8630eea]
+- Updated dependencies [b8f024f]
+- Updated dependencies [419982d]
+  - @skip-go/client@1.5.1
+
+## 3.14.1
+
+### Patch Changes
+
+- fdd2929: add isFeeRouteAvailable for track
+- bc9983e: numbers and switch component fix
+
+## 3.14.0
+
+### Minor Changes
+
+- 3bf601a: Gas on receive & executeMultipleRoutes
+
+### Patch Changes
+
+- 8d6226f: Reduce number of session replays by beginning after confirm button is clicked
+- 317ef74: Enable passing apiKey from widget to client library
+- 276d1b5: Avoid showing loading animation instead of wallet icon for manual address input
+- e4a77b0: Add showing sender and receiver address to history items
+- 0722525: Revert changes in #1460, fix hydration error by avoiding nested buttons
+- 3223cdf: Add spacing between signature required and and row above in detailed swap view
+- ad28b78: Add tracking in amplitude for the destination wallet source
+- fea44ef: Limit automatic input value updates to five decimal places after route changes.
+- Updated dependencies [fc76c0f]
+- Updated dependencies [3bf601a]
+  - @skip-go/client@1.5.0
+
 ## 3.13.0
 
 ### Minor Changes

@@ -8,7 +8,6 @@ import { ClientOperation } from "@/utils/clientType";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { useMemo } from "react";
-import { convertToPxValue } from "@/utils/style";
 import { RouteDetails, TransferEventStatus } from "@skip-go/client";
 
 export type SwapExecutionPageRouteProps = {
@@ -18,6 +17,7 @@ export type SwapExecutionPageRouteProps = {
   swapExecutionState?: SwapExecutionState;
   firstOperationStatus?: TransferEventStatus | undefined;
   secondOperationStatus?: TransferEventStatus | undefined;
+  bottomContent?: React.ReactNode;
 };
 
 export const SwapExecutionPageRouteSimple = ({
@@ -26,9 +26,10 @@ export const SwapExecutionPageRouteSimple = ({
   onClickEditDestinationWallet,
   swapExecutionState,
   firstOperationStatus,
+  bottomContent,
 }: SwapExecutionPageRouteProps) => {
   const theme = useTheme();
-  const { route } = useAtomValue(swapExecutionStateAtom);
+  const { route, originalRoute } = useAtomValue(swapExecutionStateAtom);
 
   const firstOperation = operations[0];
   const lastOperation = operations[operations.length - 1];
@@ -48,10 +49,10 @@ export const SwapExecutionPageRouteSimple = ({
   }, [firstOperationStatus, lastOperation.transferIndex, status, swapExecutionState]);
 
   const source = {
-    denom: firstOperation.denomIn,
-    tokenAmount: firstOperation.amountIn,
-    chainId: firstOperation.fromChainId ?? firstOperation.chainId,
-    usdValue: route?.usdAmountIn,
+    denom: originalRoute?.sourceAssetDenom,
+    tokenAmount: originalRoute?.amountIn ?? "",
+    chainId: originalRoute?.sourceAssetChainId,
+    usdValue: originalRoute?.usdAmountIn,
   };
 
   const destination = {
@@ -81,6 +82,7 @@ export const SwapExecutionPageRouteSimple = ({
         explorerLink={destinationExplorerLink}
         context="destination"
       />
+      {bottomContent}
     </StyledSwapExecutionPageRoute>
   );
 };
@@ -92,7 +94,5 @@ const StyledBridgeArrowIcon = styled(BridgeArrowIcon)`
 
 const StyledSwapExecutionPageRoute = styled(Column)`
   padding: 30px;
-  background: ${({ theme }) => theme.primary.background.normal};
-  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.main)};
   min-height: 225px;
 `;
