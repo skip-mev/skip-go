@@ -1463,16 +1463,7 @@ paths:
                 tx_hash: F30790E79987F18F3A4DA8C7A9BA9FD837043EF59D8236CA85180E1078BC607F
                 explorer_link: https://www.mintscan.io/osmosis/tx/F30790E79987F18F3A4DA8C7A9BA9FD837043EF59D8236CA85180E1078BC607F
               schema:
-                type: object
-                properties:
-                  tx_hash:
-                    type: string
-                    description: Hash of the transaction
-                    required: true
-                  explorer_link:
-                    type: string
-                    description: Link to the transaction on the relevant block explorer
-                    required: true
+                $ref: '#/components/schemas/TrackTxResponse'
         '400':
           description: The request was invalid, i.e. the transaction hash was malformed or the specified transaction did not execute successfully.
           content:
@@ -1720,42 +1711,7 @@ paths:
                           released: true
                         error: null
               schema:
-                type: object
-                properties:
-                  transfers:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TransferStatus'
-                    description: Transfer status for all transfers initiated by the transaction in the order they were initiated.
-                  state:
-                    $ref: '#/components/schemas/TransactionState'
-                    description: The overall state reflecting the end-to-end status of all transfers initiated by the original transaction.
-                    required: true
-                  next_blocking_transfer:
-                    description: Details about the next transfer in the sequence that is preventing further progress, if any.
-                    nullable: true
-                    properties:
-                      transfer_sequence_index:
-                        type: integer
-                    type: object
-                  transfer_asset_release:
-                    $ref: '#/components/schemas/TransferAssetRelease'
-                  error:
-                    description: Details about any error encountered during the transaction or its subsequent transfers.
-                    allOf:
-                      - $ref: '#/components/schemas/StatusError'
-                    nullable: true
-                  transfer_sequence:
-                    description: "**DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version."
-                    deprecated: true
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TransferEvent'
-                    required: true
-                  status:
-                    type: string
-                    description: A high-level status indicator for the transaction's completion state.
-                    example: STATE_COMPLETED
+                $ref: '#/components/schemas/StatusResponse'
         '404':
           description: The specified tx was not found.
           content:
@@ -2007,45 +1963,47 @@ components:
           type: string
       type: object
     Asset:
+      type: object
+      required:
+        - denom
+        - chain_id
+        - origin_denom
+        - origin_chain_id
+        - trace
+        - is_cw20
+        - is_evm
+        - is_svm
       properties:
         denom:
           description: Denom of the asset
           type: string
-          required: true
         chain_id:
           description: Chain-id of the asset
           type: string
-          required: true
         origin_denom:
           description:
             Denom of the origin of the asset. If this is an ibc denom, this
             is the original denom that the ibc token represents
           type: string
-          required: true
         origin_chain_id:
           description:
             Chain-id of the origin of the asset. If this is an ibc denom, this
             is the chain-id of the asset that the ibc token represents
           type: string
-          required: true
         trace:
           description:
             The forward slash delimited sequence of ibc ports and channels
             that can be traversed to unwind an ibc token to its origin asset.
           type: string
-          required: true
         is_cw20:
           description: Indicates whether asset is a CW20 token
           type: boolean
-          required: true
         is_evm:
           description: Indicates whether asset is an EVM token
           type: boolean
-          required: true
         is_svm:
           description: Indicates whether asset is an SVM token
           type: boolean
-          required: true
         symbol:
           description: Symbol of the asset, e.g. ATOM for uatom
           nullable: true
@@ -2083,8 +2041,9 @@ components:
             Gravity USDC
           nullable: true
           type: string
-      type: object
     AssetBetweenChains:
+      required:
+        - txs_required
       properties:
         asset_on_source:
           $ref: '#/components/schemas/Asset'
@@ -2093,7 +2052,6 @@ components:
         txs_required:
           description: Number of transactions required to transfer the asset
           type: integer
-          required: true
         bridges:
           description: Bridges that are used to transfer the asset
           items:
@@ -2180,6 +2138,12 @@ components:
           deprecated: true
       type: object
     AxelarTransferInfo:
+      type: object
+      required:
+        - to_chain_id
+        - from_chain_id
+        - state
+        - txs
       properties:
         axelar_scan_link:
           description: Link to the transaction on the Axelar Scan explorer
@@ -2187,22 +2151,17 @@ components:
         to_chain_id:
           description: Chain ID of the destination chain
           type: string
-          required: true
         from_chain_id:
           description: Chain ID of the source chain
           type: string
-          required: true
         state:
           $ref: '#/components/schemas/AxelarTransferState'
-          required: true
         txs:
           oneOf:
             - $ref: '#/components/schemas/ContractCallWithTokenTxs'
             - $ref: '#/components/schemas/SendTokenTxs'
-          required: true
         type:
           $ref: '#/components/schemas/AxelarTransferType'
-      type: object
     AxelarTransferState:
       description: |
         Axelar transfer state:
@@ -2471,26 +2430,27 @@ components:
           nullable: true
       type: object
     GoFastTransferInfo:
+      type: object
+      required:
+        - from_chain_id
+        - to_chain_id
+        - state
+        - txs
       properties:
         from_chain_id:
           description: Chain Id of the source chain
           type: string
-          required: true
         to_chain_id:
           description: Chain Id of the destination chain
           type: string
-          required: true
         state:
           $ref: '#/components/schemas/GoFastTransferState'
-          required: true
         txs:
           $ref: '#/components/schemas/GoFastTransferTxs'
-          required: true
         error_message:
           description: Error message if the transfer failed post-fill
           type: string
           nullable: true
-      type: object
     GoFastTransferWrapper:
       properties:
         go_fast_transfer:
@@ -2508,17 +2468,18 @@ components:
             type: string
     BalanceResponseDenomEntry:
       type: object
+      required:
+        - amount
+        - formatted_amount
       properties:
         amount:
           type: string
-          required: true
         decimals:
           type: integer
           format: int32
           nullable: true
         formatted_amount:
           type: string
-          required: true
         price:
           type: string
           nullable: true
@@ -2583,27 +2544,35 @@ components:
         - LAYER_ZERO
         - EUREKA
     Chain:
+      type: object
+      required:
+        - chain_name
+        - chain_id
+        - pfm_enabled
+        - cosmos_module_support
+        - supports_memo
+        - bech32_prefix
+        - fee_assets
+        - chain_type
+        - ibc_capabilities
+        - is_testnet
+        - pretty_name
       properties:
         chain_name:
           description: Name of the chain
           type: string
-          required: true
         chain_id:
           description: Chain-id of the chain
           type: string
-          required: true
         pfm_enabled:
           description: Whether the PFM module is enabled on the chain
           type: boolean
-          required: true
         cosmos_module_support:
           description: Supported cosmos modules
           $ref: '#/components/schemas/CosmosModuleSupport'
-          required: true
         supports_memo:
           description: Whether the chain supports IBC memos
           type: boolean
-          required: true
         logo_uri:
           description: chain logo URI
           nullable: true
@@ -2611,30 +2580,23 @@ components:
         bech32_prefix:
           description: Bech32 prefix of the chain
           type: string
-          required: true
         fee_assets:
           description: Fee assets of the chain
           items:
             $ref: '#/components/schemas/FeeAsset'
           type: array
-          required: true
         chain_type:
           description: Type of chain, e.g. "cosmos" or "evm"
           $ref: '#/components/schemas/ChainType'
-          required: true
         ibc_capabilities:
           description: IBC capabilities of the chain
           $ref: '#/components/schemas/IbcCapabilities'
-          required: true
         is_testnet:
           description: Whether the chain is a testnet
           type: boolean
-          required: true
         pretty_name:
           description: User friendly name of the chain
           type: string
-          required: true
-      type: object
     ChainType:
       type: string
       enum:
@@ -2705,21 +2667,22 @@ components:
           $ref: '#/components/schemas/CosmWasmContractMsg'
       type: object
     Erc20Approval:
+      type: object
+      required:
+        - amount
+        - spender
+        - token_contract
       description: An ERC20 token contract approval
       properties:
         amount:
           description: Amount of the approval
           type: string
-          required: true
         spender:
           description: Address of the spender
           type: string
-          required: true
         token_contract:
           description: Address of the ERC20 token contract
           type: string
-          required: true
-      type: object
     ErrorDetail:
       type: object
       properties:
@@ -2759,11 +2722,12 @@ components:
       type: object
     CosmosTx:
       description: A transaction on a Cosmos chain
+      required:
+        - chain_id
       properties:
         chain_id:
           description: Chain-id of the chain that the transaction is intended for
           type: string
-          required: true
         path:
           description: Path of chain-ids that the message is intended to interact with
           items:
@@ -2777,10 +2741,11 @@ components:
           items:
             $ref: '#/components/schemas/CosmosMsg'
     CosmosTxWrapper:
+      required:
+        - cosmos_tx
       properties:
         cosmos_tx:
           $ref: '#/components/schemas/CosmosTx'
-      required: true
     EvmSwap:
       description: A swap on an EVM chain
       properties:
@@ -2818,11 +2783,12 @@ components:
       type: object
     EvmTx:
       description: A transaction on an EVM chain
+      required:
+        - chain_id
       properties:
         chain_id:
           description: Chain-id of the chain that the transaction is intended for
           type: string
-          required: true
         data:
           description: Data of the transaction
           type: string
@@ -2842,18 +2808,20 @@ components:
           type: string
       type: object
     EvmTxWrapper:
+      required:
+        - evm_tx
       properties:
         evm_tx:
           $ref: '#/components/schemas/EvmTx'
       type: object
-      required: true
     SvmTx:
       description: A transaction on an SVM chain
+      required:
+        - chain_id
       properties:
         chain_id:
           description: Chain-id of the chain that the transaction is intended for
           type: string
-          required: true
         signer_address:
           description: The address of the wallet that will sign this transaction
           type: string
@@ -2862,20 +2830,22 @@ components:
           type: string
       type: object
     SvmTxWrapper:
+      required:
+        - svm_tx
       properties:
         svm_tx:
           $ref: '#/components/schemas/SvmTx'
       type: object
-      required: true
     FeeAsset:
       description:
         Asset used to pay gas fees and the recommended price tiers. Assets
         and gas price recommendations are sourced from the [keplr chain registry](https://github.com/chainapsis/keplr-chain-registry)
+      required:
+        - denom
       properties:
         denom:
           description: Asset denom
           type: string
-          required: true
         gas_price:
           description: Gas price tiers
           nullable: true
@@ -2948,21 +2918,22 @@ components:
           description: Indicates whether this transfer is relayed via Smart Relay
       type: object
     HyperlaneTransferInfo:
+      required:
+        - from_chain_id
+        - to_chain_id
+        - state
+        - txs
       properties:
         from_chain_id:
           description: Chain ID of the source chain
           type: string
-          required: true
         to_chain_id:
           description: Chain ID of the destination chain
           type: string
-          required: true
         state:
           $ref: '#/components/schemas/HyperlaneTransferState'
-          required: true
         txs:
           $ref: '#/components/schemas/HyperlaneTransferTransactions'
-          required: true
       type: object
     HyperlaneTransferState:
       description: |
@@ -2994,21 +2965,22 @@ components:
           $ref: '#/components/schemas/HyperlaneTransfer'
       type: object
     IBCTransferInfo:
+      required:
+        - to_chain_id
+        - packet_txs
+        - from_chain_id
+        - state
       properties:
         to_chain_id:
           description: Chain ID of the destination chain
           type: string
-          required: true
         packet_txs:
           $ref: '#/components/schemas/Packet'
-          required: true
         from_chain_id:
           description: Chain ID of the source chain
           type: string
-          required: true
         state:
           $ref: '#/components/schemas/TransferState'
-          required: true
       type: object
     Msg:
       oneOf:
@@ -3065,19 +3037,20 @@ components:
         - $ref: '#/components/schemas/StargateTransferWrapper'
         - $ref: '#/components/schemas/LayerZeroTransferWrapper'
         - $ref: '#/components/schemas/EurekaTransferWrapper'
+      required:
+        - tx_index
+        - amount_in
+        - amount_out
       properties:
         tx_index:
           description: Index of the tx returned from Msgs that executes this operation
           type: integer
-          required: true
         amount_in:
           description: Amount of input asset to this operation
           type: string
-          required: true
         amount_out:
           description: Amount of output asset from this operation
           type: string
-          required: true
     OptionalAsset:
       properties:
         asset:
@@ -3152,6 +3125,8 @@ components:
         - PACKET_ERROR_TIMEOUT
       type: string
     ChainTransaction:
+      required:
+        - explorer_link
       properties:
         chain_id:
           description: Chain ID the packet event occurs on
@@ -3159,7 +3134,6 @@ components:
         explorer_link:
           description: Link to the transaction on block explorer
           type: string
-          required: true
         tx_hash:
           description: Hash of the transaction the packet event occurred in
           type: string
@@ -3194,15 +3168,26 @@ components:
         - BAD_PRICE_WARNING
       type: string
     Route:
+      required:
+        - amount_in
+        - amount_out
+        - chain_ids
+        - required_chain_addresses
+        - dest_asset_chain_id
+        - dest_asset_denom
+        - estimated_amount_out
+        - operations
+        - source_asset_chain_id
+        - source_asset_denom
+        - txs_required
+        - estimated_route_duration_seconds
       properties:
         amount_in:
           description: Amount of source asset to be transferred or swapped
           type: string
-          required: true
         amount_out:
           description: Amount of destination asset out
           type: string
-          required: true
         chain_ids:
           description:
             Chain-ids of all chains of the transfer or swap, in order of usage
@@ -3210,7 +3195,6 @@ components:
           items:
             type: string
           type: array
-          required: true
         required_chain_addresses:
           description:
             All chain-ids that require an address to be provided for, in order
@@ -3218,36 +3202,29 @@ components:
           type: array
           items:
             type: string
-          required: true
         dest_asset_chain_id:
           description: Chain-id of the destination asset
           type: string
-          required: true
         dest_asset_denom:
           description: Denom of the destination asset
           type: string
-          required: true
         does_swap:
           description: Whether this route performs a swap
           type: boolean
         estimated_amount_out:
           description: Amount of destination asset out, if a swap is performed
           type: string
-          required: true
         operations:
           description: Array of operations required to perform the transfer or swap
           items:
             $ref: '#/components/schemas/Operation'
           type: array
-          required: true
         source_asset_chain_id:
           description: Chain-id of the source asset
           type: string
-          required: true
         source_asset_denom:
           description: Denom of the source asset
           type: string
-          required: true
         swap_venues:
           type: array
           items:
@@ -3256,7 +3233,6 @@ components:
         txs_required:
           description: Number of transactions required to perform the transfer or swap
           type: integer
-          required: true
         usd_amount_in:
           description: Amount of the source denom, converted to USD value
           type: string
@@ -3287,7 +3263,6 @@ components:
         estimated_route_duration_seconds:
           description: The estimated time in seconds for the route to execute
           type: integer
-          required: true
       type: object
     SendTokenError:
       properties:
@@ -3564,21 +3539,22 @@ components:
           $ref: '#/components/schemas/OPInitTransfer'
       type: object
     OPInitTransferInfo:
+      required:
+        - to_chain_id
+        - from_chain_id
+        - state
+        - txs
       properties:
         to_chain_id:
           description: Chain ID of the destination chain
           type: string
-          required: true
         from_chain_id:
           description: Chain ID of the source chain
           type: string
-          required: true
         state:
           $ref: '#/components/schemas/OPInitTransferState'
-          required: true
         txs:
           $ref: '#/components/schemas/OPInitTransferTxs'
-          required: true
       type: object
     OPInitTransferTxs:
       properties:
@@ -3668,7 +3644,7 @@ components:
           type: string
           nullable: true
         to_chain_callback_contract_address:
-          description: 
+          description: Address of the callback contract on the destination chain
           type: string
           nullable: true
         dest_denom:
@@ -3817,21 +3793,22 @@ components:
           nullable: true
       type: object
     EurekaTransferInfo:
+      required:
+        - from_chain_id
+        - to_chain_id
+        - state
+        - packet_txs
       properties:
         from_chain_id:
           description: Chain ID of the source chain
           type: string
-          required: true
         to_chain_id:
           description: Chain ID of the destination chain
           type: string
-          required: true
         state:
           $ref: '#/components/schemas/TransferState'
-          required: true
         packet_txs:
           $ref: '#/components/schemas/Packet'
-          required: true
       type: object
     EurekaTransferWrapper:
       properties:
@@ -3840,58 +3817,60 @@ components:
       type: object
     LayerZeroTransfer:
       description: A Layer Zero Transfer
+      required:
+        - from_chain_id
+        - to_chain_id
+        - denom_in
+        - denom_out
+        - source_oft_contract_address
+        - destination_endpoint_id
+        - messaging_fee_asset
+        - messaging_fee_amount
+        - messaging_fee_amount_usd
+        - bridge_id
       properties:
         from_chain_id:
           description: Chain-id on which the transfer is initiated
           type: string
-          required: true
         to_chain_id:
           description: Chain-id on which the transfer is received
           type: string
-          required: true
         denom_in:
           description: Denom of the input asset of the transfer
           type: string
-          required: true
         denom_out:
           description: Denom of the output asset of the transfer
           type: string
-          required: true
         source_oft_contract_address:
           type: string
-          required: true
         destination_endpoint_id:
           type: number
-          required: true
         messaging_fee_asset:
           $ref: '#/components/schemas/Asset'
-          required: true
         messaging_fee_amount:
           type: string
-          required: true
         messaging_fee_amount_usd:
           type: string
-          required: true
         bridge_id:
           $ref: '#/components/schemas/BridgeType'
-          required: true
       type: object
     LayerZeroTransferInfo:
+      required:
+        - from_chain_id
+        - to_chain_id
+        - state
+        - txs
       properties:
         from_chain_id:
           description: Chain ID of the source chain
           type: string
-          required: true
         to_chain_id:
           description: Chain ID of the destination chain
           type: string
-          required: true
         state:
           $ref: '#/components/schemas/LayerZeroTransferState'
-          required: true
         txs:
           $ref: '#/components/schemas/LayerZeroTransferTransactions'
-          required: true
       type: object
     LayerZeroTransferWrapper:
       properties:
@@ -4148,7 +4127,7 @@ components:
         fee_payer_address:
           type: string
           description: Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format.
-          defauld: false
+          default: false
 
     MsgsDirectRequest:
       type: object
@@ -4230,7 +4209,7 @@ components:
         fee_payer_address:
           type: string
           description: Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format.
-          defauld: false
+          default: false
 
     AssetRecommendationsRequest:
       type: object
@@ -4263,6 +4242,58 @@ components:
         chain_id:
           type: string
           description: Chain ID of the transaction
+    
+    TrackTxResponse:
+      type: object
+      required:
+        - tx_hash
+        - explorer_link
+      properties:
+        tx_hash:
+          type: string
+          description: Hash of the transaction
+        explorer_link:
+          type: string
+          description: Link to the transaction on the relevant block explorer
+
+    StatusResponse:
+      type: object
+      required:
+        - state
+        - transfer_sequence
+      properties:
+        transfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferStatus'
+          description: Transfer status for all transfers initiated by the transaction in the order they were initiated.
+        state:
+          $ref: '#/components/schemas/TransactionState'
+          description: The overall state reflecting the end-to-end status of all transfers initiated by the original transaction.
+        next_blocking_transfer:
+          description: Details about the next transfer in the sequence that is preventing further progress, if any.
+          nullable: true
+          properties:
+            transfer_sequence_index:
+              type: integer
+          type: object
+        transfer_asset_release:
+          $ref: '#/components/schemas/TransferAssetRelease'
+        error:
+          description: Details about any error encountered during the transaction or its subsequent transfers.
+          allOf:
+            - $ref: '#/components/schemas/StatusError'
+          nullable: true
+        transfer_sequence:
+          description: "**DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version."
+          deprecated: true
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferEvent'
+        status:
+          type: string
+          description: A high-level status indicator for the transaction's completion state.
+          example: STATE_COMPLETED
 
     IbcOriginAssetsRequest:
       type: object
