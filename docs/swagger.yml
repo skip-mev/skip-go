@@ -1463,16 +1463,7 @@ paths:
                 tx_hash: F30790E79987F18F3A4DA8C7A9BA9FD837043EF59D8236CA85180E1078BC607F
                 explorer_link: https://www.mintscan.io/osmosis/tx/F30790E79987F18F3A4DA8C7A9BA9FD837043EF59D8236CA85180E1078BC607F
               schema:
-                type: object
-                properties:
-                  tx_hash:
-                    type: string
-                    description: Hash of the transaction
-                    required: true
-                  explorer_link:
-                    type: string
-                    description: Link to the transaction on the relevant block explorer
-                    required: true
+                $ref: '#/components/schemas/TrackTxResponse'
         '400':
           description: The request was invalid, i.e. the transaction hash was malformed or the specified transaction did not execute successfully.
           content:
@@ -1720,42 +1711,7 @@ paths:
                           released: true
                         error: null
               schema:
-                type: object
-                properties:
-                  transfers:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TransferStatus'
-                    description: Transfer status for all transfers initiated by the transaction in the order they were initiated.
-                  state:
-                    $ref: '#/components/schemas/TransactionState'
-                    description: The overall state reflecting the end-to-end status of all transfers initiated by the original transaction.
-                    required: true
-                  next_blocking_transfer:
-                    description: Details about the next transfer in the sequence that is preventing further progress, if any.
-                    nullable: true
-                    properties:
-                      transfer_sequence_index:
-                        type: integer
-                    type: object
-                  transfer_asset_release:
-                    $ref: '#/components/schemas/TransferAssetRelease'
-                  error:
-                    description: Details about any error encountered during the transaction or its subsequent transfers.
-                    allOf:
-                      - $ref: '#/components/schemas/StatusError'
-                    nullable: true
-                  transfer_sequence:
-                    description: "**DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version."
-                    deprecated: true
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/TransferEvent'
-                    required: true
-                  status:
-                    type: string
-                    description: A high-level status indicator for the transaction's completion state.
-                    example: STATE_COMPLETED
+                $ref: '#/components/schemas/StatusResponse'
         '404':
           description: The specified tx was not found.
           content:
@@ -4263,6 +4219,56 @@ components:
         chain_id:
           type: string
           description: Chain ID of the transaction
+    
+    TrackTxResponse:
+      type: object
+      properties:
+        tx_hash:
+          type: string
+          description: Hash of the transaction
+          required: true
+        explorer_link:
+          type: string
+          description: Link to the transaction on the relevant block explorer
+          required: true
+
+    StatusResponse:
+      type: object
+      properties:
+        transfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferStatus'
+          description: Transfer status for all transfers initiated by the transaction in the order they were initiated.
+        state:
+          $ref: '#/components/schemas/TransactionState'
+          description: The overall state reflecting the end-to-end status of all transfers initiated by the original transaction.
+          required: true
+        next_blocking_transfer:
+          description: Details about the next transfer in the sequence that is preventing further progress, if any.
+          nullable: true
+          properties:
+            transfer_sequence_index:
+              type: integer
+          type: object
+        transfer_asset_release:
+          $ref: '#/components/schemas/TransferAssetRelease'
+        error:
+          description: Details about any error encountered during the transaction or its subsequent transfers.
+          allOf:
+            - $ref: '#/components/schemas/StatusError'
+          nullable: true
+        transfer_sequence:
+          description: "**DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version."
+          deprecated: true
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferEvent'
+          required: true
+        status:
+          type: string
+          description: A high-level status indicator for the transaction's completion state.
+          example: STATE_COMPLETED
 
     IbcOriginAssetsRequest:
       type: object
