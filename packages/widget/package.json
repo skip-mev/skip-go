@@ -31,6 +31,10 @@
     ".": {
       "types": "./build/index.d.ts",
       "import": "./build/index.js"
+    },
+    "./ui": {
+      "types": "./build/ui.d.ts",
+      "import": "./build/ui.js"
     }
   },
   "types": "./build/index.d.ts",
