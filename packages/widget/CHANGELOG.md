@@ -1,5 +1,15 @@
 ## 0.0.15
 
+## 3.14.3
+
+### Patch Changes
+
+- bf3b837: Deprioritize asset images from wormhole
+- b3f72d4: Use proxy api for amplitude
+- 9016a64: fix missing multi tx route indicator
+- Updated dependencies [71fb39a]
+  - @skip-go/client@1.5.2
+
 ## 3.14.2
 
 ### Patch Changes
