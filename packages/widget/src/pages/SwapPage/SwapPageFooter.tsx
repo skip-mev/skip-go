@@ -17,6 +17,7 @@ import { useIsGoFast } from "@/hooks/useIsGoFast";
 
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { currentTransactionAtom } from "@/state/history";
+import { Routes, currentPageAtom } from "@/state/router";
 
 const EstimatedDuration = ({ seconds }: { seconds?: number }) => {
   const formatted = seconds ? convertSecondsToMinutesOrHours(seconds) : null;
@@ -63,6 +64,7 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   highlightSettings = false,
 }) => {
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
+  const currentPage = useAtomValue(currentPageAtom);
   const routePreference = useAtomValue(routePreferenceAtom);
   const settingsChanged = useSettingsChanged();
   const isMobile = useIsMobileScreenSize();
@@ -70,7 +72,11 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   const currentTransaction = useAtomValue(currentTransactionAtom);
 
   const estimatedSeconds = route?.estimatedRouteDurationSeconds;
-  const signaturesRequired = route ? route?.txsRequired - (currentTransaction?.txsSigned ?? 0) : 0;
+  const signaturesRequired = route
+    ? currentPage === Routes.SwapPage
+      ? route.txsRequired
+      : route.txsRequired - (currentTransaction?.txsSigned ?? 0)
+    : 0;
 
   const leftContent = () => {
     if (content) return content;
