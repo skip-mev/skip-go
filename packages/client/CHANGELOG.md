@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.5.2
+
+### Patch Changes
+
+- 71fb39a: Allow calling api functions without first configuring api/client options
+
 ## 1.5.1
 
 ### Patch Changes
