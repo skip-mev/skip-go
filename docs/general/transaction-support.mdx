@@ -56,13 +56,13 @@ title: Transaction Support
   <img src="/images/explorer-failed-funds-released-on-chain.png" alt="Funds released info" width="700"/>
 </p>
 
-- If your IBC transaction is pending, it may take upto 24hours to clear.
+- If your IBC transaction is pending, it may take upto 24 hours to clear.
 
 <p align="center">
   <img src="/images/explorer-pending-ibc-transaction.png" alt="Funds released info" width="700"/>
 </p>
 
-- If you cannot find where your funds are released, refunded, received, please go to [Step 3](#step-3-escalate-if-needed).
+- If you cannot find where your funds are released, refunded, received, please go to step 3.
 
 ---
 
@@ -73,10 +73,10 @@ Skip Go supports multiple transfer mechanisms. Use the following references to u
 ---
 
 ### **IBC Transfers**
-Learn more: [`IBC Transfer Details`](#ibc-transfers)
+Learn more: [IBC Transfer Details](/general/multi-chain-realtime-transaction-and-packet-tracking#ibc-transfer-data)
 
 - **States:**
-  - `TRANSFER_PENDING`: Sent, waiting to be received. May take upto 24horus to be received on chain.
+  - `TRANSFER_PENDING`: Sent, waiting to be received. May take upto 24 hours to be received on chain.
   - `TRANSFER_RECEIVED`: Received, may still revert if multi-hop.
   - `TRANSFER_SUCCESS`: Completed successfully.
   - `TRANSFER_FAILURE`: Transfer failed.
@@ -87,7 +87,7 @@ Learn more: [`IBC Transfer Details`](#ibc-transfers)
 ---
 
 ### **Axelar Transfers**
-Learn more: [`Axelar Transfer Details`](#axelar-transfers)
+Learn more: [Axelar Transfer Details](/general/multi-chain-realtime-transaction-and-packet-tracking#axelar-transfer-data)
 
 - **States:**
   - `AXELAR_TRANSFER_PENDING_CONFIRMATION`: Waiting for Axelar confirmation.
@@ -101,7 +101,7 @@ Learn more: [`Axelar Transfer Details`](#axelar-transfers)
 ---
 
 ### **CCTP Transfers**
-Learn more: [`CCTP Transfer Details`](#cctp-transfers)
+Learn more: [CCTP Transfer Details](/general/multi-chain-realtime-transaction-and-packet-tracking#cctp-transfer-data)
 
 - **States:**
   - `CCTP_TRANSFER_SENT`: Burn submitted.
@@ -114,27 +114,36 @@ Learn more: [`CCTP Transfer Details`](#cctp-transfers)
 ---
 
 ### **Hyperlane Transfers**
-Learn more: [`Hyperlane Transfer Details`](#hyperlane-transfers)
+Learn more: [Hyperlane Transfer Details](/general/multi-chain-realtime-transaction-and-packet-tracking#hyperlane-transfer-data)
 
 - **States:**
-  - `HYPERLANE_TRANSFER_SENT`, `RECEIVED`, `FAILED`, `UNKNOWN`
+  - `HYPERLANE_TRANSFER_SENT`: The transfer transaction on the source chain has executed.
+  - `HYPERLANE_TRANSFER_RECEIVED`: The transfer has been received on the destination chain.
+  - `HYPERLANE_TRANSFER_FAILED`: The transfer failed to complete.
+  - `PACKET_ERROR_TIMEOUT`: The packet timed out.
+  - `PACKET_ERROR_ACKNOWLEDGEMENT`: Error in packet acknowledgement.
+
 - **Transactions:**
   - `send_tx`, `receive_tx`
 
 ---
 
 ### **OPInit Transfers**
-Learn more: [`OPInit Transfer Details`](#opinit-transfers)
+Learn more: [OPInit Transfer Details](/general/multi-chain-realtime-transaction-and-packet-tracking#opinit-transfer-data)
 
 - **States:**
-  - `OPINIT_TRANSFER_SENT`, `RECEIVED`, `UNKNOWN`
+  - `OPINIT_TRANSFER_SENT`: The deposit transaction on the source chain has executed.
+  - `OPINIT_TRANSFER_RECEIVED`: Received at the destination chain.
+  - `OPINIT_TRANSFER_FAILURE`: The transfer has failed.
+  - `PACKET_ERROR_TIMEOUT`: The packet timed out.
+  - `PACKET_ERROR_ACKNOWLEDGEMENT`: Error in packet acknowledgement.
 - **Transactions:**
   - `send_tx`, `receive_tx`
 
 ---
 
 ### **Go Fast Transfers**
-Learn more: [`Go Fast Transfer Details`](#go-fast-transfers)
+Learn more: [Go Fast Transfer Details](/general/multi-chain-realtime-transaction-and-packet-tracking#go-fast-transfer-data)
 
 - **States:**
   - `GO_FAST_TRANSFER_SENT`: Intent submitted.
@@ -146,7 +155,7 @@ Learn more: [`Go Fast Transfer Details`](#go-fast-transfers)
 ---
 
 ### **Stargate Transfers**
-Learn more: [`Stargate Transfer Details`](#stargate-transfers)
+Learn more: [Stargate Transfer Details](/general/multi-chain-realtime-transaction-and-packet-tracking#stargate-transfer-data)
 
 - **States:**
   - `STARGATE_TRANSFER_SENT`, `RECEIVED`, `FAILED`, `UNKNOWN`
@@ -156,18 +165,28 @@ Learn more: [`Stargate Transfer Details`](#stargate-transfers)
 ---
 
 ### **Eureka Transfers**
-Learn more: [`Eureka Transfer Details`](#eureka-transfers)
+Learn more: [Eureka Transfer Details](/general/multi-chain-realtime-transaction-and-packet-tracking#ibc-transfer-data)
 
-- **States:** _(To be documented)_
+- **States:**
+  - `TRANSFER_SUCCESS`: The Eureka transfer has completed successfully.
+  - `TRANSFER_RECEIVED`: The Eureka transfer has been received by the destination chain.
+  - `TRANSFER_PENDING`: The Eureka transfer is in progress.
+  - `TRANSFER_FAILURE`: The Eureka transfer has failed.
+  - `PACKET_ERROR_ACKNOWLEDGEMENT`: Error in packet acknowledgement
+  - `PACKET_ERROR_TIMEOUT`: The packet timed out before reaching the destination 
+
 - **Transactions:** Typically includes `send_tx`, `receive_tx`
-- Track via: [Skip Explorer](https://explorer.skip.build)
 
 ---
 
 ### **LayerZero Transfers**
-Learn more: [`LayerZero Transfer Details`](#layerzero-transfers)
 
-- **States:** _(To be documented — depends on integration)_
+- **States:**
+  - `LAYER_ZERO_TRANSFER_SENT`: Transfer initiated on the source chain
+  - `LAYER_ZERO_TRANSFER_RECEIVED`: Assets received on the destination chain
+  - `LAYER_ZERO_TRANSFER_FAILED`: Transfer failed
+  - `LAYER_ZERO_TRANSFER_UNKNOWN`: Transfer state could not be determined
+
 - **Transactions:** Usually `send_tx`, `receive_tx`, and `ack_tx`
 
 ---
