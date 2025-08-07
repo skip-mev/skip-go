@@ -243,7 +243,7 @@ export const SwapPage = () => {
     if (!sourceAccount?.address && !isInvertingSwap) {
       return (
         <MainButton
-          label="Connects Wallet"
+          label="Connect Wallet"
           icon={ICONS.plus}
           onClick={() => {
             track("swap page: connect wallet button - clicked");

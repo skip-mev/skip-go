@@ -21,6 +21,7 @@
     "build": "yarn run build:client && yarn run build:widget && yarn run build:nextjs",
     "build:widget": "yarn workspace @skip-go/widget run build",
     "build:nextjs": "yarn workspace nextjs build",
+    "build:explorer": "yarn workspace explorer build",
     "build:client": "yarn workspace @skip-go/client build",
     "codegen": "yarn workspace @skip-go/client codegen",
     "test": "yarn workspace @skip-go/client run test",
