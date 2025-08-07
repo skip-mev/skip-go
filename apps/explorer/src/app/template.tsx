@@ -1,20 +1,23 @@
 "use client";
+import React from "react";
 import { defaultTheme, lightTheme } from "@skip-go/widget";
 import { ShadowDomAndProviders } from "@skip-go/widget/ui";
-import { useLocalStorage, useIsClient } from "@uidotdev/usehooks";
+import { useLocalStorage } from "@uidotdev/usehooks";
+import { useIsClient } from "@uidotdev/usehooks";
 
+export default function Template({ children }: { children: React.ReactNode }) {
+  return (
+    <ClientOnly>
+      <Wrapper>
+        {children}
+        <ToggleThemeButton />
+      </Wrapper>
+    </ClientOnly>
+  );
+}
 
 export const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  const [theme] = useLocalStorage<"dark" | "light">(
-    "explorer-theme",
-    "dark"
-  );
-   const isClient = useIsClient()
-
-  if (isClient === false) {
-    return null
-  }
-
+  const [theme] = useLocalStorage<"dark" | "light">("explorer-theme", "dark");
   return (
     <ShadowDomAndProviders theme={theme === "dark" ? defaultTheme : lightTheme}>
       <div
@@ -60,4 +63,15 @@ export const ToggleThemeButton = () => {
       Toggle Theme
     </button>
   );
-}
+};
+
+type ClientOnlyProps = {
+  children: React.ReactNode;
+};
+
+export const ClientOnly: React.FC<ClientOnlyProps> = ({ children }) => {
+  const isClient = useIsClient();
+
+  // Render children if on client side, otherwise return null
+  return isClient ? <>{children}</> : null;
+};
