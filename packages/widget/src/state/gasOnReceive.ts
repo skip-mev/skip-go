@@ -170,6 +170,7 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
     const chainAddresses = get(chainAddressesAtom);
     const chainAddressesArray = Object.values(chainAddresses);
     const destination = chainAddressesArray?.[chainAddressesArray.length - 1];
+    const sourceAddress = chainAddressesArray?.[0]?.address;
     const destinationAddress = destination?.address;
 
     const enabledDestinationChainType = [ChainType.Cosmos, ChainType.Evm];
@@ -182,6 +183,9 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
       if (disabledChainIds.includes(chain.chainId)) return false;
       return true;
     })();
+    const isSameChainAndAddress =
+      originalRoute?.sourceAssetChainId === originalRoute?.destAssetChainId &&
+      sourceAddress === destinationAddress;
 
     const queryEnabled =
       originalRoute &&
@@ -189,7 +193,8 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
       !destinationAssetIsAFeeAsset &&
       !!destinationAddress &&
       isRouteEnabled &&
-      !currentTransactionItem;
+      !currentTransactionItem &&
+      !isSameChainAndAddress;
 
     return {
       enabled: queryEnabled,
