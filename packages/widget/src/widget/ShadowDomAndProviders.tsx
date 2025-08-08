@@ -18,11 +18,16 @@ export const disableShadowDomAtom = atom<boolean>(false);
 export const ShadowDomAndProviders = ({
   children,
   theme,
+  disableShadowDom,
 }: {
   children: ReactNode;
   theme?: PartialTheme;
+  disableShadowDom?: boolean;
 }) => {
-  const disableShadowDom = useAtomValue(disableShadowDomAtom);
+  const disableShadowDomAtomValue = useAtomValue(disableShadowDomAtom);
+  if (disableShadowDom === undefined) {
+    disableShadowDom = disableShadowDomAtomValue;
+  }
   useInjectFontsToDocumentHead();
 
   const [localShadowRoot, setLocalShadowRoot] = useState<ShadowRoot>();

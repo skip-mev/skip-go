@@ -19,7 +19,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
 export const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const [theme] = useLocalStorage<"dark" | "light">("explorer-theme", "dark");
   return (
-    <ShadowDomAndProviders theme={theme === "dark" ? defaultTheme : lightTheme}>
+    <ShadowDomAndProviders disableShadowDom theme={theme === "dark" ? defaultTheme : lightTheme}>
       <div
         style={{
           display: "flex",
