@@ -1,3 +1,30 @@
+@font-face {
+  font-family: ABCDiatype;
+  font-weight: 400;
+  src: url('/fonts/ABCDiatype-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: ABCDiatype;
+  font-weight: 500;
+  src: url('/fonts/ABCDiatype-Medium.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: ABCDiatype;
+  font-weight: 700;
+  src: url('/fonts/ABCDiatype-Bold.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: ABCDiatype-mono;
+  font-weight: 500;
+  src: url('/fonts/ABCDiatypeMono-Medium.woff2') format('woff2');
+  font-display: swap;
+}
 
 html,
 body {
