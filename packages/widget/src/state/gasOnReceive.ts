@@ -178,8 +178,8 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
     const chain = chains?.find((i) => i.chainId === destination?.chainId);
     const isRouteEnabled = (() => {
       if (!chain) return false;
-      if (!enabledDestinationChainType.includes(chain.chainType)) return false;
       if (disabledChainIds.includes(chain.chainId)) return false;
+      if (!enabledDestinationChainType.includes(chain.chainType)) return false;
       return true;
     })();
 
