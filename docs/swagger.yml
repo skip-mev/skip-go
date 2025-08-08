@@ -4097,7 +4097,7 @@ components:
           description: Amount of destination asset out
         address_list:
           type: array
-          description: Array of receipient and/or sender address for each chain in the path, corresponding to the chain_ids array returned from a route request
+          description: Array of receipient and/or sender address for each chain in the path, corresponding to the required_chain_addresses array returned from a route request
           items:
             type: string
         operations:
