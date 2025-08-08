@@ -20,7 +20,7 @@ When Gas on Receive is enabled, the widget automatically:
 3. **Provides native tokens** for gas fees on the destination chain
 4. **Displays the gas top-up** amount and status to users
 
-## Supported Chains
+## Supported Destination Chains
 
 ### Supported
 - **Cosmos chains** (e.g., Osmosis, Juno, Stargaze)
@@ -120,6 +120,10 @@ await executeMultipleRoutes({
       { chainId: "osmosis-1", address: "osmo1..." },
       { chainId: "42161", address: "0x..." }
     ]
+  },
+  slippageTolerancePercent: {
+    mainRoute: "1",
+    feeRoute: "10",
   },
   // Required signing functions
   getCosmosSigningClient: async (chainId) => {
