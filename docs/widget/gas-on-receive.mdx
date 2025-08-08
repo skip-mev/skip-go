@@ -1,0 +1,193 @@
+---
+title: "Gas on Receive"
+description: "Automatically provide users with gas tokens on destination chains during cross-chain swaps"
+---
+
+Gas on Receive helps users get native gas tokens on destination chains during cross-chain swaps. This prevents users from getting "stuck" with assets they can't use due to lacking gas for future transactions.
+
+<Note>
+**Widget**: Auto-detects need, user toggles on/off in v3.14.0+ | **Client Library**: Manual setup required in v1.5.0+
+</Note>
+
+## How It Works
+
+When Gas on Receive is enabled, the widget automatically:
+
+1. **Detects insufficient gas balance** on the destination chain
+2. **Splits the swap** into two parts:
+   - **Main route**: Your primary swap transaction
+   - **Fee route**: A smaller swap specifically for obtaining gas tokens
+3. **Provides native tokens** for gas fees on the destination chain
+4. **Displays the gas top-up** amount and status to users
+
+## Supported Chains
+
+### Supported
+- **Cosmos chains** (e.g., Osmosis, Juno, Stargaze)
+- **EVM L2 chains** (e.g., Arbitrum, Polygon, Base)
+
+### Not Supported
+- **Ethereum mainnet** (disabled due to high gas costs)
+- **Solana** (not currently supported)
+
+## Default Gas Amounts
+
+The feature automatically provides gas tokens worth:
+- **Cosmos chains**: $0.10 USD equivalent
+- **EVM L2 chains**: $2.00 USD equivalent
+
+These amounts are designed to cover multiple transactions on the respective chain types.
+
+## Automatic Activation
+
+Gas on Receive automatically activates when:
+- The destination chain is supported
+- The user's destination address has insufficient gas balance (< 3x current gas price)
+- The destination asset is different from the chain's native gas token
+
+Users can manually toggle the feature on/off via the widget interface.
+
+**Cost Impact**: The gas route uses a small portion of your swap amount (e.g., $0.10-$2.00) which slightly reduces your main swap output.
+
+## User Interface
+
+The feature appears in the widget as:
+- **Toggle switch**: Allows users to enable/disable the feature
+- **Gas amount display**: Shows how much gas will be received (e.g., "Enable gas top up - You'll get $2.00 in ETH")
+- **Transaction status**: During execution, shows "Receiving $2.00 in ETH as gas top-up"
+- **Completion status**: After success, displays "Received $2.00 in ETH as gas top-up"
+
+## Configuration
+
+### Widget Configuration
+
+Gas on Receive requires no configuration - the widget auto-detects when it's needed and shows a toggle switch:
+
+```tsx
+import { Widget } from "@skip-go/widget";
+
+function MyApp() {
+  return (
+    <Widget
+      defaultRoute={{
+        srcChainId: "osmosis-1",
+        destChainId: "42161", // Arbitrum  
+        srcAssetDenom: "uosmo",
+        destAssetDenom: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1" // WETH
+      }}
+      // Widget automatically:
+      // 1. Detects when user lacks gas on destination chain
+      // 2. Shows "Enable gas top up" toggle for supported chains
+      // 3. User manually enables/disables the feature
+    />
+  );
+}
+```
+
+### Client Library Usage
+
+The client library requires manual setup using `executeMultipleRoutes` (v1.5.0+). Use this when building custom interfaces or need more control than the widget provides:
+
+```typescript
+import { executeMultipleRoutes, route } from "@skip-go/client";
+
+// Create your main route and a smaller gas route
+const mainRoute = await route({
+  amountIn: "1000000", // 1 OSMO
+  sourceAssetChainId: "osmosis-1",
+  sourceAssetDenom: "uosmo",
+  destAssetChainId: "42161", // Arbitrum
+  destAssetDenom: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1" // WETH
+});
+
+const gasRoute = await route({
+  amountIn: "50000", // ~$2 worth for gas  
+  sourceAssetChainId: "osmosis-1",
+  sourceAssetDenom: "uosmo", 
+  destAssetChainId: "42161",
+  destAssetDenom: "0x0000000000000000000000000000000000000000" // Native ETH
+});
+
+// Execute both routes together
+await executeMultipleRoutes({
+  route: { mainRoute, gasRoute },
+  userAddresses: {
+    mainRoute: [
+      { chainId: "osmosis-1", address: "osmo1..." },
+      { chainId: "42161", address: "0x..." }
+    ],
+    gasRoute: [
+      { chainId: "osmosis-1", address: "osmo1..." },
+      { chainId: "42161", address: "0x..." }
+    ]
+  },
+  // Required signing functions
+  getCosmosSigningClient: async (chainId) => {
+    // Return your cosmos signing client for the chain
+    return yourCosmosWallet.getSigningClient(chainId);
+  },
+  getEVMSigningClient: async (chainId) => {
+    // Return your EVM signing client for the chain  
+    return yourEvmWallet.getSigningClient(chainId);
+  },
+  onRouteStatusUpdated: (status) => console.log(status)
+});
+```
+
+<Note>
+**Tip**: Most developers should use the widget for automatic gas management. Only use the client library approach if you need custom gas amounts or are building a custom interface.
+</Note>
+
+### Manual Gas Route Setup
+
+For more control, you can manually determine when to include gas routes based on user balances:
+
+```typescript
+import { balances } from "@skip-go/client";
+
+// Check if user has sufficient gas balance  
+const userBalances = await balances({
+  chains: {
+    "42161": { address: "0x..." } // User's Arbitrum address
+  }
+});
+
+const chainBalances = userBalances.chains?.["42161"]?.denoms;
+const nativeTokenBalance = chainBalances?.["0x0000000000000000000000000000000000000000"];
+
+// Simple check: does user have any native token balance?
+const hasEnoughGas = nativeTokenBalance?.amount && nativeTokenBalance.amount !== "0";
+
+if (!hasEnoughGas) {
+  // Include gas route in executeMultipleRoutes
+  console.log("User needs gas - including gas route");
+} else {
+  // Execute only main route
+  console.log("User has sufficient gas");
+}
+```
+
+### Custom Gas Amounts (Advanced)
+
+For advanced use cases, you can customize gas amounts by adjusting the `amountIn` when creating gas routes. The default equivalent amounts are:
+- **Cosmos chains**: $0.10 USD 
+- **EVM L2 chains**: $2.00 USD
+
+## Error Handling
+
+**If gas route fails**: Your main swap continues normally, you just won't receive the gas tokens. No funds are lost.
+
+**If main swap fails**: You receive the gas tokens you paid for, plus any remaining funds in your original source token.
+
+## Troubleshooting
+
+**Feature not appearing?**
+- Ensure you're using Widget v3.14.0+ or Client Library v1.5.0+
+- Check that the destination chain is supported (Cosmos chains, EVM L2s)
+- Feature auto-disables if user already has sufficient gas or destination asset is the native gas token
+
+**Transaction issues?**
+- Gas top-up failures don't affect your main swap - assets are safely returned
+- Main swap may succeed even if gas route fails
+
+For advanced routing configuration, see [Configuration](/widget/configuration).
