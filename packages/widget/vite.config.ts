@@ -50,7 +50,7 @@ export default defineConfig({
     minify: false,
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: [resolve(__dirname, "src/index.tsx"), resolve(__dirname, "src/ui.tsx")],
+      entry: [resolve(__dirname, "src/index.tsx")],
       formats: ["es"],
       name: "widget",
     },

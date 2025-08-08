@@ -20352,7 +20352,6 @@ __metadata:
   resolution: "explorer@workspace:apps/explorer"
   dependencies:
     "@eslint/eslintrc": ^3
-    "@skip-go/widget": "workspace:^"
     "@types/node": ^20
     "@types/react": ^19
     "@types/react-dom": ^19

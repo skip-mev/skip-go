@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@skip-go/widget": "workspace:^",
     "@uidotdev/usehooks": "^2.4.1",
     "next": "15.4.5",
     "react": "19.1.0",

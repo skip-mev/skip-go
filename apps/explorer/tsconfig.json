@@ -20,6 +20,13 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "@/components/*": ["../../packages/widget/src/components/*"],
+      "@/utils/*": ["../../packages/widget/src/utils/*"],
+      "@/hooks/*": ["../../packages/widget/src/hooks/*"],
+      "@/modals/*": ["../../packages/widget/src/modals/*"],
+      "@/icons": ["../../packages/widget/src/icons"],
+      "@/widget/*": ["../../packages/widget/src/widget/*"],
+      "@/fonts/*": ["../../packages/widget/src/fonts/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

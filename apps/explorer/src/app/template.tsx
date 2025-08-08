@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { defaultTheme, lightTheme } from "@skip-go/widget";
-import { ShadowDomAndProviders } from "@skip-go/widget/ui";
+import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { useIsClient } from "@uidotdev/usehooks";
 

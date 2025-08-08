@@ -1,6 +1,8 @@
 "use client";
-import { Button, PillButton, MainButton, Text } from "@skip-go/widget/ui";
 import { ToggleThemeButton } from "./template";
+import { Button, PillButton } from '@/components/Button';
+import { MainButton } from '@/components/MainButton';
+import { Text } from '@/components/Typography';
 
 export default function Home() {
   return (
