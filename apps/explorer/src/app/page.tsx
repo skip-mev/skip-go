@@ -2,7 +2,7 @@
 import { ToggleThemeButton } from "./template";
 import { Button, GhostButton } from '@/components/Button';
 import { MainButton } from '@/components/MainButton';
-import { Text, SmallText } from '@/components/Typography';
+import { Text } from '@/components/Typography';
 
 export default function Home() {
   return (
