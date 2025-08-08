@@ -1,7 +1,4 @@
-type IconProps = {
-  color?: string;
-  backgroundColor?: string;
-};
+import { IconProps } from ".";
 
 export const WarningIcon = ({
   color = "currentColor",

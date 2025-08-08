@@ -1,15 +1,11 @@
-type IconProps = {
-  color?: string;
-  backgroundColor?: string;
-  className?: string;
-};
+import { IconProps } from ".";
 
 export const SignatureIcon = ({
   color = "currentColor",
   backgroundColor,
   className,
   ...props
-}: IconProps & React.SVGProps<SVGSVGElement>) => {
+}: IconProps) => {
   if (backgroundColor) {
     return (
       <svg
