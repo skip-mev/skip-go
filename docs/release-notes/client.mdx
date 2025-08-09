@@ -3,6 +3,11 @@ title: "Client Library"
 description: "Selected updates and improvements to the `@skip-go/client` [npm package](https://www.npmjs.com/package/@skip-go/client)."
 ---
 
+## v1.5.0
+
+### Major Features
+- **Gas on Receive Support:** Added `executeMultipleRoutes` function that enables simultaneous execution of multiple routes. This powers the gas on receive feature, allowing users to automatically receive native gas tokens on destination chains during cross-chain swaps. The function accepts multiple routes (e.g., main swap + gas fee route) and executes them in a shared transaction for Cosmos chains. [Learn more about Gas on Receive](/widget/gas-on-receive#client-library-usage).
+
 ## v1.1.9
 
 ### Enhancements

@@ -36,6 +36,7 @@
             "pages": [
               "widget/getting-started",
               "widget/configuration",
+              "widget/gas-on-receive",
               "widget/web-component",
               "widget/migration-guide",
               "widget/faq"
