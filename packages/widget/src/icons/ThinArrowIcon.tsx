@@ -1,7 +1,4 @@
-type IconProps = {
-  color?: string;
-  direction?: "left" | "right";
-};
+import { IconProps } from ".";
 
 export const ThinArrowIcon = ({ color = "currentColor", direction = "left" }: IconProps) => (
   <svg

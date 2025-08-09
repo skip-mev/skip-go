@@ -1,11 +1,6 @@
-type IconProps = {
-  color?: string;
-};
+import { IconProps } from ".";
 
-export const HistoryIcon = ({
-  color = "currentColor",
-  ...props
-}: IconProps & React.SVGProps<SVGSVGElement>) => (
+export const HistoryIcon = ({ color = "currentColor", ...props }: IconProps) => (
   <svg
     width="14"
     height="12"
