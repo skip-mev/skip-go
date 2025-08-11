@@ -32,6 +32,7 @@ export const defaultTheme = {
     },
   },
   success: {
+    background: "#152B00",
     text: "#6fde00",
   },
   warning: {
@@ -67,6 +68,7 @@ export const lightTheme = {
     },
   },
   success: {
+    background: "#E1FFC4",
     text: "#6bcf07",
   },
   warning: {
@@ -127,6 +129,7 @@ export type Theme = {
     };
   };
   success: {
+    background: string;
     text: string;
   };
   warning: {

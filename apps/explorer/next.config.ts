@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
       "@/fonts": path.resolve(__dirname, "../../packages/widget/src/fonts"),
       "@/widget": path.resolve(__dirname, "../../packages/widget/src/widget"),
       "@/icons": path.resolve(__dirname, "../../packages/widget/src/icons"),
+      "@/state": path.resolve(__dirname, "../../packages/widget/src/state"),
+      "@/constants": path.resolve(__dirname, "../../packages/widget/src/constants"),
+      "@/pages": path.resolve(__dirname, "../../packages/widget/src/pages"),
+      "@/providers": path.resolve(__dirname, "../../packages/widget/src/providers"),
     };
 
     // Handle font files

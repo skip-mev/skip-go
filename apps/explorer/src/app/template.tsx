@@ -1,17 +1,25 @@
 "use client";
 import React from "react";
-import { defaultTheme, lightTheme } from "@skip-go/widget";
+import { defaultTheme, lightTheme } from "@/widget/theme";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { useIsClient } from "@uidotdev/usehooks";
+import { QueryProvider } from "../components/QueryProvider";
+import "../utils/skipClientConfig";
+import { Provider } from "jotai";
+import { jotaiStore } from "@/widget/Widget";
 
 export default function Template({ children }: { children: React.ReactNode }) {
   return (
     <ClientOnly>
-      <Wrapper>
-        {children}
-        <ToggleThemeButton />
-      </Wrapper>
+      <QueryProvider>
+        <Provider store={jotaiStore}>
+          <Wrapper>
+            {children}
+            <ToggleThemeButton />
+          </Wrapper>
+        </Provider>
+      </QueryProvider>
     </ClientOnly>
   );
 }

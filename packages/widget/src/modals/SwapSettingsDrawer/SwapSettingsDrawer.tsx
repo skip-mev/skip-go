@@ -12,8 +12,8 @@ import SlippageSelector from "@/modals/SwapSettingsDrawer/SlippageSelector";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { track } from "@amplitude/analytics-browser";
-import { convertToPxValue } from "@/utils/style";
 import RoutePreferenceSelector from "./RoutePreferenceSelector";
+import { Container } from "@/components/Container";
 
 export const SwapSettingsDrawer = createModal(() => {
   const theme = useTheme();
@@ -30,7 +30,7 @@ export const SwapSettingsDrawer = createModal(() => {
   }, [route]);
 
   return (
-    <StyledSwapPageSettings gap={15}>
+    <Container gap={15} borderRadius="modalContainer">
       <Column gap={10}>
         {route && (
           <Row justify="space-between" align="center">
@@ -103,16 +103,9 @@ export const SwapSettingsDrawer = createModal(() => {
           Close
         </SmallTextButton>
       </Row>
-    </StyledSwapPageSettings>
+    </Container>
   );
 });
-
-const StyledSwapPageSettings = styled(Column)`
-  width: 100%;
-  padding: 20px;
-  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.modalContainer)};
-  background: ${(props) => props.theme.primary.background.normal};
-`;
 
 export const SwapDetailText = styled(Row).attrs({
   as: SmallText,

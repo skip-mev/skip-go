@@ -10800,10 +10800,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.83.1":
+  version: 5.83.1
+  resolution: "@tanstack/query-core@npm:5.83.1"
+  checksum: 0c4a2f604de28fd8b97b07ce7ea119c52a8bf7ded877dfd6c2ebff14090d7a66aed4689cf53d78d432733f3845e0c0f9928abbe77d193a55fd92adf6e6ef8986
+  languageName: node
+  linkType: hard
+
 "@tanstack/query-core@npm:^5.51.21":
   version: 5.56.2
   resolution: "@tanstack/query-core@npm:5.56.2"
   checksum: e78430464de89fd2543155449391415983c7cdcd1ff2bb86da019414204b6800e2405e341db88000b36a101d3619ee7e94e90da1fa5497b2e021c5765924a64c
+  languageName: node
+  linkType: hard
+
+"@tanstack/query-devtools@npm:5.84.0":
+  version: 5.84.0
+  resolution: "@tanstack/query-devtools@npm:5.84.0"
+  checksum: 0121c54d3e2d4c410f2006dd8e3f34f5e3454e526cdc8ef28f5572dd69a675c5ab0530916038d0ec7708135cff5c65791edb3312d485180a3a32a0e949e692b3
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query-devtools@npm:^5.84.2":
+  version: 5.84.2
+  resolution: "@tanstack/react-query-devtools@npm:5.84.2"
+  dependencies:
+    "@tanstack/query-devtools": 5.84.0
+  peerDependencies:
+    "@tanstack/react-query": ^5.84.2
+    react: ^18 || ^19
+  checksum: 0f45418f3d6179e23c889b5a9abeba4877bced00fbda842682101e1e6cc06be47a30095149d7c8f882ef1d47d92c889373016749681208a2c94c5522324075d9
   languageName: node
   linkType: hard
 
@@ -10826,6 +10852,17 @@ __metadata:
   peerDependencies:
     react: ^18 || ^19
   checksum: dd4b33a801f8e97fec81ec2c0828c5d805674b7fc82b6899409cb18df60fbc42794baa985a21bbbc1b3ca8efc55ee7c5813e1d291e3becfa46bc35619d8f0ad0
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.84.2":
+  version: 5.84.2
+  resolution: "@tanstack/react-query@npm:5.84.2"
+  dependencies:
+    "@tanstack/query-core": 5.83.1
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 1284bced0c7acf74a443b359f94cb4700a2ec32dbd2a2a6f9e877eefe0b40e0c76d1cb5bfa2fe04aadac1ba7eae156e4f58b9c6ab70151f6c08492f4c32d4329
   languageName: node
   linkType: hard
 
@@ -20352,12 +20389,17 @@ __metadata:
   resolution: "explorer@workspace:apps/explorer"
   dependencies:
     "@eslint/eslintrc": ^3
+    "@skip-go/client": "workspace:^"
+    "@tanstack/react-query": ^5.84.2
+    "@tanstack/react-query-devtools": ^5.84.2
     "@types/node": ^20
     "@types/react": ^19
     "@types/react-dom": ^19
     "@uidotdev/usehooks": ^2.4.1
     eslint: ^9
     eslint-config-next: 15.4.5
+    jotai: ^2.13.1
+    jotai-tanstack-query: ^0.11.0
     next: 15.4.5
     next-transpile-modules: ^10.0.1
     react: 19.1.0
@@ -23927,6 +23969,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jotai-tanstack-query@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "jotai-tanstack-query@npm:0.11.0"
+  peerDependencies:
+    "@tanstack/query-core": "*"
+    "@tanstack/react-query": "*"
+    jotai: ">=2.0.0"
+    react: ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@tanstack/react-query":
+      optional: true
+    react:
+      optional: true
+  checksum: 09972c9624f08a7b4a1abf45f669ca2689dc23be75e2e05f07d377e10af46b13acc03123c1312ddb10187e6bc332f704a4377e62bdbc497692b6e6accbc8a437
+  languageName: node
+  linkType: hard
+
 "jotai-tanstack-query@npm:^0.8.6":
   version: 0.8.8
   resolution: "jotai-tanstack-query@npm:0.8.8"
@@ -23949,6 +24008,27 @@ __metadata:
     react:
       optional: true
   checksum: c9580f29fbbfce3e18f044e2bb80bb563a6d15952451a0430f28c4bd6340498bbec0537e8cf38722de117d4ec5846aa2d81489cd55e41b28d018776d2ae533e4
+  languageName: node
+  linkType: hard
+
+"jotai@npm:^2.13.1":
+  version: 2.13.1
+  resolution: "jotai@npm:2.13.1"
+  peerDependencies:
+    "@babel/core": ">=7.0.0"
+    "@babel/template": ">=7.0.0"
+    "@types/react": ">=17.0.0"
+    react: ">=17.0.0"
+  peerDependenciesMeta:
+    "@babel/core":
+      optional: true
+    "@babel/template":
+      optional: true
+    "@types/react":
+      optional: true
+    react:
+      optional: true
+  checksum: 17b5e17ab03da48593e4b08593494eb413f13b5e9fa3c11050d82f2203555365dc25994f83da087463ae096ed7d4135a230ddfab7c530f25e4a7446414524018
   languageName: node
   linkType: hard
 
