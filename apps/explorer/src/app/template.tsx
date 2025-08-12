@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { ReactNode } from "react";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import { useLocalStorage } from "@uidotdev/usehooks";
@@ -9,7 +9,7 @@ import "../utils/skipClientConfig";
 import { Provider } from "jotai";
 import { jotaiStore } from "@/widget/Widget";
 
-export default function Template({ children }: { children: React.ReactNode }) {
+export default function Template({ children }: { children: ReactNode }) {
   return (
     <ClientOnly>
       <QueryProvider>
@@ -24,7 +24,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
   );
 }
 
-export const Wrapper = ({ children }: { children: React.ReactNode }) => {
+export const Wrapper = ({ children }: { children: ReactNode }) => {
   const [theme] = useLocalStorage<"dark" | "light">("explorer-theme", "dark");
   return (
     <ShadowDomAndProviders disableShadowDom theme={theme === "dark" ? defaultTheme : lightTheme}>
