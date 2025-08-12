@@ -23,7 +23,6 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
 
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
   
-  console.log(step, status);
   return (
     <TransferEventContainer padding={15} width={354} borderRadius={16} status={step === "Destination" ? status : undefined}>
       <Row align="center" justify="space-between">
