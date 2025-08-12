@@ -431,15 +431,15 @@ type CombinedTransferEvent = {
 };
 
 export enum TransferType {
-  ibcTransfer = "IBC",
-  axelarTransfer = "AXELAR",
-  cctpTransfer = "CCTP",
-  hyperlaneTransfer = "HYPERLANE",
-  opInitTransfer = "OP INIT",
-  goFastTransfer = "GO FAST",
-  stargateTransfer = "STARGATE",
-  eurekaTransfer = "EUREKA",
-  layerZeroTransfer = "LAYER ZERO",
+  ibcTransfer = "ibcTransfer",
+  axelarTransfer = "axelarTransfer",
+  cctpTransfer = "cctpTransfer",
+  hyperlaneTransfer = "hyperlaneTransfer",
+  opInitTransfer = "opInitTransfer",
+  goFastTransfer = "goFastTransfer",
+  stargateTransfer = "stargateTransfer",
+  eurekaTransfer = "eurekaTransfer",
+  layerZeroTransfer = "layerZeroTransfer",
 }
 
 export type TransferEventStatus =

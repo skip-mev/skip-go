@@ -6,16 +6,42 @@ import { skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
 import { styled } from "@/widget";
 import { Text, SmallText } from "@/components/Typography";
+import { TransferType } from "@skip-go/client";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
 export type TransferEventCardProps = {
   chainId: string;
   explorerLink: string;
-  transferType: string;
+  transferType: TransferType | string;
   status: string;
   step: Step;
   // transferEvent?: ClientTransferEvent;
+}
+
+const getTransferTypeLabel = (transferType: TransferType | string) => {
+  switch (transferType) {
+    case TransferType.ibcTransfer:
+      return "IBC";
+    case TransferType.axelarTransfer:
+      return "Axelar";
+    case TransferType.cctpTransfer:
+      return "CCTP";
+    case TransferType.hyperlaneTransfer:
+      return "Hyperlane";
+    case TransferType.opInitTransfer:
+      return "OP INIT";
+    case TransferType.goFastTransfer:
+      return "GO FAST";
+    case TransferType.stargateTransfer:
+      return "Stargate";
+    case TransferType.eurekaTransfer:
+      return "Eureka";
+    case TransferType.layerZeroTransfer:
+      return "Layer Zero";
+    default:
+      return transferType;
+  }
 }
 
 export const TransferEventCard = ({ chainId, explorerLink, transferType, status, step }: TransferEventCardProps) => {
@@ -38,7 +64,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
               <SmallText>{chainId}</SmallText>
             </Column>
           </Row>
-          <Badge> { transferType } </Badge>
+          <Badge> { getTransferTypeLabel(transferType) } </Badge>
         </Row>
       </TransferEventDetailsCard>
       <SmallTextButton textAlign="center" onClick={() => window.open(explorerLink, "_blank")}> View on Mintscan → </SmallTextButton>
