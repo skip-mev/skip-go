@@ -295,25 +295,46 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     transferType = TransferType.layerZeroTransfer;
   }
 
-  const getExplorerLink = (type: "send" | "receive") => {
+  const getTxHashAndExplorerLink = (type: "send" | "receive") => {
     switch (transferType) {
       case TransferType.ibcTransfer:
         if (type === "send") {
-          return ibcTransfer.packetTxs.sendTx?.explorerLink;
+          return {
+            explorerLink: ibcTransfer.packetTxs.sendTx?.explorerLink,
+            txHash: ibcTransfer.packetTxs.sendTx?.txHash,
+          }
         }
-        return ibcTransfer.packetTxs.receiveTx?.explorerLink;
+        return {
+          explorerLink: ibcTransfer.packetTxs.receiveTx?.explorerLink,
+          txHash: ibcTransfer.packetTxs.receiveTx?.txHash,
+        }
       case TransferType.eurekaTransfer:
         if (type === "send") {
-          return eurekaTransfer.packetTxs.sendTx?.explorerLink;
+          return {
+            explorerLink: eurekaTransfer.packetTxs.sendTx?.explorerLink,
+            txHash: eurekaTransfer.packetTxs.sendTx?.txHash,
+          }
         }
-        return eurekaTransfer.packetTxs.receiveTx?.explorerLink;
+        return {
+          explorerLink: eurekaTransfer.packetTxs.receiveTx?.explorerLink,
+          txHash: eurekaTransfer.packetTxs.receiveTx?.txHash,
+        }
       case TransferType.goFastTransfer:
         if (type === "send") {
-          return goFastTransfer.txs.orderSubmittedTx?.explorerLink;
+          return {
+            explorerLink: goFastTransfer.txs.orderSubmittedTx?.explorerLink,
+            txHash: goFastTransfer.txs.orderSubmittedTx?.txHash,
+          }
         }
-        return goFastTransfer.txs.orderFilledTx?.explorerLink;
+        return {
+          explorerLink: goFastTransfer.txs.orderFilledTx?.explorerLink,
+          txHash: goFastTransfer.txs.orderFilledTx?.txHash,
+        }
       case TransferType.axelarTransfer:
-        return axelarTransfer?.axelarScanLink;
+        return {
+          explorerLink: axelarTransfer?.axelarScanLink,
+          txHash: axelarTransfer?.txs?.sendTx?.txHash,
+        }
       default:
         type RemainingTransferTypes =
           | CCTPTransferInfo
@@ -323,13 +344,22 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           | LayerZeroTransferInfo;
 
         if (type === "send") {
-          return (combinedTransferEvent[transferType] as RemainingTransferTypes)
-            ?.txs?.sendTx?.explorerLink;
+          return {
+            explorerLink: (combinedTransferEvent[transferType] as RemainingTransferTypes)
+              ?.txs?.sendTx?.explorerLink,
+            txHash: (combinedTransferEvent[transferType] as RemainingTransferTypes)
+              ?.txs?.sendTx?.txHash,
+          }
         }
-        return (combinedTransferEvent[transferType] as RemainingTransferTypes)
-          ?.txs?.receiveTx?.explorerLink;
+        return {
+          explorerLink: (combinedTransferEvent[transferType] as RemainingTransferTypes)
+            ?.txs?.receiveTx?.explorerLink,
+          txHash: (combinedTransferEvent[transferType] as RemainingTransferTypes)
+            ?.txs?.receiveTx?.txHash,
+        }
     }
   };
+
   const _result = {
     ...ibcTransfer,
     ...axelarTransfer,
@@ -343,8 +373,10 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     ...eurekaTransfer,
     ...layerZeroTransfer,
     transferType,
-    fromExplorerLink: getExplorerLink("send"),
-    toExplorerLink: getExplorerLink("receive"),
+    fromExplorerLink: getTxHashAndExplorerLink("send")?.explorerLink,
+    toExplorerLink: getTxHashAndExplorerLink("receive")?.explorerLink,
+    fromTxHash: getTxHashAndExplorerLink("send")?.txHash,
+    toTxHash: getTxHashAndExplorerLink("receive")?.txHash,
   } as ClientTransferEvent;
   const status = getSimpleStatus(_result.state);
   const result = {
@@ -466,6 +498,8 @@ export type ClientTransferEvent = {
   status?: TransferEventStatus;
   fromExplorerLink?: string;
   toExplorerLink?: string;
+  fromTxHash?: string;
+  toTxHash?: string;
   explorerLink?: string;
   transferType?: TransferType;
 };

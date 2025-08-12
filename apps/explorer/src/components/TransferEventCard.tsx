@@ -16,6 +16,7 @@ export type TransferEventCardProps = {
   transferType: TransferType | string;
   status: string;
   step: Step;
+  txHash?: string;
   // transferEvent?: ClientTransferEvent;
 }
 
@@ -50,7 +51,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
   
   return (
-    <TransferEventContainer padding={15} width={354} borderRadius={16} status={step === "Destination" ? status : undefined}>
+    <TransferEventContainer padding={15} width={355} borderRadius={16} status={step === "Destination" ? status : undefined}>
       <Row align="center" justify="space-between">
         <Badge> { step } </Badge>
         <Badge variant={step === "Destination" ? status : undefined}> {status} </Badge>

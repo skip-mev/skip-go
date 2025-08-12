@@ -17,7 +17,7 @@ export const Container = styled.div<ContainerProps>`
   display: flex;
   gap: ${({ gap = 10 }) => convertToPxValue(gap)};
   flex-direction: ${({ flexDirection }) => flexDirection ?? "column"};
-  height: ${({ height = "100%" }) => convertToPxValue(height)};
+  height: ${({ height = "auto" }) => convertToPxValue(height)};
   width: ${({ width = "100%" }) => convertToPxValue(width)};
   padding: ${({ padding = 20 }) => convertToPxValue(padding)};
   border-radius: ${({ theme, borderRadius }) => {

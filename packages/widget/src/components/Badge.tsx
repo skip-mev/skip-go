@@ -26,6 +26,7 @@ export const Badge = styled.div<BadgeProps>`
   ${({ theme, variant }) => {
     switch (variant) {
       case "completed":
+      case "success":
         return css`
           color: ${theme.success.text};
           background: ${theme.success.background};
@@ -35,6 +36,7 @@ export const Badge = styled.div<BadgeProps>`
           color: ${theme.warning.text};
           background: ${theme.warning.background};
         `;
+      case "failed":
       case "error":
         return css`
           color: ${theme.error.text};
