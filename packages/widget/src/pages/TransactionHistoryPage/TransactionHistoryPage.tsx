@@ -10,7 +10,6 @@ import { sortedHistoryItemsAtom } from "@/state/history";
 import { TransactionHistoryPageHistoryItem } from "./TransactionHistoryPageHistoryItem";
 import { currentPageAtom, Routes } from "@/state/router";
 import { track } from "@amplitude/analytics-browser";
-import { convertToPxValue } from "@/utils/style";
 import { Container } from "@/components/Container";
 
 export const TransactionHistoryPage = () => {

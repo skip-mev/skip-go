@@ -3,7 +3,6 @@ import { styled } from "styled-components";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
-import { convertToPxValue } from "@/utils/style";
 import { Container } from "@/components/Container";
 
 type SwapExecutionPageRouteContainerProps = {
