@@ -65,7 +65,7 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
 
 const TransactionDetailsRow = ({ label, value }: { label: string, value: ReactNode }) => {
   return (
-    <Row justify="space-between">
+    <Row align="center" justify="space-between">
       <SmallText>{label}</SmallText>
       {
         typeof value === "string" ? (
