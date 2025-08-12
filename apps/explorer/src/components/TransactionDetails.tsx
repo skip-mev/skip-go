@@ -6,8 +6,9 @@ import { getSimpleOverallStatus, TransactionState } from "@skip-go/client";
 import { Badge } from "@/components/Badge";
 import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
-import { GhostButton } from "@/components/Button";
+import { Button, GhostButton } from "@/components/Button";
 import { getTruncatedAddress } from "@/utils/crypto";
+import { useCopyAddress } from "@/hooks/useCopyAddress";
 
 export type TransactionDetailsProps = {
   txHash: string;
@@ -17,6 +18,7 @@ export type TransactionDetailsProps = {
 
 export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetailsProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
+  const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
 
   const chains = chainIds?.map((chainId) => skipChains?.data?.find((chain) => chain.chainId === chainId));
   
@@ -36,7 +38,7 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
             </Badge>
           }
         />
-        <TransactionDetailsRow label="Transaction Hash" value={getTruncatedAddress(txHash)} />
+        <TransactionDetailsRow onClick={() => copyAddress(txHash)} label="Transaction Hash" value={isShowingCopyAddressFeedback ? "Copied!" : getTruncatedAddress(txHash)} />
         <TransactionDetailsRow
           label="Route"
           value={
@@ -52,10 +54,10 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
         />
       </Container>
       <Row justify="space-between">
-        <GhostButton>
+        <GhostButton onClick={() => {}}>
           View raw data
         </GhostButton>
-        <GhostButton>
+        <GhostButton onClick={() => {}}>
           View token details
         </GhostButton>
       </Row>
@@ -63,9 +65,9 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
   );
 };
 
-const TransactionDetailsRow = ({ label, value }: { label: string, value: ReactNode }) => {
+const TransactionDetailsRow = ({ label, value, onClick }: { label: string, value: ReactNode, onClick?: () => void }) => {
   return (
-    <Row align="center" justify="space-between">
+    <Button as={onClick === undefined ? "div" : "button"} onClick={onClick} align="center" justify="space-between">
       <SmallText>{label}</SmallText>
       {
         typeof value === "string" ? (
@@ -74,6 +76,6 @@ const TransactionDetailsRow = ({ label, value }: { label: string, value: ReactNo
           value
         )
       }
-    </Row>
+    </Button>
   )
 }
