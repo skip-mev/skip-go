@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 import { WidgetBorderRadius } from "@/widget/theme";
 
 type BadgeProps = {
-  variant?: "success" | "warning" | "error" | "default";
+  variant?: string;
   borderRadius?: keyof WidgetBorderRadius | number;
   padding?: string;
   flexDirection?: "row" | "column";
@@ -19,13 +19,13 @@ export const Badge = styled.div<BadgeProps>`
   display: flex;
   gap: ${({ gap = 10 }) => convertToPxValue(gap)};
   flex-direction: ${({ flexDirection }) => flexDirection ?? "column"};
-  height: ${({ height }) => height && convertToPxValue(height)};
   width: fit-content;
+  height: ${({ height }) => (height ? convertToPxValue(height) : "fit-content")};
   padding: ${({ padding }) => padding ?? "6px 8px"};
   border-radius: 100px;
   ${({ theme, variant }) => {
     switch (variant) {
-      case "success":
+      case "completed":
         return css`
           color: ${theme.success.text};
           background: ${theme.success.background};

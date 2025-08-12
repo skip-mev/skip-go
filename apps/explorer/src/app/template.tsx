@@ -1,22 +1,13 @@
 "use client";
 import React from "react";
 import { defaultTheme, lightTheme } from "@/widget/theme";
+import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { useIsClient } from "@uidotdev/usehooks";
 import { QueryProvider } from "../components/QueryProvider";
 import "../utils/skipClientConfig";
 import { Provider } from "jotai";
 import { jotaiStore } from "@/widget/Widget";
-import { StyleSheetManager, ThemeProvider } from "styled-components";
-import isPropValid from "@emotion/is-prop-valid";
-
-// Copy the proper StyleSheetManager configuration
-function shouldForwardProp(propName: string, target: string | React.ComponentType<unknown>) {
-  if (typeof target === "string") {
-    return isPropValid(propName);
-  }
-  return true;
-}
 
 export default function Template({ children }: { children: React.ReactNode }) {
   return (
@@ -36,7 +27,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
 export const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const [theme] = useLocalStorage<"dark" | "light">("explorer-theme", "dark");
   return (
-    <StyleSheetManager shouldForwardProp={shouldForwardProp}>
+    <ShadowDomAndProviders disableShadowDom theme={theme === "dark" ? defaultTheme : lightTheme}>
       <div
         style={{
           display: "flex",
@@ -52,11 +43,9 @@ export const Wrapper = ({ children }: { children: React.ReactNode }) => {
           backgroundPosition: "bottom",
         }}
       >
-        <ThemeProvider theme={theme === "dark" ? defaultTheme : lightTheme}>
-          {children}
-        </ThemeProvider>
+        {children}
       </div>
-    </StyleSheetManager>
+    </ShadowDomAndProviders>
   );
 };
 

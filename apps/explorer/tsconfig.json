@@ -26,6 +26,7 @@
       "@/modals/*": ["../../packages/widget/src/modals/*"],
       "@/icons": ["../../packages/widget/src/icons"],
       "@/icons/*": ["../../packages/widget/src/icons/*"],
+      "@/widget": ["../../packages/widget/src"],
       "@/widget/*": ["../../packages/widget/src/widget/*"],
       "@/fonts/*": ["../../packages/widget/src/fonts/*"],
       "@/state/*": ["../../packages/widget/src/state/*"],

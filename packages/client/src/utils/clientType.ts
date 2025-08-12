@@ -342,6 +342,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     ...stargateTransfer,
     ...eurekaTransfer,
     ...layerZeroTransfer,
+    transferType,
     fromExplorerLink: getExplorerLink("send"),
     toExplorerLink: getExplorerLink("receive"),
   } as ClientTransferEvent;
@@ -430,15 +431,15 @@ type CombinedTransferEvent = {
 };
 
 export enum TransferType {
-  ibcTransfer = "ibcTransfer",
-  axelarTransfer = "axelarTransfer",
-  cctpTransfer = "cctpTransfer",
-  hyperlaneTransfer = "hyperlaneTransfer",
-  opInitTransfer = "opInitTransfer",
-  goFastTransfer = "goFastTransfer",
-  stargateTransfer = "stargateTransfer",
-  eurekaTransfer = "eurekaTransfer",
-  layerZeroTransfer = "layerZeroTransfer",
+  ibcTransfer = "IBC",
+  axelarTransfer = "AXELAR",
+  cctpTransfer = "CCTP",
+  hyperlaneTransfer = "HYPERLANE",
+  opInitTransfer = "OP INIT",
+  goFastTransfer = "GO FAST",
+  stargateTransfer = "STARGATE",
+  eurekaTransfer = "EUREKA",
+  layerZeroTransfer = "LAYER ZERO",
 }
 
 export type TransferEventStatus =
@@ -466,4 +467,5 @@ export type ClientTransferEvent = {
   fromExplorerLink?: string;
   toExplorerLink?: string;
   explorerLink?: string;
+  transferType?: TransferType;
 };

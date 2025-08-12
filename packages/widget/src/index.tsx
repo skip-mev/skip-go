@@ -4,3 +4,5 @@ export { defaultTheme, lightTheme } from "./widget/theme";
 export { resetWidget, setAsset } from "./state/swapPage";
 export type { Theme } from "./widget/theme";
 export { openAssetAndChainSelectorModal } from "./modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
+export * from "./styled-components";
+export { useGetAssetDetails } from "./hooks/useGetAssetDetails";
