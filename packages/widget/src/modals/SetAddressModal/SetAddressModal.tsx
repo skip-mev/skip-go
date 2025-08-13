@@ -14,7 +14,7 @@ import { ModalHeader } from "@/components/ModalHeader";
 import { StyledModalContainer } from "@/components/Modal";
 import {
   chainAddressesAtom,
-  feeRouteChainAddressesAtom,
+  gasRouteChainAddressesAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
 import NiceModal from "@ebay/nice-modal-react";
@@ -29,7 +29,7 @@ export type SetAddressModalProps = ModalProps & {
   chainId: string;
   chainAddressIndex: number;
   signRequired?: boolean;
-  isFeeRoute?: boolean;
+  isGasRoute?: boolean;
 };
 
 export enum WalletSource {
@@ -40,10 +40,10 @@ export enum WalletSource {
 
 export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
-  const { chainId, chainAddressIndex, isFeeRoute } = modalProps;
-  const { route, feeRoute } = useAtomValue(swapExecutionStateAtom);
-  const requiredChainAddresses = isFeeRoute
-    ? feeRoute?.requiredChainAddresses
+  const { chainId, chainAddressIndex, isGasRoute: isGasRoute } = modalProps;
+  const { route, gasRoute } = useAtomValue(swapExecutionStateAtom);
+  const requiredChainAddresses = isGasRoute
+    ? gasRoute?.requiredChainAddresses
     : route?.requiredChainAddresses;
   if (modalProps.chainAddressIndex === undefined) {
     throw new Error("chain address index cannot be undefined");
@@ -57,10 +57,10 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   const [manualWalletAddress, setManualWalletAddress] = useState("");
   const _walletList = useWalletList({ chainId, destinationWalletList: true });
   const [_chainAddresses, _setChainAddresses] = useAtom(chainAddressesAtom);
-  const [feeRouteChainAddresses, setFeeRouteChainAddresses] = useAtom(feeRouteChainAddressesAtom);
+  const [gasRouteChainAddresses, setGasRouteChainAddresses] = useAtom(gasRouteChainAddressesAtom);
 
-  const chainAddresses = isFeeRoute ? feeRouteChainAddresses : _chainAddresses;
-  const setChainAddresses = isFeeRoute ? setFeeRouteChainAddresses : _setChainAddresses;
+  const chainAddresses = isGasRoute ? gasRouteChainAddresses : _chainAddresses;
+  const setChainAddresses = isGasRoute ? setGasRouteChainAddresses : _setChainAddresses;
 
   // If not same chain transaction, show warning
   const showWithdrawalWarning =

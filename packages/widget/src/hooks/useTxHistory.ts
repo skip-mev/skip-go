@@ -27,11 +27,13 @@ export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
         subscribeToRouteStatus({
           routeDetails: route,
           onRouteStatusUpdated: (routeStatus) => {
-            const failedFeeRoute = routeStatus?.relatedRoutes?.find(
+            const failedGasRoute = routeStatus?.relatedRoutes?.find(
               (relatedRoute) => relatedRoute.status === "failed",
             );
-            if (failedFeeRoute) {
-              track("gas on receive: fee route failed", { feeRoute: failedFeeRoute });
+            if (failedGasRoute) {
+              track("gas on receive: fee route failed", {
+                gasRoute: failedGasRoute,
+              });
             }
             setTransactionHistory(routeStatus);
           },

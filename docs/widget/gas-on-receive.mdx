@@ -6,7 +6,7 @@ description: "Automatically provide users with gas tokens on destination chains 
 Gas on Receive helps users get native gas tokens on destination chains during cross-chain swaps. This prevents users from getting "stuck" with assets they can't use due to lacking gas for future transactions.
 
 <Note>
-**Widget**: Auto-detects need, user toggles on/off (v3.14.0+)  
+**Widget**: Auto-detects need, user toggles on/off (v3.14.0+)
 **Client Library**: Manual setup required (v1.5.0+)
 </Note>
 
@@ -72,7 +72,7 @@ function MyApp() {
     <Widget
       defaultRoute={{
         srcChainId: "osmosis-1",
-        destChainId: "42161", // Arbitrum  
+        destChainId: "42161", // Arbitrum
         srcAssetDenom: "uosmo",
         destAssetDenom: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1" // WETH
       }}
@@ -102,9 +102,9 @@ const mainRoute = await route({
 });
 
 const gasRoute = await route({
-  amountIn: "50000", // ~$2 worth for gas  
+  amountIn: "50000", // ~$2 worth for gas
   sourceAssetChainId: "osmosis-1",
-  sourceAssetDenom: "uosmo", 
+  sourceAssetDenom: "uosmo",
   destAssetChainId: "42161",
   destAssetDenom: "0x0000000000000000000000000000000000000000" // Native ETH
 });
@@ -124,7 +124,7 @@ await executeMultipleRoutes({
   },
   slippageTolerancePercent: {
     mainRoute: "1",
-    feeRoute: "10",
+    gasRoute: "10",
   },
   // Required signing functions
   getCosmosSigningClient: async (chainId) => {
@@ -132,7 +132,7 @@ await executeMultipleRoutes({
     return yourCosmosWallet.getSigningClient(chainId);
   },
   getEVMSigningClient: async (chainId) => {
-    // Return your EVM signing client for the chain  
+    // Return your EVM signing client for the chain
     return yourEvmWallet.getSigningClient(chainId);
   },
   onRouteStatusUpdated: (status) => console.log(status)
@@ -150,7 +150,7 @@ For more control, you can manually determine when to include gas routes based on
 ```typescript
 import { balances } from "@skip-go/client";
 
-// Check if user has sufficient gas balance  
+// Check if user has sufficient gas balance
 const userBalances = await balances({
   chains: {
     "42161": { address: "0x..." } // User's Arbitrum address
@@ -175,7 +175,7 @@ if (!hasEnoughGas) {
 ### Custom Gas Amounts (Advanced)
 
 For advanced use cases, you can customize gas amounts by adjusting the `amountIn` when creating gas routes. The default equivalent amounts are:
-- **Cosmos chains**: $0.10 USD 
+- **Cosmos chains**: $0.10 USD
 - **EVM L2 chains**: $2.00 USD
 
 ## Error Handling

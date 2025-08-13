@@ -8,8 +8,8 @@ import { SwapExecutionPageRouteContainer } from "./SwapExecutionPageRouteContain
 import { currentPageAtom, Routes } from "@/state/router";
 import {
   chainAddressesAtom,
-  feeRouteAddressesAtomEffect,
-  feeRouteChainAddressesAtom,
+  gasRouteAddressesAtomEffect,
+  gasRouteChainAddressesAtom,
   gasRouteEffect,
   skipSubmitSwapExecutionAtom,
   swapExecutionStateAtom,
@@ -32,7 +32,7 @@ import {
   isSomeDestinationFeeBalanceAvailableAtom,
 } from "@/state/gasOnReceive";
 import { GasOnReceive } from "@/components/GasOnReceive";
-import { useFeeRouteAutoSetAddress } from "@/hooks/useFeeRouteAutoSetAddress";
+import { useGasRouteAutoSetAddress } from "@/hooks/useGasRouteAutoSetAddress";
 import { useTheme } from "styled-components";
 
 export enum SwapExecutionState {
@@ -47,35 +47,35 @@ export enum SwapExecutionState {
   approving,
   pendingGettingAddresses,
   pendingGettingDestinationBalance,
-  pendingGettingFeeRouteAddresses,
-  feeRouteRecoveryAddressUnset,
+  pendingGettingGasRouteAddresses,
+  gasRouteRecoveryAddressUnset,
   pendingError,
 }
 
 export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, clientOperations, feeRoute } = useAtomValue(swapExecutionStateAtom);
+  const { route, clientOperations, gasRoute } = useAtomValue(swapExecutionStateAtom);
   const currentTransaction = useAtomValue(currentTransactionAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
-  const feeRouteChainAddresses = useAtomValue(feeRouteChainAddressesAtom);
+  const gasRouteChainAddresses = useAtomValue(gasRouteChainAddressesAtom);
   const { connectRequiredChains, isLoading: isGettingAddressesLoading } = useAutoSetAddress();
   const {
-    connectRequiredChains: connectFeeRouteRequiredChains,
-    isLoading: isGettingFeeRouteAddressesLoading,
-  } = useFeeRouteAutoSetAddress();
+    connectRequiredChains: connectGasRouteRequiredChains,
+    isLoading: isGettingGasRouteAddressesLoading,
+  } = useGasRouteAutoSetAddress();
 
   const [simpleRoute, setSimpleRoute] = useState(true);
   const isSomeDestinationFeeBalanceAvailable = useAtomValue(
     isSomeDestinationFeeBalanceAvailableAtom,
   );
-  const { data: gasRoute, isLoading: isGasRouteLoading } = useAtomValue(gasOnReceiveRouteAtom);
+  const { data: gorRoute, isLoading: isGasRouteLoading } = useAtomValue(gasOnReceiveRouteAtom);
   const gasRouteEnabled = useAtomValue(gasOnReceiveAtom);
   const isFetchingDestinationBalance =
     isSomeDestinationFeeBalanceAvailable.isLoading || isGasRouteLoading;
 
   useAtom(gasRouteEffect);
-  useAtom(feeRouteAddressesAtomEffect);
+  useAtom(gasRouteAddressesAtomEffect);
   useAtom(gasOnReceiveAtomEffect);
 
   const { mutate: submitExecuteRouteMutation, error } = useAtomValue(skipSubmitSwapExecutionAtom);
@@ -95,10 +95,10 @@ export const SwapExecutionPage = () => {
   const swapExecutionState = useSwapExecutionState({
     chainAddresses,
     requiredChainAddresses: route?.requiredChainAddresses,
-    feeRouteChainAddresses: feeRouteChainAddresses,
-    feeRouteRequiredChainAddresses: feeRoute?.requiredChainAddresses,
+    gasRouteChainAddresses: gasRouteChainAddresses,
+    gasRouteRequiredChainAddresses: gasRoute?.requiredChainAddresses,
     isGettingAddressesLoading: isGettingAddressesLoading,
-    isGettingFeeRouteAddressesLoading: isGettingFeeRouteAddressesLoading,
+    isGettingGasRouteAddressesLoading: isGettingGasRouteAddressesLoading,
     isFetchingDestinationBalance,
   });
   const isSafeToleave = route?.txsRequired === currentTransaction?.transactionDetails.length;
@@ -173,7 +173,7 @@ export const SwapExecutionPage = () => {
     route?.txsRequired === currentTransaction?.transactionDetails.length;
 
   const gasOnReceiveComponent = useMemo(() => {
-    return ((gasRoute || feeRoute) &&
+    return ((gorRoute || gasRoute) &&
       !isGasRouteLoading &&
       !currentTransaction &&
       !isFetchingDestinationBalance) ||
@@ -185,8 +185,8 @@ export const SwapExecutionPage = () => {
     ) : null;
   }, [
     currentTransaction,
-    feeRoute,
     gasRoute,
+    gorRoute,
     gasRouteEnabled,
     isFetchingDestinationBalance,
     isGasRouteLoading,
@@ -250,7 +250,7 @@ export const SwapExecutionPage = () => {
         signaturesRemaining={signaturesRemaining}
         lastOperation={lastOperation}
         connectRequiredChains={connectRequiredChains}
-        connectFeeRouteRequiredChains={connectFeeRouteRequiredChains}
+        connectGasRouteRequiredChains={connectGasRouteRequiredChains}
         submitExecuteRouteMutation={submitExecuteRouteMutation}
       />
       <SwapPageFooter />

@@ -1,7 +1,7 @@
 import {
   ChainAddress,
-  feeRouteChainAddressesAtom,
-  feeRouteUserAddressesEffectAtom,
+  gasRouteChainAddressesAtom,
+  gasRouteUserAddressesEffectAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
 import { connectedAddressesAtom, walletsAtom } from "@/state/wallets";
@@ -18,9 +18,10 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { currentTransactionAtom } from "@/state/history";
 
-export const useFeeRouteAutoSetAddress = () => {
-  const [feeRouteChainAddresses, setFeeRouteChainAddresses] = useAtom(feeRouteChainAddressesAtom);
-  const { feeRoute, isFeeRouteEnabled } = useAtomValue(swapExecutionStateAtom);
+export const useGasRouteAutoSetAddress = () => {
+  const [gasRouteChainAddresses, setGasRouteChainAddresses] = useAtom(gasRouteChainAddressesAtom);
+  const { gasRoute: feeRoute, isGasRouteEnabled: isFeeRouteEnabled } =
+    useAtomValue(swapExecutionStateAtom);
   const [isLoading, setIsLoading] = useState(true);
   const connectedAddress = useAtomValue(connectedAddressesAtom);
   const sourceWallet = useAtomValue(walletsAtom);
@@ -36,7 +37,7 @@ export const useFeeRouteAutoSetAddress = () => {
   const { createEvmWallets } = useCreateEvmWallets();
   const { createSolanaWallets } = useCreateSolanaWallets();
 
-  useAtom(feeRouteUserAddressesEffectAtom);
+  useAtom(gasRouteUserAddressesEffectAtom);
 
   const connectRequiredChains = useCallback(
     async (openModal?: boolean) => {
@@ -50,11 +51,11 @@ export const useFeeRouteAutoSetAddress = () => {
         if (!feeRoute || !isFeeRouteEnabled) return;
         const requiredChainAddresses = feeRoute.requiredChainAddresses;
         if (!requiredChainAddresses) return;
-        Object.entries(feeRouteChainAddresses).forEach(async ([_index, chainAddress], index) => {
+        Object.entries(gasRouteChainAddresses).forEach(async ([_index, chainAddress], index) => {
           if (!chainAddress.address || chainAddress.address === "") {
             const injectedAddress = connectedAddress?.[chainAddress.chainId];
             if (injectedAddress) {
-              setFeeRouteChainAddresses((prev) => ({
+              setGasRouteChainAddresses((prev) => ({
                 ...prev,
                 [index]: {
                   ...chainAddress,
@@ -75,7 +76,7 @@ export const useFeeRouteAutoSetAddress = () => {
                 return response?.logo ?? wallet?.walletInfo?.logo;
               };
               if (response?.address) {
-                setFeeRouteChainAddresses((prev) => ({
+                setGasRouteChainAddresses((prev) => ({
                   ...prev,
                   [index]: {
                     ...chainAddress,
@@ -116,9 +117,9 @@ export const useFeeRouteAutoSetAddress = () => {
       createEvmWallets,
       createSolanaWallets,
       feeRoute,
-      feeRouteChainAddresses,
+      gasRouteChainAddresses,
       isFeeRouteEnabled,
-      setFeeRouteChainAddresses,
+      setGasRouteChainAddresses,
       sourceWallet,
     ],
   );

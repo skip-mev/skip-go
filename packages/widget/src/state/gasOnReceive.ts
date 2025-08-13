@@ -16,7 +16,7 @@ import { track } from "@amplitude/analytics-browser";
 
 type SwapRoute = {
   mainRoute?: RouteResponse;
-  feeRoute?: RouteResponse;
+  gasRoute?: RouteResponse;
   gasOnReceiveAsset?: {
     amountUsd?: string;
     amountOut: string;
@@ -216,7 +216,7 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
       refetchInterval: false,
       queryFn: async () => {
         if (!params) throw new Error("No route request provided");
-        let feeRoute: RouteResponse | undefined;
+        let gasRoute: RouteResponse | undefined;
         if (
           destinationAssetIsAFeeAsset ||
           !gasOnReceiveRouteParams?.destAssetDenoms ||
@@ -252,15 +252,15 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
             }
           });
           const result = await Promise.all(feeAssetRoutes);
-          const _feeRoute = result.find((result) => result?.usdAmountOut);
-          if (_feeRoute?.usdAmountOut) {
-            feeRoute = _feeRoute;
+          const _gasRoute = result.find((result) => result?.usdAmountOut);
+          if (_gasRoute?.usdAmountOut) {
+            gasRoute = _gasRoute;
             break;
           }
         }
-        if (!feeRoute?.amountOut || !originalRoute) return null;
+        if (!gasRoute?.amountOut || !originalRoute) return null;
         params.amountIn = BigNumber(originalRoute.amountIn ?? 0)
-          .minus(BigNumber(feeRoute?.amountIn ?? 0))
+          .minus(BigNumber(gasRoute?.amountIn ?? 0))
           .toString();
         params.amountOut = undefined;
 
@@ -274,12 +274,12 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
         if (!mainRoute) return null;
         return {
           mainRoute,
-          feeRoute,
+          gasRoute,
           gasOnReceiveAsset: {
-            amountOut: feeRoute.amountOut,
-            amountUsd: feeRoute.usdAmountOut,
-            denom: feeRoute.destAssetDenom,
-            chainId: feeRoute.destAssetChainId,
+            amountOut: gasRoute.amountOut,
+            amountUsd: gasRoute.usdAmountOut,
+            denom: gasRoute.destAssetDenom,
+            chainId: gasRoute.destAssetChainId,
           },
         };
       },
