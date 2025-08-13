@@ -13,6 +13,7 @@ import { chainAddressesAtom } from "./swapExecutionPage";
 import { atomEffect } from "jotai-effect";
 import { currentTransactionAtom } from "./history";
 import { track } from "@amplitude/analytics-browser";
+import { isSubset } from "@/utils/array";
 
 type SwapRoute = {
   mainRoute?: RouteResponse;
@@ -275,6 +276,12 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
           abortDuplicateRequests: true,
         });
         if (!mainRoute) return null;
+        if (
+          originalRoute.txsRequired !== mainRoute.txsRequired ||
+          !isSubset(originalRoute?.requiredChainAddresses, mainRoute.requiredChainAddresses)
+        ) {
+          return null;
+        }
         return {
           mainRoute,
           feeRoute,
