@@ -90,39 +90,14 @@ export default function Home() {
 
       <Row justify="center" gap={10} >
         <button onClick={() => {
-            NiceModal.show(Modals.AssetAndChainSelectorModal, {
-              context: "source",
-              onSelect: (asset: ClientAsset | null) => {
-                console.log("Asset selected:", asset);
-                NiceModal.hide(Modals.AssetAndChainSelectorModal);
-              },
-              selectChain: true,
-              container: document.getElementById("test"),
-            });
-
-          // NiceModal.show(Modals.SetAddressModal, {
-          //   signRequired: false,
-          //   chainId: "osmosis-1",
-          //   chainAddressIndex: 0,
-          // });
-          
-          // try {
-          //   console.log("About to call NiceModal.show...");
-
-          //   console.log("document.getElementById('test')", document.getElementById("test"));
-            
-          //   // Use the widget package's modal system
-
-
-          //   NiceModal.show(Modals.WalletSelectorModal, {
-          //     chainId: "osmosis-1",
-          //     container: document.getElementById("test"),
-          //   });
-            
-          //   console.log("NiceModal.show called", result);
-          // } catch (error) {
-          //   console.error("Error showing modal:", error);
-          // }
+          NiceModal.show(Modals.AssetAndChainSelectorModal, {
+            context: "source",
+            onSelect: (asset: ClientAsset | null) => {
+              console.log("Asset selected:", asset);
+              NiceModal.hide(Modals.AssetAndChainSelectorModal);
+            },
+            selectChain: true,
+          });
         }}>open modal</button>
         
         <input type="text" value={txHash} onChange={(e) => setTxHash(e.target.value)} placeholder="tx hash"/>

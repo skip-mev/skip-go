@@ -60,6 +60,8 @@ export const AssetAndChainSelectorModal = createModal(
     const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
     const isLoading = (isFetching && isPending) || isChainsLoading;
 
+    console.log("assets", assets);
+
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [groupedAssetSelected, setGroupedAssetSelected] = useState<GroupedAsset | null>(null);

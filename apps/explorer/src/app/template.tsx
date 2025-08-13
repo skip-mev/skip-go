@@ -8,20 +8,21 @@ import { QueryProvider } from "../components/QueryProvider";
 import { Provider } from "jotai";
 import { jotaiStore } from "@/widget/Widget";
 import { Modals, NiceModal } from "@/nice-modal";
-import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { AssetAndChainSelectorModal } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 
 export default function Template({ children }: { children: ReactNode }) {
   return (
     <ClientOnly>
-      <QueryProvider>
-        <Provider store={jotaiStore}>
-          <Wrapper>
-            {children}
-            <ToggleThemeButton />
-          </Wrapper>
-        </Provider>
-      </QueryProvider>
+      <ShadowDomAndProviders disableShadowDom theme={defaultTheme}>
+        <QueryProvider>
+          <Provider store={jotaiStore}>
+            <Wrapper>
+              {children}
+              <ToggleThemeButton />
+            </Wrapper>
+          </Provider>
+        </QueryProvider>
+      </ShadowDomAndProviders>
     </ClientOnly>
   );
 }
@@ -94,10 +95,6 @@ export const ClientOnly: React.FC<ClientOnlyProps> = ({ children }) => {
 export const RegisterModals = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     NiceModal.register(Modals.AssetAndChainSelectorModal, AssetAndChainSelectorModal);
-    // NiceModal.register(Modals.WalletSelectorModal, WalletSelectorModal);
-    // NiceModal.register("TestModal", TestModal);
-    // NiceModal.register('TestModal', TestModal);
-    // registerModals();
   }, []);
 
   return children
