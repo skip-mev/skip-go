@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ebay/nice-modal-react": "^1.2.13",
     "@skip-go/client": "workspace:^",
     "@tanstack/react-query": "^5.84.2",
     "@uidotdev/usehooks": "^2.4.1",

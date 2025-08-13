@@ -18156,6 +18156,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "explorer@workspace:apps/explorer"
   dependencies:
+    "@ebay/nice-modal-react": ^1.2.13
     "@eslint/eslintrc": ^3
     "@skip-go/client": "workspace:^"
     "@tanstack/react-query": ^5.84.2

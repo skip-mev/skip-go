@@ -1,13 +1,14 @@
 "use client";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { useIsClient } from "@uidotdev/usehooks";
 import { QueryProvider } from "../components/QueryProvider";
-import "../utils/skipClientConfig";
-import { Provider } from "jotai";
-import { jotaiStore } from "@/widget/Widget";
+import { Provider, useSetAtom } from "jotai";
+import { jotaiStore, WidgetWrapper } from "@/widget/Widget";
+import NiceModal from "@ebay/nice-modal-react";
+import { themeAtom } from "@/state/skipClient";
 
 export default function Template({ children }: { children: ReactNode }) {
   return (
@@ -15,8 +16,12 @@ export default function Template({ children }: { children: ReactNode }) {
       <QueryProvider>
         <Provider store={jotaiStore}>
           <Wrapper>
-            {children}
-            <ToggleThemeButton />
+            <NiceModal.Provider>
+              <WidgetInitializer>
+                {children}
+                <ToggleThemeButton />
+              </WidgetInitializer>
+            </NiceModal.Provider>
           </Wrapper>
         </Provider>
       </QueryProvider>
@@ -26,6 +31,7 @@ export default function Template({ children }: { children: ReactNode }) {
 
 export const Wrapper = ({ children }: { children: ReactNode }) => {
   const [theme] = useLocalStorage<"dark" | "light">("explorer-theme", "dark");
+
   return (
     <ShadowDomAndProviders disableShadowDom theme={theme === "dark" ? defaultTheme : lightTheme}>
       <div
@@ -82,4 +88,13 @@ export const ClientOnly: React.FC<ClientOnlyProps> = ({ children }) => {
 
   // Render children if on client side, otherwise return null
   return isClient ? <>{children}</> : null;
+};
+
+const WidgetInitializer = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <WidgetWrapper
+    >
+      {children}
+    </WidgetWrapper>
+  );
 };

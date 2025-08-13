@@ -5,11 +5,13 @@ import { SmallTextButton } from '@/components/Typography';
 import { Column, Row } from "@/components/Layout";
 import { transactionStatus, getTransferEventsFromTxStatusResponse, ClientTransferEvent, TxStatusResponse } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
-import { Step, TransferEventCard, TransferEventCardProps } from "../components/TransferEventCard";
-import { defaultSkipClientConfig, skipClientConfigAtom, onlyTestnetsAtom } from "@/state/skipClient";
+import { TransferEventCard, TransferEventCardProps } from "../components/TransferEventCard";
+import { defaultSkipClientConfig, skipClientConfigAtom, onlyTestnetsAtom, ClientAsset } from "@/state/skipClient";
 import { useSetAtom } from "jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "../utils/registerModals";
 
 export default function Home() {
   const [txHash, setTxHash] = useState("BA47144AF79143EECEDA00BC758FA52D8B124934C7051A78B20DAC9DC42C1BCB");
@@ -88,6 +90,30 @@ export default function Home() {
       <ToggleThemeButton />
 
       <Row justify="center" gap={10} >
+        <button onClick={() => {
+          console.log("Button clicked");
+          console.log("Modals enum:", Modals);
+          console.log("Modal ID:", Modals.AssetAndChainSelectorModal);
+          
+          try {
+            console.log("About to call NiceModal.show...");
+            
+            // Use the widget package's modal system
+            const result = NiceModal.show(Modals.AssetAndChainSelectorModal, {
+              context: "source",
+              onSelect: (asset: ClientAsset | null) => {
+                console.log("Asset selected:", asset);
+                NiceModal.hide(Modals.AssetAndChainSelectorModal);
+              },
+              selectChain: true,
+            });
+            
+            console.log("NiceModal.show called", result);
+          } catch (error) {
+            console.error("Error showing modal:", error);
+          }
+        }}>open modal</button>
+        
         <input type="text" value={txHash} onChange={(e) => setTxHash(e.target.value)} placeholder="tx hash"/>
         <input type="text" value={chainId} onChange={(e) => setChainId(e.target.value)} placeholder="chain id"/>
         <SmallTextButton onClick={getTxStatus}>get tx info</SmallTextButton>
