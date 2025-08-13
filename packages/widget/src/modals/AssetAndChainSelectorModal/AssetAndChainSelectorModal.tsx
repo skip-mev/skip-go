@@ -54,7 +54,6 @@ const ITEM_HEIGHT = 65;
 export const AssetAndChainSelectorModal = createModal(
   (modalProps: AssetAndChainSelectorModalProps) => {
     const modal = useModal();
-    console.log(modalProps);
     const { onSelect: _onSelect, selectedAsset, selectChain, context } = modalProps;
     const { data: assets, isFetching, isPending } = useAtomValue(skipAssetsAtom);
     const ibcEurekaHighlightedAssets = useAtomValue(ibcEurekaHighlightedAssetsAtom);

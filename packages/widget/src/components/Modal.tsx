@@ -21,6 +21,7 @@ export type ModalProps = {
 };
 
 export const Modal = ({ children, drawer, container, onOpenChange, theme }: ModalProps) => {
+  console.log("Modal");
   const [prevOverflowStyle, setPrevOverflowStyle] = useState<string>("");
   const modalRef = useRef<HTMLDivElement>(null);
   const modal = useModal();
@@ -72,6 +73,8 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
     };
   }, [drawer, modal, onOpenChange, prevOverflowStyle]);
 
+  console.log("🔍 Modal rendering with props:", drawer, container, onOpenChange, theme);
+
   // this fixes a flickering animation when modals are opened
   if (disableShadowDom && wasVisible === undefined) return null;
 
@@ -112,13 +115,19 @@ export const createModal = <T extends ModalProps>(component: ComponentType<T>) =
     const setErrorWarning = useSetAtom(errorWarningAtom);
     const theme = useAtomValue(themeAtom);
 
+    console.warn("🔍 Modal WrappedComponent rendering with props:", props);
+    console.warn("🔍 Modal theme:", theme);
+
     return (
       <Modal {...props} theme={theme}>
         <ErrorBoundary
           fallback={null}
-          onError={(error) =>
-            setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error })
-          }
+          onError={(error, errorInfo) => {
+            console.error("🚨 Modal ErrorBoundary caught error:", error);
+            console.error("🚨 Modal ErrorInfo:", errorInfo);
+            console.error("🚨 Modal props that caused error:", props);
+            setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error });
+          }}
         >
           <Component {...props} />
         </ErrorBoundary>
@@ -126,6 +135,11 @@ export const createModal = <T extends ModalProps>(component: ComponentType<T>) =
     );
   };
 
+  console.warn(
+    "🔍 createModal called for component:",
+    component,
+    Component.name || Component.displayName,
+  );
   return NiceModal.create(WrappedComponent);
 };
 

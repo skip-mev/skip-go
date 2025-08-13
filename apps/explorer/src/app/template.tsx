@@ -5,10 +5,14 @@ import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { useIsClient } from "@uidotdev/usehooks";
 import { QueryProvider } from "../components/QueryProvider";
-import { Provider, useSetAtom } from "jotai";
-import { jotaiStore, WidgetWrapper } from "@/widget/Widget";
+import { Provider } from "jotai";
+import { jotaiStore } from "@/widget/Widget";
 import NiceModal from "@ebay/nice-modal-react";
-import { themeAtom } from "@/state/skipClient";
+import { Modals, registerModals } from "@/modals/registerModals";
+import { AssetAndChainSelectorModal } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
+import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
+import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
+import { TestModal } from "@/modals/TestModal";
 
 export default function Template({ children }: { children: ReactNode }) {
   return (
@@ -16,12 +20,8 @@ export default function Template({ children }: { children: ReactNode }) {
       <QueryProvider>
         <Provider store={jotaiStore}>
           <Wrapper>
-            <NiceModal.Provider>
-              <WidgetInitializer>
-                {children}
-                <ToggleThemeButton />
-              </WidgetInitializer>
-            </NiceModal.Provider>
+            {children}
+            <ToggleThemeButton />
           </Wrapper>
         </Provider>
       </QueryProvider>
@@ -49,7 +49,11 @@ export const Wrapper = ({ children }: { children: ReactNode }) => {
           backgroundPosition: "bottom",
         }}
       >
-        {children}
+        <NiceModal.Provider>
+          <RegisterModals>
+            {children}
+          </RegisterModals>
+        </NiceModal.Provider>
       </div>
     </ShadowDomAndProviders>
   );
@@ -90,11 +94,14 @@ export const ClientOnly: React.FC<ClientOnlyProps> = ({ children }) => {
   return isClient ? <>{children}</> : null;
 };
 
-const WidgetInitializer = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <WidgetWrapper
-    >
-      {children}
-    </WidgetWrapper>
-  );
+export const RegisterModals = ({ children }: { children: ReactNode }) => {
+  useEffect(() => {
+    // NiceModal.register(Modals.AssetAndChainSelectorModal, AssetAndChainSelectorModal);
+    NiceModal.register(Modals.WalletSelectorModal, WalletSelectorModal);
+    NiceModal.register("TestModal", TestModal);
+    // NiceModal.register('TestModal', TestModal);
+    // registerModals();
+  }, []);
+
+  return children
 };
