@@ -47,6 +47,7 @@ __metadata:
   linkType: hard
 
 "@amplitude/analytics-connector@npm:^1.4.8, @amplitude/analytics-connector@npm:^1.6.4":
+"@amplitude/analytics-connector@npm:^1.4.8, @amplitude/analytics-connector@npm:^1.6.4":
   version: 1.6.4
   resolution: "@amplitude/analytics-connector@npm:1.6.4"
   checksum: 2651e296c39a0fee687e7ce4315e671ed52aab513a00ea00fd45d8199c3cda945da1a23d37de255926830a268a4135bd31a16fb45118ebdbda58615b48037005
