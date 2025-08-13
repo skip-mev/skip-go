@@ -107,7 +107,7 @@ export default function Home() {
           NiceModal.show(Modals.AssetAndChainSelectorModal, {
             context: "source",
             onSelect: (asset: ClientAsset | null) => {
-              console.log("Asset selected:", asset);
+              console.log("chain id selected:", asset?.chainId);
               NiceModal.hide(Modals.AssetAndChainSelectorModal);
             },
             overrideSelectedGroup: {
