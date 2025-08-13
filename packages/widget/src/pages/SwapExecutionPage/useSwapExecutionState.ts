@@ -7,11 +7,11 @@ import { gasOnReceiveAtom } from "@/state/gasOnReceive";
 
 type UseSwapExecutionStateParams = {
   chainAddresses: Record<number, ChainAddress>;
-  feeRouteChainAddresses?: Record<number, ChainAddress>;
+  gasRouteChainAddresses?: Record<number, ChainAddress>;
   requiredChainAddresses?: string[];
-  feeRouteRequiredChainAddresses?: string[];
+  gasRouteRequiredChainAddresses?: string[];
   isGettingAddressesLoading: boolean;
-  isGettingFeeRouteAddressesLoading?: boolean;
+  isGettingGasRouteAddressesLoading?: boolean;
   isFetchingDestinationBalance: boolean;
 };
 
@@ -20,12 +20,12 @@ export function useSwapExecutionState({
   requiredChainAddresses,
   isGettingAddressesLoading,
   isFetchingDestinationBalance,
-  feeRouteChainAddresses,
-  feeRouteRequiredChainAddresses,
-  isGettingFeeRouteAddressesLoading,
+  gasRouteChainAddresses,
+  gasRouteRequiredChainAddresses,
+  isGettingGasRouteAddressesLoading: isGettingGasRouteAddressesLoading,
 }: UseSwapExecutionStateParams): SwapExecutionState {
   const currentTransaction = useAtomValue(currentTransactionAtom);
-  const isFeeRouteEnabled = useAtomValue(gasOnReceiveAtom);
+  const isGasRouteEnabled = useAtomValue(gasOnReceiveAtom);
 
   const showSignaturesRemaining = useMemo(() => {
     if (!currentTransaction) return false;
@@ -42,8 +42,8 @@ export function useSwapExecutionState({
   return useMemo(() => {
     if (isFetchingDestinationBalance) return SwapExecutionState.pendingGettingDestinationBalance;
     if (isGettingAddressesLoading) return SwapExecutionState.pendingGettingAddresses;
-    if (isFeeRouteEnabled && isGettingFeeRouteAddressesLoading)
-      return SwapExecutionState.pendingGettingFeeRouteAddresses;
+    if (isGasRouteEnabled && isGettingGasRouteAddressesLoading)
+      return SwapExecutionState.pendingGettingGasRouteAddresses;
 
     if (!chainAddresses) return SwapExecutionState.destinationAddressUnset;
     if (!requiredChainAddresses) return SwapExecutionState.destinationAddressUnset;
@@ -52,8 +52,8 @@ export function useSwapExecutionState({
       (_chainId, index) => chainAddresses[index]?.address,
     );
 
-    const feeRouteAllAddressesSet = feeRouteRequiredChainAddresses?.every(
-      (_chainId, index) => feeRouteChainAddresses?.[index]?.address,
+    const gasRouteAllAddressesSet = gasRouteRequiredChainAddresses?.every(
+      (_chainId, index) => gasRouteChainAddresses?.[index]?.address,
     );
 
     const lastChainAddress = chainAddresses[requiredChainAddresses.length - 1]?.address;
@@ -93,21 +93,21 @@ export function useSwapExecutionState({
       return SwapExecutionState.recoveryAddressUnset;
     }
 
-    if (isFeeRouteEnabled && feeRouteRequiredChainAddresses && !feeRouteAllAddressesSet) {
-      return SwapExecutionState.feeRouteRecoveryAddressUnset;
+    if (isGasRouteEnabled && gasRouteRequiredChainAddresses && !gasRouteAllAddressesSet) {
+      return SwapExecutionState.gasRouteRecoveryAddressUnset;
     }
 
     return SwapExecutionState.ready;
   }, [
     isFetchingDestinationBalance,
     isGettingAddressesLoading,
-    isFeeRouteEnabled,
-    isGettingFeeRouteAddressesLoading,
+    isGasRouteEnabled,
+    isGettingGasRouteAddressesLoading,
     chainAddresses,
     requiredChainAddresses,
-    feeRouteRequiredChainAddresses,
+    gasRouteRequiredChainAddresses,
     currentTransaction?.status,
-    feeRouteChainAddresses,
+    gasRouteChainAddresses,
     showSignaturesRemaining,
   ]);
 }

@@ -57,7 +57,13 @@ export const createRequestClient = ({ apiUrl, apiKey, apiHeaders }: SkipApiOptio
     if (params && typeof params === "object") {
       Object.entries(params as Record<string, any>).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          url.searchParams.append(key, String(value));
+          if (Array.isArray(value)) {
+            value.forEach((item) => {
+              url.searchParams.append(key, String(item));
+            });
+          } else {
+            url.searchParams.append(key, String(value));
+          }
         }
       });
     }

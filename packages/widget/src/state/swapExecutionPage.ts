@@ -52,7 +52,7 @@ type ValidatingGasBalanceData = {
 
 type SwapExecutionState = {
   userAddresses: UserAddress[];
-  feeRouteUserAddresses?: UserAddress[];
+  gasRouteUserAddresses?: UserAddress[];
   /**
    * original route
    */
@@ -61,8 +61,8 @@ type SwapExecutionState = {
 
   originalRoute?: RouteResponse;
   mainRoute?: RouteResponse;
-  feeRoute?: RouteResponse;
-  isFeeRouteEnabled?: boolean;
+  gasRoute?: RouteResponse;
+  isGasRouteEnabled?: boolean;
 
   currentTransactionId?: string;
   isValidatingGasBalance?: ValidatingGasBalanceData;
@@ -86,26 +86,26 @@ export type ChainAddress = {
  */
 export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
-export const feeRouteChainAddressesAtom = atom<Record<number, ChainAddress>>({});
+export const gasRouteChainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
-export const feeRouteAddressesAtomEffect = atomEffect((get, set) => {
+export const gasRouteAddressesAtomEffect = atomEffect((get, set) => {
   const isEnabled = get(gasOnReceiveAtom);
   const gasRoute = get(gasOnReceiveRouteAtom);
   const _chainAddresses = get(chainAddressesAtom);
   const chainAddresses = Object.values(_chainAddresses);
   const { data: chains } = get(skipChainsAtom);
 
-  if (isEnabled && gasRoute.data?.feeRoute) {
-    gasRoute.data.feeRoute.requiredChainAddresses.forEach((chainId, i) => {
+  if (isEnabled && gasRoute.data?.gasRoute) {
+    gasRoute.data.gasRoute.requiredChainAddresses.forEach((chainId, i) => {
       const chain = chains?.find((c) => c.chainId === chainId);
       const findAddress = chainAddresses.find((address) => address.chainId === chainId);
       if (findAddress) {
-        set(feeRouteChainAddressesAtom, (prev) => ({
+        set(gasRouteChainAddressesAtom, (prev) => ({
           ...prev,
           [i]: findAddress,
         }));
       } else {
-        set(feeRouteChainAddressesAtom, (prev) => ({
+        set(gasRouteChainAddressesAtom, (prev) => ({
           ...prev,
           [i]: {
             chainId,
@@ -146,8 +146,8 @@ export const gasRouteEffect = atomEffect((get, set) => {
   set(swapExecutionStateAtom, (prev) => ({
     ...prev,
     mainRoute: gorRoute?.mainRoute,
-    feeRoute: gorRoute?.feeRoute,
-    isFeeRouteEnabled: isGorEnabled,
+    gasRoute: gorRoute?.gasRoute,
+    isGasRouteEnabled: isGorEnabled,
     ...(isGorEnabled && gorRoute?.mainRoute
       ? {
           route: gorRoute.mainRoute,
@@ -195,7 +195,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     userAddresses: [],
     route,
     originalRoute: route,
-    feeRoute: undefined,
+    gasRoute: undefined,
     mainRoute: undefined,
     clientOperations: getClientOperations(route.operations),
     currentTransactionId: undefined,
@@ -203,11 +203,11 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
   set(submitSwapExecutionCallbacksAtom, {
     onRouteStatusUpdated: async (routeStatus) => {
-      const failedFeeRoute = routeStatus?.relatedRoutes?.find(
+      const failedGasRoute = routeStatus?.relatedRoutes?.find(
         (relatedRoute) => relatedRoute.status === "failed",
       );
-      if (failedFeeRoute) {
-        track("gas on receive: fee route failed", { feeRoute: failedFeeRoute });
+      if (failedGasRoute) {
+        track("gas on receive: fee route failed", { gasRoute: failedGasRoute });
       }
       set(setTransactionHistoryAtom, routeStatus);
     },
@@ -350,8 +350,8 @@ export const userAddressesEffectAtom = atomEffect((get, set) => {
   }));
 });
 
-export const feeRouteUserAddressesEffectAtom = atomEffect((get, set) => {
-  const chainAddresses = get(feeRouteChainAddressesAtom);
+export const gasRouteUserAddressesEffectAtom = atomEffect((get, set) => {
+  const chainAddresses = get(gasRouteChainAddressesAtom);
   const addressesMatch = Object.values(chainAddresses).every(
     (chainAddress) => !!chainAddress.address,
   );
@@ -366,7 +366,7 @@ export const feeRouteUserAddressesEffectAtom = atomEffect((get, set) => {
 
   set(swapExecutionStateAtom, (prev) => ({
     ...prev,
-    feeRouteUserAddresses: userAddresses,
+    gasRouteUserAddresses: userAddresses,
   }));
 });
 
@@ -381,7 +381,7 @@ export const simulateTxAtom = atom<boolean>();
 export const batchSignTxsAtom = atom<boolean>(true);
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
-  const { userAddresses, route, mainRoute, feeRoute, isFeeRouteEnabled, feeRouteUserAddresses } =
+  const { userAddresses, route, mainRoute, gasRoute, isGasRouteEnabled, gasRouteUserAddresses } =
     get(swapExecutionStateAtom);
   const gorRoute = get(gasOnReceiveRouteAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
@@ -465,29 +465,29 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
       };
 
       try {
-        if (isFeeRouteEnabled && mainRoute && feeRoute) {
-          if (!feeRouteUserAddresses?.length) return;
+        if (isGasRouteEnabled && mainRoute && gasRoute) {
+          if (!gasRouteUserAddresses?.length) return;
 
           track("execute route", {
             gasOnReceive: true,
-            isFeeRouteAvailable: true,
+            isGasRouteAvailable: true,
             isDestinationFeeBalanceAvailable: isDestinationFeeBalanceAvailable.data,
             mainRoute,
-            feeRoute,
+            gasRoute,
           });
 
           await executeMultipleRoutes({
             route: {
               mainRoute,
-              ...(isFeeRouteEnabled ? { feeRoute } : {}),
+              ...(isGasRouteEnabled ? { gasRoute: gasRoute } : {}),
             },
             userAddresses: {
               mainRoute: userAddresses,
-              ...(isFeeRouteEnabled ? { feeRoute: feeRouteUserAddresses } : {}),
+              ...(isGasRouteEnabled ? { gasRoute: gasRouteUserAddresses } : {}),
             },
             slippageTolerancePercent: {
               mainRoute: swapSettings.slippage.toString(),
-              ...(isFeeRouteEnabled ? { feeRoute: "10" } : {}),
+              ...(isGasRouteEnabled ? { gasRoute: "10" } : {}),
             },
             ...createParams(mainRoute.sourceAssetChainId),
           });
@@ -497,7 +497,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
 
           track("execute route", {
             gasOnReceive: false,
-            isFeeRouteAvailable: !!gorRoute.data?.gasOnReceiveAsset,
+            isGasRouteAvailable: !!gorRoute.data?.gasOnReceiveAsset,
             isDestinationFeeBalanceAvailable: isDestinationFeeBalanceAvailable.data,
             mainRoute: route,
           });

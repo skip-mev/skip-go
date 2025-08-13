@@ -13,18 +13,16 @@ import { themeAtom } from "@/state/skipClient";
 export default function Template({ children }: { children: ReactNode }) {
   return (
     <ClientOnly>
-      <ShadowDomAndProviders disableShadowDom theme={defaultTheme}>
-        <QueryProvider>
-          <Provider store={jotaiStore}>
-            <NiceModal.Provider>
-              <Wrapper>
-                {children}
-                <ToggleThemeButton />
-              </Wrapper>
-            </NiceModal.Provider>
-          </Provider>
-        </QueryProvider>
-      </ShadowDomAndProviders>
+      <QueryProvider>
+        <Provider store={jotaiStore}>
+          <NiceModal.Provider>
+            <Wrapper>
+              {children}
+              <ToggleThemeButton />
+            </Wrapper>
+          </NiceModal.Provider>
+        </Provider>
+      </QueryProvider>
     </ClientOnly>
   );
 }
