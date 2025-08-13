@@ -1,5 +1,21 @@
 ## 0.0.15
 
+## 3.14.5
+
+### Patch Changes
+
+- 451aa75: don't show gas on receive if same chain and address
+- 048f144: prioritize chainIds filtering for gasOnReceive
+- d3ec136: rename feeRoute to gasRoute
+- c1cab03: Stop using SVGProps<SVGSVGElement> for the sake of react 19 compatibility
+- 81d3a11: fix inconsistent main and original route
+- 37241e9: get chains and assets fron client lib state
+- 87b86a1: fix destinationFeeAssets not using the actual asset decimals
+- Updated dependencies [d3ec136]
+- Updated dependencies [37241e9]
+- Updated dependencies [b1660f8]
+  - @skip-go/client@1.5.3
+
 ## 3.14.4
 
 ### Patch Changes

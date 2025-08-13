@@ -1,5 +1,13 @@
 # @skip-go/client
 
+## 1.5.3
+
+### Patch Changes
+
+- d3ec136: rename feeRoute to gasRoute
+- 37241e9: get chains and assets fron client lib state
+- b1660f8: fix array query param value
+
 ## 1.5.2
 
 ### Patch Changes
