@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
-import { convertToPxValue } from "@/utils/style";
+import { Container } from "@/components/Container";
 
 type SwapExecutionPageRouteContainerProps = {
   showDetailed: boolean;
@@ -46,13 +46,12 @@ export const SwapExecutionPageRouteContainer = ({
   );
 };
 
-const StyledContainer = styled.div`
-  position: relative;
+const StyledContainer = styled(Container).attrs({
+  padding: 0,
+})`
   overflow: hidden;
   transition: height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   min-height: 225px;
-  background: ${({ theme }) => theme.primary.background.normal};
-  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.main)};
 `;
 
 const StyledRouteWrapper = styled.div<{ isVisible: boolean; isActive: boolean }>`

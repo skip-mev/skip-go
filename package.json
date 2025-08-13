@@ -11,13 +11,13 @@
     "apps/*"
   ],
   "scripts": {
-    "dev": "yarn run dev:widget & yarn run dev:nextjs & yarn run dev:client",
+    "dev": "yarn run dev:widget & yarn run dev:nextjs & yarn run dev:client & yarn run dev:explorer",
     "dev:https": "yarn run dev:widget & yarn run dev:nextjs-https & yarn run dev:client",
     "dev:widget": "yarn workspace @skip-go/widget run dev",
     "dev:nextjs": "yarn workspace nextjs run dev",
     "dev:nextjs-https": "yarn workspace nextjs run dev:https",
     "dev:client": "yarn workspace @skip-go/client run watch",
-    "dev:explorer": "yarn workspace @skip-go/widget watch:build & yarn workspace explorer run dev",
+    "dev:explorer": "yarn workspace explorer run dev",
     "build": "yarn run build:client && yarn run build:widget && yarn run build:nextjs",
     "build:widget": "yarn workspace @skip-go/widget run build",
     "build:nextjs": "yarn workspace nextjs build",
