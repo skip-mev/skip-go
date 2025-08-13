@@ -48,6 +48,7 @@ export { subscribeToRouteStatus } from "./public-functions/subscribeToRouteStatu
 export type { RouteDetails, TransactionDetails, RouteStatus, TransactionStatus } from "./public-functions/subscribeToRouteStatus";
 export type { TransferEventStatus } from "./utils/clientType"
 
+export { ClientState } from "./state/clientState";
 export type { SkipClientOptions } from "./state/clientState";
 
 export { GAS_STATION_CHAIN_IDS } from "./constants/constants";

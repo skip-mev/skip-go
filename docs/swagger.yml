@@ -1711,7 +1711,7 @@ paths:
                           released: true
                         error: null
               schema:
-                $ref: '#/components/schemas/StatusResponse'
+                $ref: '#/components/schemas/StatusTxResponse'
         '404':
           description: The specified tx was not found.
           content:
@@ -4242,7 +4242,7 @@ components:
         chain_id:
           type: string
           description: Chain ID of the transaction
-    
+
     TrackTxResponse:
       type: object
       required:
@@ -4256,7 +4256,7 @@ components:
           type: string
           description: Link to the transaction on the relevant block explorer
 
-    StatusResponse:
+    StatusTxResponse:
       type: object
       required:
         - state
