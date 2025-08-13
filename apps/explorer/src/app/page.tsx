@@ -9,6 +9,7 @@ import { Step, TransferEventCard, TransferEventCardProps } from "../components/T
 import { defaultSkipClientConfig, skipClientConfigAtom, onlyTestnetsAtom } from "@/state/skipClient";
 import { useSetAtom } from "jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 
 export default function Home() {
   const [txHash, setTxHash] = useState("BA47144AF79143EECEDA00BC758FA52D8B124934C7051A78B20DAC9DC42C1BCB");
@@ -18,6 +19,7 @@ export default function Home() {
   
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
+  const isMobileScreenSize = useIsMobileScreenSize();
 
   const uniqueTransfers = useMemo(() => {
     const seen = new Set<string>();
@@ -92,7 +94,7 @@ export default function Home() {
       </Row>
       {
         uniqueTransfers.length > 0 && (
-          <Row gap={16}>
+          <Row gap={16} flexDirection={isMobileScreenSize ? "column" : "row"} align={isMobileScreenSize ? "center" : "flex-start"}>
             <TransactionDetails {...transactionDetails} />
             <Column>
               {uniqueTransfers.map((transfer) => (
