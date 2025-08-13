@@ -47,6 +47,7 @@ export type AssetAndChainSelectorModalProps = ModalProps & {
   selectedAsset?: ClientAsset;
   selectChain?: boolean;
   context: SelectorContext;
+  overrideSelectedGroup?: GroupedAsset;
 };
 
 const ITEM_HEIGHT = 65;
@@ -54,13 +55,17 @@ const ITEM_HEIGHT = 65;
 export const AssetAndChainSelectorModal = createModal(
   (modalProps: AssetAndChainSelectorModalProps) => {
     const modal = useModal();
-    const { onSelect: _onSelect, selectedAsset, selectChain, context } = modalProps;
+    const {
+      onSelect: _onSelect,
+      selectedAsset,
+      selectChain,
+      context,
+      overrideSelectedGroup,
+    } = modalProps;
     const { data: assets, isFetching, isPending } = useAtomValue(skipAssetsAtom);
     const ibcEurekaHighlightedAssets = useAtomValue(ibcEurekaHighlightedAssetsAtom);
     const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
     const isLoading = (isFetching && isPending) || isChainsLoading;
-
-    console.log("assets", assets);
 
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -93,12 +98,18 @@ export const AssetAndChainSelectorModal = createModal(
     const groupedAssetsByRecommendedSymbol = useGroupedAssetByRecommendedSymbol({ context });
 
     const selectedGroup = useMemo(() => {
+      if (overrideSelectedGroup) return overrideSelectedGroup;
       const asset = groupedAssetSelected?.assets[0] || selectedAsset;
       if (!asset) return;
       return groupedAssetsByRecommendedSymbol?.find(
         (group) => group.id === asset.recommendedSymbol,
       );
-    }, [groupedAssetSelected?.assets, selectedAsset, groupedAssetsByRecommendedSymbol]);
+    }, [
+      overrideSelectedGroup,
+      groupedAssetSelected?.assets,
+      selectedAsset,
+      groupedAssetsByRecommendedSymbol,
+    ]);
 
     const filteredAssets = useFilteredAssets({ groupedAssetsByRecommendedSymbol, searchQuery });
     const filteredChains = useFilteredChains({
@@ -199,6 +210,7 @@ export const AssetAndChainSelectorModal = createModal(
           searchTerm={searchQuery}
           setSearchTerm={setSearchQuery}
           onKeyDown={onKeyDown}
+          overrideSelectedGroup={!!overrideSelectedGroup}
         />
         {showSkeleton || (!filteredAssets && !filteredChains) ? (
           <StyledColumn height={listHeight}>

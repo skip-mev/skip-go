@@ -5,9 +5,10 @@ import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { useIsClient } from "@uidotdev/usehooks";
 import { QueryProvider } from "../components/QueryProvider";
-import { Provider, jotaiStore } from "@/jotai";
+import { Provider, jotaiStore, useSetAtom } from "@/jotai";
 import { Modals, NiceModal } from "@/nice-modal";
 import { AssetAndChainSelectorModal } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
+import { themeAtom } from "@/state/skipClient";
 
 export default function Template({ children }: { children: ReactNode }) {
   return (
@@ -30,6 +31,11 @@ export default function Template({ children }: { children: ReactNode }) {
 
 export const Wrapper = ({ children }: { children: ReactNode }) => {
   const [theme] = useLocalStorage<"dark" | "light">("explorer-theme", "dark");
+  const setTheme= useSetAtom(themeAtom);
+
+  useEffect(() => {
+    setTheme(theme === "dark" ? defaultTheme : lightTheme);
+  }, [setTheme, theme]);
 
   return (
     <ShadowDomAndProviders disableShadowDom theme={theme === "dark" ? defaultTheme : lightTheme}>
