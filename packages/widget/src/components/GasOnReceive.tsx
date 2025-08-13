@@ -31,7 +31,7 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
   const theme = useTheme();
   const [gasOnReceive, setGasOnReceive] = useAtom(gasOnReceiveAtom);
   const { isLoading: fetchingGasRoute } = useAtomValue(gasOnReceiveRouteAtom);
-  const { feeRoute } = useAtomValue(swapExecutionStateAtom);
+  const { gasRoute } = useAtomValue(swapExecutionStateAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const isSomeDestinationFeeBalanceAvailable = useAtomValue(
     isSomeDestinationFeeBalanceAvailableAtom,
@@ -42,8 +42,8 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
   const isFetchingBalance = isSomeDestinationFeeBalanceAvailable.isLoading;
   const gasOnReceiveAsset = useMemo(() => {
     const gasAsset = {
-      chainId: routeDetails?.route?.destAssetChainId ?? feeRoute?.destAssetChainId,
-      denom: routeDetails?.route?.destAssetDenom ?? feeRoute?.destAssetDenom,
+      chainId: routeDetails?.route?.destAssetChainId ?? gasRoute?.destAssetChainId,
+      denom: routeDetails?.route?.destAssetDenom ?? gasRoute?.destAssetDenom,
     };
 
     if (!gasAsset) return;
@@ -54,14 +54,14 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
     return asset;
   }, [
     assets,
-    feeRoute?.destAssetChainId,
-    feeRoute?.destAssetDenom,
+    gasRoute?.destAssetChainId,
+    gasRoute?.destAssetDenom,
     routeDetails?.route?.destAssetChainId,
     routeDetails?.route?.destAssetDenom,
   ]);
 
-  const amountUsd = routeDetails?.route?.usdAmountOut ?? feeRoute?.usdAmountOut;
-  const amountOut = routeDetails?.route?.amountOut ?? feeRoute?.amountOut ?? "";
+  const amountUsd = routeDetails?.route?.usdAmountOut ?? gasRoute?.usdAmountOut;
+  const amountOut = routeDetails?.route?.amountOut ?? gasRoute?.amountOut ?? "";
   const assetSymbol = gasOnReceiveAsset?.recommendedSymbol?.toUpperCase() ?? "";
 
   const gasOnReceiveText = useMemo(() => {
@@ -134,7 +134,7 @@ export const GasOnReceive = ({ routeDetails, hideContainer }: GasOnReceiveProps 
     );
   }, [routeDetails?.status, theme.primary.text.lowContrast, theme.warning.text]);
 
-  if (!routeDetails && (!feeRoute || !gasOnReceiveAsset)) {
+  if (!routeDetails && (!gasRoute || !gasOnReceiveAsset)) {
     return null;
   }
 

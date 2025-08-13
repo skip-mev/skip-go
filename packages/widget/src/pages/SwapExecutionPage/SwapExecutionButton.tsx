@@ -31,7 +31,7 @@ type SwapExecutionButtonProps = {
   signaturesRemaining: number;
   lastOperation: ClientOperation;
   connectRequiredChains: (openModal?: boolean) => Promise<void>;
-  connectFeeRouteRequiredChains?: (openModal?: boolean) => Promise<void>;
+  connectGasRouteRequiredChains?: (openModal?: boolean) => Promise<void>;
   submitExecuteRouteMutation: MutateFunction<
     null | undefined,
     unknown,
@@ -48,7 +48,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   signaturesRemaining,
   lastOperation,
   connectRequiredChains,
-  connectFeeRouteRequiredChains,
+  connectGasRouteRequiredChains: connectGasRouteRequiredChains,
   submitExecuteRouteMutation,
 }) => {
   const countdown = useCountdown({
@@ -96,14 +96,14 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           }}
         />
       );
-    case SwapExecutionState.feeRouteRecoveryAddressUnset:
+    case SwapExecutionState.gasRouteRecoveryAddressUnset:
       return (
         <MainButton
           label="Set intermediary address"
           icon={ICONS.rightArrow}
           onClick={() => {
             track("swap execution page: set recovery address button - clicked");
-            connectFeeRouteRequiredChains?.(true);
+            connectGasRouteRequiredChains?.(true);
           }}
         />
       );

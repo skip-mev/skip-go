@@ -58,14 +58,14 @@ export const SwapExecutionPageRouteSimpleRow = ({
   const groupedAssets = useGroupedAssetByRecommendedSymbol();
   const groupedAsset = groupedAssets?.find((i) => i.id === assetDetails?.symbol);
 
-  const { feeRoute } = useAtomValue(swapExecutionStateAtom);
+  const { gasRoute } = useAtomValue(swapExecutionStateAtom);
   const isGorEnabled = useAtomValue(gasOnReceiveAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
 
   const gasOnReceiveAsset = useMemo(() => {
     const gasAsset = {
-      chainId: feeRoute?.destAssetChainId,
-      denom: feeRoute?.destAssetDenom,
+      chainId: gasRoute?.destAssetChainId,
+      denom: gasRoute?.destAssetDenom,
     };
 
     if (!gasAsset) return;
@@ -74,7 +74,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
       (a) => a.chainId === gasAsset?.chainId && a.denom === gasAsset?.denom,
     );
     return asset;
-  }, [assets, feeRoute?.destAssetChainId, feeRoute?.destAssetDenom]);
+  }, [assets, gasRoute?.destAssetChainId, gasRoute?.destAssetDenom]);
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
 
@@ -115,14 +115,14 @@ export const SwapExecutionPageRouteSimpleRow = ({
     if (context === "source") return;
     if (!gasOnReceiveAsset) return;
 
-    const amountUsd = feeRoute?.usdAmountOut;
+    const amountUsd = gasRoute?.usdAmountOut;
 
     if (!amountUsd) return;
 
     const assetSymbol = gasOnReceiveAsset?.recommendedSymbol?.toUpperCase() ?? "";
 
     return `+ ${formatUSD(amountUsd)} in ${assetSymbol}`;
-  }, [context, feeRoute?.usdAmountOut, gasOnReceiveAsset, isGorEnabled]);
+  }, [context, gasRoute?.usdAmountOut, gasOnReceiveAsset, isGorEnabled]);
 
   const renderExplorerLink = useMemo(() => {
     if (!explorerLink) return;
