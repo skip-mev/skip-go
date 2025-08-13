@@ -3,7 +3,7 @@ import { Container } from "@/components/Container";
 import { Column, Row } from "@/components/Layout";
 import { SmallTextButton } from '@/components/Typography';
 import { skipChainsAtom } from "@/state/skipClient";
-import { useAtomValue } from "jotai";
+import { useAtomValue } from "@/jotai";
 import { Text, SmallText } from "@/components/Typography";
 import { TransferType } from "@skip-go/client";
 import Image from "next/image";

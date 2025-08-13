@@ -4,7 +4,7 @@ import { SmallText } from '@/components/Typography';
 import { ReactNode } from "react";
 import { getSimpleOverallStatus, TransactionState } from "@skip-go/client";
 import { Badge } from "@/components/Badge";
-import { useAtomValue } from "jotai";
+import { useAtomValue } from "@/jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { Button, GhostButton } from "@/components/Button";
 import { getTruncatedAddress } from "@/utils/crypto";

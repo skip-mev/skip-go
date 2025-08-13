@@ -34,7 +34,8 @@
       "@/pages/*": ["../../packages/widget/src/pages/*"],
       "@/providers/*": ["../../packages/widget/src/providers/*"],
       "@/styled-components": ["../../packages/widget/src/styled-components"],
-      "@/nice-modal": ["../../packages/widget/src/nice-modal"]
+      "@/nice-modal": ["../../packages/widget/src/nice-modal"],
+      "@/jotai": ["../../packages/widget/src/jotai"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/types/**/*.d.ts"],

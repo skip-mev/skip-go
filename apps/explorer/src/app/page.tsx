@@ -7,7 +7,7 @@ import { transactionStatus, getTransferEventsFromTxStatusResponse, ClientTransfe
 import { useEffect, useState, useMemo } from "react";
 import { TransferEventCard, TransferEventCardProps } from "../components/TransferEventCard";
 import { defaultSkipClientConfig, skipClientConfigAtom, onlyTestnetsAtom, ClientAsset } from "@/state/skipClient";
-import { useSetAtom } from "jotai";
+import { useSetAtom } from "@/jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { NiceModal, Modals } from "@/nice-modal";

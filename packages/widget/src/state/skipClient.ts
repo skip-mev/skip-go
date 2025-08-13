@@ -48,6 +48,8 @@ export const skipAssetsAtom = atomWithQuery((get) => {
   const chains = get(skipChainsAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
+  console.log("skipAssetsAtom", onlyTestnets, apiUrl, apiKey, cacheDurationMs);
+
   return {
     queryKey: ["skipAssets", onlyTestnets, { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
     queryFn: async () => {
@@ -68,6 +70,8 @@ export const skipAssetsAtom = atomWithQuery((get) => {
 export const skipChainsAtom = atomWithQuery((get) => {
   const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
+
+  console.log("skipChainsAtom", onlyTestnets, apiUrl, apiKey, cacheDurationMs);
 
   return {
     queryKey: ["skipChains", { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],

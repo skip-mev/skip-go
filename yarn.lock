@@ -18156,7 +18156,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "explorer@workspace:apps/explorer"
   dependencies:
-    "@ebay/nice-modal-react": ^1.2.13
     "@eslint/eslintrc": ^3
     "@skip-go/client": "workspace:^"
     "@tanstack/react-query": ^5.84.2
@@ -18166,13 +18165,10 @@ __metadata:
     "@uidotdev/usehooks": ^2.4.1
     eslint: ^9
     eslint-config-next: 15.4.5
-    jotai: ^2.13.1
-    jotai-tanstack-query: ^0.11.0
     next: 15.4.5
     next-transpile-modules: ^10.0.1
     react: 19.1.0
     react-dom: 19.1.0
-    styled-components: ^6.1.19
     typescript: ^5
   languageName: unknown
   linkType: soft
@@ -21495,23 +21491,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jotai-tanstack-query@npm:^0.11.0":
-  version: 0.11.0
-  resolution: "jotai-tanstack-query@npm:0.11.0"
-  peerDependencies:
-    "@tanstack/query-core": "*"
-    "@tanstack/react-query": "*"
-    jotai: ">=2.0.0"
-    react: ^18.0.0 || ^19.0.0
-  peerDependenciesMeta:
-    "@tanstack/react-query":
-      optional: true
-    react:
-      optional: true
-  checksum: 09972c9624f08a7b4a1abf45f669ca2689dc23be75e2e05f07d377e10af46b13acc03123c1312ddb10187e6bc332f704a4377e62bdbc497692b6e6accbc8a437
-  languageName: node
-  linkType: hard
-
 "jotai-tanstack-query@npm:^0.8.6":
   version: 0.8.8
   resolution: "jotai-tanstack-query@npm:0.8.8"
@@ -21522,7 +21501,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jotai@npm:^2.10.1, jotai@npm:^2.13.1":
+"jotai@npm:^2.10.1":
   version: 2.13.1
   resolution: "jotai@npm:2.13.1"
   peerDependencies:
@@ -28742,7 +28721,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:^6.1.13, styled-components@npm:^6.1.19":
+"styled-components@npm:^6.1.13":
   version: 6.1.19
   resolution: "styled-components@npm:6.1.19"
   dependencies:

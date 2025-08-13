@@ -5,8 +5,7 @@ import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { useIsClient } from "@uidotdev/usehooks";
 import { QueryProvider } from "../components/QueryProvider";
-import { Provider } from "jotai";
-import { jotaiStore } from "@/widget/Widget";
+import { Provider, jotaiStore } from "@/jotai";
 import { Modals, NiceModal } from "@/nice-modal";
 import { AssetAndChainSelectorModal } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 
@@ -16,10 +15,12 @@ export default function Template({ children }: { children: ReactNode }) {
       <ShadowDomAndProviders disableShadowDom theme={defaultTheme}>
         <QueryProvider>
           <Provider store={jotaiStore}>
-            <Wrapper>
-              {children}
-              <ToggleThemeButton />
-            </Wrapper>
+            <NiceModal.Provider>
+              <Wrapper>
+                {children}
+                <ToggleThemeButton />
+              </Wrapper>
+            </NiceModal.Provider>
           </Provider>
         </QueryProvider>
       </ShadowDomAndProviders>
@@ -47,11 +48,9 @@ export const Wrapper = ({ children }: { children: ReactNode }) => {
           backgroundPosition: "bottom",
         }}
       >
-        <NiceModal.Provider>
-          <RegisterModals>
-            {children}
-          </RegisterModals>
-        </NiceModal.Provider>
+        <RegisterModals>
+          {children}
+        </RegisterModals>
       </div>
     </ShadowDomAndProviders>
   );
