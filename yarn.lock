@@ -9349,25 +9349,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-devtools@npm:5.84.0":
-  version: 5.84.0
-  resolution: "@tanstack/query-devtools@npm:5.84.0"
-  checksum: 0121c54d3e2d4c410f2006dd8e3f34f5e3454e526cdc8ef28f5572dd69a675c5ab0530916038d0ec7708135cff5c65791edb3312d485180a3a32a0e949e692b3
-  languageName: node
-  linkType: hard
-
-"@tanstack/react-query-devtools@npm:^5.84.2":
-  version: 5.84.2
-  resolution: "@tanstack/react-query-devtools@npm:5.84.2"
-  dependencies:
-    "@tanstack/query-devtools": 5.84.0
-  peerDependencies:
-    "@tanstack/react-query": ^5.84.2
-    react: ^18 || ^19
-  checksum: 0f45418f3d6179e23c889b5a9abeba4877bced00fbda842682101e1e6cc06be47a30095149d7c8f882ef1d47d92c889373016749681208a2c94c5522324075d9
-  languageName: node
-  linkType: hard
-
 "@tanstack/react-query@npm:5.81.2":
   version: 5.81.2
   resolution: "@tanstack/react-query@npm:5.81.2"
@@ -18178,7 +18159,6 @@ __metadata:
     "@eslint/eslintrc": ^3
     "@skip-go/client": "workspace:^"
     "@tanstack/react-query": ^5.84.2
-    "@tanstack/react-query-devtools": ^5.84.2
     "@types/node": ^20
     "@types/react": ^19
     "@types/react-dom": ^19
