@@ -40,6 +40,7 @@ export default function Home() {
             status: event.status ?? "",
             step: getStep(index, fromOrTo),
             txHash: event[`${fromOrTo}TxHash`] ?? "",
+            durationInMs: event.durationInMs ?? 0,
           });
         }
       };
@@ -48,6 +49,7 @@ export default function Home() {
       addChainIfUnique(event.toChainId, event.toExplorerLink, "to");
     });
 
+    console.log(transfers);
     return transfers;
   }, [transferEvents]);
 
@@ -66,6 +68,7 @@ export default function Home() {
     setTransactionStatusResponse(response);
     setTransferEvents(transferEvents);
     console.log(response);
+    console.log(transferEvents);
   }
 
   const transactionDetails = useMemo(() => {
@@ -91,7 +94,7 @@ export default function Home() {
         uniqueTransfers.length > 0 && (
           <Row gap={16}>
             <TransactionDetails {...transactionDetails} />
-            <Column gap={10}>
+            <Column>
               {uniqueTransfers.map((transfer) => (
                 <TransferEventCard
                   key={transfer.chainId}
@@ -100,6 +103,7 @@ export default function Home() {
                   transferType={transfer.transferType}
                   status={transfer.status}
                   step={transfer.step}
+                  durationInMs={transfer.durationInMs}
                 />
               ))}
             </Column>

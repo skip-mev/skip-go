@@ -8,6 +8,9 @@ import { styled } from "@/widget";
 import { Text, SmallText } from "@/components/Typography";
 import { TransferType } from "@skip-go/client";
 import Image from "next/image";
+import { BridgeIcon } from "../icons/BridgeIcon";
+import { ClockIcon } from "../icons/ClockIcon";
+import { convertSecondsToMinutesOrHours } from "@/utils/number";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -18,6 +21,7 @@ export type TransferEventCardProps = {
   status: string;
   step: Step;
   txHash?: string;
+  durationInMs?: number;
   // transferEvent?: ClientTransferEvent;
 }
 
@@ -46,31 +50,49 @@ const getTransferTypeLabel = (transferType: TransferType | string) => {
   }
 }
 
-export const TransferEventCard = ({ chainId, explorerLink, transferType, status, step }: TransferEventCardProps) => {
+export const TransferEventCard = ({ chainId, explorerLink, transferType, status, step, durationInMs = 0 }: TransferEventCardProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
 
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
   
   return (
-    <TransferEventContainer padding={15} width={355} borderRadius={16} status={step === "Destination" ? status : undefined}>
-      <Row align="center" justify="space-between">
-        <Badge> { step } </Badge>
-        <Badge variant={step === "Destination" ? status : undefined}> {status} </Badge>
-      </Row>
-      <TransferEventDetailsCard>
-        <Row justify="space-between">
-          <Row gap={15}>
-            {chain?.logoUri && <Image src={chain?.logoUri} alt={chain?.chainName} width={40} height={40} />}
-            <Column justify="center">
-              <Text>{chain?.prettyName}</Text>
-              <SmallText>{chainId}</SmallText>
-            </Column>
+    <Column align="center" justify="center">
+      {
+        step !== "Origin" && (
+          <>
+            <BridgeIcon />
+            <Container padding={12} width="auto" borderRadius={12} gap={5} flexDirection="row">
+              <SmallText normalTextColor>{ getTransferTypeLabel(transferType) }</SmallText>
+              <SmallText> <ClockIcon /> </SmallText>
+              <SmallText> {durationInMs ? convertSecondsToMinutesOrHours(durationInMs / 1000) : "Instant"}</SmallText>
+            </Container>
+            <BridgeIcon />
+          </>
+        )
+      }
+     
+      <TransferEventContainer padding={15} width={355} borderRadius={16} status={step === "Destination" ? status : undefined}>
+        <Row align="center" justify="space-between">
+          <Row gap={10}>
+            <Badge> { step } </Badge>
+            {step === "Destination" && <Badge variant={status}> {status} </Badge>}
           </Row>
-          <Badge> { getTransferTypeLabel(transferType) } </Badge>
+          <SmallTextButton textAlign="center" onClick={() => window.open(explorerLink, "_blank")}> Mintscan → </SmallTextButton>
         </Row>
-      </TransferEventDetailsCard>
-      <SmallTextButton textAlign="center" onClick={() => window.open(explorerLink, "_blank")}> View on Mintscan → </SmallTextButton>
-    </TransferEventContainer>
+        <TransferEventDetailsCard>
+          <Row justify="space-between">
+            <Row gap={15}>
+              {chain?.logoUri && <Image src={chain?.logoUri} alt={chain?.chainName} width={40} height={40} />}
+              <Column justify="center">
+                <Text>{chain?.prettyName}</Text>
+                <SmallText>{chainId}</SmallText>
+              </Column>
+            </Row>
+            <Badge> { getTransferTypeLabel(transferType) } </Badge>
+          </Row>
+        </TransferEventDetailsCard>
+      </TransferEventContainer>
+    </Column>
 );
 };
 

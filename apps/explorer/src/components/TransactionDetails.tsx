@@ -10,6 +10,7 @@ import { Button, GhostButton } from "@/components/Button";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import Image from "next/image";
+import { HamburgerIcon } from "@/icons/HamburgerIcon";
 
 export type TransactionDetailsProps = {
   txHash: string;
@@ -25,7 +26,7 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
   
   console.log({ txHash, state, chainIds });
   return (
-    <Column gap={10}>
+    <Column gap={5}>
       <Container gap={20} width={355} borderRadius={16}>
         <TransactionDetailsRow
           label="Transaction"
@@ -55,8 +56,8 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
         />
       </Container>
       <Row justify="space-between">
-        <GhostButton onClick={() => {}}>
-          View raw data
+        <GhostButton gap={5} onClick={() => {}}>
+          View raw data <HamburgerIcon />
         </GhostButton>
         <GhostButton onClick={() => {}}>
           View token details
