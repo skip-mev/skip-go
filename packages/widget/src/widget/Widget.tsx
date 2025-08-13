@@ -139,6 +139,7 @@ export const WidgetWrapper = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     registerModals();
+    console.log("registerModals");
     // eslint-disable-next-line no-console
     console.info(`Loaded skip-go widget version ${packageJson.version}`);
   }, []);

@@ -10,8 +10,7 @@ import { defaultSkipClientConfig, skipClientConfigAtom, onlyTestnetsAtom, Client
 import { useSetAtom } from "jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
-import NiceModal from "@ebay/nice-modal-react";
-import { Modals } from "../utils/registerModals";
+import { NiceModal, Modals } from "@/nice-modal";
 
 export default function Home() {
   const [txHash, setTxHash] = useState("BA47144AF79143EECEDA00BC758FA52D8B124934C7051A78B20DAC9DC42C1BCB");
@@ -91,12 +90,15 @@ export default function Home() {
 
       <Row justify="center" gap={10} >
         <button onClick={() => {
-
-          NiceModal.show("TestModal");
-
-            // NiceModal.show(Modals.WalletSelectorModal, {
-            //   chainId: "osmosis-1",
-            // });
+            NiceModal.show(Modals.AssetAndChainSelectorModal, {
+              context: "source",
+              onSelect: (asset: ClientAsset | null) => {
+                console.log("Asset selected:", asset);
+                NiceModal.hide(Modals.AssetAndChainSelectorModal);
+              },
+              selectChain: true,
+              container: document.getElementById("test"),
+            });
 
           // NiceModal.show(Modals.SetAddressModal, {
           //   signRequired: false,
@@ -110,15 +112,7 @@ export default function Home() {
           //   console.log("document.getElementById('test')", document.getElementById("test"));
             
           //   // Use the widget package's modal system
-          //   const result = NiceModal.show(Modals.AssetAndChainSelectorModal, {
-          //     context: "source",
-          //     onSelect: (asset: ClientAsset | null) => {
-          //       console.log("Asset selected:", asset);
-          //       NiceModal.hide(Modals.AssetAndChainSelectorModal);
-          //     },
-          //     selectChain: true,
-          //     container: document.getElementById("test"),
-          //   });
+
 
           //   NiceModal.show(Modals.WalletSelectorModal, {
           //     chainId: "osmosis-1",

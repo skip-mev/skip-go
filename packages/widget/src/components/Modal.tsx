@@ -2,7 +2,7 @@ import { css, keyframes, styled } from "styled-components";
 import { disableShadowDomAtom, ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { ComponentType, useEffect, useRef, useState } from "react";
-import { PartialTheme } from "@/widget/theme";
+import { defaultTheme, PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -109,6 +109,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
 };
 
 export const createModal = <T extends ModalProps>(component: ComponentType<T>) => {
+  console.log("createModal", component);
   const Component = component;
 
   const WrappedComponent = (props: T) => {
@@ -119,7 +120,7 @@ export const createModal = <T extends ModalProps>(component: ComponentType<T>) =
     console.warn("🔍 Modal theme:", theme);
 
     return (
-      <Modal {...props} theme={theme}>
+      <Modal {...props} theme={defaultTheme}>
         <ErrorBoundary
           fallback={null}
           onError={(error, errorInfo) => {
@@ -135,11 +136,7 @@ export const createModal = <T extends ModalProps>(component: ComponentType<T>) =
     );
   };
 
-  console.warn(
-    "🔍 createModal called for component:",
-    component,
-    Component.name || Component.displayName,
-  );
+  console.warn("🔍 createModal called for component:", Component.name || Component.displayName);
   return NiceModal.create(WrappedComponent);
 };
 

@@ -34,6 +34,7 @@ const nextConfig: NextConfig = {
       "@/pages": path.resolve(__dirname, "../../packages/widget/src/pages"),
       "@/providers": path.resolve(__dirname, "../../packages/widget/src/providers"),
       "@/styled-components": path.resolve(__dirname, "../../packages/widget/src/styled-components"),
+      "@/nice-modal": path.resolve(__dirname, "../../packages/widget/src/nice-modal"),
     };
 
     // Handle font files

@@ -33,7 +33,8 @@
       "@/constants/*": ["../../packages/widget/src/constants/*"],
       "@/pages/*": ["../../packages/widget/src/pages/*"],
       "@/providers/*": ["../../packages/widget/src/providers/*"],
-      "@/styled-components": ["../../packages/widget/src/styled-components"]
+      "@/styled-components": ["../../packages/widget/src/styled-components"],
+      "@/nice-modal": ["../../packages/widget/src/nice-modal"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/types/**/*.d.ts"],
