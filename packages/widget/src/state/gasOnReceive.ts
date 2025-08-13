@@ -82,10 +82,10 @@ export const gasOnReceiveRouteRequestAtom = atom((get) => {
   const sourceAssetUsdPrice =
     balances?.data?.chains?.[sourceAsset?.chainId]?.denoms?.[sourceAsset?.denom]?.price;
   if (!sourceAssetUsdPrice) return;
-  const amount = BigNumber(sourceAssetUsdPrice).multipliedBy(amountUsd).toString();
+  const amount = BigNumber(amountUsd).dividedBy(sourceAssetUsdPrice).toString();
 
   return {
-    amountIn: convertHumanReadableAmountToCryptoAmount(amount, destinationAsset?.decimals),
+    amountIn: convertHumanReadableAmountToCryptoAmount(amount, sourceAsset?.decimals),
     sourceAssetChainId: sourceAsset.chainId,
     sourceAssetDenom: sourceAsset.denom,
     destAssetChainId: destinationAsset?.chainId,
