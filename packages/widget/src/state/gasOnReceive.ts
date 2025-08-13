@@ -54,8 +54,8 @@ export const gasOnReceiveRouteRequestAtom = atom((get) => {
     return GAS_ON_RECEIVE_AMOUNT_USD[ChainType.Cosmos];
   })();
   const destinationFeeAssets = (() => {
+    const assets = get(skipAssetsAtom);
     if (destinationChain?.chainType === ChainType.Evm) {
-      const assets = get(skipAssetsAtom);
       const evmFeeAsset = assets.data?.find(
         (asset) => asset.chain_key === destinationChain?.chainId && asset.denom.includes("-native"),
       );
@@ -64,13 +64,16 @@ export const gasOnReceiveRouteRequestAtom = atom((get) => {
       }
     }
     return destinationChain?.feeAssets.map((asset) => {
+      const destinationFeeAsset = assets.data?.find(
+        (a) => a.chain_key === destinationChain?.chainId && a.denom === asset.denom,
+      );
       const gasPrice = asset.gasPrice?.average ?? asset.gasPrice?.high ?? asset.gasPrice?.low;
       return {
         amountOut:
           gasPrice &&
           convertHumanReadableAmountToCryptoAmount(
             BigNumber(gasPrice).multipliedBy(3).toNumber(),
-            destinationAsset?.decimals,
+            destinationFeeAsset?.decimals,
           ),
         denom: asset.denom,
       };
