@@ -49,6 +49,7 @@ export type { RouteDetails, TransactionDetails, RouteStatus, TransactionStatus }
 export type { TransferEventStatus, ClientTransferEvent } from "./utils/clientType"
 export { getTransferEventsFromTxStatusResponse, TransferType, getSimpleOverallStatus } from "./utils/clientType"
 
+export { ClientState } from "./state/clientState";
 export type { SkipClientOptions } from "./state/clientState";
 
 export { GAS_STATION_CHAIN_IDS } from "./constants/constants";

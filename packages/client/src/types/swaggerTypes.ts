@@ -31,38 +31,38 @@ export interface ApiError {
 }
 
 export interface Asset {
-  /** Chain-id of the asset */
-  chainId: string;
-  /** Coingecko id of the asset */
-  coingeckoId?: string;
-  /** Number of decimals used for amounts of the asset */
-  decimals?: number;
   /** Denom of the asset */
   denom: string;
-  /** Description of the asset */
-  description?: string;
+  /** Chain-id of the asset */
+  chainId: string;
+  /** Denom of the origin of the asset. If this is an ibc denom, this is the original denom that the ibc token represents */
+  originDenom: string;
+  /** Chain-id of the origin of the asset. If this is an ibc denom, this is the chain-id of the asset that the ibc token represents */
+  originChainId: string;
+  /** The forward slash delimited sequence of ibc ports and channels that can be traversed to unwind an ibc token to its origin asset. */
+  trace: string;
   /** Indicates whether asset is a CW20 token */
   isCw20: boolean;
   /** Indicates whether asset is an EVM token */
   isEvm: boolean;
   /** Indicates whether asset is an SVM token */
   isSvm: boolean;
-  /** URI pointing to an image of the logo of the asset */
-  logoUri?: string;
-  /** Name of the asset */
-  name?: string;
-  /** Chain-id of the origin of the asset. If this is an ibc denom, this is the chain-id of the asset that the ibc token represents */
-  originChainId: string;
-  /** Denom of the origin of the asset. If this is an ibc denom, this is the original denom that the ibc token represents */
-  originDenom: string;
-  /** Recommended symbol of the asset used to differentiate between bridged assets with the same symbol, e.g. USDC.axl for Axelar USDC and USDC.grv for Gravity USDC */
-  recommendedSymbol?: string;
   /** Symbol of the asset, e.g. ATOM for uatom */
   symbol?: string;
+  /** Name of the asset */
+  name?: string;
+  /** URI pointing to an image of the logo of the asset */
+  logoUri?: string;
+  /** Number of decimals used for amounts of the asset */
+  decimals?: number;
   /** Address of the contract for the asset, e.g. if it is a CW20 or ERC20 token */
   tokenContract?: string;
-  /** The forward slash delimited sequence of ibc ports and channels that can be traversed to unwind an ibc token to its origin asset. */
-  trace: string;
+  /** Description of the asset */
+  description?: string;
+  /** Coingecko id of the asset */
+  coingeckoId?: string;
+  /** Recommended symbol of the asset used to differentiate between bridged assets with the same symbol, e.g. USDC.axl for Axelar USDC and USDC.grv for Gravity USDC */
+  recommendedSymbol?: string;
 }
 
 export interface AssetBetweenChains {
@@ -97,29 +97,25 @@ export interface AutopilotMsgWrapper {
 
 /** A transfer facilitated by the Axelar bridge */
 export interface AxelarTransfer {
-  /** Axelar-name of the asset to bridge */
-  asset?: string;
-  /** Amount of the fee asset to be paid as the Axelar bridge fee. This is denominated in the fee asset. */
-  feeAmount?: string;
-  feeAsset?: Asset;
-  /** Name for source chain of the bridge transaction used on Axelar */
-  fromChain?: string;
   /** Canonical chain-id of the source chain of the bridge transaction */
   fromChainId?: string;
-  /** Whether the source and destination chains are both testnets */
-  isTestnet?: boolean;
-  /** Whether to unwrap the asset at the destination chain (from ERC-20 to native) */
-  shouldUnwrap?: boolean;
-  /** Name for destination chain of the bridge transaction used on Axelar */
-  toChain?: string;
   /** Canonical chain-id of the destination chain of the bridge transaction */
   toChainId?: string;
+  /** Axelar-name of the asset to bridge */
+  asset?: string;
+  /** Whether to unwrap the asset at the destination chain (from ERC-20 to native) */
+  shouldUnwrap?: boolean;
   /** Denom of the input asset */
   denomIn?: string;
   /** Denom of the output asset */
   denomOut?: string;
+  /** Amount of the fee asset to be paid as the Axelar bridge fee. This is denominated in the fee asset. */
+  feeAmount?: string;
   /** Amount of the fee asset to be paid as the Axelar bridge fee, converted to USD value */
   usdFeeAmount?: string;
+  feeAsset?: Asset;
+  /** Whether the source and destination chains are both testnets */
+  isTestnet?: boolean;
   /** A cross-chain transfer */
   ibcTransferToAxelar?: Transfer;
   /**
@@ -137,6 +133,16 @@ export interface AxelarTransfer {
   bridgeId?: BridgeType;
   /** Indicates whether this transfer is relayed via Smart Relay */
   smartRelay?: boolean;
+  /**
+   * Deprecated, use from_chain_id instead. Name for source chain of the bridge transaction used on Axelar
+   * @deprecated
+   */
+  fromChain?: string;
+  /**
+   * Deprecated, use to_chain_id instead. Name for destination chain of the bridge transaction used on Axelar
+   * @deprecated
+   */
+  toChain?: string;
 }
 
 export interface AxelarTransferInfo {
@@ -199,14 +205,14 @@ export interface AxelarTransferWrapper {
 export interface SmartRelayFeeQuote {
   /** The USDC fee amount */
   feeAmount?: string;
-  /** The fee asset denomination */
-  feeDenom?: string;
-  /** The address the fee should be sent to */
-  feePaymentAddress?: string;
   /** Address of the relayer */
   relayerAddress?: string;
   /** Expiration time of the fee quote */
   expiration?: string;
+  /** The fee asset denomination */
+  feeDenom?: string;
+  /** The address the fee should be sent to */
+  feePaymentAddress?: string;
 }
 
 /** A transfer facilitated by the CCTP bridge */
@@ -292,6 +298,14 @@ export interface StargateTransfer {
   denomIn?: string;
   /** Denom of the output asset */
   denomOut?: string;
+  poolAddress?: string;
+  destinationEndpointId?: number;
+  oftFeeAsset?: Asset;
+  oftFeeAmount?: string;
+  oftFeeAmountUsd?: string;
+  messagingFeeAsset?: Asset;
+  messagingFeeAmount?: string;
+  messagingFeeAmountUsd?: string;
   /**
    * Bridge Type:
    * * `IBC` - IBC Bridge
@@ -305,14 +319,6 @@ export interface StargateTransfer {
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
-  poolAddress?: string;
-  destinationEndpointId?: number;
-  oftFeeAsset?: Asset;
-  oftFeeAmount?: string;
-  oftFeeAmountUsd?: string;
-  messagingFeeAsset?: Asset;
-  messagingFeeAmount?: string;
-  messagingFeeAmountUsd?: string;
 }
 
 /**
@@ -368,6 +374,8 @@ export interface GoFastTransfer {
   fromChainId?: string;
   /** Canonical chain-id of the destination chain of the bridge transaction */
   toChainId?: string;
+  /** Go fast Fee */
+  fee?: GoFastFee;
   /**
    * Bridge Type:
    * * `IBC` - IBC Bridge
@@ -389,8 +397,6 @@ export interface GoFastTransfer {
   sourceDomain?: string;
   /** Destination domain ID of the transfer */
   destinationDomain?: string;
-  /** Go fast Fee */
-  fee?: GoFastFee;
 }
 
 /**
@@ -753,9 +759,9 @@ export interface HyperlaneTransfer {
   hyperlaneContractAddress?: string;
   /** Amount of the fee asset to be paid as the Hyperlane bridge fee. This is denominated in the fee asset. */
   feeAmount?: string;
-  feeAsset?: Asset;
   /** Amount of the fee asset to be paid as the Hyperlane bridge fee, converted to USD value */
   usdFeeAmount?: string;
+  feeAsset?: Asset;
   /**
    * Bridge Type:
    * * `IBC` - IBC Bridge
@@ -863,10 +869,10 @@ export type Operation = (
   | HyperlaneTransferWrapper
   | EvmSwapWrapper
   | OPInitTransferWrapper
-  | StargateTransferWrapper
   | GoFastTransferWrapper
-  | EurekaTransferWrapper
+  | StargateTransferWrapper
   | LayerZeroTransferWrapper
+  | EurekaTransferWrapper
 ) & {
   /** Index of the tx returned from Msgs that executes this operation */
   txIndex: number;
@@ -1065,10 +1071,10 @@ export enum StatusErrorType {
 export type Swap = (SwapInWrapper | SwapOutWrapper | SmartSwapInWrapper) & {
   /** Estimated total affiliate fee generated by the swap */
   estimatedAffiliateFee?: string;
-  /** Chain ID that the swap will be executed on */
-  chainId?: string;
   /** Chain ID that the swap will be executed on (alias for chain_id) */
   fromChainId?: string;
+  /** Chain ID that the swap will be executed on */
+  chainId?: string;
   /** Input denom of the swap */
   denomIn?: string;
   /** Output denom of the swap */
@@ -1079,24 +1085,26 @@ export type Swap = (SwapInWrapper | SwapOutWrapper | SmartSwapInWrapper) & {
 
 /** Specification of a swap with an exact amount in */
 export interface SwapExactCoinIn {
-  /** Amount to swap in */
-  swapAmountIn?: string;
-  /** Operations required to execute the swap */
-  swapOperations?: SwapOperation[];
   /** Swap venue that this swap should execute on */
   swapVenue?: SwapVenue;
+  /** Operations required to execute the swap */
+  swapOperations?: SwapOperation[];
+  /** Amount to swap in */
+  swapAmountIn?: string;
   /** Price impact of the estimated swap, if present.  Measured in percentage e.g. "0.5" is .5% */
   priceImpactPercent?: string;
+  /** The estimated amount out received from the swap */
+  estimatedAmountOut?: string;
 }
 
 /** Specification of a swap with an exact amount out */
 export interface SwapExactCoinOut {
-  /** Amount to get out of the swap */
-  swapAmountOut?: string;
-  /** Operations required to execute the swap */
-  swapOperations?: SwapOperation[];
   /** Swap venue that this swap should execute on */
   swapVenue?: SwapVenue;
+  /** Operations required to execute the swap */
+  swapOperations?: SwapOperation[];
+  /** Amount to get out of the swap */
+  swapAmountOut?: string;
   /** Price impact of the estimated swap, if present.  Measured in percentage e.g. "0.5" is .5% */
   priceImpactPercent?: string;
 }
@@ -1138,6 +1146,8 @@ export interface SmartSwapExactCoinIn {
   swapVenue?: SwapVenue;
   /** Routes to execute the swap */
   swapRoutes?: SwapRoute[];
+  /** The estimated amount out received from the swap */
+  estimatedAmountOut?: string;
 }
 
 export interface SmartSwapOptions {
@@ -1186,9 +1196,9 @@ export interface TransactionExecutionErrorDetails {
 export enum TransactionState {
   STATE_SUBMITTED = "STATE_SUBMITTED",
   STATE_PENDING = "STATE_PENDING",
+  STATE_ABANDONED = "STATE_ABANDONED",
   STATE_COMPLETED_SUCCESS = "STATE_COMPLETED_SUCCESS",
   STATE_COMPLETED_ERROR = "STATE_COMPLETED_ERROR",
-  STATE_ABANDONED = "STATE_ABANDONED",
   STATE_PENDING_ERROR = "STATE_PENDING_ERROR",
 }
 
@@ -1276,18 +1286,16 @@ export enum LayerZeroTransferState {
 
 /** A cross-chain transfer */
 export interface Transfer {
+  /** Port to use to initiate the transfer */
+  port?: string;
+  /** Channel to use to initiate the transfer */
+  channel?: string;
   /** Chain-id on which the transfer is initiated */
   fromChainId?: string;
   /** Chain-id on which the transfer is received */
   toChainId?: string;
-  /** Channel to use to initiate the transfer */
-  channel?: string;
-  /** Denom of the destination asset of the transfer */
-  destDenom?: string;
   /** Whether pfm is enabled on the chain where the transfer is initiated */
   pfmEnabled?: boolean;
-  /** Port to use to initiate the transfer */
-  port?: string;
   /** Whether the transfer chain supports a memo */
   supportsMemo?: boolean;
   /** Denom of the input asset of the transfer */
@@ -1296,9 +1304,6 @@ export interface Transfer {
   denomOut?: string;
   /** Amount of the fee asset to be paid as the transfer fee if applicable. */
   feeAmount?: string;
-  /** Address of the entry contract on the destination chain */
-  toChainEntryContractAddress?: string;
-  toChainCallbackContractAddress?: string;
   /** Amount of the fee asset to be paid as the transfer fee if applicable, converted to USD value */
   usdFeeAmount?: string;
   /** Asset to be paid as the transfer fee if applicable. */
@@ -1318,6 +1323,15 @@ export interface Transfer {
   bridgeId?: BridgeType;
   /** Indicates whether this transfer is relayed via Smart Relay */
   smartRelay?: boolean;
+  /** Address of the entry contract on the destination chain */
+  toChainEntryContractAddress?: string;
+  /** Address of the callback contract on the destination chain */
+  toChainCallbackContractAddress?: string;
+  /**
+   * Deprecated, use denom_out instead. Denom of the destination asset of the transfer
+   * @deprecated
+   */
+  destDenom?: string;
 }
 
 export interface TransferEvent {
@@ -1361,12 +1375,6 @@ export interface TransferAssetRelease {
 }
 
 export interface TransferStatus {
-  error?: StatusError;
-  /** Indicates which entry in the `transfer_sequence` field that the transfer is blocked on. Will be null if there is no blocked transfer. */
-  nextBlockingTransfer?: {
-    /** The index of the entry in the `transfer_sequence` field that the transfer is blocked on. */
-    transferSequenceIndex?: number;
-  };
   /**
    * Transaction state:
    * * `STATE_SUBMITTED` - The initial transaction has been submitted to Skip Go API but not observed on chain yet
@@ -1378,10 +1386,16 @@ export interface TransferStatus {
    * * `STATE_PENDING_ERROR` - The overall transaction will fail, pending error propagation
    */
   state?: TransactionState;
-  /** Indicates location and denom of transfer asset release. */
-  transferAssetRelease?: TransferAssetRelease;
   /** Lists any IBC and Axelar transfers as they are seen. */
   transferSequence?: TransferEvent[];
+  /** Indicates which entry in the `transfer_sequence` field that the transfer is blocked on. Will be null if there is no blocked transfer. */
+  nextBlockingTransfer?: {
+    /** The index of the entry in the `transfer_sequence` field that the transfer is blocked on. */
+    transferSequenceIndex?: number;
+  };
+  /** Indicates location and denom of transfer asset release. */
+  transferAssetRelease?: TransferAssetRelease;
+  error?: StatusError;
 }
 
 export interface TransferWrapper {
@@ -1626,10 +1640,6 @@ export interface AssetsFromSourceRequest {
 }
 
 export interface RouteRequest {
-  /** Amount of source asset to be transferred or swapped. Only one of amount_in and amount_out should be provided. */
-  amountIn?: string;
-  /** Amount of destination asset to receive. Only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out. */
-  amountOut?: string;
   /** Denom of the source asset */
   sourceAssetDenom?: string;
   /** Chain-id of the source asset */
@@ -1638,19 +1648,23 @@ export interface RouteRequest {
   destAssetDenom?: string;
   /** Chain-id of the destination asset */
   destAssetChainId?: string;
+  /** Amount of source asset to be transferred or swapped. Only one of amount_in and amount_out should be provided. */
+  amountIn?: string;
+  /** Amount of destination asset to receive. Only one of amount_in and amount_out should be provided. If amount_out is provided for a swap, the route will be computed to give exactly amount_out. */
+  amountOut?: string;
   /** Cumulative fee to be distributed to affiliates, in bps (optional) */
   cumulativeAffiliateFeeBps?: string;
   /** Swap venues to consider, if provided (optional) */
   swapVenues?: SwapVenue[];
+  /** Toggles whether the api should return routes that fail price safety checks. */
+  allowUnsafe?: boolean;
+  /** Array of experimental features to enable */
+  experimentalFeatures?: string[];
   /**
    * Whether to allow route responses requiring multiple
    * transactions
    */
   allowMultiTx?: boolean;
-  /** Toggles whether the api should return routes that fail price safety checks. */
-  allowUnsafe?: boolean;
-  /** Array of experimental features to enable */
-  experimentalFeatures?: string[];
   /** Array of bridges to use */
   bridges?: BridgeType[];
   /** Indicates whether this transfer route should be relayed via Skip's Smart Relay service - true by default. */
@@ -1675,24 +1689,27 @@ export interface MsgsRequest {
   amountIn?: string;
   /** Amount of destination asset out */
   amountOut?: string;
-  /** Array of receipient and/or sender address for each chain in the path, corresponding to the chain_ids array returned from a route request */
+  /** Array of receipient and/or sender address for each chain in the path, corresponding to the required_chain_addresses array returned from a route request */
   addressList?: string[];
   /** Array of operations required to perform the transfer or swap */
   operations?: Operation[];
   estimatedAmountOut?: string;
   /** Percent tolerance for slippage on swap, if a swap is performed */
   slippageTolerancePercent?: string;
-  /** Number of seconds for the IBC transfer timeout, defaults to 5 minutes */
-  timeoutSeconds?: string;
-  postRouteHandler?: PostHandler;
   /** Map of chain-ids to arrays of affiliates. The API expects all chains to have the same cumulative affiliate fee bps for each chain specified. If any of the provided affiliate arrays does not have the same cumulative fee, the API will return an error. */
   chainIdsToAffiliates?: Record<string, ChainAffiliates>;
+  postRouteHandler?: PostHandler;
+  /** Number of seconds for the IBC transfer timeout, defaults to 5 minutes */
+  timeoutSeconds?: string;
   /**
    * Whether to enable gas warnings for intermediate and destination chains
    * @default false
    */
   enableGasWarnings?: boolean;
-  /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format. */
+  /**
+   * Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format.
+   * @default false
+   */
   feePayerAddress?: string;
 }
 
@@ -1715,20 +1732,20 @@ export interface MsgsDirectRequest {
   swapVenues?: SwapVenue[];
   /** Percent tolerance for slippage on swap, if a swap is performed */
   slippageTolerancePercent?: string;
-  /** Number of seconds for the IBC transfer timeout, defaults to 5 minutes */
-  timeoutSeconds?: string;
   /** Map of chain-ids to arrays of affiliates. Since cumulative_affiliate_fee_bps must be provided to retrieve a route, and the swap chain is not known at this time, all chains must have the same cumulative_affiliate_fee_bps otherwise the API will return an error. */
   chainIdsToAffiliates?: Record<string, ChainAffiliates>;
   postRouteHandler?: PostHandler;
+  /** Number of seconds for the IBC transfer timeout, defaults to 5 minutes */
+  timeoutSeconds?: string;
+  /** Toggles whether the api should return routes that fail price safety checks. */
+  allowUnsafe?: boolean;
+  /** Array of experimental features to enable */
+  experimentalFeatures?: string[];
   /**
    * Whether to allow route responses requiring multiple
    * transactions
    */
   allowMultiTx?: boolean;
-  /** Toggles whether the api should return routes that fail price safety checks. */
-  allowUnsafe?: boolean;
-  /** Array of experimental features to enable */
-  experimentalFeatures?: string[];
   /** Array of bridges to use */
   bridges?: BridgeType[];
   /** Indicates whether this transfer route should be relayed via Skip's Smart Relay service */
@@ -1736,14 +1753,17 @@ export interface MsgsDirectRequest {
   smartSwapOptions?: SmartSwapOptions;
   /** Whether to allow swaps in the route */
   allowSwaps?: boolean;
-  /** Whether to enable Go Fast routes */
-  goFast?: boolean;
   /**
    * Whether to enable gas warnings for intermediate and destination chains
    * @default false
    */
   enableGasWarnings?: boolean;
-  /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format. */
+  /** Whether to enable Go Fast routes */
+  goFast?: boolean;
+  /**
+   * Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format.
+   * @default false
+   */
   feePayerAddress?: string;
 }
 
@@ -1764,6 +1784,38 @@ export interface TrackTxRequest {
   txHash: string;
   /** Chain ID of the transaction */
   chainId: string;
+}
+
+export interface TrackTxResponse {
+  /** Hash of the transaction */
+  txHash: string;
+  /** Link to the transaction on the relevant block explorer */
+  explorerLink: string;
+}
+
+export interface StatusTxResponse {
+  /** Transfer status for all transfers initiated by the transaction in the order they were initiated. */
+  transfers?: TransferStatus[];
+  /** The overall state reflecting the end-to-end status of all transfers initiated by the original transaction. */
+  state: TransactionState;
+  /** Details about the next transfer in the sequence that is preventing further progress, if any. */
+  nextBlockingTransfer?: {
+    transferSequenceIndex?: number;
+  };
+  /** Indicates location and denom of transfer asset release. */
+  transferAssetRelease?: TransferAssetRelease;
+  /** Details about any error encountered during the transaction or its subsequent transfers. */
+  error?: StatusError;
+  /**
+   * **DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version.
+   * @deprecated
+   */
+  transferSequence: TransferEvent[];
+  /**
+   * A high-level status indicator for the transaction's completion state.
+   * @example "STATE_COMPLETED"
+   */
+  status?: string;
 }
 
 export interface IbcOriginAssetsRequest {
@@ -1921,12 +1973,7 @@ export interface SubmitResponse {
   explorerLink?: string;
 }
 
-export interface TrackResponse {
-  /** Hash of the transaction */
-  txHash: string;
-  /** Link to the transaction on the relevant block explorer */
-  explorerLink: string;
-}
+export type TrackResponse = TrackTxResponse;
 
 export interface StatusRequest {
   /**
@@ -1941,30 +1988,7 @@ export interface StatusRequest {
   chainId: string;
 }
 
-export interface StatusResponse {
-  /** Transfer status for all transfers initiated by the transaction in the order they were initiated. */
-  transfers?: TransferStatus[];
-  /** The overall state reflecting the end-to-end status of all transfers initiated by the original transaction. */
-  state: TransactionState;
-  /**
-   * **DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version.
-   * @deprecated
-   */
-  transferSequence: TransferEvent[];
-  /** Details about the next transfer in the sequence that is preventing further progress, if any. */
-  nextBlockingTransfer?: {
-    transfer_sequence_index?: number;
-  };
-  /** Indicates location and denom of transfer asset release. */
-  transferAssetRelease?: TransferAssetRelease;
-  /** Details about any error encountered during the transaction or its subsequent transfers. */
-  error?: StatusError | null;
-  /**
-   * A high-level status indicator for the transaction's completion state.
-   * @example "STATE_COMPLETED"
-   */
-  status?: string;
-}
+export type StatusResponse = StatusTxResponse;
 
 export interface IbcOriginAssetsResponse {
   originAssets?: OptionalAsset[];
