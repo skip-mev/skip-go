@@ -7,6 +7,7 @@ import { useAtomValue } from "jotai";
 import { styled } from "@/widget";
 import { Text, SmallText } from "@/components/Typography";
 import { TransferType } from "@skip-go/client";
+import Image from "next/image";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -59,7 +60,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       <TransferEventDetailsCard>
         <Row justify="space-between">
           <Row gap={15}>
-            <img src={chain?.logoUri} alt={chain?.chainName} width={40} height={40} />
+            {chain?.logoUri && <Image src={chain?.logoUri} alt={chain?.chainName} width={40} height={40} />}
             <Column justify="center">
               <Text>{chain?.prettyName}</Text>
               <SmallText>{chainId}</SmallText>

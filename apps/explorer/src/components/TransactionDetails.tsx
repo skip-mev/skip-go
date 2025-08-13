@@ -9,6 +9,7 @@ import { skipChainsAtom } from "@/state/skipClient";
 import { Button, GhostButton } from "@/components/Button";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
+import Image from "next/image";
 
 export type TransactionDetailsProps = {
   txHash: string;
@@ -44,8 +45,8 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
           value={
             <Row gap={5}>
               {chains?.map((chain, index) => (
-                <Row key={chain?.chainId} gap={8} align="center">
-                  <img src={chain?.logoUri} alt={chain?.chainName} width={20} height={20} />
+                <Row key={`${chain?.chainId}-${index}`} gap={8} align="center">
+                  {chain?.logoUri && <Image src={chain?.logoUri} alt={chain?.chainName} width={20} height={20} />}
                   <SmallText>{index < chains.length - 1 && "→"}</SmallText>
                 </Row>
               ))}
