@@ -1,4 +1,4 @@
-import { route, setApiOptions, getRecommendedGasPrice } from "@skip-go/client";
+import { route, setApiOptions, getRecommendedGasPrice, routeWithGasOnReceive } from "@skip-go/client";
 
 const getRoute = async () => {
   setApiOptions();
@@ -17,6 +17,21 @@ const getRoute = async () => {
     amountIn: "1000000",
   });
   console.log(response);
+
+  const responseWithGasOnReceive = await routeWithGasOnReceive({
+    sourceAssetDenom: "uusdc",
+    sourceAssetChainId: "noble-1",
+    destAssetDenom: "uusdc",
+    destAssetChainId: "osmosis-1",
+    allowUnsafe: true,
+    experimentalFeatures: ["stargate", "eureka"],
+    allowMultiTx: true,
+    smartRelay: true,
+    smartSwapOptions: { splitRoutes: true, evmSwaps: true },
+    goFast: true,
+    amountIn: "1000000",
+  })
+  console.log(responseWithGasOnReceive);
 }
 
 const getRecGasPrice = async () => {

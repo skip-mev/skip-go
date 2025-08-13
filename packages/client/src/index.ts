@@ -18,6 +18,7 @@ export type { BalanceRequest, BalanceResponse } from "./api/postBalances";
 
 export { route } from "./api/postRoute";
 export type { RouteRequest } from "./api/postRoute";
+export { routeWithGasOnReceive } from "./public-functions/routeWithGasOnReceive";
 
 export { submitTransaction } from "./api/postSubmitTransaction";
 export type { SubmitTransactionRequest, SubmitTransactionResponse } from "./api/postSubmitTransaction";
