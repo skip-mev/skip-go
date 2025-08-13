@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-fix incosisntent main and original route
+fix inconsistent main and original route
