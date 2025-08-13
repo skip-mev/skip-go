@@ -5,10 +5,8 @@ import {
   type PostHandler,
   type CosmosTx,
   ChainType,
-  type Tx,
-  type Route,
 } from "../types/swaggerTypes";
-import type { ApiRequest, ApiResponse } from "../utils/generateApi";
+import type { ApiRequest } from "../utils/generateApi";
 import type {
   SignerGetters,
   GasOptions,
@@ -19,17 +17,14 @@ import type {
 import {
   executeAndSubscribeToRouteStatus,
   updateRouteDetails,
-  type RouteDetails,
   type RouteStatus,
 } from "./subscribeToRouteStatus";
 import {
   createValidAddressList,
-  validateUserAddresses,
 } from "src/utils/address";
 import { ApiState } from "src/state/apiState";
-import { messages, type MessagesResponse } from "src/api/postMessages";
+import { messages } from "src/api/postMessages";
 import { executeTransactions } from "src/private-functions/executeTransactions";
-import { v4 as uuidv4 } from "uuid";
 import { trackTransaction } from "src/api/postTrackTransaction";
 
 /** Execute Routes Options */
@@ -57,20 +52,40 @@ export type ExecuteMultipleRoutesOptions = SignerGetters &
 /**
  * example:
  * ```ts
+ * const routes = routeWithGasOnReceive({
+ *   sourceAssetDenom: "uusdc",
+ *   sourceAssetChainId: "noble-1",
+ *   destAssetDenom: "uusdc",
+ *   destAssetChainId: "osmosis-1",
+ *   allowUnsafe: true,
+ *   experimentalFeatures: ["stargate", "eureka"],
+ *   allowMultiTx: true,
+ *   smartRelay: true,
+ *   smartSwapOptions: { splitRoutes: true, evmSwaps: true },
+ *   goFast: true,
+ *   amountIn: "1000000",
+ * })
+ *
+ * // you need to get the userAddresses for each route from chain ids inside routes.mainRoute.requiredChainAddresses and routes.gasRoute.requiredChainAddresses
+ *
  * executeMultipleRoutes({
  *  route: {
- *   "mainRoute": mainRouteResponse,
- *   "secondaryRoute": secondaryRouteResponse
+ *   "mainRoute": routes.mainRoute,
+ *   "gasRoute": routes.gasRoute
  *  }
  *  userAddresses: {
  *   "mainRoute": [
- *    {chainId: "cosmos", address: "cosmos1..."},
- *    {chainId: "ethereum", address: "0x..."}
+ *    {chainId: "noble-1", address: "noble1..."},
+ *    {chainId: "osmosis-1", address: "osmo..."}
  *   ],
  *   "secondaryRoute": [
- *    {chainId: "cosmos", address: "cosmos1..."},
- *    {chainId: "ethereum", address: "0x..."}
+ *    {chainId: "noble-1", address: "noble1..."},
+ *    {chainId: "osmosis-1", address: "osmo..."}
  *   ]
+ *  },
+ *  slippageTolerancePercent: {
+ *   "mainRoute": "1",
+ *   "secondaryRoute": "10"
  *  }
  * })
  *
@@ -310,12 +325,12 @@ export const executeMultipleRoutes = async (
           userAddresses: userAddresses[routeKey]!,
           ...restOptions,
           onRouteStatusUpdated: (routeStatus) => {
-  
+
             const relatedRoutes = Object.entries(route)
             .filter(([key]) => key !== "mainRoute")
             .map(([key, route]) => ({ route, routeKey: key, status: routeStatus.status }));
-  
-  
+
+
             if (routeKey !== "mainRoute") {
               updateRouteDetails({
                 options: {

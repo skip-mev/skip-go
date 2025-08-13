@@ -1,19 +1,18 @@
 import { atom } from "jotai";
 import { skipAssetsAtom, skipChainsAtom } from "./skipClient";
 import { _skipRouteAtom, routeConfigAtom, skipRouteAtom, skipRouteRequestAtom } from "./route";
-import { ChainType, RouteResponse, balances, route } from "@skip-go/client";
+import { ChainType, RouteResponse, balances, getRouteWithGasOnReceive } from "@skip-go/client";
 import { destinationAssetAtom, sourceAssetAtom, swapSettingsAtom } from "./swapPage";
 import { skipAllBalancesAtom } from "./balances";
 import { convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { RoutePreference } from "./types";
 import { Routes, currentPageAtom } from "./router";
 import BigNumber from "bignumber.js";
 import { chainAddressesAtom } from "./swapExecutionPage";
 import { atomEffect } from "jotai-effect";
 import { currentTransactionAtom } from "./history";
 import { track } from "@amplitude/analytics-browser";
-import { isSubset } from "@/utils/array";
+import { RoutePreference } from "./types";
 
 type SwapRoute = {
   mainRoute?: RouteResponse;
@@ -220,89 +219,29 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
       refetchInterval: false,
       queryFn: async () => {
         if (!params) throw new Error("No route request provided");
-        let gasRoute: RouteResponse | undefined;
-        if (
-          destinationAssetIsAFeeAsset ||
-          !gasOnReceiveRouteParams?.destAssetDenoms ||
-          gasOnReceiveRouteParams.destAssetDenoms.length === 0
-        ) {
-          return null;
-        }
-
-        const {
-          destAssetDenoms,
-          amountIn: amountInFallback,
-          ...restParams
-        } = gasOnReceiveRouteParams;
-
-        const splitDenoms = chunkArray(destAssetDenoms);
-        for (const chunk of splitDenoms) {
-          const feeAssetRoutes = chunk.map(async ({ amountOut, denom }) => {
-            try {
-              const res = await route({
-                destAssetDenom: denom,
-                amountIn: amountOut ? undefined : amountInFallback,
-                amountOut: amountOut ?? undefined,
-                ...restParams,
-                smartRelay: true,
-                ...routeConfig,
-                goFast: swapSettings.routePreference === RoutePreference.FASTEST,
-                allowMultiTx: false,
-                abortDuplicateRequests: true,
-              });
-              return res;
-            } catch (_e) {
-              return null;
-            }
-          });
-          const result = await Promise.all(feeAssetRoutes);
-          const _gasRoute = result.find((result) => result?.usdAmountOut);
-          if (_gasRoute?.usdAmountOut) {
-            gasRoute = _gasRoute;
-            break;
-          }
-        }
-        if (!gasRoute?.amountOut || !originalRoute) return null;
-        params.amountIn = BigNumber(originalRoute.amountIn ?? 0)
-          .minus(BigNumber(gasRoute?.amountIn ?? 0))
-          .toString();
-        params.amountOut = undefined;
-
-        const mainRoute = await route({
-          ...params,
-          smartRelay: true,
-          ...routeConfig,
-          goFast: swapSettings.routePreference === RoutePreference.FASTEST,
-          abortDuplicateRequests: true,
+        if (!originalRoute) return null;
+        const routes = await getRouteWithGasOnReceive({
+          routeRequest: {
+            ...params,
+            ...routeConfig,
+            goFast: swapSettings.routePreference === RoutePreference.FASTEST,
+          },
+          routeResponse: originalRoute,
         });
-        if (!mainRoute) return null;
-        if (
-          originalRoute.txsRequired !== mainRoute.txsRequired ||
-          !isSubset(originalRoute?.requiredChainAddresses, mainRoute.requiredChainAddresses)
-        ) {
+
+        if (!routes.gasRoute) {
           return null;
         }
         return {
-          mainRoute,
-          gasRoute,
+          mainRoute: routes.mainRoute,
+          gasRoute: routes.gasRoute,
           gasOnReceiveAsset: {
-            amountOut: gasRoute.amountOut,
-            amountUsd: gasRoute.usdAmountOut,
-            denom: gasRoute.destAssetDenom,
-            chainId: gasRoute.destAssetChainId,
+            amountOut: routes.gasRoute.amountOut,
+            amountUsd: routes.gasRoute.usdAmountOut,
+            denom: routes.gasRoute.destAssetDenom,
+            chainId: routes.gasRoute.destAssetChainId,
           },
         };
       },
     };
   });
-
-const chunkArray = (
-  arr: { denom: string; amountOut?: string }[],
-  size = 3,
-): { denom: string; amountOut?: string }[][] => {
-  const result: { denom: string; amountOut?: string }[][] = [];
-  for (let i = 0; i < arr.length; i += size) {
-    result.push(arr.slice(i, i + size));
-  }
-  return result;
-};
