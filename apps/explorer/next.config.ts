@@ -33,6 +33,7 @@ const nextConfig: NextConfig = {
       "@/constants": path.resolve(__dirname, "../../packages/widget/src/constants"),
       "@/pages": path.resolve(__dirname, "../../packages/widget/src/pages"),
       "@/providers": path.resolve(__dirname, "../../packages/widget/src/providers"),
+      "@/styled-components": path.resolve(__dirname, "../../packages/widget/src/styled-components"),
     };
 
     // Handle font files

@@ -32,7 +32,8 @@
       "@/state/*": ["../../packages/widget/src/state/*"],
       "@/constants/*": ["../../packages/widget/src/constants/*"],
       "@/pages/*": ["../../packages/widget/src/pages/*"],
-      "@/providers/*": ["../../packages/widget/src/providers/*"]
+      "@/providers/*": ["../../packages/widget/src/providers/*"],
+      "@/styled-components": ["../../packages/widget/src/styled-components"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/types/**/*.d.ts"],

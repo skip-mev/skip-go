@@ -4,13 +4,13 @@ import { Column, Row } from "@/components/Layout";
 import { SmallTextButton } from '@/components/Typography';
 import { skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
-import { styled } from "@/widget";
 import { Text, SmallText } from "@/components/Typography";
 import { TransferType } from "@skip-go/client";
 import Image from "next/image";
 import { BridgeIcon } from "../icons/BridgeIcon";
 import { ClockIcon } from "../icons/ClockIcon";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
+import { useTheme, styled } from "@/styled-components";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -52,6 +52,7 @@ const getTransferTypeLabel = (transferType: TransferType | string) => {
 
 export const TransferEventCard = ({ chainId, explorerLink, transferType, status, step, durationInMs = 0 }: TransferEventCardProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
+  const theme = useTheme();
 
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
   
@@ -60,13 +61,13 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       {
         step !== "Origin" && (
           <>
-            <BridgeIcon />
+            <BridgeIcon color={theme.primary.background.normal}/>
             <Container padding={12} width="auto" borderRadius={12} gap={5} flexDirection="row">
               <SmallText normalTextColor>{ getTransferTypeLabel(transferType) }</SmallText>
               <SmallText> <ClockIcon /> </SmallText>
               <SmallText> {durationInMs ? convertSecondsToMinutesOrHours(durationInMs / 1000) : "Instant"}</SmallText>
             </Container>
-            <BridgeIcon />
+            <BridgeIcon color={theme.primary.background.normal} />
           </>
         )
       }
