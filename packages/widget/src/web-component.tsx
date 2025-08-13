@@ -53,6 +53,7 @@ const widgetPropTypes: Required<PropDescriptors> = {
   onDestinationAssetUpdated: "any",
   onSourceAssetUpdated: "any",
   onTransactionSignRequested: "any",
+  allowOptionsUpdateAfterApiCall: "any",
 };
 
 const WebComponent = toWebComponent(Widget, {

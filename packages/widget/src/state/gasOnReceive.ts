@@ -13,10 +13,11 @@ import { chainAddressesAtom } from "./swapExecutionPage";
 import { atomEffect } from "jotai-effect";
 import { currentTransactionAtom } from "./history";
 import { track } from "@amplitude/analytics-browser";
+import { isSubset } from "@/utils/array";
 
 type SwapRoute = {
   mainRoute?: RouteResponse;
-  feeRoute?: RouteResponse;
+  gasRoute?: RouteResponse;
   gasOnReceiveAsset?: {
     amountUsd?: string;
     amountOut: string;
@@ -54,8 +55,8 @@ export const gasOnReceiveRouteRequestAtom = atom((get) => {
     return GAS_ON_RECEIVE_AMOUNT_USD[ChainType.Cosmos];
   })();
   const destinationFeeAssets = (() => {
+    const assets = get(skipAssetsAtom);
     if (destinationChain?.chainType === ChainType.Evm) {
-      const assets = get(skipAssetsAtom);
       const evmFeeAsset = assets.data?.find(
         (asset) => asset.chain_key === destinationChain?.chainId && asset.denom.includes("-native"),
       );
@@ -64,13 +65,16 @@ export const gasOnReceiveRouteRequestAtom = atom((get) => {
       }
     }
     return destinationChain?.feeAssets.map((asset) => {
+      const destinationFeeAsset = assets.data?.find(
+        (a) => a.chain_key === destinationChain?.chainId && a.denom === asset.denom,
+      );
       const gasPrice = asset.gasPrice?.average ?? asset.gasPrice?.high ?? asset.gasPrice?.low;
       return {
         amountOut:
           gasPrice &&
           convertHumanReadableAmountToCryptoAmount(
             BigNumber(gasPrice).multipliedBy(3).toNumber(),
-            destinationAsset?.decimals,
+            destinationFeeAsset?.decimals,
           ),
         denom: asset.denom,
       };
@@ -170,6 +174,7 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
     const chainAddresses = get(chainAddressesAtom);
     const chainAddressesArray = Object.values(chainAddresses);
     const destination = chainAddressesArray?.[chainAddressesArray.length - 1];
+    const sourceAddress = chainAddressesArray?.[0]?.address;
     const destinationAddress = destination?.address;
 
     const enabledDestinationChainType = [ChainType.Cosmos, ChainType.Evm];
@@ -178,10 +183,13 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
     const chain = chains?.find((i) => i.chainId === destination?.chainId);
     const isRouteEnabled = (() => {
       if (!chain) return false;
-      if (!enabledDestinationChainType.includes(chain.chainType)) return false;
       if (disabledChainIds.includes(chain.chainId)) return false;
+      if (!enabledDestinationChainType.includes(chain.chainType)) return false;
       return true;
     })();
+    const isSameChainAndAddress =
+      originalRoute?.sourceAssetChainId === originalRoute?.destAssetChainId &&
+      sourceAddress === destinationAddress;
 
     const queryEnabled =
       originalRoute &&
@@ -189,7 +197,8 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
       !destinationAssetIsAFeeAsset &&
       !!destinationAddress &&
       isRouteEnabled &&
-      !currentTransactionItem;
+      !currentTransactionItem &&
+      !isSameChainAndAddress;
 
     return {
       enabled: queryEnabled,
@@ -211,7 +220,7 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
       refetchInterval: false,
       queryFn: async () => {
         if (!params) throw new Error("No route request provided");
-        let feeRoute: RouteResponse | undefined;
+        let gasRoute: RouteResponse | undefined;
         if (
           destinationAssetIsAFeeAsset ||
           !gasOnReceiveRouteParams?.destAssetDenoms ||
@@ -247,15 +256,15 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
             }
           });
           const result = await Promise.all(feeAssetRoutes);
-          const _feeRoute = result.find((result) => result?.usdAmountOut);
-          if (_feeRoute?.usdAmountOut) {
-            feeRoute = _feeRoute;
+          const _gasRoute = result.find((result) => result?.usdAmountOut);
+          if (_gasRoute?.usdAmountOut) {
+            gasRoute = _gasRoute;
             break;
           }
         }
-        if (!feeRoute?.amountOut || !originalRoute) return null;
+        if (!gasRoute?.amountOut || !originalRoute) return null;
         params.amountIn = BigNumber(originalRoute.amountIn ?? 0)
-          .minus(BigNumber(feeRoute?.amountIn ?? 0))
+          .minus(BigNumber(gasRoute?.amountIn ?? 0))
           .toString();
         params.amountOut = undefined;
 
@@ -267,14 +276,20 @@ export const gasOnReceiveRouteAtom: ReturnType<typeof atomWithQuery<Awaited<Swap
           abortDuplicateRequests: true,
         });
         if (!mainRoute) return null;
+        if (
+          originalRoute.txsRequired !== mainRoute.txsRequired ||
+          !isSubset(originalRoute?.requiredChainAddresses, mainRoute.requiredChainAddresses)
+        ) {
+          return null;
+        }
         return {
           mainRoute,
-          feeRoute,
+          gasRoute,
           gasOnReceiveAsset: {
-            amountOut: feeRoute.amountOut,
-            amountUsd: feeRoute.usdAmountOut,
-            denom: feeRoute.destAssetDenom,
-            chainId: feeRoute.destAssetChainId,
+            amountOut: gasRoute.amountOut,
+            amountUsd: gasRoute.usdAmountOut,
+            denom: gasRoute.destAssetDenom,
+            chainId: gasRoute.destAssetChainId,
           },
         };
       },

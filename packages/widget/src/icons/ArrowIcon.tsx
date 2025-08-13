@@ -1,12 +1,6 @@
 import { withBoundProps } from "@/utils/misc";
+import { IconProps } from ".";
 
-type IconProps = {
-  color?: string;
-  backgroundColor?: string;
-  direction?: "right" | "down" | "left" | "up";
-  className?: string;
-  maskedVersion?: boolean;
-};
 export const ArrowIcon = ({
   color = "currentColor",
   backgroundColor = "transparent",

@@ -1,0 +1,32 @@
+{
+  "name": "explorer",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@skip-go/client": "workspace:^",
+    "@tanstack/react-query": "^5.84.2",
+    "@uidotdev/usehooks": "^2.4.1",
+    "jotai": "^2.13.1",
+    "jotai-tanstack-query": "^0.11.0",
+    "next": "15.4.5",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "styled-components": "^6.1.19"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.5",
+    "next-transpile-modules": "^10.0.1",
+    "typescript": "^5"
+  }
+}

@@ -42,6 +42,7 @@ export default defineConfig({
     nodePolyfills(),
   ],
   build: {
+    emptyOutDir: false,
     commonjsOptions: {
       include: [/jotai-effect/, /node_modules/],
       transformMixedEsModules: true,
@@ -49,7 +50,7 @@ export default defineConfig({
     minify: false,
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, "src/index.tsx"),
+      entry: [resolve(__dirname, "src/index.tsx")],
       formats: ["es"],
       name: "widget",
     },

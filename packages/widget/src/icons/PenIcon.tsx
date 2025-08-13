@@ -1,6 +1,4 @@
-type IconProps = {
-  color?: string;
-};
+import { IconProps } from ".";
 
 export const PenIcon = ({ color = "currentColor" }: IconProps) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="11" height="13" viewBox="0 0 11 12" fill="none">

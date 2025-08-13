@@ -2,7 +2,7 @@ export const withBoundProps = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
   boundProps: Partial<P>,
 ) => {
-  return (props: Partial<P>): React.ReactElement => {
+  return (props: Partial<P>) => {
     const combinedProps = {
       ...boundProps,
       ...props,

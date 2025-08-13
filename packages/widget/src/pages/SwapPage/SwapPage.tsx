@@ -22,7 +22,7 @@ import {
 import {
   setSwapExecutionStateAtom,
   chainAddressesAtom,
-  feeRouteChainAddressesAtom,
+  gasRouteChainAddressesAtom,
 } from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { currentPageAtom, Routes } from "@/state/router";
@@ -81,7 +81,7 @@ export const SwapPage = () => {
   const callbacks = useAtomValue(callbacksAtom);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
-  const setFeeRouteChainAddresses = useSetAtom(feeRouteChainAddressesAtom);
+  const setGasRouteChainAddresses = useSetAtom(gasRouteChainAddressesAtom);
 
   useFetchAllBalances();
   useCleanupDebouncedAtoms();
@@ -323,7 +323,7 @@ export const SwapPage = () => {
         startTransition(() => {
           setError(undefined);
           setChainAddresses({});
-          setFeeRouteChainAddresses({});
+          setGasRouteChainAddresses({});
           setSwapExecutionState();
           setCurrentPage(Routes.SwapExecutionPage);
         });
@@ -418,7 +418,7 @@ export const SwapPage = () => {
     showGoFastWarning,
     isGoFast,
     setChainAddresses,
-    setFeeRouteChainAddresses,
+    setGasRouteChainAddresses,
     setCurrentPage,
     setSwapExecutionState,
     setError,

@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { Asset, assets, bridges, Chain, chains, SkipClientOptions, venues } from "@skip-go/client";
+import { Asset, bridges, Chain, ClientState, SkipClientOptions, venues } from "@skip-go/client";
 
 import { atomWithQuery } from "jotai-tanstack-query";
 import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
@@ -51,13 +51,7 @@ export const skipAssetsAtom = atomWithQuery((get) => {
   return {
     queryKey: ["skipAssets", onlyTestnets, { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
     queryFn: async () => {
-      const response = await assets({
-        includeEvmAssets: true,
-        includeCw20Assets: true,
-        includeSvmAssets: true,
-        onlyTestnets,
-        abortDuplicateRequests: true,
-      });
+      const response = await ClientState.getSkipAssets({});
 
       return flattenData(response as Record<string, Asset[]>, chains.data);
     },
@@ -72,12 +66,7 @@ export const skipChainsAtom = atomWithQuery((get) => {
   return {
     queryKey: ["skipChains", { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
     queryFn: async () => {
-      const response = await chains({
-        includeEvm: true,
-        includeSvm: true,
-        onlyTestnets,
-        abortDuplicateRequests: true,
-      });
+      const response = await ClientState.getSkipChains();
       return response;
     },
     enabled: onlyTestnets !== undefined && apiUrl !== undefined,

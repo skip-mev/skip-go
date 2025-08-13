@@ -7,18 +7,21 @@
     "packages/client",
     "packages/widget",
     "examples/*",
-    "vendor/"
+    "vendor/",
+    "apps/*"
   ],
   "scripts": {
-    "dev": "yarn run dev:widget & yarn run dev:nextjs & yarn run dev:client",
+    "dev": "yarn run dev:widget & yarn run dev:nextjs & yarn run dev:client & yarn run dev:explorer",
     "dev:https": "yarn run dev:widget & yarn run dev:nextjs-https & yarn run dev:client",
     "dev:widget": "yarn workspace @skip-go/widget run dev",
     "dev:nextjs": "yarn workspace nextjs run dev",
     "dev:nextjs-https": "yarn workspace nextjs run dev:https",
     "dev:client": "yarn workspace @skip-go/client run watch",
+    "dev:explorer": "yarn workspace explorer run dev",
     "build": "yarn run build:client && yarn run build:widget && yarn run build:nextjs",
     "build:widget": "yarn workspace @skip-go/widget run build",
     "build:nextjs": "yarn workspace nextjs build",
+    "build:explorer": "yarn workspace explorer build",
     "build:client": "yarn workspace @skip-go/client build",
     "codegen": "yarn workspace @skip-go/client codegen",
     "test": "yarn workspace @skip-go/client run test",

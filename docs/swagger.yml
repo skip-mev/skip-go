@@ -1711,7 +1711,7 @@ paths:
                           released: true
                         error: null
               schema:
-                $ref: '#/components/schemas/StatusResponse'
+                $ref: '#/components/schemas/StatusTxResponse'
         '404':
           description: The specified tx was not found.
           content:
@@ -4097,7 +4097,7 @@ components:
           description: Amount of destination asset out
         address_list:
           type: array
-          description: Array of receipient and/or sender address for each chain in the path, corresponding to the chain_ids array returned from a route request
+          description: Array of receipient and/or sender address for each chain in the path, corresponding to the required_chain_addresses array returned from a route request
           items:
             type: string
         operations:
@@ -4242,7 +4242,7 @@ components:
         chain_id:
           type: string
           description: Chain ID of the transaction
-    
+
     TrackTxResponse:
       type: object
       required:
@@ -4256,7 +4256,7 @@ components:
           type: string
           description: Link to the transaction on the relevant block explorer
 
-    StatusResponse:
+    StatusTxResponse:
       type: object
       required:
         - state

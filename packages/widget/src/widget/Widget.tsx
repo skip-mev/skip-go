@@ -133,7 +133,7 @@ export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
   );
 };
 
-const WidgetWrapper = ({ children }: { children: ReactNode }) => {
+export const WidgetWrapper = ({ children }: { children: ReactNode }) => {
   const setSettingsDrawerContainer = useSetAtom(settingsDrawerAtom);
   const rootId = useAtomValue(rootIdAtom);
 
