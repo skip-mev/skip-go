@@ -715,7 +715,7 @@ export const ValidatorCurrentRewards = {
           message.rewards.push(DecCoin.decode(reader, reader.uint32()));
           break;
         case 2:
-          message.period = (reader.uint64() as Long);
+          message.period = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -981,7 +981,7 @@ export const ValidatorSlashEvent = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.validatorPeriod = (reader.uint64() as Long);
+          message.validatorPeriod = reader.uint64() as Long;
           break;
         case 2:
           message.fraction = Decimal.fromAtomics(reader.string(), 18).toString();
@@ -1375,13 +1375,13 @@ export const DelegatorStartingInfo = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.previousPeriod = (reader.uint64() as Long);
+          message.previousPeriod = reader.uint64() as Long;
           break;
         case 2:
           message.stake = Decimal.fromAtomics(reader.string(), 18).toString();
           break;
         case 3:
-          message.height = (reader.uint64() as Long);
+          message.height = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

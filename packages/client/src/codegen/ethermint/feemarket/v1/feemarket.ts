@@ -127,7 +127,7 @@ export const Params = {
           message.elasticityMultiplier = reader.uint32();
           break;
         case 5:
-          message.enableHeight = (reader.int64() as Long);
+          message.enableHeight = reader.int64() as Long;
           break;
         case 6:
           message.baseFee = reader.string();

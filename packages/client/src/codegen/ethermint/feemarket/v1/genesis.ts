@@ -64,7 +64,7 @@ export const GenesisState = {
           message.params = Params.decode(reader, reader.uint32());
           break;
         case 3:
-          message.blockGas = (reader.uint64() as Long);
+          message.blockGas = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

@@ -2541,7 +2541,7 @@ export const MsgUpdateMaxMessageBodySize = {
           message.from = reader.string();
           break;
         case 2:
-          message.messageSize = (reader.uint64() as Long);
+          message.messageSize = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -2995,7 +2995,7 @@ export const MsgDepositForBurnResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -3223,7 +3223,7 @@ export const MsgDepositForBurnWithCallerResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -3807,7 +3807,7 @@ export const MsgSendMessageResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -4021,7 +4021,7 @@ export const MsgSendMessageWithCallerResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

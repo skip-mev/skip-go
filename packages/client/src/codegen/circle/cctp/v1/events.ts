@@ -934,10 +934,10 @@ export const SignatureThresholdUpdated = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.oldSignatureThreshold = (reader.uint64() as Long);
+          message.oldSignatureThreshold = reader.uint64() as Long;
           break;
         case 2:
-          message.newSignatureThreshold = (reader.uint64() as Long);
+          message.newSignatureThreshold = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1708,7 +1708,7 @@ export const DepositForBurn = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         case 2:
           message.burnToken = reader.string();
@@ -2249,7 +2249,7 @@ export const MessageReceived = {
           message.sourceDomain = reader.uint32();
           break;
         case 3:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         case 4:
           message.sender = reader.bytes();
@@ -2356,7 +2356,7 @@ export const MaxMessageBodySizeUpdated = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.newMaxMessageBodySize = (reader.uint64() as Long);
+          message.newMaxMessageBodySize = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

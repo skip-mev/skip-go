@@ -383,7 +383,7 @@ export const SignatureDescriptor = {
           message.data = SignatureDescriptor_Data.decode(reader, reader.uint32());
           break;
         case 3:
-          message.sequence = (reader.uint64() as Long);
+          message.sequence = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -573,7 +573,7 @@ export const SignatureDescriptor_Data_Single = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.mode = (reader.int32() as any);
+          message.mode = reader.int32() as any;
           break;
         case 2:
           message.signature = reader.bytes();

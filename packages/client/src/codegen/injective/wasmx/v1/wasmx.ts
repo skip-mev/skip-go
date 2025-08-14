@@ -166,13 +166,13 @@ export const Params = {
           message.isExecutionEnabled = reader.bool();
           break;
         case 2:
-          message.maxBeginBlockTotalGas = (reader.uint64() as Long);
+          message.maxBeginBlockTotalGas = reader.uint64() as Long;
           break;
         case 3:
-          message.maxContractGasLimit = (reader.uint64() as Long);
+          message.maxContractGasLimit = reader.uint64() as Long;
           break;
         case 4:
-          message.minGasPrice = (reader.uint64() as Long);
+          message.minGasPrice = reader.uint64() as Long;
           break;
         case 5:
           message.registerContractAccess = AccessConfig.decode(reader, reader.uint32());
@@ -306,16 +306,16 @@ export const RegisteredContract = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.gasLimit = (reader.uint64() as Long);
+          message.gasLimit = reader.uint64() as Long;
           break;
         case 2:
-          message.gasPrice = (reader.uint64() as Long);
+          message.gasPrice = reader.uint64() as Long;
           break;
         case 3:
           message.isExecutable = reader.bool();
           break;
         case 4:
-          message.codeId = (reader.uint64() as Long);
+          message.codeId = reader.uint64() as Long;
           break;
         case 5:
           message.adminAddress = reader.string();
@@ -324,7 +324,7 @@ export const RegisteredContract = {
           message.granterAddress = reader.string();
           break;
         case 7:
-          message.fundMode = (reader.int32() as any);
+          message.fundMode = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);

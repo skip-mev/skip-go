@@ -146,7 +146,7 @@ export const Message = {
           message.destinationDomain = reader.uint32();
           break;
         case 4:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         case 5:
           message.sender = reader.bytes();

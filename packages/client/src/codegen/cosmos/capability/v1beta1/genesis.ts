@@ -88,7 +88,7 @@ export const GenesisOwners = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.index = (reader.uint64() as Long);
+          message.index = reader.uint64() as Long;
           break;
         case 2:
           message.indexOwners = CapabilityOwners.decode(reader, reader.uint32());
@@ -181,7 +181,7 @@ export const GenesisState = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.index = (reader.uint64() as Long);
+          message.index = reader.uint64() as Long;
           break;
         case 2:
           message.owners.push(GenesisOwners.decode(reader, reader.uint32()));

@@ -260,7 +260,7 @@ export const BaseVestingAccount = {
           message.delegatedVesting.push(Coin.decode(reader, reader.uint32()));
           break;
         case 5:
-          message.endTime = (reader.int64() as Long);
+          message.endTime = reader.int64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -392,7 +392,7 @@ export const ContinuousVestingAccount = {
           message.baseVestingAccount = BaseVestingAccount.decode(reader, reader.uint32());
           break;
         case 2:
-          message.startTime = (reader.int64() as Long);
+          message.startTime = reader.int64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -561,7 +561,7 @@ export const Period = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.length = (reader.int64() as Long);
+          message.length = reader.int64() as Long;
           break;
         case 2:
           message.amount.push(Coin.decode(reader, reader.uint32()));
@@ -667,7 +667,7 @@ export const PeriodicVestingAccount = {
           message.baseVestingAccount = BaseVestingAccount.decode(reader, reader.uint32());
           break;
         case 2:
-          message.startTime = (reader.int64() as Long);
+          message.startTime = reader.int64() as Long;
           break;
         case 3:
           message.vestingPeriods.push(Period.decode(reader, reader.uint32()));

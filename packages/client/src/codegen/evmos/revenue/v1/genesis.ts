@@ -209,7 +209,7 @@ export const Params = {
           message.developerShares = Decimal.fromAtomics(reader.string(), 18).toString();
           break;
         case 3:
-          message.addrDerivationCostCreate = (reader.uint64() as Long);
+          message.addrDerivationCostCreate = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

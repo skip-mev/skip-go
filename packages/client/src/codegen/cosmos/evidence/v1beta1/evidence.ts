@@ -82,13 +82,13 @@ export const Equivocation = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.height = (reader.int64() as Long);
+          message.height = reader.int64() as Long;
           break;
         case 2:
           message.time = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         case 3:
-          message.power = (reader.int64() as Long);
+          message.power = reader.int64() as Long;
           break;
         case 4:
           message.consensusAddress = reader.string();

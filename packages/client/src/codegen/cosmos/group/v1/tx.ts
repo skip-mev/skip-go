@@ -953,7 +953,7 @@ export const MsgCreateGroupResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.groupId = (reader.uint64() as Long);
+          message.groupId = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1043,7 +1043,7 @@ export const MsgUpdateGroupMembers = {
           message.admin = reader.string();
           break;
         case 2:
-          message.groupId = (reader.uint64() as Long);
+          message.groupId = reader.uint64() as Long;
           break;
         case 3:
           message.memberUpdates.push(MemberRequest.decode(reader, reader.uint32()));
@@ -1219,7 +1219,7 @@ export const MsgUpdateGroupAdmin = {
           message.admin = reader.string();
           break;
         case 2:
-          message.groupId = (reader.uint64() as Long);
+          message.groupId = reader.uint64() as Long;
           break;
         case 3:
           message.newAdmin = reader.string();
@@ -1389,7 +1389,7 @@ export const MsgUpdateGroupMetadata = {
           message.admin = reader.string();
           break;
         case 2:
-          message.groupId = (reader.uint64() as Long);
+          message.groupId = reader.uint64() as Long;
           break;
         case 3:
           message.metadata = reader.string();
@@ -1563,7 +1563,7 @@ export const MsgCreateGroupPolicy = {
           message.admin = reader.string();
           break;
         case 2:
-          message.groupId = (reader.uint64() as Long);
+          message.groupId = reader.uint64() as Long;
           break;
         case 3:
           message.metadata = reader.string();
@@ -2077,7 +2077,7 @@ export const MsgCreateGroupWithPolicyResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.groupId = (reader.uint64() as Long);
+          message.groupId = reader.uint64() as Long;
           break;
         case 2:
           message.groupPolicyAddress = reader.string();
@@ -2542,7 +2542,7 @@ export const MsgSubmitProposal = {
           message.messages.push(Any.decode(reader, reader.uint32()));
           break;
         case 5:
-          message.exec = (reader.int32() as any);
+          message.exec = reader.int32() as any;
           break;
         case 6:
           message.title = reader.string();
@@ -2681,7 +2681,7 @@ export const MsgSubmitProposalResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.proposalId = (reader.uint64() as Long);
+          message.proposalId = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -2764,7 +2764,7 @@ export const MsgWithdrawProposal = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.proposalId = (reader.uint64() as Long);
+          message.proposalId = reader.uint64() as Long;
           break;
         case 2:
           message.address = reader.string();
@@ -2932,19 +2932,19 @@ export const MsgVote = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.proposalId = (reader.uint64() as Long);
+          message.proposalId = reader.uint64() as Long;
           break;
         case 2:
           message.voter = reader.string();
           break;
         case 3:
-          message.option = (reader.int32() as any);
+          message.option = reader.int32() as any;
           break;
         case 4:
           message.metadata = reader.string();
           break;
         case 5:
-          message.exec = (reader.int32() as any);
+          message.exec = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);
@@ -3118,7 +3118,7 @@ export const MsgExec = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.proposalId = (reader.uint64() as Long);
+          message.proposalId = reader.uint64() as Long;
           break;
         case 2:
           message.executor = reader.string();
@@ -3207,7 +3207,7 @@ export const MsgExecResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 2:
-          message.result = (reader.int32() as any);
+          message.result = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);
@@ -3293,7 +3293,7 @@ export const MsgLeaveGroup = {
           message.address = reader.string();
           break;
         case 2:
-          message.groupId = (reader.uint64() as Long);
+          message.groupId = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

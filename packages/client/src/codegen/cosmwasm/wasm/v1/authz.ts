@@ -866,7 +866,7 @@ export const MaxCallsLimit = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.remaining = (reader.uint64() as Long);
+          message.remaining = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1034,7 +1034,7 @@ export const CombinedLimit = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.callsRemaining = (reader.uint64() as Long);
+          message.callsRemaining = reader.uint64() as Long;
           break;
         case 2:
           message.amounts.push(Coin.decode(reader, reader.uint32()));

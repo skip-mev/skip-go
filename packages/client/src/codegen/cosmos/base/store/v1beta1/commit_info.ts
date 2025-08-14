@@ -131,7 +131,7 @@ export const CommitInfo = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.version = (reader.int64() as Long);
+          message.version = reader.int64() as Long;
           break;
         case 2:
           message.storeInfos.push(StoreInfo.decode(reader, reader.uint32()));
@@ -333,7 +333,7 @@ export const CommitID = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.version = (reader.int64() as Long);
+          message.version = reader.int64() as Long;
           break;
         case 2:
           message.hash = reader.bytes();
