@@ -144,6 +144,7 @@ export const validateGasBalances = async ({
           const res = await validateSvmGasBalance({
             tx: tx.svmTx,
             simulate,
+            feePayerAddress: options.svmFeePayer?.address
           });
           return res;
         } catch (e) {
