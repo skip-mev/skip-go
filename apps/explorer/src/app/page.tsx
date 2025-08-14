@@ -11,6 +11,8 @@ import { useSetAtom, useAtomValue } from "@/jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { NiceModal, Modals } from "@/nice-modal";
+import { GhostButton } from "@/components/Button";
+import { HamburgerIcon } from "@/icons/HamburgerIcon";
 
 export default function Home() {
   const [txHash, setTxHash] = useState("BA47144AF79143EECEDA00BC758FA52D8B124934C7051A78B20DAC9DC42C1BCB");
@@ -123,22 +125,38 @@ export default function Home() {
       </Row>
       {
         uniqueTransfers.length > 0 && (
-          <Row gap={16} flexDirection={isMobileScreenSize ? "column" : "row"} align={isMobileScreenSize ? "center" : "flex-start"}>
-            <TransactionDetails {...transactionDetails} />
-            <Column>
-              {uniqueTransfers.map((transfer) => (
-                <TransferEventCard
-                  key={transfer.chainId}
-                  chainId={transfer.chainId}
-                  explorerLink={transfer.explorerLink}
-                  transferType={transfer.transferType}
-                  status={transfer.status}
-                  step={transfer.step}
-                  durationInMs={transfer.durationInMs}
-                />
-              ))}
-            </Column>
-          </Row>
+          <>
+            <Row gap={16}>
+              <Column align="flex-end" width={355}>
+                <GhostButton onClick={() => {}}>
+                  View token details
+                </GhostButton>
+              </Column>
+              <Column align="flex-end" width={355}>
+                <GhostButton gap={5} onClick={() => {}}>
+                  View raw data <HamburgerIcon />
+                </GhostButton>
+              </Column>
+            </Row>
+            <Row gap={16} flexDirection={isMobileScreenSize ? "column" : "row"} align={isMobileScreenSize ? "center" : "flex-start"}>
+              <Column width={355}>
+                <TransactionDetails {...transactionDetails} />
+              </Column>
+              <Column width={355}>
+                {uniqueTransfers.map((transfer) => (
+                  <TransferEventCard
+                    key={transfer.chainId}
+                    chainId={transfer.chainId}
+                    explorerLink={transfer.explorerLink}
+                    transferType={transfer.transferType}
+                    status={transfer.status}
+                    step={transfer.step}
+                    durationInMs={transfer.durationInMs}
+                  />
+                ))}
+              </Column>
+            </Row>
+          </>
         )
       }
       
