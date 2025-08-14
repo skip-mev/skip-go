@@ -126,7 +126,6 @@ export const createModal = <T extends ModalProps>(component: ComponentType<T>) =
     );
   };
 
-  console.warn("🔍 createModal called for component:", Component.name || Component.displayName);
   return NiceModal.create(WrappedComponent);
 };
 
