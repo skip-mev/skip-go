@@ -236,13 +236,13 @@ export const ProtocolVersion = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.p2p = (reader.uint64() as Long);
+          message.p2p = reader.uint64() as Long;
           break;
         case 2:
-          message.block = (reader.uint64() as Long);
+          message.block = reader.uint64() as Long;
           break;
         case 3:
-          message.app = (reader.uint64() as Long);
+          message.app = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

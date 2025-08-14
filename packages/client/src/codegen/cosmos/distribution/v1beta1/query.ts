@@ -1303,10 +1303,10 @@ export const QueryValidatorSlashesRequest = {
           message.validatorAddress = reader.string();
           break;
         case 2:
-          message.startingHeight = (reader.uint64() as Long);
+          message.startingHeight = reader.uint64() as Long;
           break;
         case 3:
-          message.endingHeight = (reader.uint64() as Long);
+          message.endingHeight = reader.uint64() as Long;
           break;
         case 4:
           message.pagination = PageRequest.decode(reader, reader.uint32());

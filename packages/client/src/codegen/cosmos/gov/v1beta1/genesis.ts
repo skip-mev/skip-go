@@ -100,7 +100,7 @@ export const GenesisState = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.startingProposalId = (reader.uint64() as Long);
+          message.startingProposalId = reader.uint64() as Long;
           break;
         case 2:
           message.deposits.push(Deposit.decode(reader, reader.uint32()));

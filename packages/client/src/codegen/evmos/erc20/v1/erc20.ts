@@ -293,7 +293,7 @@ export const TokenPair = {
           message.enabled = reader.bool();
           break;
         case 4:
-          message.contractOwner = (reader.int32() as any);
+          message.contractOwner = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);

@@ -964,10 +964,10 @@ export const IndexValue = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.uint = (reader.uint64() as Long);
+          message.uint = reader.uint64() as Long;
           break;
         case 2:
-          message.int = (reader.int64() as Long);
+          message.int = reader.int64() as Long;
           break;
         case 3:
           message.str = reader.string();

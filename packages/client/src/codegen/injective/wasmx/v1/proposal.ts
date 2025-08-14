@@ -609,10 +609,10 @@ export const ContractRegistrationRequest = {
           message.contractAddress = reader.string();
           break;
         case 2:
-          message.gasLimit = (reader.uint64() as Long);
+          message.gasLimit = reader.uint64() as Long;
           break;
         case 3:
-          message.gasPrice = (reader.uint64() as Long);
+          message.gasPrice = reader.uint64() as Long;
           break;
         case 4:
           message.shouldPinContract = reader.bool();
@@ -621,7 +621,7 @@ export const ContractRegistrationRequest = {
           message.isMigrationAllowed = reader.bool();
           break;
         case 6:
-          message.codeId = (reader.uint64() as Long);
+          message.codeId = reader.uint64() as Long;
           break;
         case 7:
           message.adminAddress = reader.string();
@@ -630,7 +630,7 @@ export const ContractRegistrationRequest = {
           message.granterAddress = reader.string();
           break;
         case 9:
-          message.fundingMode = (reader.int32() as any);
+          message.fundingMode = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);

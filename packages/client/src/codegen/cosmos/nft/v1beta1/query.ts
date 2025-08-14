@@ -461,7 +461,7 @@ export const QueryBalanceResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.amount = (reader.uint64() as Long);
+          message.amount = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -791,7 +791,7 @@ export const QuerySupplyResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.amount = (reader.uint64() as Long);
+          message.amount = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

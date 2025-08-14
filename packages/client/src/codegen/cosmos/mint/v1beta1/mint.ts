@@ -226,7 +226,7 @@ export const Params = {
           message.goalBonded = Decimal.fromAtomics(reader.string(), 18).toString();
           break;
         case 6:
-          message.blocksPerYear = (reader.uint64() as Long);
+          message.blocksPerYear = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

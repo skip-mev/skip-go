@@ -117,7 +117,7 @@ export const TxResult = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.height = (reader.int64() as Long);
+          message.height = reader.int64() as Long;
           break;
         case 2:
           message.txIndex = reader.uint32();
@@ -132,10 +132,10 @@ export const TxResult = {
           message.failed = reader.bool();
           break;
         case 6:
-          message.gasUsed = (reader.uint64() as Long);
+          message.gasUsed = reader.uint64() as Long;
           break;
         case 7:
-          message.cumulativeGasUsed = (reader.uint64() as Long);
+          message.cumulativeGasUsed = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

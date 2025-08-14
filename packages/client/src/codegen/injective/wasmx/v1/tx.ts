@@ -497,10 +497,10 @@ export const MsgUpdateContract = {
           message.contractAddress = reader.string();
           break;
         case 3:
-          message.gasLimit = (reader.uint64() as Long);
+          message.gasLimit = reader.uint64() as Long;
           break;
         case 4:
-          message.gasPrice = (reader.uint64() as Long);
+          message.gasPrice = reader.uint64() as Long;
           break;
         case 5:
           message.adminAddress = reader.string();

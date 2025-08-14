@@ -836,7 +836,7 @@ export const QueryAccountResponse = {
           message.codeHash = reader.string();
           break;
         case 3:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1019,10 +1019,10 @@ export const QueryCosmosAccountResponse = {
           message.cosmosAddress = reader.string();
           break;
         case 2:
-          message.sequence = (reader.uint64() as Long);
+          message.sequence = reader.uint64() as Long;
           break;
         case 3:
-          message.accountNumber = (reader.uint64() as Long);
+          message.accountNumber = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1205,10 +1205,10 @@ export const QueryValidatorAccountResponse = {
           message.accountAddress = reader.string();
           break;
         case 2:
-          message.sequence = (reader.uint64() as Long);
+          message.sequence = reader.uint64() as Long;
           break;
         case 3:
-          message.accountNumber = (reader.uint64() as Long);
+          message.accountNumber = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -2138,13 +2138,13 @@ export const EthCallRequest = {
           message.args = reader.bytes();
           break;
         case 2:
-          message.gasCap = (reader.uint64() as Long);
+          message.gasCap = reader.uint64() as Long;
           break;
         case 3:
           message.proposerAddress = reader.bytes();
           break;
         case 4:
-          message.chainId = (reader.int64() as Long);
+          message.chainId = reader.int64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -2244,7 +2244,7 @@ export const EstimateGasResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.gas = (reader.uint64() as Long);
+          message.gas = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -2364,7 +2364,7 @@ export const QueryTraceTxRequest = {
           message.predecessors.push(MsgEthereumTx.decode(reader, reader.uint32()));
           break;
         case 5:
-          message.blockNumber = (reader.int64() as Long);
+          message.blockNumber = reader.int64() as Long;
           break;
         case 6:
           message.blockHash = reader.string();
@@ -2376,10 +2376,10 @@ export const QueryTraceTxRequest = {
           message.proposerAddress = reader.bytes();
           break;
         case 9:
-          message.chainId = (reader.int64() as Long);
+          message.chainId = reader.int64() as Long;
           break;
         case 10:
-          message.blockMaxGas = (reader.int64() as Long);
+          message.blockMaxGas = reader.int64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -2633,7 +2633,7 @@ export const QueryTraceBlockRequest = {
           message.traceConfig = TraceConfig.decode(reader, reader.uint32());
           break;
         case 5:
-          message.blockNumber = (reader.int64() as Long);
+          message.blockNumber = reader.int64() as Long;
           break;
         case 6:
           message.blockHash = reader.string();
@@ -2645,10 +2645,10 @@ export const QueryTraceBlockRequest = {
           message.proposerAddress = reader.bytes();
           break;
         case 9:
-          message.chainId = (reader.int64() as Long);
+          message.chainId = reader.int64() as Long;
           break;
         case 10:
-          message.blockMaxGas = (reader.int64() as Long);
+          message.blockMaxGas = reader.int64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

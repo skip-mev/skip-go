@@ -653,7 +653,7 @@ export const Output = {
           message.l1BlockTime = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         case 3:
-          message.l2BlockNumber = (reader.uint64() as Long);
+          message.l2BlockNumber = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

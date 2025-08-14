@@ -249,7 +249,7 @@ export const MsgCreateVestingAccount = {
           message.amount.push(Coin.decode(reader, reader.uint32()));
           break;
         case 4:
-          message.endTime = (reader.int64() as Long);
+          message.endTime = reader.int64() as Long;
           break;
         case 5:
           message.delayed = reader.bool();
@@ -622,7 +622,7 @@ export const MsgCreatePeriodicVestingAccount = {
           message.toAddress = reader.string();
           break;
         case 3:
-          message.startTime = (reader.int64() as Long);
+          message.startTime = reader.int64() as Long;
           break;
         case 4:
           message.vestingPeriods.push(Period.decode(reader, reader.uint32()));

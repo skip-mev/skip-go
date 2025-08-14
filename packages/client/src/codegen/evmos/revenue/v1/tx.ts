@@ -279,10 +279,10 @@ export const MsgRegisterRevenue = {
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.nonces.push((reader.uint64() as Long));
+              message.nonces.push(reader.uint64() as Long);
             }
           } else {
-            message.nonces.push((reader.uint64() as Long));
+            message.nonces.push(reader.uint64() as Long);
           }
           break;
         default:

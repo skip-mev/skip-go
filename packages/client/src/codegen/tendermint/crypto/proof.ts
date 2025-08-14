@@ -166,10 +166,10 @@ export const Proof = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.total = (reader.int64() as Long);
+          message.total = reader.int64() as Long;
           break;
         case 2:
-          message.index = (reader.int64() as Long);
+          message.index = reader.int64() as Long;
           break;
         case 3:
           message.leafHash = reader.bytes();

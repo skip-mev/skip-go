@@ -332,7 +332,7 @@ export const LastValidatorPower = {
           message.address = reader.string();
           break;
         case 2:
-          message.power = (reader.int64() as Long);
+          message.power = reader.int64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
