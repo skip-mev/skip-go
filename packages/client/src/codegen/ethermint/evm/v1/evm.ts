@@ -590,10 +590,10 @@ export const Params = {
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.extraEips.push((reader.int64() as Long));
+              message.extraEips.push(reader.int64() as Long);
             }
           } else {
-            message.extraEips.push((reader.int64() as Long));
+            message.extraEips.push(reader.int64() as Long);
           }
           break;
         case 5:
@@ -1316,19 +1316,19 @@ export const Log = {
           message.data = reader.bytes();
           break;
         case 4:
-          message.blockNumber = (reader.uint64() as Long);
+          message.blockNumber = reader.uint64() as Long;
           break;
         case 5:
           message.txHash = reader.string();
           break;
         case 6:
-          message.txIndex = (reader.uint64() as Long);
+          message.txIndex = reader.uint64() as Long;
           break;
         case 7:
           message.blockHash = reader.string();
           break;
         case 8:
-          message.index = (reader.uint64() as Long);
+          message.index = reader.uint64() as Long;
           break;
         case 9:
           message.removed = reader.bool();
@@ -1507,7 +1507,7 @@ export const TxResult = {
           message.reverted = reader.bool();
           break;
         case 6:
-          message.gasUsed = (reader.uint64() as Long);
+          message.gasUsed = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1766,7 +1766,7 @@ export const TraceConfig = {
           message.timeout = reader.string();
           break;
         case 3:
-          message.reexec = (reader.uint64() as Long);
+          message.reexec = reader.uint64() as Long;
           break;
         case 5:
           message.disableStack = reader.bool();

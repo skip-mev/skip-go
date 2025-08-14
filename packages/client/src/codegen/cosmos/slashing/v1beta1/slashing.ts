@@ -154,10 +154,10 @@ export const ValidatorSigningInfo = {
           message.address = reader.string();
           break;
         case 2:
-          message.startHeight = (reader.int64() as Long);
+          message.startHeight = reader.int64() as Long;
           break;
         case 3:
-          message.indexOffset = (reader.int64() as Long);
+          message.indexOffset = reader.int64() as Long;
           break;
         case 4:
           message.jailedUntil = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
@@ -166,7 +166,7 @@ export const ValidatorSigningInfo = {
           message.tombstoned = reader.bool();
           break;
         case 6:
-          message.missedBlocksCounter = (reader.int64() as Long);
+          message.missedBlocksCounter = reader.int64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -296,7 +296,7 @@ export const Params = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.signedBlocksWindow = (reader.int64() as Long);
+          message.signedBlocksWindow = reader.int64() as Long;
           break;
         case 2:
           message.minSignedPerWindow = reader.bytes();

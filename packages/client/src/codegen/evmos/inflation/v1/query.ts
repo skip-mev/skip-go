@@ -377,7 +377,7 @@ export const QueryPeriodResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.period = (reader.uint64() as Long);
+          message.period = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -661,7 +661,7 @@ export const QuerySkippedEpochsResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.skippedEpochs = (reader.uint64() as Long);
+          message.skippedEpochs = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

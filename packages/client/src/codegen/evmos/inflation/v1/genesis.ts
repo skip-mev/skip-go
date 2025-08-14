@@ -122,16 +122,16 @@ export const GenesisState = {
           message.params = Params.decode(reader, reader.uint32());
           break;
         case 2:
-          message.period = (reader.uint64() as Long);
+          message.period = reader.uint64() as Long;
           break;
         case 3:
           message.epochIdentifier = reader.string();
           break;
         case 4:
-          message.epochsPerPeriod = (reader.int64() as Long);
+          message.epochsPerPeriod = reader.int64() as Long;
           break;
         case 5:
-          message.skippedEpochs = (reader.uint64() as Long);
+          message.skippedEpochs = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

@@ -210,7 +210,7 @@ export const Incentive = {
           message.startTime = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         case 5:
-          message.totalGas = (reader.uint64() as Long);
+          message.totalGas = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -337,7 +337,7 @@ export const GasMeter = {
           message.participant = reader.string();
           break;
         case 3:
-          message.cumulativeGas = (reader.uint64() as Long);
+          message.cumulativeGas = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

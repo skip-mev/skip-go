@@ -127,7 +127,7 @@ export const GenesisState = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.groupSeq = (reader.uint64() as Long);
+          message.groupSeq = reader.uint64() as Long;
           break;
         case 2:
           message.groups.push(GroupInfo.decode(reader, reader.uint32()));
@@ -136,13 +136,13 @@ export const GenesisState = {
           message.groupMembers.push(GroupMember.decode(reader, reader.uint32()));
           break;
         case 4:
-          message.groupPolicySeq = (reader.uint64() as Long);
+          message.groupPolicySeq = reader.uint64() as Long;
           break;
         case 5:
           message.groupPolicies.push(GroupPolicyInfo.decode(reader, reader.uint32()));
           break;
         case 6:
-          message.proposalSeq = (reader.uint64() as Long);
+          message.proposalSeq = reader.uint64() as Long;
           break;
         case 7:
           message.proposals.push(Proposal.decode(reader, reader.uint32()));

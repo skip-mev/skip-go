@@ -2869,7 +2869,7 @@ export const QueryGetUsedNonceRequest = {
           message.sourceDomain = reader.uint32();
           break;
         case 2:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

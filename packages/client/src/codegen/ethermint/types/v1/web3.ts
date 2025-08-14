@@ -90,7 +90,7 @@ export const ExtensionOptionsWeb3Tx = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.typedDataChainId = (reader.uint64() as Long);
+          message.typedDataChainId = reader.uint64() as Long;
           break;
         case 2:
           message.feePayer = reader.string();

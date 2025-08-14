@@ -542,7 +542,7 @@ export const TxResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.height = (reader.int64() as Long);
+          message.height = reader.int64() as Long;
           break;
         case 2:
           message.txhash = reader.string();
@@ -566,10 +566,10 @@ export const TxResponse = {
           message.info = reader.string();
           break;
         case 9:
-          message.gasWanted = (reader.int64() as Long);
+          message.gasWanted = reader.int64() as Long;
           break;
         case 10:
-          message.gasUsed = (reader.int64() as Long);
+          message.gasUsed = reader.int64() as Long;
           break;
         case 11:
           message.tx = Any.decode(reader, reader.uint32());
@@ -1062,10 +1062,10 @@ export const GasInfo = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.gasWanted = (reader.uint64() as Long);
+          message.gasWanted = reader.uint64() as Long;
           break;
         case 2:
-          message.gasUsed = (reader.uint64() as Long);
+          message.gasUsed = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1595,19 +1595,19 @@ export const SearchTxsResult = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.totalCount = (reader.uint64() as Long);
+          message.totalCount = reader.uint64() as Long;
           break;
         case 2:
-          message.count = (reader.uint64() as Long);
+          message.count = reader.uint64() as Long;
           break;
         case 3:
-          message.pageNumber = (reader.uint64() as Long);
+          message.pageNumber = reader.uint64() as Long;
           break;
         case 4:
-          message.pageTotal = (reader.uint64() as Long);
+          message.pageTotal = reader.uint64() as Long;
           break;
         case 5:
-          message.limit = (reader.uint64() as Long);
+          message.limit = reader.uint64() as Long;
           break;
         case 6:
           message.txs.push(TxResponse.decode(reader, reader.uint32()));

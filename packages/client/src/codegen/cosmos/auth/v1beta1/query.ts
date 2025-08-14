@@ -1871,10 +1871,10 @@ export const QueryAccountAddressByIDRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.id = (reader.int64() as Long);
+          message.id = reader.int64() as Long;
           break;
         case 2:
-          message.accountId = (reader.uint64() as Long);
+          message.accountId = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

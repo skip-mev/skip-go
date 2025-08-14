@@ -867,7 +867,7 @@ export const Header = {
           message.chainId = reader.string();
           break;
         case 3:
-          message.height = (reader.int64() as Long);
+          message.height = reader.int64() as Long;
           break;
         case 4:
           message.time = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
@@ -1171,10 +1171,10 @@ export const Vote = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.type = (reader.int32() as any);
+          message.type = reader.int32() as any;
           break;
         case 2:
-          message.height = (reader.int64() as Long);
+          message.height = reader.int64() as Long;
           break;
         case 3:
           message.round = reader.int32();
@@ -1326,7 +1326,7 @@ export const Commit = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.height = (reader.int64() as Long);
+          message.height = reader.int64() as Long;
           break;
         case 2:
           message.round = reader.int32();
@@ -1447,7 +1447,7 @@ export const CommitSig = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.blockIdFlag = (reader.int32() as any);
+          message.blockIdFlag = reader.int32() as any;
           break;
         case 2:
           message.validatorAddress = reader.bytes();
@@ -1574,10 +1574,10 @@ export const Proposal = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.type = (reader.int32() as any);
+          message.type = reader.int32() as any;
           break;
         case 2:
-          message.height = (reader.int64() as Long);
+          message.height = reader.int64() as Long;
           break;
         case 3:
           message.round = reader.int32();
@@ -1896,13 +1896,13 @@ export const BlockMeta = {
           message.blockId = BlockID.decode(reader, reader.uint32());
           break;
         case 2:
-          message.blockSize = (reader.int64() as Long);
+          message.blockSize = reader.int64() as Long;
           break;
         case 3:
           message.header = Header.decode(reader, reader.uint32());
           break;
         case 4:
-          message.numTxs = (reader.int64() as Long);
+          message.numTxs = reader.int64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

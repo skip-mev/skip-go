@@ -578,13 +578,13 @@ export const LegacyTx = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         case 2:
           message.gasPrice = reader.string();
           break;
         case 3:
-          message.gas = (reader.uint64() as Long);
+          message.gas = reader.uint64() as Long;
           break;
         case 4:
           message.to = reader.string();
@@ -780,13 +780,13 @@ export const AccessListTx = {
           message.chainId = reader.string();
           break;
         case 2:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         case 3:
           message.gasPrice = reader.string();
           break;
         case 4:
-          message.gas = (reader.uint64() as Long);
+          message.gas = reader.uint64() as Long;
           break;
         case 5:
           message.to = reader.string();
@@ -1009,7 +1009,7 @@ export const DynamicFeeTx = {
           message.chainId = reader.string();
           break;
         case 2:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         case 3:
           message.gasTipCap = reader.string();
@@ -1018,7 +1018,7 @@ export const DynamicFeeTx = {
           message.gasFeeCap = reader.string();
           break;
         case 5:
-          message.gas = (reader.uint64() as Long);
+          message.gas = reader.uint64() as Long;
           break;
         case 6:
           message.to = reader.string();
@@ -1292,7 +1292,7 @@ export const MsgEthereumTxResponse = {
           message.vmError = reader.string();
           break;
         case 5:
-          message.gasUsed = (reader.uint64() as Long);
+          message.gasUsed = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

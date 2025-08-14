@@ -1432,7 +1432,7 @@ export const MsgCancelUnbondingDelegation = {
           message.amount = Coin.decode(reader, reader.uint32());
           break;
         case 4:
-          message.creationHeight = (reader.int64() as Long);
+          message.creationHeight = reader.int64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

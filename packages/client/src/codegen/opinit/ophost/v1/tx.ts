@@ -95,7 +95,7 @@ export const MsgInitiateTokenDeposit = {
           message.sender = reader.string();
           break;
         case 2:
-          message.bridgeId = (reader.uint64() as Long);
+          message.bridgeId = reader.uint64() as Long;
           break;
         case 3:
           message.to = reader.string();
@@ -211,7 +211,7 @@ export const MsgInitiateTokenDepositResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sequence = (reader.uint64() as Long);
+          message.sequence = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

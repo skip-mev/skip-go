@@ -113,7 +113,7 @@ export const Capability = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.index = (reader.uint64() as Long);
+          message.index = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);

@@ -307,7 +307,7 @@ export const Timestamp = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.seconds = (reader.int64() as Long);
+          message.seconds = reader.int64() as Long;
           break;
         case 2:
           message.nanos = reader.int32();

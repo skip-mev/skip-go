@@ -473,7 +473,7 @@ export const MissedBlock = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.index = (reader.int64() as Long);
+          message.index = reader.int64() as Long;
           break;
         case 2:
           message.missed = reader.bool();

@@ -497,7 +497,7 @@ export const QueryBlockGasResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.gas = (reader.int64() as Long);
+          message.gas = reader.int64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
