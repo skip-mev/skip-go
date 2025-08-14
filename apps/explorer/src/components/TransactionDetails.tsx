@@ -4,13 +4,12 @@ import { SmallText } from '@/components/Typography';
 import { ReactNode } from "react";
 import { getSimpleOverallStatus, TransactionState } from "@skip-go/client";
 import { Badge } from "@/components/Badge";
-import { useAtomValue } from "jotai";
+import { useAtomValue } from "@/jotai";
 import { skipChainsAtom } from "@/state/skipClient";
-import { Button, GhostButton } from "@/components/Button";
+import { Button } from "@/components/Button";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import Image from "next/image";
-import { HamburgerIcon } from "@/icons/HamburgerIcon";
 
 export type TransactionDetailsProps = {
   txHash: string;
@@ -55,14 +54,6 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
           }
         />
       </Container>
-      <Row justify="space-between">
-        <GhostButton gap={5} onClick={() => {}}>
-          View raw data <HamburgerIcon />
-        </GhostButton>
-        <GhostButton onClick={() => {}}>
-          View token details
-        </GhostButton>
-      </Row>
     </Column>
   );
 };

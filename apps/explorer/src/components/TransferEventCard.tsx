@@ -3,7 +3,7 @@ import { Container } from "@/components/Container";
 import { Column, Row } from "@/components/Layout";
 import { SmallTextButton } from '@/components/Typography';
 import { skipChainsAtom } from "@/state/skipClient";
-import { useAtomValue } from "jotai";
+import { useAtomValue } from "@/jotai";
 import { Text, SmallText } from "@/components/Typography";
 import { TransferType } from "@skip-go/client";
 import Image from "next/image";
@@ -74,11 +74,8 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
      
       <TransferEventContainer padding={15} width={355} borderRadius={16} status={step === "Destination" ? status : undefined}>
         <Row align="center" justify="space-between">
-          <Row gap={10}>
-            <Badge> { step } </Badge>
-            {step === "Destination" && <Badge variant={status}> {status} </Badge>}
-          </Row>
-          <SmallTextButton textAlign="center" onClick={() => window.open(explorerLink, "_blank")}> Mintscan → </SmallTextButton>
+          <Badge> { step } </Badge>
+          <Badge variant={step === "Destination" ? status : undefined}> {status} </Badge>
         </Row>
         <TransferEventDetailsCard>
           <Row justify="space-between">
@@ -92,6 +89,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
             <Badge> { getTransferTypeLabel(transferType) } </Badge>
           </Row>
         </TransferEventDetailsCard>
+        <SmallTextButton textAlign="center" onClick={() => window.open(explorerLink, "_blank")}> View on Mintscan → </SmallTextButton>
       </TransferEventContainer>
     </Column>
 );

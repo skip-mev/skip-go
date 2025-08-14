@@ -29,7 +29,7 @@ import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
 import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
 import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
 
-export const useInitWidget = (props: WidgetProps) => {
+export const useInitWidget = (props: WidgetProps = {}) => {
   if (props.enableAmplitudeAnalytics) {
     initAmplitude();
   }

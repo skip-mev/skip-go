@@ -116,9 +116,9 @@ export const createModal = <T extends ModalProps>(component: ComponentType<T>) =
       <Modal {...props} theme={theme}>
         <ErrorBoundary
           fallback={null}
-          onError={(error) =>
-            setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error })
-          }
+          onError={(error) => {
+            setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error });
+          }}
         >
           <Component {...props} />
         </ErrorBoundary>

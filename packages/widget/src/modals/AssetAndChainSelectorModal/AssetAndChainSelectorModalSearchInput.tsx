@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { styled, useTheme } from "styled-components";
 import { Row } from "@/components/Layout";
 import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
@@ -21,6 +21,7 @@ type AssetAndChainSelectorModalSearchInputProps = {
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  overrideSelectedGroup?: boolean;
 };
 
 export const AssetAndChainSelectorModalSearchInput = ({
@@ -30,9 +31,10 @@ export const AssetAndChainSelectorModalSearchInput = ({
   searchTerm,
   setSearchTerm,
   onKeyDown,
+  overrideSelectedGroup,
 }: AssetAndChainSelectorModalSearchInputProps) => {
   const theme = useTheme();
-  const asset = groupedAsset?.assets[0] as Asset;
+  const asset = !overrideSelectedGroup && (groupedAsset?.assets[0] as Asset);
   const isMobileScreenSize = useIsMobileScreenSize();
   const mobile = isMobile();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -51,6 +53,11 @@ export const AssetAndChainSelectorModalSearchInput = ({
       inputRef.current?.focus();
     }, 0);
   }, [asset, isMobileScreenSize, mobile]);
+
+  const placeholder = useMemo(() => {
+    if (overrideSelectedGroup || asset) return "Search networks";
+    return "Search for an asset";
+  }, [overrideSelectedGroup, asset]);
 
   return (
     <StyledSearchInputContainer align="center" gap={5}>
@@ -72,7 +79,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
         ref={inputRef}
         style={{ paddingLeft: asset ? undefined : 30 }}
         type="text"
-        placeholder={asset ? "Search networks" : "Search for an asset"}
+        placeholder={placeholder}
         value={searchTerm}
         onChange={handleSearch}
         onKeyDown={onKeyDown}
