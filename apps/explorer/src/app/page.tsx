@@ -3,10 +3,11 @@ import React from "react";
 import { ToggleThemeButton } from "./template";
 import { SmallTextButton } from '@/components/Typography';
 import { Column, Row } from "@/components/Layout";
-import { transactionStatus, getTransferEventsFromTxStatusResponse, ClientTransferEvent, TxStatusResponse, Chain } from "@skip-go/client";
+import { transactionStatus, getTransferEventsFromTxStatusResponse, ClientTransferEvent, TxStatusResponse } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
 import { TransferEventCard, TransferEventCardProps } from "../components/TransferEventCard";
-import { defaultSkipClientConfig, skipClientConfigAtom, onlyTestnetsAtom, ClientAsset, skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
+import { defaultSkipClientConfig, skipClientConfigAtom, onlyTestnetsAtom, ClientAsset } from "@/state/skipClient";
+import { uniqueAssetsBySymbolAtom } from "../state/uniqueAssetsBySymbol";
 import { useSetAtom, useAtomValue } from "@/jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
@@ -22,7 +23,7 @@ export default function Home() {
   
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
-  const { data: assets } = useAtomValue(skipAssetsAtom);
+  const uniqueAssetsBySymbol = useAtomValue(uniqueAssetsBySymbolAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
 
   const uniqueTransfers = useMemo(() => {
@@ -87,19 +88,6 @@ export default function Home() {
     }
   }, [uniqueTransfers, transferEvents, transactionStatusResponse?.state]);
 
-  const getUniqueAssetsBySymbol = (assets: ClientAsset[] = []) => {
-    const seen = new Map<string, ClientAsset>();
-    
-    assets.forEach(asset => {
-      const chainId = asset.chainId;
-      if (chainId && !seen.has(chainId)) {
-        seen.set(chainId, asset);
-      }
-    });
-    
-    return Array.from(seen.values());
-  };
-
   return (
     <Column gap={10}>
       <ToggleThemeButton />
@@ -113,7 +101,7 @@ export default function Home() {
               NiceModal.hide(Modals.AssetAndChainSelectorModal);
             },
             overrideSelectedGroup: {
-              assets: getUniqueAssetsBySymbol(assets),
+              assets: uniqueAssetsBySymbol,
             },
             selectChain: true,
           });
