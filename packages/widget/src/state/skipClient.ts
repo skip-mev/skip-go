@@ -63,8 +63,6 @@ export const skipChainsAtom = atomWithQuery((get) => {
   const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
-  console.log("skipChainsAtom", onlyTestnets, apiUrl, apiKey, cacheDurationMs);
-
   return {
     queryKey: ["skipChains", { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
     queryFn: async () => {
