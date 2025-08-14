@@ -99,7 +99,7 @@ export default function Home() {
   };
 
   return (
-    <Column id="test"gap={10}>
+    <Column gap={10}>
       <ToggleThemeButton />
 
       <Row justify="center" gap={10} >
