@@ -9,7 +9,7 @@ import { Provider, jotaiStore, useSetAtom } from "@/jotai";
 import { Modals, NiceModal } from "@/nice-modal";
 import { AssetAndChainSelectorModal } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 import { themeAtom } from "@/state/skipClient";
-import { ViewRawDataModal } from "../components/modals/ViewRawData";
+import { ViewRawDataModal } from "../components/modals/ViewRawDataModal";
 import { ExplorerModals } from "../constants/modal";
 
 export default function Template({ children }: { children: ReactNode }) {

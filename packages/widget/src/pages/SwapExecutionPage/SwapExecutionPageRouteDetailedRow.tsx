@@ -14,7 +14,7 @@ import { getTruncatedAddress } from "@/utils/crypto";
 import { formatDisplayAmount } from "@/utils/number";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
-import { useCopyAddress } from "@/hooks/useCopyAddress";
+import { useClipboard } from "@/hooks/useCopyAddress";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
@@ -52,7 +52,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
 }: SwapExecutionPageRouteDetailedRowProps) => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
-  const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
+  const { saveToClipboard: copyAddress, isCopied: isShowingCopyAddressFeedback } = useClipboard();
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,

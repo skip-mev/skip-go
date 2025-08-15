@@ -17,7 +17,7 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { XIcon } from "@/icons/XIcon";
 import { Tooltip } from "@/components/Tooltip";
 import { CopyIcon } from "@/icons/CopyIcon";
-import { useCopyAddress } from "@/hooks/useCopyAddress";
+import { useClipboard } from "@/hooks/useCopyAddress";
 import { track } from "@amplitude/analytics-browser";
 import { useAccount as useCosmosAccount } from "graz";
 import { usePrimaryChainIdForChainType } from "@/hooks/usePrimaryChainIdForChainType";
@@ -38,7 +38,7 @@ export const ConnectEcoRow = ({
   onClick?: () => void;
   connectedWalletModal?: boolean;
 }) => {
-  const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
+  const { saveToClipboard: copyAddress, isCopied: isShowingCopyAddressFeedback } = useClipboard();
 
   const { data: cosmosAccounts } = useCosmosAccount({
     multiChain: true,

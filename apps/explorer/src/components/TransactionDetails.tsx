@@ -8,7 +8,7 @@ import { useAtomValue } from "@/jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { Button } from "@/components/Button";
 import { getTruncatedAddress } from "@/utils/crypto";
-import { useCopyAddress } from "@/hooks/useCopyAddress";
+import { useClipboard } from "@/hooks/useCopyAddress";
 import Image from "next/image";
 
 export type TransactionDetailsProps = {
@@ -19,10 +19,10 @@ export type TransactionDetailsProps = {
 
 export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetailsProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
-  const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
+  const { saveToClipboard: copyAddress, isCopied: isShowingCopyAddressFeedback } = useClipboard();
 
   const chains = chainIds?.map((chainId) => skipChains?.data?.find((chain) => chain.chainId === chainId));
-  
+
   console.log({ txHash, state, chainIds });
   return (
     <Column gap={5}>
