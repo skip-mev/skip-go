@@ -1,8 +1,8 @@
 import { copyToClipboard } from "@/utils/misc";
 import { useEffect, useState } from "react";
 
-export const useCopyAddress = () => {
-  const [isShowingCopyAddressFeedback, setIsShowingCopyAddressFeedback] = useState(false);
+export const useClipboard = () => {
+  const [isCopied, setIsShowingCopied] = useState(false);
   const [copyAddressTimeout, setCopyAddressTimeout] = useState<NodeJS.Timeout>();
 
   useEffect(() => {
@@ -11,18 +11,18 @@ export const useCopyAddress = () => {
     };
   }, [copyAddressTimeout]);
 
-  const copyAddress = (address?: string) => {
-    if (!address) return;
-    copyToClipboard(address);
-    setIsShowingCopyAddressFeedback(true);
+  const saveToClipboard = (text?: string) => {
+    if (!text) return;
+    copyToClipboard(text);
+    setIsShowingCopied(true);
     const timeout = setTimeout(() => {
-      setIsShowingCopyAddressFeedback(false);
+      setIsShowingCopied(false);
     }, 1000);
     setCopyAddressTimeout(timeout);
   };
 
   return {
-    copyAddress,
-    isShowingCopyAddressFeedback,
+    saveToClipboard,
+    isCopied,
   };
 };
