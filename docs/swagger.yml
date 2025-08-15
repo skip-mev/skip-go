@@ -2691,9 +2691,11 @@ components:
             Error detail:
             * `LOW_INFO_ERROR` - Not enough asset pricing information to determine the price safety of the route.
             * `BAD_PRICE_ERROR` - The execution price of the route deviates significantly from the current market price.
+            * `HIGH_LOSS_ERROR` - The route would result in a USD loss exceeding the configured threshold and has been blocked.
           enum:
             - LOW_INFO_ERROR
             - BAD_PRICE_ERROR
+            - HIGH_LOSS_ERROR
           type: string
     Error:
       properties:
@@ -3163,9 +3165,11 @@ components:
         Recommendation reason:
         * `LOW_INFO_WARNING` - Not enough asset pricing information to determine the price safety of the route.
         * `BAD_PRICE_WARNING` - The execution price of the route deviates significantly from the current market price.
+        * `HIGH_LOSS_WARNING` - The route would result in a USD loss exceeding the configured threshold.
       enum:
         - LOW_INFO_WARNING
         - BAD_PRICE_WARNING
+        - HIGH_LOSS_WARNING
       type: string
     Route:
       required:
