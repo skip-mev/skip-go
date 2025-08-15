@@ -1,5 +1,17 @@
 # @skip-go/client
 
+## 1.5.3
+
+### Patch Changes
+
+- 676a76b: update registries
+- d3ec136: rename feeRoute to gasRoute
+- 4cc4b68: add routeWithGasOnReceive
+- 55f7438: Add HIGH_LOSS_ERROR to Swagger API spec
+- 37241e9: get chains and assets fron client lib state
+- b1660f8: fix array query param value
+- 4920ae0: fix build warning reorder exports
+
 ## 1.5.2
 
 ### Patch Changes
