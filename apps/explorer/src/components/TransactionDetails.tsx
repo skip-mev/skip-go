@@ -8,7 +8,7 @@ import { useAtomValue } from "@/jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { Button } from "@/components/Button";
 import { getTruncatedAddress } from "@/utils/crypto";
-import { useClipboard } from "@/hooks/useCopyAddress";
+import { useClipboard } from "@/hooks/useClipboard";
 import Image from "next/image";
 
 export type TransactionDetailsProps = {
