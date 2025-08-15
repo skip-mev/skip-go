@@ -24,21 +24,40 @@ export interface GenesisStateProtoMsg {
   typeUrl: "/cosmos.gov.v1beta1.GenesisState";
   value: Uint8Array;
 }
-/** GenesisState defines the gov module's genesis state. */
+/**
+ * GenesisState defines the gov module's genesis state.
+ * @name GenesisStateAmino
+ * @package cosmos.gov.v1beta1
+ * @see proto type: cosmos.gov.v1beta1.GenesisState
+ */
 export interface GenesisStateAmino {
-  /** starting_proposal_id is the ID of the starting proposal. */
+  /**
+   * starting_proposal_id is the ID of the starting proposal.
+   */
   starting_proposal_id?: string;
-  /** deposits defines all the deposits present at genesis. */
+  /**
+   * deposits defines all the deposits present at genesis.
+   */
   deposits: DepositAmino[];
-  /** votes defines all the votes present at genesis. */
+  /**
+   * votes defines all the votes present at genesis.
+   */
   votes: VoteAmino[];
-  /** proposals defines all the proposals present at genesis. */
+  /**
+   * proposals defines all the proposals present at genesis.
+   */
   proposals: ProposalAmino[];
-  /** params defines all the parameters of related to deposit. */
+  /**
+   * params defines all the parameters of related to deposit.
+   */
   deposit_params: DepositParamsAmino;
-  /** params defines all the parameters of related to voting. */
+  /**
+   * params defines all the parameters of related to voting.
+   */
   voting_params: VotingParamsAmino;
-  /** params defines all the parameters of related to tally. */
+  /**
+   * params defines all the parameters of related to tally.
+   */
   tally_params: TallyParamsAmino;
 }
 export interface GenesisStateAminoMsg {
@@ -100,7 +119,7 @@ export const GenesisState = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.startingProposalId = (reader.uint64() as Long);
+          message.startingProposalId = reader.uint64() as Long;
           break;
         case 2:
           message.deposits.push(Deposit.decode(reader, reader.uint32()));
@@ -193,7 +212,7 @@ export const GenesisState = {
   },
   toAmino(message: GenesisState): GenesisStateAmino {
     const obj: any = {};
-    obj.starting_proposal_id = !message.startingProposalId.isZero() ? message.startingProposalId.toString() : undefined;
+    obj.starting_proposal_id = !message.startingProposalId.isZero() ? message.startingProposalId?.toString() : undefined;
     if (message.deposits) {
       obj.deposits = message.deposits.map(e => e ? Deposit.toAmino(e) : undefined);
     } else {

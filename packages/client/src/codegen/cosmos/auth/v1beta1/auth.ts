@@ -22,6 +22,9 @@ export interface BaseAccountProtoMsg {
  * BaseAccount defines a base account type. It contains all the necessary fields
  * for basic account functionality. Any custom account type should extend this
  * type for additional functionality (e.g. vesting).
+ * @name BaseAccountAmino
+ * @package cosmos.auth.v1beta1
+ * @see proto type: cosmos.auth.v1beta1.BaseAccount
  */
 export interface BaseAccountAmino {
   address?: string;
@@ -54,7 +57,12 @@ export interface ModuleAccountProtoMsg {
   typeUrl: "/cosmos.auth.v1beta1.ModuleAccount";
   value: Uint8Array;
 }
-/** ModuleAccount defines an account for modules that holds coins on a pool. */
+/**
+ * ModuleAccount defines an account for modules that holds coins on a pool.
+ * @name ModuleAccountAmino
+ * @package cosmos.auth.v1beta1
+ * @see proto type: cosmos.auth.v1beta1.ModuleAccount
+ */
 export interface ModuleAccountAmino {
   base_account?: BaseAccountAmino;
   name?: string;
@@ -92,9 +100,14 @@ export interface ModuleCredentialProtoMsg {
  * ModuleCredential represents a unclaimable pubkey for base accounts controlled by modules.
  * 
  * Since: cosmos-sdk 0.47
+ * @name ModuleCredentialAmino
+ * @package cosmos.auth.v1beta1
+ * @see proto type: cosmos.auth.v1beta1.ModuleCredential
  */
 export interface ModuleCredentialAmino {
-  /** module_name is the name of the module used for address derivation (passed into address.Module). */
+  /**
+   * module_name is the name of the module used for address derivation (passed into address.Module).
+   */
   module_name?: string;
   /**
    * derivation_keys is for deriving a module account address (passed into address.Module)
@@ -127,7 +140,12 @@ export interface ParamsProtoMsg {
   typeUrl: "/cosmos.auth.v1beta1.Params";
   value: Uint8Array;
 }
-/** Params defines the parameters for the auth module. */
+/**
+ * Params defines the parameters for the auth module.
+ * @name ParamsAmino
+ * @package cosmos.auth.v1beta1
+ * @see proto type: cosmos.auth.v1beta1.Params
+ */
 export interface ParamsAmino {
   max_memo_characters?: string;
   tx_sig_limit?: string;
@@ -186,10 +204,10 @@ export const BaseAccount = {
           message.pubKey = Any.decode(reader, reader.uint32());
           break;
         case 3:
-          message.accountNumber = (reader.uint64() as Long);
+          message.accountNumber = reader.uint64() as Long;
           break;
         case 4:
-          message.sequence = (reader.uint64() as Long);
+          message.sequence = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -242,8 +260,8 @@ export const BaseAccount = {
     const obj: any = {};
     obj.address = message.address === "" ? undefined : message.address;
     obj.pub_key = message.pubKey ? Any.toAmino(message.pubKey) : undefined;
-    obj.account_number = !message.accountNumber.isZero() ? message.accountNumber.toString() : undefined;
-    obj.sequence = !message.sequence.isZero() ? message.sequence.toString() : undefined;
+    obj.account_number = !message.accountNumber.isZero() ? message.accountNumber?.toString() : undefined;
+    obj.sequence = !message.sequence.isZero() ? message.sequence?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: BaseAccountAminoMsg): BaseAccount {
@@ -517,19 +535,19 @@ export const Params = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.maxMemoCharacters = (reader.uint64() as Long);
+          message.maxMemoCharacters = reader.uint64() as Long;
           break;
         case 2:
-          message.txSigLimit = (reader.uint64() as Long);
+          message.txSigLimit = reader.uint64() as Long;
           break;
         case 3:
-          message.txSizeCostPerByte = (reader.uint64() as Long);
+          message.txSizeCostPerByte = reader.uint64() as Long;
           break;
         case 4:
-          message.sigVerifyCostEd25519 = (reader.uint64() as Long);
+          message.sigVerifyCostEd25519 = reader.uint64() as Long;
           break;
         case 5:
-          message.sigVerifyCostSecp256k1 = (reader.uint64() as Long);
+          message.sigVerifyCostSecp256k1 = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -586,11 +604,11 @@ export const Params = {
   },
   toAmino(message: Params): ParamsAmino {
     const obj: any = {};
-    obj.max_memo_characters = !message.maxMemoCharacters.isZero() ? message.maxMemoCharacters.toString() : undefined;
-    obj.tx_sig_limit = !message.txSigLimit.isZero() ? message.txSigLimit.toString() : undefined;
-    obj.tx_size_cost_per_byte = !message.txSizeCostPerByte.isZero() ? message.txSizeCostPerByte.toString() : undefined;
-    obj.sig_verify_cost_ed25519 = !message.sigVerifyCostEd25519.isZero() ? message.sigVerifyCostEd25519.toString() : undefined;
-    obj.sig_verify_cost_secp256k1 = !message.sigVerifyCostSecp256k1.isZero() ? message.sigVerifyCostSecp256k1.toString() : undefined;
+    obj.max_memo_characters = !message.maxMemoCharacters.isZero() ? message.maxMemoCharacters?.toString() : undefined;
+    obj.tx_sig_limit = !message.txSigLimit.isZero() ? message.txSigLimit?.toString() : undefined;
+    obj.tx_size_cost_per_byte = !message.txSizeCostPerByte.isZero() ? message.txSizeCostPerByte?.toString() : undefined;
+    obj.sig_verify_cost_ed25519 = !message.sigVerifyCostEd25519.isZero() ? message.sigVerifyCostEd25519?.toString() : undefined;
+    obj.sig_verify_cost_secp256k1 = !message.sigVerifyCostSecp256k1.isZero() ? message.sigVerifyCostSecp256k1?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: ParamsAminoMsg): Params {

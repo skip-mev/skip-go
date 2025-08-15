@@ -13,6 +13,11 @@ export interface EvidenceProtoMsg {
   typeUrl: "/tendermint.types.Evidence";
   value: Uint8Array;
 }
+/**
+ * @name EvidenceAmino
+ * @package tendermint.types
+ * @see proto type: tendermint.types.Evidence
+ */
 export interface EvidenceAmino {
   duplicate_vote_evidence?: DuplicateVoteEvidenceAmino;
   light_client_attack_evidence?: LightClientAttackEvidenceAmino;
@@ -37,7 +42,12 @@ export interface DuplicateVoteEvidenceProtoMsg {
   typeUrl: "/tendermint.types.DuplicateVoteEvidence";
   value: Uint8Array;
 }
-/** DuplicateVoteEvidence contains evidence of a validator signed two conflicting votes. */
+/**
+ * DuplicateVoteEvidence contains evidence of a validator signed two conflicting votes.
+ * @name DuplicateVoteEvidenceAmino
+ * @package tendermint.types
+ * @see proto type: tendermint.types.DuplicateVoteEvidence
+ */
 export interface DuplicateVoteEvidenceAmino {
   vote_a?: VoteAmino;
   vote_b?: VoteAmino;
@@ -69,7 +79,12 @@ export interface LightClientAttackEvidenceProtoMsg {
   typeUrl: "/tendermint.types.LightClientAttackEvidence";
   value: Uint8Array;
 }
-/** LightClientAttackEvidence contains evidence of a set of validators attempting to mislead a light client. */
+/**
+ * LightClientAttackEvidence contains evidence of a set of validators attempting to mislead a light client.
+ * @name LightClientAttackEvidenceAmino
+ * @package tendermint.types
+ * @see proto type: tendermint.types.LightClientAttackEvidence
+ */
 export interface LightClientAttackEvidenceAmino {
   conflicting_block?: LightBlockAmino;
   common_height?: string;
@@ -96,6 +111,11 @@ export interface EvidenceListProtoMsg {
   typeUrl: "/tendermint.types.EvidenceList";
   value: Uint8Array;
 }
+/**
+ * @name EvidenceListAmino
+ * @package tendermint.types
+ * @see proto type: tendermint.types.EvidenceList
+ */
 export interface EvidenceListAmino {
   evidence?: EvidenceAmino[];
 }
@@ -236,10 +256,10 @@ export const DuplicateVoteEvidence = {
           message.voteB = Vote.decode(reader, reader.uint32());
           break;
         case 3:
-          message.totalVotingPower = (reader.int64() as Long);
+          message.totalVotingPower = reader.int64() as Long;
           break;
         case 4:
-          message.validatorPower = (reader.int64() as Long);
+          message.validatorPower = reader.int64() as Long;
           break;
         case 5:
           message.timestamp = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
@@ -301,8 +321,8 @@ export const DuplicateVoteEvidence = {
     const obj: any = {};
     obj.vote_a = message.voteA ? Vote.toAmino(message.voteA) : undefined;
     obj.vote_b = message.voteB ? Vote.toAmino(message.voteB) : undefined;
-    obj.total_voting_power = !message.totalVotingPower.isZero() ? message.totalVotingPower.toString() : undefined;
-    obj.validator_power = !message.validatorPower.isZero() ? message.validatorPower.toString() : undefined;
+    obj.total_voting_power = !message.totalVotingPower.isZero() ? message.totalVotingPower?.toString() : undefined;
+    obj.validator_power = !message.validatorPower.isZero() ? message.validatorPower?.toString() : undefined;
     obj.timestamp = message.timestamp ? Timestamp.toAmino(toTimestamp(message.timestamp)) : undefined;
     return obj;
   },
@@ -362,13 +382,13 @@ export const LightClientAttackEvidence = {
           message.conflictingBlock = LightBlock.decode(reader, reader.uint32());
           break;
         case 2:
-          message.commonHeight = (reader.int64() as Long);
+          message.commonHeight = reader.int64() as Long;
           break;
         case 3:
           message.byzantineValidators.push(Validator.decode(reader, reader.uint32()));
           break;
         case 4:
-          message.totalVotingPower = (reader.int64() as Long);
+          message.totalVotingPower = reader.int64() as Long;
           break;
         case 5:
           message.timestamp = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
@@ -431,13 +451,13 @@ export const LightClientAttackEvidence = {
   toAmino(message: LightClientAttackEvidence): LightClientAttackEvidenceAmino {
     const obj: any = {};
     obj.conflicting_block = message.conflictingBlock ? LightBlock.toAmino(message.conflictingBlock) : undefined;
-    obj.common_height = !message.commonHeight.isZero() ? message.commonHeight.toString() : undefined;
+    obj.common_height = !message.commonHeight.isZero() ? message.commonHeight?.toString() : undefined;
     if (message.byzantineValidators) {
       obj.byzantine_validators = message.byzantineValidators.map(e => e ? Validator.toAmino(e) : undefined);
     } else {
       obj.byzantine_validators = message.byzantineValidators;
     }
-    obj.total_voting_power = !message.totalVotingPower.isZero() ? message.totalVotingPower.toString() : undefined;
+    obj.total_voting_power = !message.totalVotingPower.isZero() ? message.totalVotingPower?.toString() : undefined;
     obj.timestamp = message.timestamp ? Timestamp.toAmino(toTimestamp(message.timestamp)) : undefined;
     return obj;
   },

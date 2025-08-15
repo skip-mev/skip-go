@@ -19,9 +19,14 @@ export interface QueryEpochsInfoRequestProtoMsg {
 /**
  * QueryEpochsInfoRequest is the request type for the Query/EpochInfos RPC
  * method.
+ * @name QueryEpochsInfoRequestAmino
+ * @package evmos.epochs.v1
+ * @see proto type: evmos.epochs.v1.QueryEpochsInfoRequest
  */
 export interface QueryEpochsInfoRequestAmino {
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryEpochsInfoRequestAminoMsg {
@@ -52,11 +57,18 @@ export interface QueryEpochsInfoResponseProtoMsg {
 /**
  * QueryEpochsInfoResponse is the response type for the Query/EpochInfos RPC
  * method.
+ * @name QueryEpochsInfoResponseAmino
+ * @package evmos.epochs.v1
+ * @see proto type: evmos.epochs.v1.QueryEpochsInfoResponse
  */
 export interface QueryEpochsInfoResponseAmino {
-  /** epochs is a slice of all EpochInfos */
+  /**
+   * epochs is a slice of all EpochInfos
+   */
   epochs?: EpochInfoAmino[];
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryEpochsInfoResponseAminoMsg {
@@ -86,9 +98,14 @@ export interface QueryCurrentEpochRequestProtoMsg {
 /**
  * QueryCurrentEpochRequest is the request type for the Query/EpochInfos RPC
  * method.
+ * @name QueryCurrentEpochRequestAmino
+ * @package evmos.epochs.v1
+ * @see proto type: evmos.epochs.v1.QueryCurrentEpochRequest
  */
 export interface QueryCurrentEpochRequestAmino {
-  /** identifier of the current epoch */
+  /**
+   * identifier of the current epoch
+   */
   identifier?: string;
 }
 export interface QueryCurrentEpochRequestAminoMsg {
@@ -117,9 +134,14 @@ export interface QueryCurrentEpochResponseProtoMsg {
 /**
  * QueryCurrentEpochResponse is the response type for the Query/EpochInfos RPC
  * method.
+ * @name QueryCurrentEpochResponseAmino
+ * @package evmos.epochs.v1
+ * @see proto type: evmos.epochs.v1.QueryCurrentEpochResponse
  */
 export interface QueryCurrentEpochResponseAmino {
-  /** current_epoch is the number of the current epoch */
+  /**
+   * current_epoch is the number of the current epoch
+   */
   current_epoch?: string;
 }
 export interface QueryCurrentEpochResponseAminoMsg {
@@ -411,7 +433,7 @@ export const QueryCurrentEpochResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.currentEpoch = (reader.int64() as Long);
+          message.currentEpoch = reader.int64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -444,7 +466,7 @@ export const QueryCurrentEpochResponse = {
   },
   toAmino(message: QueryCurrentEpochResponse): QueryCurrentEpochResponseAmino {
     const obj: any = {};
-    obj.current_epoch = !message.currentEpoch.isZero() ? message.currentEpoch.toString() : undefined;
+    obj.current_epoch = !message.currentEpoch.isZero() ? message.currentEpoch?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: QueryCurrentEpochResponseAminoMsg): QueryCurrentEpochResponse {

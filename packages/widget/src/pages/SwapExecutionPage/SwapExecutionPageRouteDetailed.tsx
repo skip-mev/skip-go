@@ -111,24 +111,28 @@ export const SwapExecutionPageRouteDetailed = ({
   const renderTooltip = useCallback(
     (operation: ClientOperation) => {
       const simpleOperationType = operationTypeToSimpleOperationType[operation.type];
-
       const bridgeOrSwapVenue = getBridgeSwapVenue(operation);
+      
+      const isBankSend = operation.type === OperationType.bankSend;
+      const tooltipText = isBankSend 
+        ? `${simpleOperationType} with BankSend`
+        : `${simpleOperationType} with ${bridgeOrSwapVenue.name}`;
 
       return (
         <StyledOperationTypeAndTooltipContainer align="center">
           <Tooltip
             content={
               <SmallText normalTextColor textWrap="nowrap">
-                {simpleOperationType} with {bridgeOrSwapVenue.name}
-                {bridgeOrSwapVenue.isSvg ? (
+                {tooltipText}
+                {!isBankSend && bridgeOrSwapVenue.isSvg ? (
                   <StyledSwapVenueOrBridgeSvg svg={bridgeOrSwapVenue.image} />
-                ) : (
+                ) : !isBankSend && bridgeOrSwapVenue.image ? (
                   <StyledSwapVenueOrBridgeImage
                     width="10"
                     height="10"
                     src={bridgeOrSwapVenue.image}
                   />
-                )}
+                ) : null}
               </SmallText>
             }
           >

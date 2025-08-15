@@ -20,11 +20,18 @@ export interface MsgSubmitEvidenceProtoMsg {
 /**
  * MsgSubmitEvidence represents a message that supports submitting arbitrary
  * Evidence of misbehavior such as equivocation or counterfactual signing.
+ * @name MsgSubmitEvidenceAmino
+ * @package cosmos.evidence.v1beta1
+ * @see proto type: cosmos.evidence.v1beta1.MsgSubmitEvidence
  */
 export interface MsgSubmitEvidenceAmino {
-  /** submitter is the signer account address of evidence. */
+  /**
+   * submitter is the signer account address of evidence.
+   */
   submitter?: string;
-  /** evidence defines the evidence of misbehavior. */
+  /**
+   * evidence defines the evidence of misbehavior.
+   */
   evidence?: AnyAmino;
 }
 export interface MsgSubmitEvidenceAminoMsg {
@@ -48,9 +55,16 @@ export interface MsgSubmitEvidenceResponseProtoMsg {
   typeUrl: "/cosmos.evidence.v1beta1.MsgSubmitEvidenceResponse";
   value: Uint8Array;
 }
-/** MsgSubmitEvidenceResponse defines the Msg/SubmitEvidence response type. */
+/**
+ * MsgSubmitEvidenceResponse defines the Msg/SubmitEvidence response type.
+ * @name MsgSubmitEvidenceResponseAmino
+ * @package cosmos.evidence.v1beta1
+ * @see proto type: cosmos.evidence.v1beta1.MsgSubmitEvidenceResponse
+ */
 export interface MsgSubmitEvidenceResponseAmino {
-  /** hash defines the hash of the evidence. */
+  /**
+   * hash defines the hash of the evidence.
+   */
   hash?: string;
 }
 export interface MsgSubmitEvidenceResponseAminoMsg {

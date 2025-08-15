@@ -10,6 +10,11 @@ export interface BitArrayProtoMsg {
   typeUrl: "/tendermint.libs.bits.BitArray";
   value: Uint8Array;
 }
+/**
+ * @name BitArrayAmino
+ * @package tendermint.libs.bits
+ * @see proto type: tendermint.libs.bits.BitArray
+ */
 export interface BitArrayAmino {
   bits?: string;
   elems?: string[];
@@ -49,16 +54,16 @@ export const BitArray = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.bits = (reader.int64() as Long);
+          message.bits = reader.int64() as Long;
           break;
         case 2:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.elems.push((reader.uint64() as Long));
+              message.elems.push(reader.uint64() as Long);
             }
           } else {
-            message.elems.push((reader.uint64() as Long));
+            message.elems.push(reader.uint64() as Long);
           }
           break;
         default:
@@ -100,7 +105,7 @@ export const BitArray = {
   },
   toAmino(message: BitArray): BitArrayAmino {
     const obj: any = {};
-    obj.bits = !message.bits.isZero() ? message.bits.toString() : undefined;
+    obj.bits = !message.bits.isZero() ? message.bits?.toString() : undefined;
     if (message.elems) {
       obj.elems = message.elems.map(e => e);
     } else {

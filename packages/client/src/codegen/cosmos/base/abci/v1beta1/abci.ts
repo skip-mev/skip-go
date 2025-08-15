@@ -57,32 +57,55 @@ export interface TxResponseProtoMsg {
 /**
  * TxResponse defines a structure containing relevant tx data and metadata. The
  * tags are stringified and the log is JSON decoded.
+ * @name TxResponseAmino
+ * @package cosmos.base.abci.v1beta1
+ * @see proto type: cosmos.base.abci.v1beta1.TxResponse
  */
 export interface TxResponseAmino {
-  /** The block height */
+  /**
+   * The block height
+   */
   height?: string;
-  /** The transaction hash. */
+  /**
+   * The transaction hash.
+   */
   txhash?: string;
-  /** Namespace for the Code */
+  /**
+   * Namespace for the Code
+   */
   codespace?: string;
-  /** Response code. */
+  /**
+   * Response code.
+   */
   code?: number;
-  /** Result bytes, if any. */
+  /**
+   * Result bytes, if any.
+   */
   data?: string;
   /**
    * The output of the application's logger (raw string). May be
    * non-deterministic.
    */
   raw_log?: string;
-  /** The output of the application's logger (typed). May be non-deterministic. */
+  /**
+   * The output of the application's logger (typed). May be non-deterministic.
+   */
   logs?: ABCIMessageLogAmino[];
-  /** Additional information. May be non-deterministic. */
+  /**
+   * Additional information. May be non-deterministic.
+   */
   info?: string;
-  /** Amount of gas requested for transaction. */
+  /**
+   * Amount of gas requested for transaction.
+   */
   gas_wanted?: string;
-  /** Amount of gas consumed by transaction. */
+  /**
+   * Amount of gas consumed by transaction.
+   */
   gas_used?: string;
-  /** The request transaction bytes. */
+  /**
+   * The request transaction bytes.
+   */
   tx?: AnyAmino;
   /**
    * Time of the previous block. For heights > 1, it's the weighted median of
@@ -137,7 +160,12 @@ export interface ABCIMessageLogProtoMsg {
   typeUrl: "/cosmos.base.abci.v1beta1.ABCIMessageLog";
   value: Uint8Array;
 }
-/** ABCIMessageLog defines a structure containing an indexed tx ABCI message log. */
+/**
+ * ABCIMessageLog defines a structure containing an indexed tx ABCI message log.
+ * @name ABCIMessageLogAmino
+ * @package cosmos.base.abci.v1beta1
+ * @see proto type: cosmos.base.abci.v1beta1.ABCIMessageLog
+ */
 export interface ABCIMessageLogAmino {
   msg_index: number;
   log?: string;
@@ -172,6 +200,9 @@ export interface StringEventProtoMsg {
 /**
  * StringEvent defines en Event object wrapper where all the attributes
  * contain key/value pairs that are strings instead of raw bytes.
+ * @name StringEventAmino
+ * @package cosmos.base.abci.v1beta1
+ * @see proto type: cosmos.base.abci.v1beta1.StringEvent
  */
 export interface StringEventAmino {
   type?: string;
@@ -204,6 +235,9 @@ export interface AttributeProtoMsg {
 /**
  * Attribute defines an attribute wrapper where the key and value are
  * strings instead of raw bytes.
+ * @name AttributeAmino
+ * @package cosmos.base.abci.v1beta1
+ * @see proto type: cosmos.base.abci.v1beta1.Attribute
  */
 export interface AttributeAmino {
   key?: string;
@@ -232,11 +266,20 @@ export interface GasInfoProtoMsg {
   typeUrl: "/cosmos.base.abci.v1beta1.GasInfo";
   value: Uint8Array;
 }
-/** GasInfo defines tx execution gas context. */
+/**
+ * GasInfo defines tx execution gas context.
+ * @name GasInfoAmino
+ * @package cosmos.base.abci.v1beta1
+ * @see proto type: cosmos.base.abci.v1beta1.GasInfo
+ */
 export interface GasInfoAmino {
-  /** GasWanted is the maximum units of work we allow this tx to perform. */
+  /**
+   * GasWanted is the maximum units of work we allow this tx to perform.
+   */
   gas_wanted?: string;
-  /** GasUsed is the amount of gas actually consumed. */
+  /**
+   * GasUsed is the amount of gas actually consumed.
+   */
   gas_used?: string;
 }
 export interface GasInfoAminoMsg {
@@ -276,17 +319,24 @@ export interface ResultProtoMsg {
   typeUrl: "/cosmos.base.abci.v1beta1.Result";
   value: Uint8Array;
 }
-/** Result is the union of ResponseFormat and ResponseCheckTx. */
+/**
+ * Result is the union of ResponseFormat and ResponseCheckTx.
+ * @name ResultAmino
+ * @package cosmos.base.abci.v1beta1
+ * @see proto type: cosmos.base.abci.v1beta1.Result
+ */
 export interface ResultAmino {
   /**
    * Data is any data returned from message or handler execution. It MUST be
    * length prefixed in order to separate data from multiple message executions.
    * Deprecated. This field is still populated, but prefer msg_response instead
    * because it also contains the Msg response typeURL.
+   * @deprecated
    */
-  /** @deprecated */
   data?: string;
-  /** Log contains the log information from message or handler execution. */
+  /**
+   * Log contains the log information from message or handler execution.
+   */
   log?: string;
   /**
    * Events contains a slice of Event objects that were emitted during message
@@ -327,6 +377,9 @@ export interface SimulationResponseProtoMsg {
 /**
  * SimulationResponse defines the response generated when a transaction is
  * successfully simulated.
+ * @name SimulationResponseAmino
+ * @package cosmos.base.abci.v1beta1
+ * @see proto type: cosmos.base.abci.v1beta1.SimulationResponse
  */
 export interface SimulationResponseAmino {
   gas_info?: GasInfoAmino;
@@ -360,8 +413,11 @@ export interface MsgDataProtoMsg {
 /**
  * MsgData defines the data returned in a Result object during message
  * execution.
+ * @name MsgDataAmino
+ * @package cosmos.base.abci.v1beta1
+ * @see proto type: cosmos.base.abci.v1beta1.MsgData
+ * @deprecated
  */
-/** @deprecated */
 export interface MsgDataAmino {
   msg_type?: string;
   data?: string;
@@ -401,10 +457,15 @@ export interface TxMsgDataProtoMsg {
 /**
  * TxMsgData defines a list of MsgData. A transaction will have a MsgData object
  * for each message.
+ * @name TxMsgDataAmino
+ * @package cosmos.base.abci.v1beta1
+ * @see proto type: cosmos.base.abci.v1beta1.TxMsgData
  */
 export interface TxMsgDataAmino {
-  /** data field is deprecated and not populated. */
-  /** @deprecated */
+  /**
+   * data field is deprecated and not populated.
+   * @deprecated
+   */
   data?: MsgDataAmino[];
   /**
    * msg_responses contains the Msg handler responses packed into Anys.
@@ -445,19 +506,36 @@ export interface SearchTxsResultProtoMsg {
   typeUrl: "/cosmos.base.abci.v1beta1.SearchTxsResult";
   value: Uint8Array;
 }
-/** SearchTxsResult defines a structure for querying txs pageable */
+/**
+ * SearchTxsResult defines a structure for querying txs pageable
+ * @name SearchTxsResultAmino
+ * @package cosmos.base.abci.v1beta1
+ * @see proto type: cosmos.base.abci.v1beta1.SearchTxsResult
+ */
 export interface SearchTxsResultAmino {
-  /** Count of all txs */
+  /**
+   * Count of all txs
+   */
   total_count?: string;
-  /** Count of txs in current page */
+  /**
+   * Count of txs in current page
+   */
   count?: string;
-  /** Index of current page, start from 1 */
+  /**
+   * Index of current page, start from 1
+   */
   page_number?: string;
-  /** Count of total pages */
+  /**
+   * Count of total pages
+   */
   page_total?: string;
-  /** Max count txs per page */
+  /**
+   * Max count txs per page
+   */
   limit?: string;
-  /** List of txs in current page */
+  /**
+   * List of txs in current page
+   */
   txs?: TxResponseAmino[];
 }
 export interface SearchTxsResultAminoMsg {
@@ -542,7 +620,7 @@ export const TxResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.height = (reader.int64() as Long);
+          message.height = reader.int64() as Long;
           break;
         case 2:
           message.txhash = reader.string();
@@ -566,10 +644,10 @@ export const TxResponse = {
           message.info = reader.string();
           break;
         case 9:
-          message.gasWanted = (reader.int64() as Long);
+          message.gasWanted = reader.int64() as Long;
           break;
         case 10:
-          message.gasUsed = (reader.int64() as Long);
+          message.gasUsed = reader.int64() as Long;
           break;
         case 11:
           message.tx = Any.decode(reader, reader.uint32());
@@ -687,7 +765,7 @@ export const TxResponse = {
   },
   toAmino(message: TxResponse): TxResponseAmino {
     const obj: any = {};
-    obj.height = !message.height.isZero() ? message.height.toString() : undefined;
+    obj.height = !message.height.isZero() ? message.height?.toString() : undefined;
     obj.txhash = message.txhash === "" ? undefined : message.txhash;
     obj.codespace = message.codespace === "" ? undefined : message.codespace;
     obj.code = message.code === 0 ? undefined : message.code;
@@ -699,8 +777,8 @@ export const TxResponse = {
       obj.logs = message.logs;
     }
     obj.info = message.info === "" ? undefined : message.info;
-    obj.gas_wanted = !message.gasWanted.isZero() ? message.gasWanted.toString() : undefined;
-    obj.gas_used = !message.gasUsed.isZero() ? message.gasUsed.toString() : undefined;
+    obj.gas_wanted = !message.gasWanted.isZero() ? message.gasWanted?.toString() : undefined;
+    obj.gas_used = !message.gasUsed.isZero() ? message.gasUsed?.toString() : undefined;
     obj.tx = message.tx ? Any.toAmino(message.tx) : undefined;
     obj.timestamp = message.timestamp === "" ? undefined : message.timestamp;
     if (message.events) {
@@ -1062,10 +1140,10 @@ export const GasInfo = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.gasWanted = (reader.uint64() as Long);
+          message.gasWanted = reader.uint64() as Long;
           break;
         case 2:
-          message.gasUsed = (reader.uint64() as Long);
+          message.gasUsed = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1104,8 +1182,8 @@ export const GasInfo = {
   },
   toAmino(message: GasInfo): GasInfoAmino {
     const obj: any = {};
-    obj.gas_wanted = !message.gasWanted.isZero() ? message.gasWanted.toString() : undefined;
-    obj.gas_used = !message.gasUsed.isZero() ? message.gasUsed.toString() : undefined;
+    obj.gas_wanted = !message.gasWanted.isZero() ? message.gasWanted?.toString() : undefined;
+    obj.gas_used = !message.gasUsed.isZero() ? message.gasUsed?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: GasInfoAminoMsg): GasInfo {
@@ -1595,19 +1673,19 @@ export const SearchTxsResult = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.totalCount = (reader.uint64() as Long);
+          message.totalCount = reader.uint64() as Long;
           break;
         case 2:
-          message.count = (reader.uint64() as Long);
+          message.count = reader.uint64() as Long;
           break;
         case 3:
-          message.pageNumber = (reader.uint64() as Long);
+          message.pageNumber = reader.uint64() as Long;
           break;
         case 4:
-          message.pageTotal = (reader.uint64() as Long);
+          message.pageTotal = reader.uint64() as Long;
           break;
         case 5:
-          message.limit = (reader.uint64() as Long);
+          message.limit = reader.uint64() as Long;
           break;
         case 6:
           message.txs.push(TxResponse.decode(reader, reader.uint32()));
@@ -1675,11 +1753,11 @@ export const SearchTxsResult = {
   },
   toAmino(message: SearchTxsResult): SearchTxsResultAmino {
     const obj: any = {};
-    obj.total_count = !message.totalCount.isZero() ? message.totalCount.toString() : undefined;
-    obj.count = !message.count.isZero() ? message.count.toString() : undefined;
-    obj.page_number = !message.pageNumber.isZero() ? message.pageNumber.toString() : undefined;
-    obj.page_total = !message.pageTotal.isZero() ? message.pageTotal.toString() : undefined;
-    obj.limit = !message.limit.isZero() ? message.limit.toString() : undefined;
+    obj.total_count = !message.totalCount.isZero() ? message.totalCount?.toString() : undefined;
+    obj.count = !message.count.isZero() ? message.count?.toString() : undefined;
+    obj.page_number = !message.pageNumber.isZero() ? message.pageNumber?.toString() : undefined;
+    obj.page_total = !message.pageTotal.isZero() ? message.pageTotal?.toString() : undefined;
+    obj.limit = !message.limit.isZero() ? message.limit?.toString() : undefined;
     if (message.txs) {
       obj.txs = message.txs.map(e => e ? TxResponse.toAmino(e) : undefined);
     } else {

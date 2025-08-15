@@ -55,6 +55,9 @@ export interface PageRequestProtoMsg {
  *          Foo some_parameter = 1;
  *          PageRequest pagination = 2;
  *  }
+ * @name PageRequestAmino
+ * @package cosmos.base.query.v1beta1
+ * @see proto type: cosmos.base.query.v1beta1.PageRequest
  */
 export interface PageRequestAmino {
   /**
@@ -142,6 +145,9 @@ export interface PageResponseProtoMsg {
  *          repeated Bar results = 1;
  *          PageResponse page = 2;
  *  }
+ * @name PageResponseAmino
+ * @package cosmos.base.query.v1beta1
+ * @see proto type: cosmos.base.query.v1beta1.PageResponse
  */
 export interface PageResponseAmino {
   /**
@@ -213,10 +219,10 @@ export const PageRequest = {
           message.key = reader.bytes();
           break;
         case 2:
-          message.offset = (reader.uint64() as Long);
+          message.offset = reader.uint64() as Long;
           break;
         case 3:
-          message.limit = (reader.uint64() as Long);
+          message.limit = reader.uint64() as Long;
           break;
         case 4:
           message.countTotal = reader.bool();
@@ -280,8 +286,8 @@ export const PageRequest = {
   toAmino(message: PageRequest): PageRequestAmino {
     const obj: any = {};
     obj.key = message.key ? base64FromBytes(message.key) : undefined;
-    obj.offset = !message.offset.isZero() ? message.offset.toString() : undefined;
-    obj.limit = !message.limit.isZero() ? message.limit.toString() : undefined;
+    obj.offset = !message.offset.isZero() ? message.offset?.toString() : undefined;
+    obj.limit = !message.limit.isZero() ? message.limit?.toString() : undefined;
     obj.count_total = message.countTotal === false ? undefined : message.countTotal;
     obj.reverse = message.reverse === false ? undefined : message.reverse;
     return obj;
@@ -336,7 +342,7 @@ export const PageResponse = {
           message.nextKey = reader.bytes();
           break;
         case 2:
-          message.total = (reader.uint64() as Long);
+          message.total = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -376,7 +382,7 @@ export const PageResponse = {
   toAmino(message: PageResponse): PageResponseAmino {
     const obj: any = {};
     obj.next_key = message.nextKey ? base64FromBytes(message.nextKey) : undefined;
-    obj.total = !message.total.isZero() ? message.total.toString() : undefined;
+    obj.total = !message.total.isZero() ? message.total?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: PageResponseAminoMsg): PageResponse {

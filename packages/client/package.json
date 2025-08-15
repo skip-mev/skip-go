@@ -9,13 +9,13 @@
   "types": "./dist/esm/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/esm/index.js",
-      "types": "./dist/esm/index.d.ts"
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js"
     },
     "./cjs": {
+      "types": "./dist/esm/index.d.ts",
       "require": "./dist/cjs/index.cjs",
-      "import": "./dist/cjs/index.cjs",
-      "types": "./dist/esm/index.d.ts"
+      "import": "./dist/cjs/index.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -57,7 +57,7 @@
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",
     "@types/keccak": "3.0.4",
-    "chain-registry": "^2.0.37",
+    "chain-registry": "^2.0.43",
     "eslint-plugin-esm": "^0.8.1",
     "eslint-plugin-import": "^2.31.0",
     "minimatch": "^9.0.3",

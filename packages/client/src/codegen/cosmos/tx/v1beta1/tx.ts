@@ -26,9 +26,16 @@ export interface TxProtoMsg {
   typeUrl: "/cosmos.tx.v1beta1.Tx";
   value: Uint8Array;
 }
-/** Tx is the standard type used for broadcasting transactions. */
+/**
+ * Tx is the standard type used for broadcasting transactions.
+ * @name TxAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.Tx
+ */
 export interface TxAmino {
-  /** body is the processable content of the transaction */
+  /**
+   * body is the processable content of the transaction
+   */
   body?: TxBodyAmino;
   /**
    * auth_info is the authorization related content of the transaction,
@@ -87,6 +94,9 @@ export interface TxRawProtoMsg {
  * verification. The binary `serialize(tx: TxRaw)` is stored in Tendermint and
  * the hash `sha256(serialize(tx: TxRaw))` becomes the "txhash", commonly used
  * as the transaction ID.
+ * @name TxRawAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.TxRaw
  */
 export interface TxRawAmino {
   /**
@@ -147,7 +157,12 @@ export interface SignDocProtoMsg {
   typeUrl: "/cosmos.tx.v1beta1.SignDoc";
   value: Uint8Array;
 }
-/** SignDoc is the type used for generating sign bytes for SIGN_MODE_DIRECT. */
+/**
+ * SignDoc is the type used for generating sign bytes for SIGN_MODE_DIRECT.
+ * @name SignDocAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.SignDoc
+ */
 export interface SignDocAmino {
   /**
    * body_bytes is protobuf serialization of a TxBody that matches the
@@ -165,7 +180,9 @@ export interface SignDocAmino {
    * attacker
    */
   chain_id?: string;
-  /** account_number is the account number of the account in state */
+  /**
+   * account_number is the account number of the account in state
+   */
   account_number?: string;
 }
 export interface SignDocAminoMsg {
@@ -222,6 +239,9 @@ export interface SignDocDirectAuxProtoMsg {
  * SIGN_MODE_DIRECT_AUX.
  * 
  * Since: cosmos-sdk 0.46
+ * @name SignDocDirectAuxAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.SignDocDirectAux
  */
 export interface SignDocDirectAuxAmino {
   /**
@@ -229,7 +249,9 @@ export interface SignDocDirectAuxAmino {
    * representation in TxRaw.
    */
   body_bytes?: string;
-  /** public_key is the public key of the signing account. */
+  /**
+   * public_key is the public key of the signing account.
+   */
   public_key?: AnyAmino;
   /**
    * chain_id is the identifier of the chain this transaction targets.
@@ -237,9 +259,13 @@ export interface SignDocDirectAuxAmino {
    * attacker.
    */
   chain_id?: string;
-  /** account_number is the account number of the account in state. */
+  /**
+   * account_number is the account number of the account in state.
+   */
   account_number?: string;
-  /** sequence is the sequence number of the signing account. */
+  /**
+   * sequence is the sequence number of the signing account.
+   */
   sequence?: string;
   /**
    * Tip is the optional tip used for transactions fees paid in another denom.
@@ -309,7 +335,12 @@ export interface TxBodyProtoMsg {
   typeUrl: "/cosmos.tx.v1beta1.TxBody";
   value: Uint8Array;
 }
-/** TxBody is the body of a transaction that all signers sign over. */
+/**
+ * TxBody is the body of a transaction that all signers sign over.
+ * @name TxBodyAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.TxBody
+ */
 export interface TxBodyAmino {
   /**
    * messages is a list of messages to be executed. The required signers of
@@ -393,6 +424,9 @@ export interface AuthInfoProtoMsg {
 /**
  * AuthInfo describes the fee and signer modes that are used to sign a
  * transaction.
+ * @name AuthInfoAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.AuthInfo
  */
 export interface AuthInfoAmino {
   /**
@@ -462,6 +496,9 @@ export interface SignerInfoProtoMsg {
 /**
  * SignerInfo describes the public key and signing mode of a single top-level
  * signer.
+ * @name SignerInfoAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.SignerInfo
  */
 export interface SignerInfoAmino {
   /**
@@ -506,11 +543,20 @@ export interface ModeInfoProtoMsg {
   typeUrl: "/cosmos.tx.v1beta1.ModeInfo";
   value: Uint8Array;
 }
-/** ModeInfo describes the signing mode of a single or nested multisig signer. */
+/**
+ * ModeInfo describes the signing mode of a single or nested multisig signer.
+ * @name ModeInfoAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.ModeInfo
+ */
 export interface ModeInfoAmino {
-  /** single represents a single signer */
+  /**
+   * single represents a single signer
+   */
   single?: ModeInfo_SingleAmino;
-  /** multi represents a nested multisig signer */
+  /**
+   * multi represents a nested multisig signer
+   */
   multi?: ModeInfo_MultiAmino;
 }
 export interface ModeInfoAminoMsg {
@@ -539,9 +585,14 @@ export interface ModeInfo_SingleProtoMsg {
  * Single is the mode info for a single signer. It is structured as a message
  * to allow for additional fields such as locale for SIGN_MODE_TEXTUAL in the
  * future
+ * @name ModeInfo_SingleAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.ModeInfo_Single
  */
 export interface ModeInfo_SingleAmino {
-  /** mode is the signing mode of the single signer */
+  /**
+   * mode is the signing mode of the single signer
+   */
   mode?: SignMode;
 }
 export interface ModeInfo_SingleAminoMsg {
@@ -570,9 +621,16 @@ export interface ModeInfo_MultiProtoMsg {
   typeUrl: "/cosmos.tx.v1beta1.Multi";
   value: Uint8Array;
 }
-/** Multi is the mode info for a multisig public key */
+/**
+ * Multi is the mode info for a multisig public key
+ * @name ModeInfo_MultiAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.ModeInfo_Multi
+ */
 export interface ModeInfo_MultiAmino {
-  /** bitarray specifies which keys within the multisig are signing */
+  /**
+   * bitarray specifies which keys within the multisig are signing
+   */
   bitarray?: CompactBitArrayAmino;
   /**
    * mode_infos is the corresponding modes of the signers of the multisig
@@ -623,9 +681,14 @@ export interface FeeProtoMsg {
  * Fee includes the amount of coins paid in fees and the maximum
  * gas to be used by the transaction. The ratio yields an effective "gasprice",
  * which must be above some miminum to be accepted into the mempool.
+ * @name FeeAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.Fee
  */
 export interface FeeAmino {
-  /** amount is the amount of coins to be paid as a fee */
+  /**
+   * amount is the amount of coins to be paid as a fee
+   */
   amount?: CoinAmino[];
   /**
    * gas_limit is the maximum gas that can be used in transaction processing
@@ -679,11 +742,18 @@ export interface TipProtoMsg {
  * Tip is the tip used for meta-transactions.
  * 
  * Since: cosmos-sdk 0.46
+ * @name TipAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.Tip
  */
 export interface TipAmino {
-  /** amount is the amount of the tip */
+  /**
+   * amount is the amount of the tip
+   */
   amount?: CoinAmino[];
-  /** tipper is the address of the account paying for the tip */
+  /**
+   * tipper is the address of the account paying for the tip
+   */
   tipper?: string;
 }
 export interface TipAminoMsg {
@@ -736,6 +806,9 @@ export interface AuxSignerDataProtoMsg {
  * by the node if sent directly as-is.
  * 
  * Since: cosmos-sdk 0.46
+ * @name AuxSignerDataAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.AuxSignerData
  */
 export interface AuxSignerDataAmino {
   /**
@@ -750,9 +823,13 @@ export interface AuxSignerDataAmino {
    * LEGACY_AMINO_JSON.
    */
   sign_doc?: SignDocDirectAuxAmino;
-  /** mode is the signing mode of the single signer. */
+  /**
+   * mode is the signing mode of the single signer.
+   */
   mode?: SignMode;
-  /** sig is the signature of the sign doc. */
+  /**
+   * sig is the signature of the sign doc.
+   */
   sig?: string;
 }
 export interface AuxSignerDataAminoMsg {
@@ -1041,7 +1118,7 @@ export const SignDoc = {
           message.chainId = reader.string();
           break;
         case 4:
-          message.accountNumber = (reader.uint64() as Long);
+          message.accountNumber = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1095,7 +1172,7 @@ export const SignDoc = {
     obj.body_bytes = message.bodyBytes ? base64FromBytes(message.bodyBytes) : undefined;
     obj.auth_info_bytes = message.authInfoBytes ? base64FromBytes(message.authInfoBytes) : undefined;
     obj.chain_id = message.chainId === "" ? undefined : message.chainId;
-    obj.account_number = !message.accountNumber.isZero() ? message.accountNumber.toString() : undefined;
+    obj.account_number = !message.accountNumber.isZero() ? message.accountNumber?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: SignDocAminoMsg): SignDoc {
@@ -1170,10 +1247,10 @@ export const SignDocDirectAux = {
           message.chainId = reader.string();
           break;
         case 4:
-          message.accountNumber = (reader.uint64() as Long);
+          message.accountNumber = reader.uint64() as Long;
           break;
         case 5:
-          message.sequence = (reader.uint64() as Long);
+          message.sequence = reader.uint64() as Long;
           break;
         case 6:
           message.tip = Tip.decode(reader, reader.uint32());
@@ -1242,8 +1319,8 @@ export const SignDocDirectAux = {
     obj.body_bytes = message.bodyBytes ? base64FromBytes(message.bodyBytes) : undefined;
     obj.public_key = message.publicKey ? Any.toAmino(message.publicKey) : undefined;
     obj.chain_id = message.chainId === "" ? undefined : message.chainId;
-    obj.account_number = !message.accountNumber.isZero() ? message.accountNumber.toString() : undefined;
-    obj.sequence = !message.sequence.isZero() ? message.sequence.toString() : undefined;
+    obj.account_number = !message.accountNumber.isZero() ? message.accountNumber?.toString() : undefined;
+    obj.sequence = !message.sequence.isZero() ? message.sequence?.toString() : undefined;
     obj.tip = message.tip ? Tip.toAmino(message.tip) : undefined;
     return obj;
   },
@@ -1312,7 +1389,7 @@ export const TxBody = {
           message.memo = reader.string();
           break;
         case 3:
-          message.timeoutHeight = (reader.uint64() as Long);
+          message.timeoutHeight = reader.uint64() as Long;
           break;
         case 1023:
           message.extensionOptions.push(Any.decode(reader, reader.uint32()));
@@ -1387,7 +1464,7 @@ export const TxBody = {
       obj.messages = message.messages;
     }
     obj.memo = message.memo === "" ? undefined : message.memo;
-    obj.timeout_height = !message.timeoutHeight.isZero() ? message.timeoutHeight.toString() : undefined;
+    obj.timeout_height = !message.timeoutHeight.isZero() ? message.timeoutHeight?.toString() : undefined;
     if (message.extensionOptions) {
       obj.extension_options = message.extensionOptions.map(e => e ? Any.toAmino(e) : undefined);
     } else {
@@ -1570,7 +1647,7 @@ export const SignerInfo = {
           message.modeInfo = ModeInfo.decode(reader, reader.uint32());
           break;
         case 3:
-          message.sequence = (reader.uint64() as Long);
+          message.sequence = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1617,7 +1694,7 @@ export const SignerInfo = {
     const obj: any = {};
     obj.public_key = message.publicKey ? Any.toAmino(message.publicKey) : undefined;
     obj.mode_info = message.modeInfo ? ModeInfo.toAmino(message.modeInfo) : undefined;
-    obj.sequence = !message.sequence.isZero() ? message.sequence.toString() : undefined;
+    obj.sequence = !message.sequence.isZero() ? message.sequence?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: SignerInfoAminoMsg): SignerInfo {
@@ -1756,7 +1833,7 @@ export const ModeInfo_Single = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.mode = (reader.int32() as any);
+          message.mode = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1949,7 +2026,7 @@ export const Fee = {
           message.amount.push(Coin.decode(reader, reader.uint32()));
           break;
         case 2:
-          message.gasLimit = (reader.uint64() as Long);
+          message.gasLimit = reader.uint64() as Long;
           break;
         case 3:
           message.payer = reader.string();
@@ -2013,7 +2090,7 @@ export const Fee = {
     } else {
       obj.amount = message.amount;
     }
-    obj.gas_limit = !message.gasLimit.isZero() ? message.gasLimit.toString() : undefined;
+    obj.gas_limit = !message.gasLimit.isZero() ? message.gasLimit?.toString() : undefined;
     obj.payer = message.payer === "" ? undefined : message.payer;
     obj.granter = message.granter === "" ? undefined : message.granter;
     return obj;
@@ -2178,7 +2255,7 @@ export const AuxSignerData = {
           message.signDoc = SignDocDirectAux.decode(reader, reader.uint32());
           break;
         case 3:
-          message.mode = (reader.int32() as any);
+          message.mode = reader.int32() as any;
           break;
         case 4:
           message.sig = reader.bytes();

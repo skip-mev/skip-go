@@ -5,20 +5,27 @@ import { SmallTextButton } from '@/components/Typography';
 import { Column, Row } from "@/components/Layout";
 import { transactionStatus, getTransferEventsFromTxStatusResponse, ClientTransferEvent, TxStatusResponse } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
-import { Step, TransferEventCard, TransferEventCardProps } from "../components/TransferEventCard";
-import { defaultSkipClientConfig, skipClientConfigAtom, onlyTestnetsAtom } from "@/state/skipClient";
-import { useSetAtom } from "jotai";
+import { TransferEventCard, TransferEventCardProps } from "../components/TransferEventCard";
+import { defaultSkipClientConfig, skipClientConfigAtom, onlyTestnetsAtom, ClientAsset } from "@/state/skipClient";
+import { uniqueAssetsBySymbolAtom } from "../state/uniqueAssetsBySymbol";
+import { useSetAtom, useAtomValue } from "@/jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { NiceModal, Modals } from "@/nice-modal";
+import { GhostButton } from "@/components/Button";
+import { HamburgerIcon } from "@/icons/HamburgerIcon";
+import { ExplorerModals } from "../constants/modal";
 
 export default function Home() {
   const [txHash, setTxHash] = useState("BA47144AF79143EECEDA00BC758FA52D8B124934C7051A78B20DAC9DC42C1BCB");
   const [chainId, setChainId] = useState("osmosis-1");
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>([]);
   const [transactionStatusResponse, setTransactionStatusResponse] = useState<TxStatusResponse | null>(null);
-  
+  const [rawData, setRawData] = useState<string>("");
+
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
+  const uniqueAssetsBySymbol = useAtomValue(uniqueAssetsBySymbolAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
 
   const uniqueTransfers = useMemo(() => {
@@ -59,12 +66,13 @@ export default function Home() {
     setSkipClientConfig(defaultSkipClientConfig);
     setOnlyTestnets(false);
   }, [setSkipClientConfig, setOnlyTestnets]);
-  
+
   const getTxStatus = async () => {
     const response = await transactionStatus({
       txHash,
       chainId,
     })
+    setRawData(JSON.stringify(response, null, 2));
     const transferEvents = getTransferEventsFromTxStatusResponse([response]);
 
     setTransactionStatusResponse(response);
@@ -75,7 +83,7 @@ export default function Home() {
 
   const transactionDetails = useMemo(() => {
     const chainIds = uniqueTransfers?.map((event) => event.chainId);
-    
+
     return {
       txHash: transferEvents?.[0]?.fromTxHash ?? "",
       state: transactionStatusResponse?.state,
@@ -88,31 +96,68 @@ export default function Home() {
       <ToggleThemeButton />
 
       <Row justify="center" gap={10} >
+        <button onClick={() => {
+          NiceModal.show(Modals.AssetAndChainSelectorModal, {
+            context: "source",
+            onSelect: (asset: ClientAsset | null) => {
+              console.log("chain id selected:", asset?.chainId);
+              NiceModal.hide(Modals.AssetAndChainSelectorModal);
+            },
+            overrideSelectedGroup: {
+              assets: uniqueAssetsBySymbol,
+            },
+            selectChain: true,
+          });
+        }}>open modal</button>
+
         <input type="text" value={txHash} onChange={(e) => setTxHash(e.target.value)} placeholder="tx hash"/>
         <input type="text" value={chainId} onChange={(e) => setChainId(e.target.value)} placeholder="chain id"/>
         <SmallTextButton onClick={getTxStatus}>get tx info</SmallTextButton>
       </Row>
       {
         uniqueTransfers.length > 0 && (
-          <Row gap={16} flexDirection={isMobileScreenSize ? "column" : "row"} align={isMobileScreenSize ? "center" : "flex-start"}>
-            <TransactionDetails {...transactionDetails} />
-            <Column>
-              {uniqueTransfers.map((transfer) => (
-                <TransferEventCard
-                  key={transfer.chainId}
-                  chainId={transfer.chainId}
-                  explorerLink={transfer.explorerLink}
-                  transferType={transfer.transferType}
-                  status={transfer.status}
-                  step={transfer.step}
-                  durationInMs={transfer.durationInMs}
-                />
-              ))}
-            </Column>
-          </Row>
+          <>
+            <Row gap={16}>
+              <Column align="flex-end" width={355}>
+                <GhostButton onClick={() => {}}>
+                  View token details
+                </GhostButton>
+              </Column>
+              <Column align="flex-end" width={355}>
+                <GhostButton gap={5} onClick={() => {
+                  NiceModal.show(ExplorerModals.ViewRawDataModal, {
+                    data: rawData,
+                    onClose: () => {
+                      console.log("ViewRawDataModal closed");
+                    },
+                  });
+                }}>
+                  View raw data <HamburgerIcon />
+                </GhostButton>
+              </Column>
+            </Row>
+            <Row gap={16} flexDirection={isMobileScreenSize ? "column" : "row"} align={isMobileScreenSize ? "center" : "flex-start"}>
+              <Column width={355}>
+                <TransactionDetails {...transactionDetails} />
+              </Column>
+              <Column width={355}>
+                {uniqueTransfers.map((transfer) => (
+                  <TransferEventCard
+                    key={transfer.chainId}
+                    chainId={transfer.chainId}
+                    explorerLink={transfer.explorerLink}
+                    transferType={transfer.transferType}
+                    status={transfer.status}
+                    step={transfer.step}
+                    durationInMs={transfer.durationInMs}
+                  />
+                ))}
+              </Column>
+            </Row>
+          </>
         )
       }
-      
+
     </Column>
   );
 }

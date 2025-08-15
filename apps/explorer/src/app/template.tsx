@@ -1,23 +1,28 @@
 "use client";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { useIsClient } from "@uidotdev/usehooks";
 import { QueryProvider } from "../components/QueryProvider";
-import "../utils/skipClientConfig";
-import { Provider } from "jotai";
-import { jotaiStore } from "@/widget/Widget";
+import { Provider, jotaiStore, useSetAtom } from "@/jotai";
+import { Modals, NiceModal } from "@/nice-modal";
+import { AssetAndChainSelectorModal } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
+import { themeAtom } from "@/state/skipClient";
+import { ViewRawDataModal } from "../components/modals/ViewRawDataModal";
+import { ExplorerModals } from "../constants/modal";
 
 export default function Template({ children }: { children: ReactNode }) {
   return (
     <ClientOnly>
       <QueryProvider>
         <Provider store={jotaiStore}>
-          <Wrapper>
-            {children}
-            <ToggleThemeButton />
-          </Wrapper>
+          <NiceModal.Provider>
+            <Wrapper>
+              {children}
+              <ToggleThemeButton />
+            </Wrapper>
+          </NiceModal.Provider>
         </Provider>
       </QueryProvider>
     </ClientOnly>
@@ -26,6 +31,12 @@ export default function Template({ children }: { children: ReactNode }) {
 
 export const Wrapper = ({ children }: { children: ReactNode }) => {
   const [theme] = useLocalStorage<"dark" | "light">("explorer-theme", "dark");
+  const setTheme= useSetAtom(themeAtom);
+
+  useEffect(() => {
+    setTheme(theme === "dark" ? defaultTheme : lightTheme);
+  }, [setTheme, theme]);
+
   return (
     <ShadowDomAndProviders disableShadowDom theme={theme === "dark" ? defaultTheme : lightTheme}>
       <div
@@ -43,7 +54,9 @@ export const Wrapper = ({ children }: { children: ReactNode }) => {
           backgroundPosition: "bottom",
         }}
       >
-        {children}
+        <RegisterModals>
+          {children}
+        </RegisterModals>
       </div>
     </ShadowDomAndProviders>
   );
@@ -82,4 +95,13 @@ export const ClientOnly: React.FC<ClientOnlyProps> = ({ children }) => {
 
   // Render children if on client side, otherwise return null
   return isClient ? <>{children}</> : null;
+};
+
+export const RegisterModals = ({ children }: { children: ReactNode }) => {
+  useEffect(() => {
+    NiceModal.register(Modals.AssetAndChainSelectorModal, AssetAndChainSelectorModal);
+    NiceModal.register(ExplorerModals.ViewRawDataModal, ViewRawDataModal);
+  }, []);
+
+  return children
 };

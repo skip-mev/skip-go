@@ -4,13 +4,12 @@ import { SmallText } from '@/components/Typography';
 import { ReactNode } from "react";
 import { getSimpleOverallStatus, TransactionState } from "@skip-go/client";
 import { Badge } from "@/components/Badge";
-import { useAtomValue } from "jotai";
+import { useAtomValue } from "@/jotai";
 import { skipChainsAtom } from "@/state/skipClient";
-import { Button, GhostButton } from "@/components/Button";
+import { Button } from "@/components/Button";
 import { getTruncatedAddress } from "@/utils/crypto";
-import { useCopyAddress } from "@/hooks/useCopyAddress";
+import { useClipboard } from "@/hooks/useClipboard";
 import Image from "next/image";
-import { HamburgerIcon } from "@/icons/HamburgerIcon";
 
 export type TransactionDetailsProps = {
   txHash: string;
@@ -20,10 +19,10 @@ export type TransactionDetailsProps = {
 
 export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetailsProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
-  const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
+  const { saveToClipboard: copyAddress, isCopied: isShowingCopyAddressFeedback } = useClipboard();
 
   const chains = chainIds?.map((chainId) => skipChains?.data?.find((chain) => chain.chainId === chainId));
-  
+
   console.log({ txHash, state, chainIds });
   return (
     <Column gap={5}>
@@ -55,14 +54,6 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
           }
         />
       </Container>
-      <Row justify="space-between">
-        <GhostButton gap={5} onClick={() => {}}>
-          View raw data <HamburgerIcon />
-        </GhostButton>
-        <GhostButton onClick={() => {}}>
-          View token details
-        </GhostButton>
-      </Row>
     </Column>
   );
 };

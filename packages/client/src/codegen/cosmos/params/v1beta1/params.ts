@@ -12,7 +12,12 @@ export interface ParameterChangeProposalProtoMsg {
   typeUrl: "/cosmos.params.v1beta1.ParameterChangeProposal";
   value: Uint8Array;
 }
-/** ParameterChangeProposal defines a proposal to change one or more parameters. */
+/**
+ * ParameterChangeProposal defines a proposal to change one or more parameters.
+ * @name ParameterChangeProposalAmino
+ * @package cosmos.params.v1beta1
+ * @see proto type: cosmos.params.v1beta1.ParameterChangeProposal
+ */
 export interface ParameterChangeProposalAmino {
   title?: string;
   description?: string;
@@ -44,6 +49,9 @@ export interface ParamChangeProtoMsg {
 /**
  * ParamChange defines an individual parameter change, for use in
  * ParameterChangeProposal.
+ * @name ParamChangeAmino
+ * @package cosmos.params.v1beta1
+ * @see proto type: cosmos.params.v1beta1.ParamChange
  */
 export interface ParamChangeAmino {
   subspace?: string;

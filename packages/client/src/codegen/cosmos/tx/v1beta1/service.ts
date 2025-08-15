@@ -136,18 +136,25 @@ export interface GetTxsEventRequestProtoMsg {
 /**
  * GetTxsEventRequest is the request type for the Service.TxsByEvents
  * RPC method.
+ * @name GetTxsEventRequestAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.GetTxsEventRequest
  */
 export interface GetTxsEventRequestAmino {
-  /** events is the list of transaction event type. */
+  /**
+   * events is the list of transaction event type.
+   */
   events?: string[];
   /**
    * pagination defines a pagination for the request.
    * Deprecated post v0.46.x: use page and limit instead.
+   * @deprecated
    */
-  /** @deprecated */
   pagination?: PageRequestAmino;
   order_by?: OrderBy;
-  /** page is the page number to query, starts at 1. If not provided, will default to first page. */
+  /**
+   * page is the page number to query, starts at 1. If not provided, will default to first page.
+   */
   page?: string;
   /**
    * limit is the total number of results to be returned in the result page.
@@ -196,19 +203,28 @@ export interface GetTxsEventResponseProtoMsg {
 /**
  * GetTxsEventResponse is the response type for the Service.TxsByEvents
  * RPC method.
+ * @name GetTxsEventResponseAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.GetTxsEventResponse
  */
 export interface GetTxsEventResponseAmino {
-  /** txs is the list of queried transactions. */
+  /**
+   * txs is the list of queried transactions.
+   */
   txs?: TxAmino[];
-  /** tx_responses is the list of queried TxResponses. */
+  /**
+   * tx_responses is the list of queried TxResponses.
+   */
   tx_responses?: TxResponseAmino[];
   /**
    * pagination defines a pagination for the response.
    * Deprecated post v0.46.x: use total instead.
+   * @deprecated
    */
-  /** @deprecated */
   pagination?: PageResponseAmino;
-  /** total is total number of results available */
+  /**
+   * total is total number of results available
+   */
   total?: string;
 }
 export interface GetTxsEventResponseAminoMsg {
@@ -242,9 +258,14 @@ export interface BroadcastTxRequestProtoMsg {
 /**
  * BroadcastTxRequest is the request type for the Service.BroadcastTxRequest
  * RPC method.
+ * @name BroadcastTxRequestAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.BroadcastTxRequest
  */
 export interface BroadcastTxRequestAmino {
-  /** tx_bytes is the raw transaction. */
+  /**
+   * tx_bytes is the raw transaction.
+   */
   tx_bytes?: string;
   mode?: BroadcastMode;
 }
@@ -275,9 +296,14 @@ export interface BroadcastTxResponseProtoMsg {
 /**
  * BroadcastTxResponse is the response type for the
  * Service.BroadcastTx method.
+ * @name BroadcastTxResponseAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.BroadcastTxResponse
  */
 export interface BroadcastTxResponseAmino {
-  /** tx_response is the queried TxResponses. */
+  /**
+   * tx_response is the queried TxResponses.
+   */
   tx_response?: TxResponseAmino;
 }
 export interface BroadcastTxResponseAminoMsg {
@@ -316,13 +342,16 @@ export interface SimulateRequestProtoMsg {
 /**
  * SimulateRequest is the request type for the Service.Simulate
  * RPC method.
+ * @name SimulateRequestAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.SimulateRequest
  */
 export interface SimulateRequestAmino {
   /**
    * tx is the transaction to simulate.
    * Deprecated. Send raw tx bytes instead.
+   * @deprecated
    */
-  /** @deprecated */
   tx?: TxAmino;
   /**
    * tx_bytes is the raw transaction.
@@ -361,11 +390,18 @@ export interface SimulateResponseProtoMsg {
 /**
  * SimulateResponse is the response type for the
  * Service.SimulateRPC method.
+ * @name SimulateResponseAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.SimulateResponse
  */
 export interface SimulateResponseAmino {
-  /** gas_info is the information about gas used in the simulation. */
+  /**
+   * gas_info is the information about gas used in the simulation.
+   */
   gas_info?: GasInfoAmino;
-  /** result is the result of the simulation. */
+  /**
+   * result is the result of the simulation.
+   */
   result?: ResultAmino;
 }
 export interface SimulateResponseAminoMsg {
@@ -395,9 +431,14 @@ export interface GetTxRequestProtoMsg {
 /**
  * GetTxRequest is the request type for the Service.GetTx
  * RPC method.
+ * @name GetTxRequestAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.GetTxRequest
  */
 export interface GetTxRequestAmino {
-  /** hash is the tx hash to query, encoded as a hex string. */
+  /**
+   * hash is the tx hash to query, encoded as a hex string.
+   */
   hash?: string;
 }
 export interface GetTxRequestAminoMsg {
@@ -422,11 +463,20 @@ export interface GetTxResponseProtoMsg {
   typeUrl: "/cosmos.tx.v1beta1.GetTxResponse";
   value: Uint8Array;
 }
-/** GetTxResponse is the response type for the Service.GetTx method. */
+/**
+ * GetTxResponse is the response type for the Service.GetTx method.
+ * @name GetTxResponseAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.GetTxResponse
+ */
 export interface GetTxResponseAmino {
-  /** tx is the queried transaction. */
+  /**
+   * tx is the queried transaction.
+   */
   tx?: TxAmino;
-  /** tx_response is the queried TxResponses. */
+  /**
+   * tx_response is the queried TxResponses.
+   */
   tx_response?: TxResponseAmino;
 }
 export interface GetTxResponseAminoMsg {
@@ -459,11 +509,18 @@ export interface GetBlockWithTxsRequestProtoMsg {
  * RPC method.
  * 
  * Since: cosmos-sdk 0.45.2
+ * @name GetBlockWithTxsRequestAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.GetBlockWithTxsRequest
  */
 export interface GetBlockWithTxsRequestAmino {
-  /** height is the height of the block to query. */
+  /**
+   * height is the height of the block to query.
+   */
   height?: string;
-  /** pagination defines a pagination for the request. */
+  /**
+   * pagination defines a pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface GetBlockWithTxsRequestAminoMsg {
@@ -501,13 +558,20 @@ export interface GetBlockWithTxsResponseProtoMsg {
  * GetBlockWithTxsResponse is the response type for the Service.GetBlockWithTxs method.
  * 
  * Since: cosmos-sdk 0.45.2
+ * @name GetBlockWithTxsResponseAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.GetBlockWithTxsResponse
  */
 export interface GetBlockWithTxsResponseAmino {
-  /** txs are the transactions in the block. */
+  /**
+   * txs are the transactions in the block.
+   */
   txs?: TxAmino[];
   block_id?: BlockIDAmino;
   block?: BlockAmino;
-  /** pagination defines a pagination for the response. */
+  /**
+   * pagination defines a pagination for the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface GetBlockWithTxsResponseAminoMsg {
@@ -544,9 +608,14 @@ export interface TxDecodeRequestProtoMsg {
  * RPC method.
  * 
  * Since: cosmos-sdk 0.47
+ * @name TxDecodeRequestAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.TxDecodeRequest
  */
 export interface TxDecodeRequestAmino {
-  /** tx_bytes is the raw transaction. */
+  /**
+   * tx_bytes is the raw transaction.
+   */
   tx_bytes?: string;
 }
 export interface TxDecodeRequestAminoMsg {
@@ -581,9 +650,14 @@ export interface TxDecodeResponseProtoMsg {
  * Service.TxDecode method.
  * 
  * Since: cosmos-sdk 0.47
+ * @name TxDecodeResponseAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.TxDecodeResponse
  */
 export interface TxDecodeResponseAmino {
-  /** tx is the decoded transaction. */
+  /**
+   * tx is the decoded transaction.
+   */
   tx?: TxAmino;
 }
 export interface TxDecodeResponseAminoMsg {
@@ -618,9 +692,14 @@ export interface TxEncodeRequestProtoMsg {
  * RPC method.
  * 
  * Since: cosmos-sdk 0.47
+ * @name TxEncodeRequestAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.TxEncodeRequest
  */
 export interface TxEncodeRequestAmino {
-  /** tx is the transaction to encode. */
+  /**
+   * tx is the transaction to encode.
+   */
   tx?: TxAmino;
 }
 export interface TxEncodeRequestAminoMsg {
@@ -655,9 +734,14 @@ export interface TxEncodeResponseProtoMsg {
  * Service.TxEncode method.
  * 
  * Since: cosmos-sdk 0.47
+ * @name TxEncodeResponseAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.TxEncodeResponse
  */
 export interface TxEncodeResponseAmino {
-  /** tx_bytes is the encoded transaction bytes. */
+  /**
+   * tx_bytes is the encoded transaction bytes.
+   */
   tx_bytes?: string;
 }
 export interface TxEncodeResponseAminoMsg {
@@ -691,6 +775,9 @@ export interface TxEncodeAminoRequestProtoMsg {
  * RPC method.
  * 
  * Since: cosmos-sdk 0.47
+ * @name TxEncodeAminoRequestAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.TxEncodeAminoRequest
  */
 export interface TxEncodeAminoRequestAmino {
   amino_json?: string;
@@ -726,6 +813,9 @@ export interface TxEncodeAminoResponseProtoMsg {
  * RPC method.
  * 
  * Since: cosmos-sdk 0.47
+ * @name TxEncodeAminoResponseAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.TxEncodeAminoResponse
  */
 export interface TxEncodeAminoResponseAmino {
   amino_binary?: string;
@@ -761,6 +851,9 @@ export interface TxDecodeAminoRequestProtoMsg {
  * RPC method.
  * 
  * Since: cosmos-sdk 0.47
+ * @name TxDecodeAminoRequestAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.TxDecodeAminoRequest
  */
 export interface TxDecodeAminoRequestAmino {
   amino_binary?: string;
@@ -796,6 +889,9 @@ export interface TxDecodeAminoResponseProtoMsg {
  * RPC method.
  * 
  * Since: cosmos-sdk 0.47
+ * @name TxDecodeAminoResponseAmino
+ * @package cosmos.tx.v1beta1
+ * @see proto type: cosmos.tx.v1beta1.TxDecodeAminoResponse
  */
 export interface TxDecodeAminoResponseAmino {
   amino_json?: string;
@@ -856,13 +952,13 @@ export const GetTxsEventRequest = {
           message.pagination = PageRequest.decode(reader, reader.uint32());
           break;
         case 3:
-          message.orderBy = (reader.int32() as any);
+          message.orderBy = reader.int32() as any;
           break;
         case 4:
-          message.page = (reader.uint64() as Long);
+          message.page = reader.uint64() as Long;
           break;
         case 5:
-          message.limit = (reader.uint64() as Long);
+          message.limit = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -928,8 +1024,8 @@ export const GetTxsEventRequest = {
     }
     obj.pagination = message.pagination ? PageRequest.toAmino(message.pagination) : undefined;
     obj.order_by = message.orderBy === 0 ? undefined : message.orderBy;
-    obj.page = !message.page.isZero() ? message.page.toString() : undefined;
-    obj.limit = !message.limit.isZero() ? message.limit.toString() : undefined;
+    obj.page = !message.page.isZero() ? message.page?.toString() : undefined;
+    obj.limit = !message.limit.isZero() ? message.limit?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: GetTxsEventRequestAminoMsg): GetTxsEventRequest {
@@ -996,7 +1092,7 @@ export const GetTxsEventResponse = {
           message.pagination = PageResponse.decode(reader, reader.uint32());
           break;
         case 4:
-          message.total = (reader.uint64() as Long);
+          message.total = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1062,7 +1158,7 @@ export const GetTxsEventResponse = {
       obj.tx_responses = message.txResponses;
     }
     obj.pagination = message.pagination ? PageResponse.toAmino(message.pagination) : undefined;
-    obj.total = !message.total.isZero() ? message.total.toString() : undefined;
+    obj.total = !message.total.isZero() ? message.total?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: GetTxsEventResponseAminoMsg): GetTxsEventResponse {
@@ -1115,7 +1211,7 @@ export const BroadcastTxRequest = {
           message.txBytes = reader.bytes();
           break;
         case 2:
-          message.mode = (reader.int32() as any);
+          message.mode = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);
@@ -1642,7 +1738,7 @@ export const GetBlockWithTxsRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.height = (reader.int64() as Long);
+          message.height = reader.int64() as Long;
           break;
         case 2:
           message.pagination = PageRequest.decode(reader, reader.uint32());
@@ -1684,7 +1780,7 @@ export const GetBlockWithTxsRequest = {
   },
   toAmino(message: GetBlockWithTxsRequest): GetBlockWithTxsRequestAmino {
     const obj: any = {};
-    obj.height = !message.height.isZero() ? message.height.toString() : undefined;
+    obj.height = !message.height.isZero() ? message.height?.toString() : undefined;
     obj.pagination = message.pagination ? PageRequest.toAmino(message.pagination) : undefined;
     return obj;
   },

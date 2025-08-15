@@ -31,6 +31,11 @@ export interface ParamsProtoMsg {
   typeUrl: "/injective.wasmx.v1.Params";
   value: Uint8Array;
 }
+/**
+ * @name ParamsAmino
+ * @package injective.wasmx.v1
+ * @see proto type: injective.wasmx.v1.Params
+ */
 export interface ParamsAmino {
   /**
    * Set the status to active to indicate that contracts can be executed in
@@ -91,26 +96,41 @@ export interface RegisteredContractProtoMsg {
   typeUrl: "/injective.wasmx.v1.RegisteredContract";
   value: Uint8Array;
 }
+/**
+ * @name RegisteredContractAmino
+ * @package injective.wasmx.v1
+ * @see proto type: injective.wasmx.v1.RegisteredContract
+ */
 export interface RegisteredContractAmino {
-  /** limit of gas per BB execution */
+  /**
+   * limit of gas per BB execution
+   */
   gas_limit?: string;
-  /** gas price that contract is willing to pay for execution in BeginBlocker */
+  /**
+   * gas price that contract is willing to pay for execution in BeginBlocker
+   */
   gas_price?: string;
-  /** is contract currently active */
+  /**
+   * is contract currently active
+   */
   is_executable?: boolean;
   /**
    * code_id that is allowed to be executed (to prevent malicious updates) - if
    * nil/0 any code_id can be executed
    */
   code_id?: string;
-  /** optional - admin addr that is allowed to update contract data */
+  /**
+   * optional - admin addr that is allowed to update contract data
+   */
   admin_address?: string;
   /**
    * Optional: address of the contract granting fee
    * Must be set if fund_mode is GrantOnly
    */
   granter_address?: string;
-  /** funding mode */
+  /**
+   * funding mode
+   */
   fund_mode?: FundingMode;
 }
 export interface RegisteredContractAminoMsg {
@@ -166,13 +186,13 @@ export const Params = {
           message.isExecutionEnabled = reader.bool();
           break;
         case 2:
-          message.maxBeginBlockTotalGas = (reader.uint64() as Long);
+          message.maxBeginBlockTotalGas = reader.uint64() as Long;
           break;
         case 3:
-          message.maxContractGasLimit = (reader.uint64() as Long);
+          message.maxContractGasLimit = reader.uint64() as Long;
           break;
         case 4:
-          message.minGasPrice = (reader.uint64() as Long);
+          message.minGasPrice = reader.uint64() as Long;
           break;
         case 5:
           message.registerContractAccess = AccessConfig.decode(reader, reader.uint32());
@@ -233,9 +253,9 @@ export const Params = {
   toAmino(message: Params): ParamsAmino {
     const obj: any = {};
     obj.is_execution_enabled = message.isExecutionEnabled === false ? undefined : message.isExecutionEnabled;
-    obj.max_begin_block_total_gas = !message.maxBeginBlockTotalGas.isZero() ? message.maxBeginBlockTotalGas.toString() : undefined;
-    obj.max_contract_gas_limit = !message.maxContractGasLimit.isZero() ? message.maxContractGasLimit.toString() : undefined;
-    obj.min_gas_price = !message.minGasPrice.isZero() ? message.minGasPrice.toString() : undefined;
+    obj.max_begin_block_total_gas = !message.maxBeginBlockTotalGas.isZero() ? message.maxBeginBlockTotalGas?.toString() : undefined;
+    obj.max_contract_gas_limit = !message.maxContractGasLimit.isZero() ? message.maxContractGasLimit?.toString() : undefined;
+    obj.min_gas_price = !message.minGasPrice.isZero() ? message.minGasPrice?.toString() : undefined;
     obj.register_contract_access = message.registerContractAccess ? AccessConfig.toAmino(message.registerContractAccess) : AccessConfig.toAmino(AccessConfig.fromPartial({}));
     return obj;
   },
@@ -306,16 +326,16 @@ export const RegisteredContract = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.gasLimit = (reader.uint64() as Long);
+          message.gasLimit = reader.uint64() as Long;
           break;
         case 2:
-          message.gasPrice = (reader.uint64() as Long);
+          message.gasPrice = reader.uint64() as Long;
           break;
         case 3:
           message.isExecutable = reader.bool();
           break;
         case 4:
-          message.codeId = (reader.uint64() as Long);
+          message.codeId = reader.uint64() as Long;
           break;
         case 5:
           message.adminAddress = reader.string();
@@ -324,7 +344,7 @@ export const RegisteredContract = {
           message.granterAddress = reader.string();
           break;
         case 7:
-          message.fundMode = (reader.int32() as any);
+          message.fundMode = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);
@@ -395,10 +415,10 @@ export const RegisteredContract = {
   },
   toAmino(message: RegisteredContract): RegisteredContractAmino {
     const obj: any = {};
-    obj.gas_limit = !message.gasLimit.isZero() ? message.gasLimit.toString() : undefined;
-    obj.gas_price = !message.gasPrice.isZero() ? message.gasPrice.toString() : undefined;
+    obj.gas_limit = !message.gasLimit.isZero() ? message.gasLimit?.toString() : undefined;
+    obj.gas_price = !message.gasPrice.isZero() ? message.gasPrice?.toString() : undefined;
     obj.is_executable = message.isExecutable === false ? undefined : message.isExecutable;
-    obj.code_id = !message.codeId.isZero() ? message.codeId.toString() : undefined;
+    obj.code_id = !message.codeId.isZero() ? message.codeId?.toString() : undefined;
     obj.admin_address = message.adminAddress === null ? undefined : message.adminAddress;
     obj.granter_address = message.granterAddress === null ? undefined : message.granterAddress;
     obj.fund_mode = message.fundMode === 0 ? undefined : message.fundMode;

@@ -14,11 +14,20 @@ export interface QueryParamsRequestProtoMsg {
   typeUrl: "/cosmos.params.v1beta1.QueryParamsRequest";
   value: Uint8Array;
 }
-/** QueryParamsRequest is request type for the Query/Params RPC method. */
+/**
+ * QueryParamsRequest is request type for the Query/Params RPC method.
+ * @name QueryParamsRequestAmino
+ * @package cosmos.params.v1beta1
+ * @see proto type: cosmos.params.v1beta1.QueryParamsRequest
+ */
 export interface QueryParamsRequestAmino {
-  /** subspace defines the module to query the parameter for. */
+  /**
+   * subspace defines the module to query the parameter for.
+   */
   subspace?: string;
-  /** key defines the key of the parameter in the subspace. */
+  /**
+   * key defines the key of the parameter in the subspace.
+   */
   key?: string;
 }
 export interface QueryParamsRequestAminoMsg {
@@ -39,9 +48,16 @@ export interface QueryParamsResponseProtoMsg {
   typeUrl: "/cosmos.params.v1beta1.QueryParamsResponse";
   value: Uint8Array;
 }
-/** QueryParamsResponse is response type for the Query/Params RPC method. */
+/**
+ * QueryParamsResponse is response type for the Query/Params RPC method.
+ * @name QueryParamsResponseAmino
+ * @package cosmos.params.v1beta1
+ * @see proto type: cosmos.params.v1beta1.QueryParamsResponse
+ */
 export interface QueryParamsResponseAmino {
-  /** param defines the queried parameter. */
+  /**
+   * param defines the queried parameter.
+   */
   param: ParamChangeAmino;
 }
 export interface QueryParamsResponseAminoMsg {
@@ -68,6 +84,9 @@ export interface QuerySubspacesRequestProtoMsg {
  * subspaces and all keys for a subspace.
  * 
  * Since: cosmos-sdk 0.46
+ * @name QuerySubspacesRequestAmino
+ * @package cosmos.params.v1beta1
+ * @see proto type: cosmos.params.v1beta1.QuerySubspacesRequest
  */
 export interface QuerySubspacesRequestAmino {}
 export interface QuerySubspacesRequestAminoMsg {
@@ -99,6 +118,9 @@ export interface QuerySubspacesResponseProtoMsg {
  * registered subspaces and all keys for a subspace.
  * 
  * Since: cosmos-sdk 0.46
+ * @name QuerySubspacesResponseAmino
+ * @package cosmos.params.v1beta1
+ * @see proto type: cosmos.params.v1beta1.QuerySubspacesResponse
  */
 export interface QuerySubspacesResponseAmino {
   subspaces?: SubspaceAmino[];
@@ -135,6 +157,9 @@ export interface SubspaceProtoMsg {
  * the subspace.
  * 
  * Since: cosmos-sdk 0.46
+ * @name SubspaceAmino
+ * @package cosmos.params.v1beta1
+ * @see proto type: cosmos.params.v1beta1.Subspace
  */
 export interface SubspaceAmino {
   subspace?: string;

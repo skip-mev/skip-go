@@ -13,11 +13,20 @@ export interface EventRegisterPairProtoMsg {
   typeUrl: "/evmos.erc20.v1.EventRegisterPair";
   value: Uint8Array;
 }
-/** EventRegisterPair is an event emitted when a coin is registered. */
+/**
+ * EventRegisterPair is an event emitted when a coin is registered.
+ * @name EventRegisterPairAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.EventRegisterPair
+ */
 export interface EventRegisterPairAmino {
-  /** denom is the coin's denomination. */
+  /**
+   * denom is the coin's denomination.
+   */
   denom?: string;
-  /** erc20_address is the ERC20 contract address. */
+  /**
+   * erc20_address is the ERC20 contract address.
+   */
   erc20_address?: string;
 }
 export interface EventRegisterPairAminoMsg {
@@ -40,11 +49,20 @@ export interface EventToggleTokenConversionProtoMsg {
   typeUrl: "/evmos.erc20.v1.EventToggleTokenConversion";
   value: Uint8Array;
 }
-/** EventToggleTokenConversion is an event emitted when a coin's token conversion is toggled. */
+/**
+ * EventToggleTokenConversion is an event emitted when a coin's token conversion is toggled.
+ * @name EventToggleTokenConversionAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.EventToggleTokenConversion
+ */
 export interface EventToggleTokenConversionAmino {
-  /** denom is the coin's denomination. */
+  /**
+   * denom is the coin's denomination.
+   */
   denom?: string;
-  /** erc20_address is the ERC20 contract address. */
+  /**
+   * erc20_address is the ERC20 contract address.
+   */
   erc20_address?: string;
 }
 export interface EventToggleTokenConversionAminoMsg {
@@ -73,17 +91,32 @@ export interface EventConvertCoinProtoMsg {
   typeUrl: "/evmos.erc20.v1.EventConvertCoin";
   value: Uint8Array;
 }
-/** EventConvertCoin is an event emitted when a coin is converted. */
+/**
+ * EventConvertCoin is an event emitted when a coin is converted.
+ * @name EventConvertCoinAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.EventConvertCoin
+ */
 export interface EventConvertCoinAmino {
-  /** sender is the sender's address. */
+  /**
+   * sender is the sender's address.
+   */
   sender?: string;
-  /** receiver is the receiver's address. */
+  /**
+   * receiver is the receiver's address.
+   */
   receiver?: string;
-  /** amount is the amount of coins to be converted. */
+  /**
+   * amount is the amount of coins to be converted.
+   */
   amount?: string;
-  /** denom is the coin's denomination. */
+  /**
+   * denom is the coin's denomination.
+   */
   denom?: string;
-  /** erc20_address is the ERC20 contract address. */
+  /**
+   * erc20_address is the ERC20 contract address.
+   */
   erc20_address?: string;
 }
 export interface EventConvertCoinAminoMsg {
@@ -115,17 +148,32 @@ export interface EventConvertERC20ProtoMsg {
   typeUrl: "/evmos.erc20.v1.EventConvertERC20";
   value: Uint8Array;
 }
-/** EventConvertERC20 is an event emitted when an ERC20 is converted. */
+/**
+ * EventConvertERC20 is an event emitted when an ERC20 is converted.
+ * @name EventConvertERC20Amino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.EventConvertERC20
+ */
 export interface EventConvertERC20Amino {
-  /** sender is the sender's address. */
+  /**
+   * sender is the sender's address.
+   */
   sender?: string;
-  /** receiver is the receiver's address. */
+  /**
+   * receiver is the receiver's address.
+   */
   receiver?: string;
-  /** amount is the amount of coins to be converted. */
+  /**
+   * amount is the amount of coins to be converted.
+   */
   amount?: string;
-  /** denom is the coin's denomination. */
+  /**
+   * denom is the coin's denomination.
+   */
   denom?: string;
-  /** contract_address of an ERC20 token contract, that is registered in a token pair */
+  /**
+   * contract_address of an ERC20 token contract, that is registered in a token pair
+   */
   contract_address?: string;
 }
 export interface EventConvertERC20AminoMsg {

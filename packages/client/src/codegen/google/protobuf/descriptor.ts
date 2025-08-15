@@ -372,6 +372,9 @@ export interface FileDescriptorSetProtoMsg {
 /**
  * The protocol compiler can output a FileDescriptorSet containing the .proto
  * files it parses.
+ * @name FileDescriptorSetAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.FileDescriptorSet
  */
 export interface FileDescriptorSetAmino {
   file?: FileDescriptorProtoAmino[];
@@ -425,22 +428,37 @@ export interface FileDescriptorProtoProtoMsg {
   typeUrl: "/google.protobuf.FileDescriptorProto";
   value: Uint8Array;
 }
-/** Describes a complete .proto file. */
+/**
+ * Describes a complete .proto file.
+ * @name FileDescriptorProtoAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.FileDescriptorProto
+ */
 export interface FileDescriptorProtoAmino {
-  /** file name, relative to root of source tree */
+  /**
+   * file name, relative to root of source tree
+   */
   name?: string;
-  /** e.g. "foo", "foo.bar", etc. */
+  /**
+   * e.g. "foo", "foo.bar", etc.
+   */
   package?: string;
-  /** Names of files imported by this file. */
+  /**
+   * Names of files imported by this file.
+   */
   dependency?: string[];
-  /** Indexes of the public imported files in the dependency list above. */
+  /**
+   * Indexes of the public imported files in the dependency list above.
+   */
   public_dependency?: number[];
   /**
    * Indexes of the weak imported files in the dependency list.
    * For Google-internal migration only. Do not use.
    */
   weak_dependency?: number[];
-  /** All top-level definitions in this file. */
+  /**
+   * All top-level definitions in this file.
+   */
   message_type?: DescriptorProtoAmino[];
   enum_type?: EnumDescriptorProtoAmino[];
   service?: ServiceDescriptorProtoAmino[];
@@ -499,7 +517,12 @@ export interface DescriptorProtoProtoMsg {
   typeUrl: "/google.protobuf.DescriptorProto";
   value: Uint8Array;
 }
-/** Describes a message type. */
+/**
+ * Describes a message type.
+ * @name DescriptorProtoAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.DescriptorProto
+ */
 export interface DescriptorProtoAmino {
   name?: string;
   field?: FieldDescriptorProtoAmino[];
@@ -544,10 +567,19 @@ export interface DescriptorProto_ExtensionRangeProtoMsg {
   typeUrl: "/google.protobuf.ExtensionRange";
   value: Uint8Array;
 }
+/**
+ * @name DescriptorProto_ExtensionRangeAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.DescriptorProto_ExtensionRange
+ */
 export interface DescriptorProto_ExtensionRangeAmino {
-  /** Inclusive. */
+  /**
+   * Inclusive.
+   */
   start?: number;
-  /** Exclusive. */
+  /**
+   * Exclusive.
+   */
   end?: number;
   options?: ExtensionRangeOptionsAmino;
 }
@@ -579,11 +611,18 @@ export interface DescriptorProto_ReservedRangeProtoMsg {
  * Range of reserved tag numbers. Reserved tag numbers may not be used by
  * fields or extension ranges in the same message. Reserved ranges may
  * not overlap.
+ * @name DescriptorProto_ReservedRangeAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.DescriptorProto_ReservedRange
  */
 export interface DescriptorProto_ReservedRangeAmino {
-  /** Inclusive. */
+  /**
+   * Inclusive.
+   */
   start?: number;
-  /** Exclusive. */
+  /**
+   * Exclusive.
+   */
   end?: number;
 }
 export interface DescriptorProto_ReservedRangeAminoMsg {
@@ -607,8 +646,15 @@ export interface ExtensionRangeOptionsProtoMsg {
   typeUrl: "/google.protobuf.ExtensionRangeOptions";
   value: Uint8Array;
 }
+/**
+ * @name ExtensionRangeOptionsAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.ExtensionRangeOptions
+ */
 export interface ExtensionRangeOptionsAmino {
-  /** The parser stores options it doesn't recognize here. See above. */
+  /**
+   * The parser stores options it doesn't recognize here. See above.
+   */
   uninterpreted_option?: UninterpretedOptionAmino[];
 }
 export interface ExtensionRangeOptionsAminoMsg {
@@ -667,7 +713,12 @@ export interface FieldDescriptorProtoProtoMsg {
   typeUrl: "/google.protobuf.FieldDescriptorProto";
   value: Uint8Array;
 }
-/** Describes a field within a message. */
+/**
+ * Describes a field within a message.
+ * @name FieldDescriptorProtoAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.FieldDescriptorProto
+ */
 export interface FieldDescriptorProtoAmino {
   name?: string;
   number?: number;
@@ -738,7 +789,12 @@ export interface OneofDescriptorProtoProtoMsg {
   typeUrl: "/google.protobuf.OneofDescriptorProto";
   value: Uint8Array;
 }
-/** Describes a oneof. */
+/**
+ * Describes a oneof.
+ * @name OneofDescriptorProtoAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.OneofDescriptorProto
+ */
 export interface OneofDescriptorProtoAmino {
   name?: string;
   options?: OneofOptionsAmino;
@@ -773,7 +829,12 @@ export interface EnumDescriptorProtoProtoMsg {
   typeUrl: "/google.protobuf.EnumDescriptorProto";
   value: Uint8Array;
 }
-/** Describes an enum type. */
+/**
+ * Describes an enum type.
+ * @name EnumDescriptorProtoAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.EnumDescriptorProto
+ */
 export interface EnumDescriptorProtoAmino {
   name?: string;
   value?: EnumValueDescriptorProtoAmino[];
@@ -827,11 +888,18 @@ export interface EnumDescriptorProto_EnumReservedRangeProtoMsg {
  * Note that this is distinct from DescriptorProto.ReservedRange in that it
  * is inclusive such that it can appropriately represent the entire int32
  * domain.
+ * @name EnumDescriptorProto_EnumReservedRangeAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.EnumDescriptorProto_EnumReservedRange
  */
 export interface EnumDescriptorProto_EnumReservedRangeAmino {
-  /** Inclusive. */
+  /**
+   * Inclusive.
+   */
   start?: number;
-  /** Inclusive. */
+  /**
+   * Inclusive.
+   */
   end?: number;
 }
 export interface EnumDescriptorProto_EnumReservedRangeAminoMsg {
@@ -860,7 +928,12 @@ export interface EnumValueDescriptorProtoProtoMsg {
   typeUrl: "/google.protobuf.EnumValueDescriptorProto";
   value: Uint8Array;
 }
-/** Describes a value within an enum. */
+/**
+ * Describes a value within an enum.
+ * @name EnumValueDescriptorProtoAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.EnumValueDescriptorProto
+ */
 export interface EnumValueDescriptorProtoAmino {
   name?: string;
   number?: number;
@@ -886,7 +959,12 @@ export interface ServiceDescriptorProtoProtoMsg {
   typeUrl: "/google.protobuf.ServiceDescriptorProto";
   value: Uint8Array;
 }
-/** Describes a service. */
+/**
+ * Describes a service.
+ * @name ServiceDescriptorProtoAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.ServiceDescriptorProto
+ */
 export interface ServiceDescriptorProtoAmino {
   name?: string;
   method?: MethodDescriptorProtoAmino[];
@@ -921,7 +999,12 @@ export interface MethodDescriptorProtoProtoMsg {
   typeUrl: "/google.protobuf.MethodDescriptorProto";
   value: Uint8Array;
 }
-/** Describes a method of a service. */
+/**
+ * Describes a method of a service.
+ * @name MethodDescriptorProtoAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.MethodDescriptorProto
+ */
 export interface MethodDescriptorProtoAmino {
   name?: string;
   /**
@@ -931,9 +1014,13 @@ export interface MethodDescriptorProtoAmino {
   input_type?: string;
   output_type?: string;
   options?: MethodOptionsAmino;
-  /** Identifies if client streams multiple client messages */
+  /**
+   * Identifies if client streams multiple client messages
+   */
   client_streaming?: boolean;
-  /** Identifies if server streams multiple server messages */
+  /**
+   * Identifies if server streams multiple server messages
+   */
   server_streaming?: boolean;
 }
 export interface MethodDescriptorProtoAminoMsg {
@@ -1070,6 +1157,11 @@ export interface FileOptionsProtoMsg {
   typeUrl: "/google.protobuf.FileOptions";
   value: Uint8Array;
 }
+/**
+ * @name FileOptionsAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.FileOptions
+ */
 export interface FileOptionsAmino {
   /**
    * Sets the Java package where classes generated from this .proto will be
@@ -1095,8 +1187,10 @@ export interface FileOptionsAmino {
    * top-level extensions defined in the file.
    */
   java_multiple_files?: boolean;
-  /** This option does nothing. */
-  /** @deprecated */
+  /**
+   * This option does nothing.
+   * @deprecated
+   */
   java_generate_equals_and_hash?: boolean;
   /**
    * If set true, then the Java2 code generator will generate code that
@@ -1149,7 +1243,9 @@ export interface FileOptionsAmino {
    * generated classes from this .proto. There is no default.
    */
   objc_class_prefix?: string;
-  /** Namespace for generated classes; defaults to the package. */
+  /**
+   * Namespace for generated classes; defaults to the package.
+   */
   csharp_namespace?: string;
   /**
    * By default Swift generators will take the proto package and CamelCase it
@@ -1281,6 +1377,11 @@ export interface MessageOptionsProtoMsg {
   typeUrl: "/google.protobuf.MessageOptions";
   value: Uint8Array;
 }
+/**
+ * @name MessageOptionsAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.MessageOptions
+ */
 export interface MessageOptionsAmino {
   /**
    * Set true to use the old proto1 MessageSet wire format for extensions.
@@ -1340,7 +1441,9 @@ export interface MessageOptionsAmino {
    * parser.
    */
   map_entry?: boolean;
-  /** The parser stores options it doesn't recognize here. See above. */
+  /**
+   * The parser stores options it doesn't recognize here. See above.
+   */
   uninterpreted_option?: UninterpretedOptionAmino[];
 }
 export interface MessageOptionsAminoMsg {
@@ -1431,6 +1534,11 @@ export interface FieldOptionsProtoMsg {
   typeUrl: "/google.protobuf.FieldOptions";
   value: Uint8Array;
 }
+/**
+ * @name FieldOptionsAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.FieldOptions
+ */
 export interface FieldOptionsAmino {
   /**
    * The ctype option instructs the C++ code generator to use a different
@@ -1499,9 +1607,13 @@ export interface FieldOptionsAmino {
    * is a formalization for deprecating fields.
    */
   deprecated?: boolean;
-  /** For Google-internal migration only. Do not use. */
+  /**
+   * For Google-internal migration only. Do not use.
+   */
   weak?: boolean;
-  /** The parser stores options it doesn't recognize here. See above. */
+  /**
+   * The parser stores options it doesn't recognize here. See above.
+   */
   uninterpreted_option?: UninterpretedOptionAmino[];
 }
 export interface FieldOptionsAminoMsg {
@@ -1525,8 +1637,15 @@ export interface OneofOptionsProtoMsg {
   typeUrl: "/google.protobuf.OneofOptions";
   value: Uint8Array;
 }
+/**
+ * @name OneofOptionsAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.OneofOptions
+ */
 export interface OneofOptionsAmino {
-  /** The parser stores options it doesn't recognize here. See above. */
+  /**
+   * The parser stores options it doesn't recognize here. See above.
+   */
   uninterpreted_option?: UninterpretedOptionAmino[];
 }
 export interface OneofOptionsAminoMsg {
@@ -1556,6 +1675,11 @@ export interface EnumOptionsProtoMsg {
   typeUrl: "/google.protobuf.EnumOptions";
   value: Uint8Array;
 }
+/**
+ * @name EnumOptionsAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.EnumOptions
+ */
 export interface EnumOptionsAmino {
   /**
    * Set this option to true to allow mapping different tag names to the same
@@ -1569,7 +1693,9 @@ export interface EnumOptionsAmino {
    * is a formalization for deprecating enums.
    */
   deprecated?: boolean;
-  /** The parser stores options it doesn't recognize here. See above. */
+  /**
+   * The parser stores options it doesn't recognize here. See above.
+   */
   uninterpreted_option?: UninterpretedOptionAmino[];
 }
 export interface EnumOptionsAminoMsg {
@@ -1596,6 +1722,11 @@ export interface EnumValueOptionsProtoMsg {
   typeUrl: "/google.protobuf.EnumValueOptions";
   value: Uint8Array;
 }
+/**
+ * @name EnumValueOptionsAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.EnumValueOptions
+ */
 export interface EnumValueOptionsAmino {
   /**
    * Is this enum value deprecated?
@@ -1604,7 +1735,9 @@ export interface EnumValueOptionsAmino {
    * this is a formalization for deprecating enum values.
    */
   deprecated?: boolean;
-  /** The parser stores options it doesn't recognize here. See above. */
+  /**
+   * The parser stores options it doesn't recognize here. See above.
+   */
   uninterpreted_option?: UninterpretedOptionAmino[];
 }
 export interface EnumValueOptionsAminoMsg {
@@ -1630,6 +1763,11 @@ export interface ServiceOptionsProtoMsg {
   typeUrl: "/google.protobuf.ServiceOptions";
   value: Uint8Array;
 }
+/**
+ * @name ServiceOptionsAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.ServiceOptions
+ */
 export interface ServiceOptionsAmino {
   /**
    * Is this service deprecated?
@@ -1638,7 +1776,9 @@ export interface ServiceOptionsAmino {
    * this is a formalization for deprecating services.
    */
   deprecated?: boolean;
-  /** The parser stores options it doesn't recognize here. See above. */
+  /**
+   * The parser stores options it doesn't recognize here. See above.
+   */
   uninterpreted_option?: UninterpretedOptionAmino[];
 }
 export interface ServiceOptionsAminoMsg {
@@ -1665,6 +1805,11 @@ export interface MethodOptionsProtoMsg {
   typeUrl: "/google.protobuf.MethodOptions";
   value: Uint8Array;
 }
+/**
+ * @name MethodOptionsAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.MethodOptions
+ */
 export interface MethodOptionsAmino {
   /**
    * Is this method deprecated?
@@ -1674,7 +1819,9 @@ export interface MethodOptionsAmino {
    */
   deprecated?: boolean;
   idempotency_level?: MethodOptions_IdempotencyLevel;
-  /** The parser stores options it doesn't recognize here. See above. */
+  /**
+   * The parser stores options it doesn't recognize here. See above.
+   */
   uninterpreted_option?: UninterpretedOptionAmino[];
 }
 export interface MethodOptionsAminoMsg {
@@ -1718,6 +1865,9 @@ export interface UninterpretedOptionProtoMsg {
  * options protos in descriptor objects (e.g. returned by Descriptor::options(),
  * or produced by Descriptor::CopyTo()) will never have UninterpretedOptions
  * in them.
+ * @name UninterpretedOptionAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.UninterpretedOption
  */
 export interface UninterpretedOptionAmino {
   name?: UninterpretedOption_NamePartAmino[];
@@ -1774,6 +1924,9 @@ export interface UninterpretedOption_NamePartProtoMsg {
  * extension (denoted with parentheses in options specs in .proto files).
  * E.g.,{ ["foo", false], ["bar.baz", true], ["qux", false] } represents
  * "foo.(bar.baz).qux".
+ * @name UninterpretedOption_NamePartAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.UninterpretedOption_NamePart
  */
 export interface UninterpretedOption_NamePartAmino {
   name_part?: string;
@@ -1853,6 +2006,9 @@ export interface SourceCodeInfoProtoMsg {
 /**
  * Encapsulates information about the original source file from which a
  * FileDescriptorProto was generated.
+ * @name SourceCodeInfoAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.SourceCodeInfo
  */
 export interface SourceCodeInfoAmino {
   /**
@@ -2005,6 +2161,11 @@ export interface SourceCodeInfo_LocationProtoMsg {
   typeUrl: "/google.protobuf.Location";
   value: Uint8Array;
 }
+/**
+ * @name SourceCodeInfo_LocationAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.SourceCodeInfo_Location
+ */
 export interface SourceCodeInfo_LocationAmino {
   /**
    * Identifies which part of the FileDescriptorProto was defined at this
@@ -2124,6 +2285,9 @@ export interface GeneratedCodeInfoProtoMsg {
  * Describes the relationship between generated code and its original source
  * file. A GeneratedCodeInfo message is associated with only one generated
  * source file, but may contain references to different source .proto files.
+ * @name GeneratedCodeInfoAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.GeneratedCodeInfo
  */
 export interface GeneratedCodeInfoAmino {
   /**
@@ -2168,13 +2332,20 @@ export interface GeneratedCodeInfo_AnnotationProtoMsg {
   typeUrl: "/google.protobuf.Annotation";
   value: Uint8Array;
 }
+/**
+ * @name GeneratedCodeInfo_AnnotationAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.GeneratedCodeInfo_Annotation
+ */
 export interface GeneratedCodeInfo_AnnotationAmino {
   /**
    * Identifies the element in the original source .proto file. This field
    * is formatted the same as SourceCodeInfo.Location.path.
    */
   path?: number[];
-  /** Identifies the filesystem path to the original source .proto. */
+  /**
+   * Identifies the filesystem path to the original source .proto.
+   */
   source_file?: string;
   /**
    * Identifies the starting offset in bytes in the generated code
@@ -3141,10 +3312,10 @@ export const FieldDescriptorProto = {
           message.number = reader.int32();
           break;
         case 4:
-          message.label = (reader.int32() as any);
+          message.label = reader.int32() as any;
           break;
         case 5:
-          message.type = (reader.int32() as any);
+          message.type = reader.int32() as any;
           break;
         case 6:
           message.typeName = reader.string();
@@ -4065,7 +4236,7 @@ export const FileOptions = {
           message.javaStringCheckUtf8 = reader.bool();
           break;
         case 9:
-          message.optimizeFor = (reader.int32() as any);
+          message.optimizeFor = reader.int32() as any;
           break;
         case 11:
           message.goPackage = reader.string();
@@ -4488,13 +4659,13 @@ export const FieldOptions = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.ctype = (reader.int32() as any);
+          message.ctype = reader.int32() as any;
           break;
         case 2:
           message.packed = reader.bool();
           break;
         case 6:
-          message.jstype = (reader.int32() as any);
+          message.jstype = reader.int32() as any;
           break;
         case 5:
           message.lazy = reader.bool();
@@ -5010,7 +5181,7 @@ export const MethodOptions = {
           message.deprecated = reader.bool();
           break;
         case 34:
-          message.idempotencyLevel = (reader.int32() as any);
+          message.idempotencyLevel = reader.int32() as any;
           break;
         case 999:
           message.uninterpretedOption.push(UninterpretedOption.decode(reader, reader.uint32()));
@@ -5136,10 +5307,10 @@ export const UninterpretedOption = {
           message.identifierValue = reader.string();
           break;
         case 4:
-          message.positiveIntValue = (reader.uint64() as Long);
+          message.positiveIntValue = reader.uint64() as Long;
           break;
         case 5:
-          message.negativeIntValue = (reader.int64() as Long);
+          message.negativeIntValue = reader.int64() as Long;
           break;
         case 6:
           message.doubleValue = reader.double();
@@ -5225,8 +5396,8 @@ export const UninterpretedOption = {
       obj.name = message.name;
     }
     obj.identifier_value = message.identifierValue === "" ? undefined : message.identifierValue;
-    obj.positive_int_value = !message.positiveIntValue.isZero() ? message.positiveIntValue.toString() : undefined;
-    obj.negative_int_value = !message.negativeIntValue.isZero() ? message.negativeIntValue.toString() : undefined;
+    obj.positive_int_value = !message.positiveIntValue.isZero() ? message.positiveIntValue?.toString() : undefined;
+    obj.negative_int_value = !message.negativeIntValue.isZero() ? message.negativeIntValue?.toString() : undefined;
     obj.double_value = message.doubleValue === 0 ? undefined : message.doubleValue;
     obj.string_value = message.stringValue ? base64FromBytes(message.stringValue) : undefined;
     obj.aggregate_value = message.aggregateValue === "" ? undefined : message.aggregateValue;

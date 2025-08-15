@@ -27,17 +27,30 @@ export interface IncentiveProtoMsg {
 /**
  * Incentive defines an instance that organizes distribution conditions for a
  * given smart contract
+ * @name IncentiveAmino
+ * @package evmos.incentives.v1
+ * @see proto type: evmos.incentives.v1.Incentive
  */
 export interface IncentiveAmino {
-  /** contract address of the smart contract to be incentivized */
+  /**
+   * contract address of the smart contract to be incentivized
+   */
   contract?: string;
-  /** allocations is a slice of denoms and percentages of rewards to be allocated */
+  /**
+   * allocations is a slice of denoms and percentages of rewards to be allocated
+   */
   allocations?: DecCoinAmino[];
-  /** epochs defines the number of remaining epochs for the incentive */
+  /**
+   * epochs defines the number of remaining epochs for the incentive
+   */
   epochs?: number;
-  /** start_time of the incentive distribution */
+  /**
+   * start_time of the incentive distribution
+   */
   start_time?: string;
-  /** total_gas is the cumulative gas spent by all gas meters of the incentive during the epoch */
+  /**
+   * total_gas is the cumulative gas spent by all gas meters of the incentive during the epoch
+   */
   total_gas?: string;
 }
 export interface IncentiveAminoMsg {
@@ -68,13 +81,24 @@ export interface GasMeterProtoMsg {
   typeUrl: "/evmos.incentives.v1.GasMeter";
   value: Uint8Array;
 }
-/** GasMeter tracks the cumulative gas spent per participant in one epoch */
+/**
+ * GasMeter tracks the cumulative gas spent per participant in one epoch
+ * @name GasMeterAmino
+ * @package evmos.incentives.v1
+ * @see proto type: evmos.incentives.v1.GasMeter
+ */
 export interface GasMeterAmino {
-  /** contract is the hex address of the incentivized smart contract */
+  /**
+   * contract is the hex address of the incentivized smart contract
+   */
   contract?: string;
-  /** participant address that interacts with the incentive */
+  /**
+   * participant address that interacts with the incentive
+   */
   participant?: string;
-  /** cumulative_gas spent during the epoch */
+  /**
+   * cumulative_gas spent during the epoch
+   */
   cumulative_gas?: string;
 }
 export interface GasMeterAminoMsg {
@@ -104,17 +128,32 @@ export interface RegisterIncentiveProposalProtoMsg {
   typeUrl: "/evmos.incentives.v1.RegisterIncentiveProposal";
   value: Uint8Array;
 }
-/** RegisterIncentiveProposal is a gov Content type to register an incentive */
+/**
+ * RegisterIncentiveProposal is a gov Content type to register an incentive
+ * @name RegisterIncentiveProposalAmino
+ * @package evmos.incentives.v1
+ * @see proto type: evmos.incentives.v1.RegisterIncentiveProposal
+ */
 export interface RegisterIncentiveProposalAmino {
-  /** title of the proposal */
+  /**
+   * title of the proposal
+   */
   title?: string;
-  /** description of the proposal */
+  /**
+   * description of the proposal
+   */
   description?: string;
-  /** contract address to be registered */
+  /**
+   * contract address to be registered
+   */
   contract?: string;
-  /** allocations defines the denoms and percentage of rewards to be allocated */
+  /**
+   * allocations defines the denoms and percentage of rewards to be allocated
+   */
   allocations?: DecCoinAmino[];
-  /** epochs is the number of remaining epochs for the incentive */
+  /**
+   * epochs is the number of remaining epochs for the incentive
+   */
   epochs?: number;
 }
 export interface RegisterIncentiveProposalAminoMsg {
@@ -142,13 +181,24 @@ export interface CancelIncentiveProposalProtoMsg {
   typeUrl: "/evmos.incentives.v1.CancelIncentiveProposal";
   value: Uint8Array;
 }
-/** CancelIncentiveProposal is a gov Content type to cancel an incentive */
+/**
+ * CancelIncentiveProposal is a gov Content type to cancel an incentive
+ * @name CancelIncentiveProposalAmino
+ * @package evmos.incentives.v1
+ * @see proto type: evmos.incentives.v1.CancelIncentiveProposal
+ */
 export interface CancelIncentiveProposalAmino {
-  /** title of the proposal */
+  /**
+   * title of the proposal
+   */
   title?: string;
-  /** description of the proposal */
+  /**
+   * description of the proposal
+   */
   description?: string;
-  /** contract address of the incentivized smart contract */
+  /**
+   * contract address of the incentivized smart contract
+   */
   contract?: string;
 }
 export interface CancelIncentiveProposalAminoMsg {
@@ -210,7 +260,7 @@ export const Incentive = {
           message.startTime = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         case 5:
-          message.totalGas = (reader.uint64() as Long);
+          message.totalGas = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -277,7 +327,7 @@ export const Incentive = {
     }
     obj.epochs = message.epochs === 0 ? undefined : message.epochs;
     obj.start_time = message.startTime ? Timestamp.toAmino(toTimestamp(message.startTime)) : undefined;
-    obj.total_gas = !message.totalGas.isZero() ? message.totalGas.toString() : undefined;
+    obj.total_gas = !message.totalGas.isZero() ? message.totalGas?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: IncentiveAminoMsg): Incentive {
@@ -337,7 +387,7 @@ export const GasMeter = {
           message.participant = reader.string();
           break;
         case 3:
-          message.cumulativeGas = (reader.uint64() as Long);
+          message.cumulativeGas = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -384,7 +434,7 @@ export const GasMeter = {
     const obj: any = {};
     obj.contract = message.contract === "" ? undefined : message.contract;
     obj.participant = message.participant === "" ? undefined : message.participant;
-    obj.cumulative_gas = !message.cumulativeGas.isZero() ? message.cumulativeGas.toString() : undefined;
+    obj.cumulative_gas = !message.cumulativeGas.isZero() ? message.cumulativeGas?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: GasMeterAminoMsg): GasMeter {

@@ -100,7 +100,12 @@ export interface ModuleSchemaDescriptorProtoMsg {
   typeUrl: "/cosmos.orm.v1alpha1.ModuleSchemaDescriptor";
   value: Uint8Array;
 }
-/** ModuleSchemaDescriptor describe's a module's ORM schema. */
+/**
+ * ModuleSchemaDescriptor describe's a module's ORM schema.
+ * @name ModuleSchemaDescriptorAmino
+ * @package cosmos.orm.v1alpha1
+ * @see proto type: cosmos.orm.v1alpha1.ModuleSchemaDescriptor
+ */
 export interface ModuleSchemaDescriptorAmino {
   schema_file?: ModuleSchemaDescriptor_FileEntryAmino[];
   /**
@@ -142,7 +147,12 @@ export interface ModuleSchemaDescriptor_FileEntryProtoMsg {
   typeUrl: "/cosmos.orm.v1alpha1.FileEntry";
   value: Uint8Array;
 }
-/** FileEntry describes an ORM file used in a module. */
+/**
+ * FileEntry describes an ORM file used in a module.
+ * @name ModuleSchemaDescriptor_FileEntryAmino
+ * @package cosmos.orm.v1alpha1
+ * @see proto type: cosmos.orm.v1alpha1.ModuleSchemaDescriptor_FileEntry
+ */
 export interface ModuleSchemaDescriptor_FileEntryAmino {
   /**
    * id is a prefix that will be varint encoded and prepended to all the
@@ -306,7 +316,7 @@ export const ModuleSchemaDescriptor_FileEntry = {
           message.protoFileName = reader.string();
           break;
         case 3:
-          message.storageType = (reader.int32() as any);
+          message.storageType = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);

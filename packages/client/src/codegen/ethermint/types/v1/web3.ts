@@ -30,6 +30,9 @@ export interface ExtensionOptionsWeb3TxProtoMsg {
 /**
  * ExtensionOptionsWeb3Tx is an extension option that specifies the typed chain id,
  * the fee payer as well as its signature data.
+ * @name ExtensionOptionsWeb3TxAmino
+ * @package ethermint.types.v1
+ * @see proto type: ethermint.types.v1.ExtensionOptionsWeb3Tx
  */
 export interface ExtensionOptionsWeb3TxAmino {
   /**
@@ -90,7 +93,7 @@ export const ExtensionOptionsWeb3Tx = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.typedDataChainId = (reader.uint64() as Long);
+          message.typedDataChainId = reader.uint64() as Long;
           break;
         case 2:
           message.feePayer = reader.string();
@@ -141,7 +144,7 @@ export const ExtensionOptionsWeb3Tx = {
   },
   toAmino(message: ExtensionOptionsWeb3Tx): ExtensionOptionsWeb3TxAmino {
     const obj: any = {};
-    obj.typed_data_chain_id = !message.typedDataChainId.isZero() ? message.typedDataChainId.toString() : undefined;
+    obj.typed_data_chain_id = !message.typedDataChainId.isZero() ? message.typedDataChainId?.toString() : undefined;
     obj.fee_payer = message.feePayer === "" ? undefined : message.feePayer;
     obj.fee_payer_sig = message.feePayerSig ? base64FromBytes(message.feePayerSig) : undefined;
     return obj;

@@ -15,6 +15,9 @@ export interface QueryCurrentPlanRequestProtoMsg {
 /**
  * QueryCurrentPlanRequest is the request type for the Query/CurrentPlan RPC
  * method.
+ * @name QueryCurrentPlanRequestAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.QueryCurrentPlanRequest
  */
 export interface QueryCurrentPlanRequestAmino {}
 export interface QueryCurrentPlanRequestAminoMsg {
@@ -41,9 +44,14 @@ export interface QueryCurrentPlanResponseProtoMsg {
 /**
  * QueryCurrentPlanResponse is the response type for the Query/CurrentPlan RPC
  * method.
+ * @name QueryCurrentPlanResponseAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.QueryCurrentPlanResponse
  */
 export interface QueryCurrentPlanResponseAmino {
-  /** plan is the current upgrade plan. */
+  /**
+   * plan is the current upgrade plan.
+   */
   plan?: PlanAmino;
 }
 export interface QueryCurrentPlanResponseAminoMsg {
@@ -72,9 +80,14 @@ export interface QueryAppliedPlanRequestProtoMsg {
 /**
  * QueryCurrentPlanRequest is the request type for the Query/AppliedPlan RPC
  * method.
+ * @name QueryAppliedPlanRequestAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.QueryAppliedPlanRequest
  */
 export interface QueryAppliedPlanRequestAmino {
-  /** name is the name of the applied plan to query for. */
+  /**
+   * name is the name of the applied plan to query for.
+   */
   name?: string;
 }
 export interface QueryAppliedPlanRequestAminoMsg {
@@ -103,9 +116,14 @@ export interface QueryAppliedPlanResponseProtoMsg {
 /**
  * QueryAppliedPlanResponse is the response type for the Query/AppliedPlan RPC
  * method.
+ * @name QueryAppliedPlanResponseAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.QueryAppliedPlanResponse
  */
 export interface QueryAppliedPlanResponseAmino {
-  /** height is the block height at which the plan was applied. */
+  /**
+   * height is the block height at which the plan was applied.
+   */
   height?: string;
 }
 export interface QueryAppliedPlanResponseAminoMsg {
@@ -138,8 +156,11 @@ export interface QueryUpgradedConsensusStateRequestProtoMsg {
 /**
  * QueryUpgradedConsensusStateRequest is the request type for the Query/UpgradedConsensusState
  * RPC method.
+ * @name QueryUpgradedConsensusStateRequestAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.QueryUpgradedConsensusStateRequest
+ * @deprecated
  */
-/** @deprecated */
 export interface QueryUpgradedConsensusStateRequestAmino {
   /**
    * last height of the current chain must be sent in request
@@ -175,10 +196,15 @@ export interface QueryUpgradedConsensusStateResponseProtoMsg {
 /**
  * QueryUpgradedConsensusStateResponse is the response type for the Query/UpgradedConsensusState
  * RPC method.
+ * @name QueryUpgradedConsensusStateResponseAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.QueryUpgradedConsensusStateResponse
+ * @deprecated
  */
-/** @deprecated */
 export interface QueryUpgradedConsensusStateResponseAmino {
-  /** Since: cosmos-sdk 0.43 */
+  /**
+   * Since: cosmos-sdk 0.43
+   */
   upgraded_consensus_state?: string;
 }
 export interface QueryUpgradedConsensusStateResponseAminoMsg {
@@ -216,6 +242,9 @@ export interface QueryModuleVersionsRequestProtoMsg {
  * RPC method.
  * 
  * Since: cosmos-sdk 0.43
+ * @name QueryModuleVersionsRequestAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.QueryModuleVersionsRequest
  */
 export interface QueryModuleVersionsRequestAmino {
   /**
@@ -257,9 +286,14 @@ export interface QueryModuleVersionsResponseProtoMsg {
  * RPC method.
  * 
  * Since: cosmos-sdk 0.43
+ * @name QueryModuleVersionsResponseAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.QueryModuleVersionsResponse
  */
 export interface QueryModuleVersionsResponseAmino {
-  /** module_versions is a list of module names with their consensus versions. */
+  /**
+   * module_versions is a list of module names with their consensus versions.
+   */
   module_versions?: ModuleVersionAmino[];
 }
 export interface QueryModuleVersionsResponseAminoMsg {
@@ -289,6 +323,9 @@ export interface QueryAuthorityRequestProtoMsg {
  * QueryAuthorityRequest is the request type for Query/Authority
  * 
  * Since: cosmos-sdk 0.46
+ * @name QueryAuthorityRequestAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.QueryAuthorityRequest
  */
 export interface QueryAuthorityRequestAmino {}
 export interface QueryAuthorityRequestAminoMsg {
@@ -317,6 +354,9 @@ export interface QueryAuthorityResponseProtoMsg {
  * QueryAuthorityResponse is the response type for Query/Authority
  * 
  * Since: cosmos-sdk 0.46
+ * @name QueryAuthorityResponseAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.QueryAuthorityResponse
  */
 export interface QueryAuthorityResponseAmino {
   address?: string;
@@ -575,7 +615,7 @@ export const QueryAppliedPlanResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.height = (reader.int64() as Long);
+          message.height = reader.int64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -608,7 +648,7 @@ export const QueryAppliedPlanResponse = {
   },
   toAmino(message: QueryAppliedPlanResponse): QueryAppliedPlanResponseAmino {
     const obj: any = {};
-    obj.height = !message.height.isZero() ? message.height.toString() : undefined;
+    obj.height = !message.height.isZero() ? message.height?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: QueryAppliedPlanResponseAminoMsg): QueryAppliedPlanResponse {
@@ -654,7 +694,7 @@ export const QueryUpgradedConsensusStateRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.lastHeight = (reader.int64() as Long);
+          message.lastHeight = reader.int64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -687,7 +727,7 @@ export const QueryUpgradedConsensusStateRequest = {
   },
   toAmino(message: QueryUpgradedConsensusStateRequest): QueryUpgradedConsensusStateRequestAmino {
     const obj: any = {};
-    obj.last_height = !message.lastHeight.isZero() ? message.lastHeight.toString() : undefined;
+    obj.last_height = !message.lastHeight.isZero() ? message.lastHeight?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: QueryUpgradedConsensusStateRequestAminoMsg): QueryUpgradedConsensusStateRequest {

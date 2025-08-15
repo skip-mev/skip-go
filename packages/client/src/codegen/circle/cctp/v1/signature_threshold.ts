@@ -18,6 +18,9 @@ export interface SignatureThresholdProtoMsg {
  * SignatureThreshold is the minimum amount of signatures required to attest to
  * a message (the 'm' in a m/n multisig)
  * @param amount the number of signatures required
+ * @name SignatureThresholdAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.SignatureThreshold
  */
 export interface SignatureThresholdAmino {
   amount?: number;

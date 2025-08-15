@@ -28,11 +28,18 @@ export interface StoreKVPairProtoMsg {
  * Deletes
  * 
  * Since: cosmos-sdk 0.43
+ * @name StoreKVPairAmino
+ * @package cosmos.base.store.v1beta1
+ * @see proto type: cosmos.base.store.v1beta1.StoreKVPair
  */
 export interface StoreKVPairAmino {
-  /** the store key for the KVStore this pair originates from */
+  /**
+   * the store key for the KVStore this pair originates from
+   */
   store_key?: string;
-  /** true indicates a delete operation, false indicates a set operation */
+  /**
+   * true indicates a delete operation, false indicates a set operation
+   */
   delete?: boolean;
   key?: string;
   value?: string;
@@ -73,6 +80,9 @@ export interface BlockMetadataProtoMsg {
 /**
  * BlockMetadata contains all the abci event data of a block
  * the file streamer dump them into files together with the state changes.
+ * @name BlockMetadataAmino
+ * @package cosmos.base.store.v1beta1
+ * @see proto type: cosmos.base.store.v1beta1.BlockMetadata
  */
 export interface BlockMetadataAmino {
   request_begin_block?: RequestBeginBlockAmino;
@@ -107,7 +117,12 @@ export interface BlockMetadata_DeliverTxProtoMsg {
   typeUrl: "/cosmos.base.store.v1beta1.DeliverTx";
   value: Uint8Array;
 }
-/** DeliverTx encapulate deliver tx request and response. */
+/**
+ * DeliverTx encapulate deliver tx request and response.
+ * @name BlockMetadata_DeliverTxAmino
+ * @package cosmos.base.store.v1beta1
+ * @see proto type: cosmos.base.store.v1beta1.BlockMetadata_DeliverTx
+ */
 export interface BlockMetadata_DeliverTxAmino {
   request?: RequestDeliverTxAmino;
   response?: ResponseDeliverTxAmino;

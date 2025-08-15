@@ -28,6 +28,9 @@ export interface TokenPairProtoMsg {
  * @param remote_domain the remote domain_id corresponding to the token
  * @param remote_token the remote token address
  * @param local_token the corresponding Noble token denom in uunits
+ * @name TokenPairAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.TokenPair
  */
 export interface TokenPairAmino {
   remote_domain?: number;

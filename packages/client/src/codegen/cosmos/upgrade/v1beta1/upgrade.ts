@@ -42,7 +42,12 @@ export interface PlanProtoMsg {
   typeUrl: "/cosmos.upgrade.v1beta1.Plan";
   value: Uint8Array;
 }
-/** Plan specifies information about a planned upgrade and when it should occur. */
+/**
+ * Plan specifies information about a planned upgrade and when it should occur.
+ * @name PlanAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.Plan
+ */
 export interface PlanAmino {
   /**
    * Sets the name for the upgrade. This name will be used by the upgraded
@@ -58,10 +63,12 @@ export interface PlanAmino {
    * Deprecated: Time based upgrades have been deprecated. Time based upgrade logic
    * has been removed from the SDK.
    * If this field is not empty, an error will be thrown.
+   * @deprecated
    */
-  /** @deprecated */
   time: string;
-  /** The height at which the upgrade must be performed. */
+  /**
+   * The height at which the upgrade must be performed.
+   */
   height?: string;
   /**
    * Any application specific upgrade info to be included on-chain
@@ -72,8 +79,8 @@ export interface PlanAmino {
    * Deprecated: UpgradedClientState field has been deprecated. IBC upgrade logic has been
    * moved to the IBC module in the sub module 02-client.
    * If this field is not empty, an error will be thrown.
+   * @deprecated
    */
-  /** @deprecated */
   upgraded_client_state?: AnyAmino;
 }
 export interface PlanAminoMsg {
@@ -114,14 +121,23 @@ export interface SoftwareUpgradeProposalProtoMsg {
  * upgrade.
  * Deprecated: This legacy proposal is deprecated in favor of Msg-based gov
  * proposals, see MsgSoftwareUpgrade.
+ * @name SoftwareUpgradeProposalAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.SoftwareUpgradeProposal
+ * @deprecated
  */
-/** @deprecated */
 export interface SoftwareUpgradeProposalAmino {
-  /** title of the proposal */
+  /**
+   * title of the proposal
+   */
   title?: string;
-  /** description of the proposal */
+  /**
+   * description of the proposal
+   */
   description?: string;
-  /** plan of the proposal */
+  /**
+   * plan of the proposal
+   */
   plan: PlanAmino;
 }
 export interface SoftwareUpgradeProposalAminoMsg {
@@ -162,12 +178,19 @@ export interface CancelSoftwareUpgradeProposalProtoMsg {
  * upgrade.
  * Deprecated: This legacy proposal is deprecated in favor of Msg-based gov
  * proposals, see MsgCancelUpgrade.
+ * @name CancelSoftwareUpgradeProposalAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.CancelSoftwareUpgradeProposal
+ * @deprecated
  */
-/** @deprecated */
 export interface CancelSoftwareUpgradeProposalAmino {
-  /** title of the proposal */
+  /**
+   * title of the proposal
+   */
   title?: string;
-  /** description of the proposal */
+  /**
+   * description of the proposal
+   */
   description?: string;
 }
 export interface CancelSoftwareUpgradeProposalAminoMsg {
@@ -204,11 +227,18 @@ export interface ModuleVersionProtoMsg {
  * ModuleVersion specifies a module and its consensus version.
  * 
  * Since: cosmos-sdk 0.43
+ * @name ModuleVersionAmino
+ * @package cosmos.upgrade.v1beta1
+ * @see proto type: cosmos.upgrade.v1beta1.ModuleVersion
  */
 export interface ModuleVersionAmino {
-  /** name of the app module */
+  /**
+   * name of the app module
+   */
   name?: string;
-  /** consensus version of the app module */
+  /**
+   * consensus version of the app module
+   */
   version?: string;
 }
 export interface ModuleVersionAminoMsg {
@@ -267,7 +297,7 @@ export const Plan = {
           message.time = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         case 3:
-          message.height = (reader.int64() as Long);
+          message.height = reader.int64() as Long;
           break;
         case 4:
           message.info = reader.string();
@@ -332,7 +362,7 @@ export const Plan = {
     const obj: any = {};
     obj.name = message.name === "" ? undefined : message.name;
     obj.time = message.time ? Timestamp.toAmino(toTimestamp(message.time)) : new Date();
-    obj.height = !message.height.isZero() ? message.height.toString() : undefined;
+    obj.height = !message.height.isZero() ? message.height?.toString() : undefined;
     obj.info = message.info === "" ? undefined : message.info;
     obj.upgraded_client_state = message.upgradedClientState ? Any.toAmino(message.upgradedClientState) : undefined;
     return obj;
@@ -587,7 +617,7 @@ export const ModuleVersion = {
           message.name = reader.string();
           break;
         case 2:
-          message.version = (reader.uint64() as Long);
+          message.version = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -627,7 +657,7 @@ export const ModuleVersion = {
   toAmino(message: ModuleVersion): ModuleVersionAmino {
     const obj: any = {};
     obj.name = message.name === "" ? undefined : message.name;
-    obj.version = !message.version.isZero() ? message.version.toString() : undefined;
+    obj.version = !message.version.isZero() ? message.version?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: ModuleVersionAminoMsg): ModuleVersion {

@@ -24,15 +24,26 @@ export interface EquivocationProtoMsg {
 /**
  * Equivocation implements the Evidence interface and defines evidence of double
  * signing misbehavior.
+ * @name EquivocationAmino
+ * @package cosmos.evidence.v1beta1
+ * @see proto type: cosmos.evidence.v1beta1.Equivocation
  */
 export interface EquivocationAmino {
-  /** height is the equivocation height. */
+  /**
+   * height is the equivocation height.
+   */
   height?: string;
-  /** time is the equivocation time. */
+  /**
+   * time is the equivocation time.
+   */
   time: string;
-  /** power is the equivocation validator power. */
+  /**
+   * power is the equivocation validator power.
+   */
   power?: string;
-  /** consensus_address is the equivocation validator consensus address. */
+  /**
+   * consensus_address is the equivocation validator consensus address.
+   */
   consensus_address?: string;
 }
 export interface EquivocationAminoMsg {
@@ -82,13 +93,13 @@ export const Equivocation = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.height = (reader.int64() as Long);
+          message.height = reader.int64() as Long;
           break;
         case 2:
           message.time = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         case 3:
-          message.power = (reader.int64() as Long);
+          message.power = reader.int64() as Long;
           break;
         case 4:
           message.consensusAddress = reader.string();
@@ -142,9 +153,9 @@ export const Equivocation = {
   },
   toAmino(message: Equivocation): EquivocationAmino {
     const obj: any = {};
-    obj.height = !message.height.isZero() ? message.height.toString() : undefined;
+    obj.height = !message.height.isZero() ? message.height?.toString() : undefined;
     obj.time = message.time ? Timestamp.toAmino(toTimestamp(message.time)) : new Date();
-    obj.power = !message.power.isZero() ? message.power.toString() : undefined;
+    obj.power = !message.power.isZero() ? message.power?.toString() : undefined;
     obj.consensus_address = message.consensusAddress === "" ? undefined : message.consensusAddress;
     return obj;
   },

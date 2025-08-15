@@ -28,18 +28,29 @@ export interface GenesisStateProtoMsg {
   typeUrl: "/cosmos.bank.v1beta1.GenesisState";
   value: Uint8Array;
 }
-/** GenesisState defines the bank module's genesis state. */
+/**
+ * GenesisState defines the bank module's genesis state.
+ * @name GenesisStateAmino
+ * @package cosmos.bank.v1beta1
+ * @see proto type: cosmos.bank.v1beta1.GenesisState
+ */
 export interface GenesisStateAmino {
-  /** params defines all the parameters of the module. */
+  /**
+   * params defines all the parameters of the module.
+   */
   params: ParamsAmino;
-  /** balances is an array containing the balances of all the accounts. */
+  /**
+   * balances is an array containing the balances of all the accounts.
+   */
   balances: BalanceAmino[];
   /**
    * supply represents the total supply. If it is left empty, then supply will be calculated based on the provided
    * balances. Otherwise, it will be used to validate that the sum of the balances equals this amount.
    */
   supply: CoinAmino[];
-  /** denom_metadata defines the metadata of the different coins. */
+  /**
+   * denom_metadata defines the metadata of the different coins.
+   */
   denom_metadata: MetadataAmino[];
   /**
    * send_enabled defines the denoms where send is enabled or disabled.
@@ -77,11 +88,18 @@ export interface BalanceProtoMsg {
 /**
  * Balance defines an account address and balance pair used in the bank module's
  * genesis state.
+ * @name BalanceAmino
+ * @package cosmos.bank.v1beta1
+ * @see proto type: cosmos.bank.v1beta1.Balance
  */
 export interface BalanceAmino {
-  /** address is the address of the balance holder. */
+  /**
+   * address is the address of the balance holder.
+   */
   address?: string;
-  /** coins defines the different coins this balance holds. */
+  /**
+   * coins defines the different coins this balance holds.
+   */
   coins: CoinAmino[];
 }
 export interface BalanceAminoMsg {

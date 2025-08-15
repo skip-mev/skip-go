@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { DecCoin, DecCoinAmino, DecCoinSDKType } from "../../../cosmos/base/v1beta1/coin";
 import { Params, ParamsAmino, ParamsSDKType } from "./genesis";
-import { Long, isSet, padDecimal } from "../../../helpers";
+import { Long, isSet } from "../../../helpers";
 import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 import { Decimal } from "@cosmjs/math";
@@ -11,7 +11,12 @@ export interface QueryPeriodRequestProtoMsg {
   typeUrl: "/evmos.inflation.v1.QueryPeriodRequest";
   value: Uint8Array;
 }
-/** QueryPeriodRequest is the request type for the Query/Period RPC method. */
+/**
+ * QueryPeriodRequest is the request type for the Query/Period RPC method.
+ * @name QueryPeriodRequestAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.QueryPeriodRequest
+ */
 export interface QueryPeriodRequestAmino {}
 export interface QueryPeriodRequestAminoMsg {
   type: "inflation/QueryPeriodRequest";
@@ -28,9 +33,16 @@ export interface QueryPeriodResponseProtoMsg {
   typeUrl: "/evmos.inflation.v1.QueryPeriodResponse";
   value: Uint8Array;
 }
-/** QueryPeriodResponse is the response type for the Query/Period RPC method. */
+/**
+ * QueryPeriodResponse is the response type for the Query/Period RPC method.
+ * @name QueryPeriodResponseAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.QueryPeriodResponse
+ */
 export interface QueryPeriodResponseAmino {
-  /** period is the current minting per epoch provision value. */
+  /**
+   * period is the current minting per epoch provision value.
+   */
   period?: string;
 }
 export interface QueryPeriodResponseAminoMsg {
@@ -53,6 +65,9 @@ export interface QueryEpochMintProvisionRequestProtoMsg {
 /**
  * QueryEpochMintProvisionRequest is the request type for the
  * Query/EpochMintProvision RPC method.
+ * @name QueryEpochMintProvisionRequestAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.QueryEpochMintProvisionRequest
  */
 export interface QueryEpochMintProvisionRequestAmino {}
 export interface QueryEpochMintProvisionRequestAminoMsg {
@@ -79,9 +94,14 @@ export interface QueryEpochMintProvisionResponseProtoMsg {
 /**
  * QueryEpochMintProvisionResponse is the response type for the
  * Query/EpochMintProvision RPC method.
+ * @name QueryEpochMintProvisionResponseAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.QueryEpochMintProvisionResponse
  */
 export interface QueryEpochMintProvisionResponseAmino {
-  /** epoch_mint_provision is the current minting per epoch provision value. */
+  /**
+   * epoch_mint_provision is the current minting per epoch provision value.
+   */
   epoch_mint_provision?: DecCoinAmino;
 }
 export interface QueryEpochMintProvisionResponseAminoMsg {
@@ -107,6 +127,9 @@ export interface QuerySkippedEpochsRequestProtoMsg {
 /**
  * QuerySkippedEpochsRequest is the request type for the Query/SkippedEpochs RPC
  * method.
+ * @name QuerySkippedEpochsRequestAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.QuerySkippedEpochsRequest
  */
 export interface QuerySkippedEpochsRequestAmino {}
 export interface QuerySkippedEpochsRequestAminoMsg {
@@ -133,9 +156,14 @@ export interface QuerySkippedEpochsResponseProtoMsg {
 /**
  * QuerySkippedEpochsResponse is the response type for the Query/SkippedEpochs
  * RPC method.
+ * @name QuerySkippedEpochsResponseAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.QuerySkippedEpochsResponse
  */
 export interface QuerySkippedEpochsResponseAmino {
-  /** skipped_epochs is the number of epochs that the inflation module has been disabled. */
+  /**
+   * skipped_epochs is the number of epochs that the inflation module has been disabled.
+   */
   skipped_epochs?: string;
 }
 export interface QuerySkippedEpochsResponseAminoMsg {
@@ -161,6 +189,9 @@ export interface QueryCirculatingSupplyRequestProtoMsg {
 /**
  * QueryCirculatingSupplyRequest is the request type for the
  * Query/CirculatingSupply RPC method.
+ * @name QueryCirculatingSupplyRequestAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.QueryCirculatingSupplyRequest
  */
 export interface QueryCirculatingSupplyRequestAmino {}
 export interface QueryCirculatingSupplyRequestAminoMsg {
@@ -187,9 +218,14 @@ export interface QueryCirculatingSupplyResponseProtoMsg {
 /**
  * QueryCirculatingSupplyResponse is the response type for the
  * Query/CirculatingSupply RPC method.
+ * @name QueryCirculatingSupplyResponseAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.QueryCirculatingSupplyResponse
  */
 export interface QueryCirculatingSupplyResponseAmino {
-  /** circulating_supply is the total amount of coins in circulation */
+  /**
+   * circulating_supply is the total amount of coins in circulation
+   */
   circulating_supply?: DecCoinAmino;
 }
 export interface QueryCirculatingSupplyResponseAminoMsg {
@@ -215,6 +251,9 @@ export interface QueryInflationRateRequestProtoMsg {
 /**
  * QueryInflationRateRequest is the request type for the Query/InflationRate RPC
  * method.
+ * @name QueryInflationRateRequestAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.QueryInflationRateRequest
  */
 export interface QueryInflationRateRequestAmino {}
 export interface QueryInflationRateRequestAminoMsg {
@@ -241,9 +280,14 @@ export interface QueryInflationRateResponseProtoMsg {
 /**
  * QueryInflationRateResponse is the response type for the Query/InflationRate
  * RPC method.
+ * @name QueryInflationRateResponseAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.QueryInflationRateResponse
  */
 export interface QueryInflationRateResponseAmino {
-  /** inflation_rate by which the total supply increases within one period */
+  /**
+   * inflation_rate by which the total supply increases within one period
+   */
   inflation_rate?: string;
 }
 export interface QueryInflationRateResponseAminoMsg {
@@ -263,7 +307,12 @@ export interface QueryParamsRequestProtoMsg {
   typeUrl: "/evmos.inflation.v1.QueryParamsRequest";
   value: Uint8Array;
 }
-/** QueryParamsRequest is the request type for the Query/Params RPC method. */
+/**
+ * QueryParamsRequest is the request type for the Query/Params RPC method.
+ * @name QueryParamsRequestAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.QueryParamsRequest
+ */
 export interface QueryParamsRequestAmino {}
 export interface QueryParamsRequestAminoMsg {
   type: "inflation/QueryParamsRequest";
@@ -280,9 +329,16 @@ export interface QueryParamsResponseProtoMsg {
   typeUrl: "/evmos.inflation.v1.QueryParamsResponse";
   value: Uint8Array;
 }
-/** QueryParamsResponse is the response type for the Query/Params RPC method. */
+/**
+ * QueryParamsResponse is the response type for the Query/Params RPC method.
+ * @name QueryParamsResponseAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.QueryParamsResponse
+ */
 export interface QueryParamsResponseAmino {
-  /** params defines the parameters of the module. */
+  /**
+   * params defines the parameters of the module.
+   */
   params?: ParamsAmino;
 }
 export interface QueryParamsResponseAminoMsg {
@@ -377,7 +433,7 @@ export const QueryPeriodResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.period = (reader.uint64() as Long);
+          message.period = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -410,7 +466,7 @@ export const QueryPeriodResponse = {
   },
   toAmino(message: QueryPeriodResponse): QueryPeriodResponseAmino {
     const obj: any = {};
-    obj.period = !message.period.isZero() ? message.period.toString() : undefined;
+    obj.period = !message.period.isZero() ? message.period?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: QueryPeriodResponseAminoMsg): QueryPeriodResponse {
@@ -661,7 +717,7 @@ export const QuerySkippedEpochsResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.skippedEpochs = (reader.uint64() as Long);
+          message.skippedEpochs = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -694,7 +750,7 @@ export const QuerySkippedEpochsResponse = {
   },
   toAmino(message: QuerySkippedEpochsResponse): QuerySkippedEpochsResponseAmino {
     const obj: any = {};
-    obj.skipped_epochs = !message.skippedEpochs.isZero() ? message.skippedEpochs.toString() : undefined;
+    obj.skipped_epochs = !message.skippedEpochs.isZero() ? message.skippedEpochs?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: QuerySkippedEpochsResponseAminoMsg): QuerySkippedEpochsResponse {
@@ -978,7 +1034,7 @@ export const QueryInflationRateResponse = {
   },
   toAmino(message: QueryInflationRateResponse): QueryInflationRateResponseAmino {
     const obj: any = {};
-    obj.inflation_rate = padDecimal(message.inflationRate) === "" ? undefined : padDecimal(message.inflationRate);
+    obj.inflation_rate = message.inflationRate === "" ? undefined : Decimal.fromUserInput(message.inflationRate, 18).atomics;
     return obj;
   },
   fromAminoMsg(object: QueryInflationRateResponseAminoMsg): QueryInflationRateResponse {

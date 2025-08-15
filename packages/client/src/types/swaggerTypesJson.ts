@@ -10,6 +10,280 @@
  * ---------------------------------------------------------------
  */
 
+/**
+ * Indicates whether the fee is deducted from the transfer amount or charged additionally.
+ * - FEE_BEHAVIOR_DEDUCTED: Fee is subtracted from the transfer amount (default, typical for Cosmos chains)
+ * - FEE_BEHAVIOR_ADDITIONAL: Fee is charged on top of the transfer amount (typical for EVM chains with native tokens)
+ */
+export enum FeeBehaviorJson {
+  FEE_BEHAVIOR_DEDUCTED = "FEE_BEHAVIOR_DEDUCTED",
+  FEE_BEHAVIOR_ADDITIONAL = "FEE_BEHAVIOR_ADDITIONAL",
+}
+
+/**
+ * Fee type:
+ * * SMART_RELAY - Fees for Smart relaying services.'
+ */
+export enum FeeTypeJson {
+  SMART_RELAY = "SMART_RELAY",
+}
+
+/**
+ * Transfer state:
+ * * `TRANSFER_UNKNOWN` - Transfer state is not known.
+ * * `TRANSFER_PENDING` - The send packet for the transfer has been committed and the transfer is pending.
+ * * `TRANSFER_RECEIVED` - The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer.
+ * * `TRANSFER_SUCCESS` - The transfer has been successfully completed and will not revert.
+ * * `TRANSFER_FAILURE`- The transfer has failed.
+ */
+export enum TransferStateJson {
+  TRANSFER_UNKNOWN = "TRANSFER_UNKNOWN",
+  TRANSFER_PENDING = "TRANSFER_PENDING",
+  TRANSFER_RECEIVED = "TRANSFER_RECEIVED",
+  TRANSFER_SUCCESS = "TRANSFER_SUCCESS",
+  TRANSFER_FAILURE = "TRANSFER_FAILURE",
+}
+
+/**
+ * LayerZero transfer state:
+ * * `LAYER_ZERO_TRANSFER_UNKNOWN` - Unknown error
+ * * `LAYER_ZERO_TRANSFER_SENT` - The transaction on the source chain has executed
+ * * `LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE` - The transfer has been delivered to the destination chain but there is an additional lz_compose transaction that still needs to be delivered before marking this transfer as LAYER_ZERO_TRANSFER_RECEIVED
+ * * `LAYER_ZERO_TRANSFER_RECEIVED` - The transfer has been received at the destination chain
+ * * `LAYER_ZERO_TRANSFER_FAILED` - The transfer has failed
+ */
+export enum LayerZeroTransferStateJson {
+  LAYER_ZERO_TRANSFER_UNKNOWN = "LAYER_ZERO_TRANSFER_UNKNOWN",
+  LAYER_ZERO_TRANSFER_SENT = "LAYER_ZERO_TRANSFER_SENT",
+  LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE = "LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE",
+  LAYER_ZERO_TRANSFER_RECEIVED = "LAYER_ZERO_TRANSFER_RECEIVED",
+  LAYER_ZERO_TRANSFER_FAILED = "LAYER_ZERO_TRANSFER_FAILED",
+}
+
+/**
+ * OPInit transfer state:
+ * * `OPINIT_TRANSFER_UNKNOWN` - Unknown error
+ * * `OPINIT_TRANSFER_SENT` - The deposit transaction on the source chain has executed
+ * * `OPINIT_TRANSFER_RECEIVED` - OPInit transfer has been received at the destination chain
+ */
+export enum OPInitTransferStateJson {
+  OPINIT_TRANSFER_UNKNOWN = "OPINIT_TRANSFER_UNKNOWN",
+  OPINIT_TRANSFER_SENT = "OPINIT_TRANSFER_SENT",
+  OPINIT_TRANSFER_RECEIVED = "OPINIT_TRANSFER_RECEIVED",
+}
+
+/**
+ * Transaction state:
+ * * `STATE_SUBMITTED` - The initial transaction has been submitted to Skip Go API but not observed on chain yet
+ * * `STATE_PENDING` - The initial transaction has been observed on chain, and there are still pending actions
+ * * `STATE_COMPLETED_SUCCESS` - The route has completed successfully and the user has their tokens on the destination. (indicated by `transfer_asset_release`)
+ * * `STATE_COMPLETED_ERROR` - The route errored somewhere and the user has their tokens unlocked in one of their wallets. Their tokens are either on the source chain, an intermediate chain, or the destination chain but as the wrong asset.
+ * (Again, `transfer_asset_release` indicates where the tokens are)
+ * * `STATE_ABANDONED` - Tracking for the transaction has been abandoned. This happens if the cross-chain  sequence of actions stalls for more than 10 minutes or if the initial transaction does not get observed in a block for 5 minutes.
+ * * `STATE_PENDING_ERROR` - The overall transaction will fail, pending error propagation
+ */
+export enum TransactionStateJson {
+  STATE_SUBMITTED = "STATE_SUBMITTED",
+  STATE_PENDING = "STATE_PENDING",
+  STATE_ABANDONED = "STATE_ABANDONED",
+  STATE_COMPLETED_SUCCESS = "STATE_COMPLETED_SUCCESS",
+  STATE_COMPLETED_ERROR = "STATE_COMPLETED_ERROR",
+  STATE_PENDING_ERROR = "STATE_PENDING_ERROR",
+}
+
+/**
+ * Packet error types:
+ * * `STATUS_ERROR_UNKNOWN` - Unknown error
+ * * `STATUS_ERROR_TRANSACTION_EXECUTION` - Error was encountered during transaction execution
+ * * `STATUS_ERROR_INDEXING` - Error was encountered while indexing the transaction and packet data
+ * * `STATUS_ERROR_TRANSFER` - The transfer failed to complete successfully
+ */
+export enum StatusErrorTypeJson {
+  STATUS_ERROR_UNKNOWN = "STATUS_ERROR_UNKNOWN",
+  STATUS_ERROR_TRANSACTION_EXECUTION = "STATUS_ERROR_TRANSACTION_EXECUTION",
+  STATUS_ERROR_INDEXING = "STATUS_ERROR_INDEXING",
+  STATUS_ERROR_TRANSFER = "STATUS_ERROR_TRANSFER",
+}
+
+/**
+ * SendToken error types:
+ * * `SEND_TOKEN_EXECUTION_ERROR` - Error occurred during the execute transaction
+ */
+export enum SendTokenErrorTypeJson {
+  SEND_TOKEN_EXECUTION_ERROR = "SEND_TOKEN_EXECUTION_ERROR",
+}
+
+/**
+ * Recommendation reason:
+ * * `LOW_INFO_WARNING` - Not enough asset pricing information to determine the price safety of the route.
+ * * `BAD_PRICE_WARNING` - The execution price of the route deviates significantly from the current market price.
+ */
+export enum RoutePriceWarningTypeJson {
+  LOW_INFO_WARNING = "LOW_INFO_WARNING",
+  BAD_PRICE_WARNING = "BAD_PRICE_WARNING",
+}
+
+/**
+ * Recommendation reason:
+ * * `UNKNOWN` - Unknown recommendation reason.
+ * * `MOST_LIQUID` - Highest liquidity form of the transferred token on the destination chain.
+ * * `BASE_TOKEN` - The base token if the destination chain is the origin chain of the source token.
+ * * `DIRECT` - The token resulting from the least amount of transfers to the destination chain.
+ */
+export enum ReasonJson {
+  UNKNOWN = "UNKNOWN",
+  MOST_LIQUID = "MOST_LIQUID",
+  BASE_TOKEN = "BASE_TOKEN",
+  DIRECT = "DIRECT",
+}
+
+/**
+ * Packet error type:
+ * * `PACKET_ERROR_UNKNOWN` - Unknown error
+ * * `PACKET_ERROR_ACKNOWLEDGEMENT` - Packet acknowledgement error
+ * * `PACKET_ERROR_TIMEOUT` - Packet timed out
+ */
+export enum PacketErrorTypeJson {
+  PACKET_ERROR_UNKNOWN = "PACKET_ERROR_UNKNOWN",
+  PACKET_ERROR_ACKNOWLEDGEMENT = "PACKET_ERROR_ACKNOWLEDGEMENT",
+  PACKET_ERROR_TIMEOUT = "PACKET_ERROR_TIMEOUT",
+}
+
+/**
+ * Hyperlane transfer state:
+ * * `HYPERLANE_TRANSFER_UNKNOWN` - Unknown error
+ * * `HYPERLANE_TRANSFER_SENT` - The Hyperlane transfer transaction on the source chain has executed
+ * * `HYPERLANE_TRANSFER_FAILED` - The Hyperlane transfer failed
+ * * `HYPERLANE_TRANSFER_RECEIVED` - The Hyperlane transfer has been received at the destination chain
+ */
+export enum HyperlaneTransferStateJson {
+  HYPERLANE_TRANSFER_UNKNOWN = "HYPERLANE_TRANSFER_UNKNOWN",
+  HYPERLANE_TRANSFER_SENT = "HYPERLANE_TRANSFER_SENT",
+  HYPERLANE_TRANSFER_FAILED = "HYPERLANE_TRANSFER_FAILED",
+  HYPERLANE_TRANSFER_RECEIVED = "HYPERLANE_TRANSFER_RECEIVED",
+}
+
+/**
+ * ContractCallWithToken errors:
+ * * `CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR` - Error occurred during the execute transaction
+ */
+export enum ContractCallWithTokenErrorTypeJson {
+  CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR = "CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR",
+}
+
+export enum ChainTypeJson {
+  Cosmos = "cosmos",
+  Evm = "evm",
+  Svm = "svm",
+}
+
+/**
+ * Bridge Type:
+ * * `IBC` - IBC Bridge
+ * * `AXELAR` - Axelar Bridge
+ * * `CCTP` - CCTP Bridge
+ * * `HYPERLANE` - Hyperlane Bridge
+ * * `OPINIT` - Opinit Bridge
+ * * `GO_FAST` - Go Fast Bridge
+ * * `STARGATE` - Stargate Bridge
+ * * `LAYER_ZERO` - Layerzero Bridge
+ * * `EUREKA` - IBC Eureka Bridge
+ */
+export enum BridgeTypeJson {
+  IBC = "IBC",
+  AXELAR = "AXELAR",
+  CCTP = "CCTP",
+  HYPERLANE = "HYPERLANE",
+  OPINIT = "OPINIT",
+  GO_FAST = "GO_FAST",
+  STARGATE = "STARGATE",
+  LAYER_ZERO = "LAYER_ZERO",
+  EUREKA = "EUREKA",
+}
+
+/**
+ * GoFast transfer state:
+ * * `GO_FAST_TRANSFER_UNKNOWN` - Unknown state
+ * * `GO_FAST_TRANSFER_SENT` - Order submitted on source chain
+ * * `GO_FAST_POST_ACTION_FAILED` - Order filled, but subsequent action (e.g., swap) failed
+ * * `GO_FAST_TRANSFER_TIMEOUT` - Order timed out
+ * * `GO_FAST_TRANSFER_FILLED` - Order filled on destination chain
+ * * `GO_FAST_TRANSFER_REFUNDED` - Order refunded
+ */
+export enum GoFastTransferStateJson {
+  GO_FAST_TRANSFER_UNKNOWN = "GO_FAST_TRANSFER_UNKNOWN",
+  GO_FAST_TRANSFER_SENT = "GO_FAST_TRANSFER_SENT",
+  GO_FAST_POST_ACTION_FAILED = "GO_FAST_POST_ACTION_FAILED",
+  GO_FAST_TRANSFER_TIMEOUT = "GO_FAST_TRANSFER_TIMEOUT",
+  GO_FAST_TRANSFER_FILLED = "GO_FAST_TRANSFER_FILLED",
+  GO_FAST_TRANSFER_REFUNDED = "GO_FAST_TRANSFER_REFUNDED",
+}
+
+/**
+ * Stargate transfer state:
+ * * `STARGATE_TRANSFER_UNKNOWN` - Unknown error
+ * * `STARGATE_TRANSFER_SENT` - The Stargate transfer transaction on the source chain has executed
+ * * `STARGATE_TRANSFER_PENDING_CONFIRMATION` - Stargate transfer is pending confirmation
+ * * `STARGATE_TRANSFER_CONFIRMED` - Stargate transfer has been confirmed
+ * * `STARGATE_TRANSFER_RECEIVED` - Stargate transfer has been received at the destination chain
+ * * `STARGATE_TRANSFER_FAILED` - Stargate transfer failed
+ */
+export enum StargateTransferStateJson {
+  STARGATE_TRANSFER_UNKNOWN = "STARGATE_TRANSFER_UNKNOWN",
+  STARGATE_TRANSFER_SENT = "STARGATE_TRANSFER_SENT",
+  STARGATE_TRANSFER_PENDING_CONFIRMATION = "STARGATE_TRANSFER_PENDING_CONFIRMATION",
+  STARGATE_TRANSFER_CONFIRMED = "STARGATE_TRANSFER_CONFIRMED",
+  STARGATE_TRANSFER_RECEIVED = "STARGATE_TRANSFER_RECEIVED",
+  STARGATE_TRANSFER_FAILED = "STARGATE_TRANSFER_FAILED",
+}
+
+/**
+ * CCTP transfer state:
+ * * `CCTP_TRANSFER_UNKNOWN` - Unknown error
+ * * `CCTP_TRANSFER_SENT` - The burn transaction on the source chain has executed
+ * * `CCTP_TRANSFER_PENDING_CONFIRMATION` - CCTP transfer is pending confirmation by the cctp attestation api
+ * * `CCTP_TRANSFER_CONFIRMED` - CCTP transfer has been confirmed by the cctp attestation api
+ * * `CCTP_TRANSFER_RECEIVED` - CCTP transfer has been received at the destination chain
+ */
+export enum CCTPTransferStateJson {
+  CCTP_TRANSFER_UNKNOWN = "CCTP_TRANSFER_UNKNOWN",
+  CCTP_TRANSFER_SENT = "CCTP_TRANSFER_SENT",
+  CCTP_TRANSFER_PENDING_CONFIRMATION = "CCTP_TRANSFER_PENDING_CONFIRMATION",
+  CCTP_TRANSFER_CONFIRMED = "CCTP_TRANSFER_CONFIRMED",
+  CCTP_TRANSFER_RECEIVED = "CCTP_TRANSFER_RECEIVED",
+}
+
+/**
+ * Axelar transfer type:
+ * * `AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN` - GMP contract call with token transfer type
+ * * `AXELAR_TRANSFER_SEND_TOKEN` - Send token transfer type
+ */
+export enum AxelarTransferTypeJson {
+  AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN = "AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN",
+  AXELAR_TRANSFER_SEND_TOKEN = "AXELAR_TRANSFER_SEND_TOKEN",
+}
+
+/**
+ * Axelar transfer state:
+ * * `AXELAR_TRANSFER_UNKNOWN` - Unknown error
+ * * `AXELAR_TRANSFER_PENDING_CONFIRMATION` - Axelar transfer is pending confirmation
+ * * `AXELAR_TRANSFER_PENDING_RECEIPT` - Axelar transfer is pending receipt at destination
+ * * `AXELAR_TRANSFER_SUCCESS` - Axelar transfer succeeded and assets have been received
+ * * `AXELAR_TRANSFER_FAILURE` - Axelar transfer failed
+ */
+export enum AxelarTransferStateJson {
+  AXELAR_TRANSFER_UNKNOWN = "AXELAR_TRANSFER_UNKNOWN",
+  AXELAR_TRANSFER_PENDING_CONFIRMATION = "AXELAR_TRANSFER_PENDING_CONFIRMATION",
+  AXELAR_TRANSFER_PENDING_RECEIPT = "AXELAR_TRANSFER_PENDING_RECEIPT",
+  AXELAR_TRANSFER_SUCCESS = "AXELAR_TRANSFER_SUCCESS",
+  AXELAR_TRANSFER_FAILURE = "AXELAR_TRANSFER_FAILURE",
+}
+
+export enum AutopilotActionJson {
+  LIQUID_STAKE = "LIQUID_STAKE",
+  CLAIM = "CLAIM",
+}
+
 export interface AcknowledgementErrorDetailsJson {
   /** Error code */
   code?: number;
@@ -79,11 +353,6 @@ export interface AssetRecommendationJson {
   asset?: AssetJson;
   /** Reason for recommending the asset */
   reason?: ReasonJson;
-}
-
-export enum AutopilotActionJson {
-  LIQUID_STAKE = "LIQUID_STAKE",
-  CLAIM = "CLAIM",
 }
 
 export interface AutopilotMsgJson {
@@ -170,32 +439,6 @@ export interface AxelarTransferInfoJson {
   type?: AxelarTransferTypeJson;
 }
 
-/**
- * Axelar transfer state:
- * * `AXELAR_TRANSFER_UNKNOWN` - Unknown error
- * * `AXELAR_TRANSFER_PENDING_CONFIRMATION` - Axelar transfer is pending confirmation
- * * `AXELAR_TRANSFER_PENDING_RECEIPT` - Axelar transfer is pending receipt at destination
- * * `AXELAR_TRANSFER_SUCCESS` - Axelar transfer succeeded and assets have been received
- * * `AXELAR_TRANSFER_FAILURE` - Axelar transfer failed
- */
-export enum AxelarTransferStateJson {
-  AXELAR_TRANSFER_UNKNOWN = "AXELAR_TRANSFER_UNKNOWN",
-  AXELAR_TRANSFER_PENDING_CONFIRMATION = "AXELAR_TRANSFER_PENDING_CONFIRMATION",
-  AXELAR_TRANSFER_PENDING_RECEIPT = "AXELAR_TRANSFER_PENDING_RECEIPT",
-  AXELAR_TRANSFER_SUCCESS = "AXELAR_TRANSFER_SUCCESS",
-  AXELAR_TRANSFER_FAILURE = "AXELAR_TRANSFER_FAILURE",
-}
-
-/**
- * Axelar transfer type:
- * * `AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN` - GMP contract call with token transfer type
- * * `AXELAR_TRANSFER_SEND_TOKEN` - Send token transfer type
- */
-export enum AxelarTransferTypeJson {
-  AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN = "AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN",
-  AXELAR_TRANSFER_SEND_TOKEN = "AXELAR_TRANSFER_SEND_TOKEN",
-}
-
 export interface AxelarTransferWrapperJson {
   /** A transfer facilitated by the Axelar bridge */
   axelar_transfer?: AxelarTransferJson;
@@ -267,22 +510,6 @@ export interface CCTPTransferTxsJson {
   receive_tx?: ChainTransactionJson | null;
 }
 
-/**
- * CCTP transfer state:
- * * `CCTP_TRANSFER_UNKNOWN` - Unknown error
- * * `CCTP_TRANSFER_SENT` - The burn transaction on the source chain has executed
- * * `CCTP_TRANSFER_PENDING_CONFIRMATION` - CCTP transfer is pending confirmation by the cctp attestation api
- * * `CCTP_TRANSFER_CONFIRMED` - CCTP transfer has been confirmed by the cctp attestation api
- * * `CCTP_TRANSFER_RECEIVED` - CCTP transfer has been received at the destination chain
- */
-export enum CCTPTransferStateJson {
-  CCTP_TRANSFER_UNKNOWN = "CCTP_TRANSFER_UNKNOWN",
-  CCTP_TRANSFER_SENT = "CCTP_TRANSFER_SENT",
-  CCTP_TRANSFER_PENDING_CONFIRMATION = "CCTP_TRANSFER_PENDING_CONFIRMATION",
-  CCTP_TRANSFER_CONFIRMED = "CCTP_TRANSFER_CONFIRMED",
-  CCTP_TRANSFER_RECEIVED = "CCTP_TRANSFER_RECEIVED",
-}
-
 export interface CCTPTransferWrapperJson {
   /** A transfer facilitated by the CCTP bridge */
   cctp_transfer?: CCTPTransferJson;
@@ -319,24 +546,6 @@ export interface StargateTransferJson {
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
-}
-
-/**
- * Stargate transfer state:
- * * `STARGATE_TRANSFER_UNKNOWN` - Unknown error
- * * `STARGATE_TRANSFER_SENT` - The Stargate transfer transaction on the source chain has executed
- * * `STARGATE_TRANSFER_PENDING_CONFIRMATION` - Stargate transfer is pending confirmation
- * * `STARGATE_TRANSFER_CONFIRMED` - Stargate transfer has been confirmed
- * * `STARGATE_TRANSFER_RECEIVED` - Stargate transfer has been received at the destination chain
- * * `STARGATE_TRANSFER_FAILED` - Stargate transfer failed
- */
-export enum StargateTransferStateJson {
-  STARGATE_TRANSFER_UNKNOWN = "STARGATE_TRANSFER_UNKNOWN",
-  STARGATE_TRANSFER_SENT = "STARGATE_TRANSFER_SENT",
-  STARGATE_TRANSFER_PENDING_CONFIRMATION = "STARGATE_TRANSFER_PENDING_CONFIRMATION",
-  STARGATE_TRANSFER_CONFIRMED = "STARGATE_TRANSFER_CONFIRMED",
-  STARGATE_TRANSFER_RECEIVED = "STARGATE_TRANSFER_RECEIVED",
-  STARGATE_TRANSFER_FAILED = "STARGATE_TRANSFER_FAILED",
 }
 
 export interface StargateTransferTxsJson {
@@ -397,24 +606,6 @@ export interface GoFastTransferJson {
   source_domain?: string;
   /** Destination domain ID of the transfer */
   destination_domain?: string;
-}
-
-/**
- * GoFast transfer state:
- * * `GO_FAST_TRANSFER_UNKNOWN` - Unknown state
- * * `GO_FAST_TRANSFER_SENT` - Order submitted on source chain
- * * `GO_FAST_POST_ACTION_FAILED` - Order filled, but subsequent action (e.g., swap) failed
- * * `GO_FAST_TRANSFER_TIMEOUT` - Order timed out
- * * `GO_FAST_TRANSFER_FILLED` - Order filled on destination chain
- * * `GO_FAST_TRANSFER_REFUNDED` - Order refunded
- */
-export enum GoFastTransferStateJson {
-  GO_FAST_TRANSFER_UNKNOWN = "GO_FAST_TRANSFER_UNKNOWN",
-  GO_FAST_TRANSFER_SENT = "GO_FAST_TRANSFER_SENT",
-  GO_FAST_POST_ACTION_FAILED = "GO_FAST_POST_ACTION_FAILED",
-  GO_FAST_TRANSFER_TIMEOUT = "GO_FAST_TRANSFER_TIMEOUT",
-  GO_FAST_TRANSFER_FILLED = "GO_FAST_TRANSFER_FILLED",
-  GO_FAST_TRANSFER_REFUNDED = "GO_FAST_TRANSFER_REFUNDED",
 }
 
 export interface GoFastTransferTxsJson {
@@ -501,30 +692,6 @@ export interface BridgeJson {
   logo_uri?: string;
 }
 
-/**
- * Bridge Type:
- * * `IBC` - IBC Bridge
- * * `AXELAR` - Axelar Bridge
- * * `CCTP` - CCTP Bridge
- * * `HYPERLANE` - Hyperlane Bridge
- * * `OPINIT` - Opinit Bridge
- * * `GO_FAST` - Go Fast Bridge
- * * `STARGATE` - Stargate Bridge
- * * `LAYER_ZERO` - Layerzero Bridge
- * * `EUREKA` - IBC Eureka Bridge
- */
-export enum BridgeTypeJson {
-  IBC = "IBC",
-  AXELAR = "AXELAR",
-  CCTP = "CCTP",
-  HYPERLANE = "HYPERLANE",
-  OPINIT = "OPINIT",
-  GO_FAST = "GO_FAST",
-  STARGATE = "STARGATE",
-  LAYER_ZERO = "LAYER_ZERO",
-  EUREKA = "EUREKA",
-}
-
 export interface ChainJson {
   /** Name of the chain */
   chain_name: string;
@@ -552,12 +719,6 @@ export interface ChainJson {
   pretty_name: string;
 }
 
-export enum ChainTypeJson {
-  Cosmos = "cosmos",
-  Evm = "evm",
-  Svm = "svm",
-}
-
 export interface ChainAffiliatesJson {
   /** An array of affiliates that receives fees from a swap */
   affiliates?: AffiliateJson[];
@@ -571,14 +732,6 @@ export interface ContractCallWithTokenErrorJson {
    * * `CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR` - Error occurred during the execute transaction
    */
   type?: ContractCallWithTokenErrorTypeJson;
-}
-
-/**
- * ContractCallWithToken errors:
- * * `CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR` - Error occurred during the execute transaction
- */
-export enum ContractCallWithTokenErrorTypeJson {
-  CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR = "CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR",
 }
 
 export interface ContractCallWithTokenTxsJson {
@@ -616,8 +769,9 @@ export interface ErrorDetailJson {
    * Error detail:
    * * `LOW_INFO_ERROR` - Not enough asset pricing information to determine the price safety of the route.
    * * `BAD_PRICE_ERROR` - The execution price of the route deviates significantly from the current market price.
+   * * `HIGH_LOSS_ERROR` - The route would result in a USD loss exceeding the configured threshold and has been blocked.
    */
-  reason?: "LOW_INFO_ERROR" | "BAD_PRICE_ERROR";
+  reason?: "LOW_INFO_ERROR" | "BAD_PRICE_ERROR" | "HIGH_LOSS_ERROR";
 }
 
 export interface ErrorJson {
@@ -795,20 +949,6 @@ export interface HyperlaneTransferInfoJson {
   txs: HyperlaneTransferTransactionsJson;
 }
 
-/**
- * Hyperlane transfer state:
- * * `HYPERLANE_TRANSFER_UNKNOWN` - Unknown error
- * * `HYPERLANE_TRANSFER_SENT` - The Hyperlane transfer transaction on the source chain has executed
- * * `HYPERLANE_TRANSFER_FAILED` - The Hyperlane transfer failed
- * * `HYPERLANE_TRANSFER_RECEIVED` - The Hyperlane transfer has been received at the destination chain
- */
-export enum HyperlaneTransferStateJson {
-  HYPERLANE_TRANSFER_UNKNOWN = "HYPERLANE_TRANSFER_UNKNOWN",
-  HYPERLANE_TRANSFER_SENT = "HYPERLANE_TRANSFER_SENT",
-  HYPERLANE_TRANSFER_FAILED = "HYPERLANE_TRANSFER_FAILED",
-  HYPERLANE_TRANSFER_RECEIVED = "HYPERLANE_TRANSFER_RECEIVED",
-}
-
 export interface HyperlaneTransferTransactionsJson {
   send_tx?: ChainTransactionJson | null;
   receive_tx?: ChainTransactionJson | null;
@@ -836,9 +976,16 @@ export interface IBCTransferInfoJson {
   state: TransferStateJson;
 }
 
-export type MsgJson = MultiChainMsgWrapperJson | EvmTxWrapperJson | SvmTxWrapperJson;
+export type MsgJson =
+  | MultiChainMsgWrapperJson
+  | EvmTxWrapperJson
+  | SvmTxWrapperJson;
 
-export type TxJson = (CosmosTxWrapperJson | EvmTxWrapperJson | SvmTxWrapperJson) & {
+export type TxJson = (
+  | CosmosTxWrapperJson
+  | EvmTxWrapperJson
+  | SvmTxWrapperJson
+) & {
   /** Array of indices of the operations that this transaction executes */
   operations_indices?: number[];
 };
@@ -916,18 +1063,6 @@ export interface PacketErrorJson {
   type?: PacketErrorTypeJson;
 }
 
-/**
- * Packet error type:
- * * `PACKET_ERROR_UNKNOWN` - Unknown error
- * * `PACKET_ERROR_ACKNOWLEDGEMENT` - Packet acknowledgement error
- * * `PACKET_ERROR_TIMEOUT` - Packet timed out
- */
-export enum PacketErrorTypeJson {
-  PACKET_ERROR_UNKNOWN = "PACKET_ERROR_UNKNOWN",
-  PACKET_ERROR_ACKNOWLEDGEMENT = "PACKET_ERROR_ACKNOWLEDGEMENT",
-  PACKET_ERROR_TIMEOUT = "PACKET_ERROR_TIMEOUT",
-}
-
 export interface ChainTransactionJson {
   /** Chain ID the packet event occurs on */
   chain_id?: string;
@@ -939,31 +1074,9 @@ export interface ChainTransactionJson {
   on_chain_at?: string;
 }
 
-export type PostHandlerJson = CosmWasmContractMsgWrapperJson | AutopilotMsgWrapperJson;
-
-/**
- * Recommendation reason:
- * * `UNKNOWN` - Unknown recommendation reason.
- * * `MOST_LIQUID` - Highest liquidity form of the transferred token on the destination chain.
- * * `BASE_TOKEN` - The base token if the destination chain is the origin chain of the source token.
- * * `DIRECT` - The token resulting from the least amount of transfers to the destination chain.
- */
-export enum ReasonJson {
-  UNKNOWN = "UNKNOWN",
-  MOST_LIQUID = "MOST_LIQUID",
-  BASE_TOKEN = "BASE_TOKEN",
-  DIRECT = "DIRECT",
-}
-
-/**
- * Recommendation reason:
- * * `LOW_INFO_WARNING` - Not enough asset pricing information to determine the price safety of the route.
- * * `BAD_PRICE_WARNING` - The execution price of the route deviates significantly from the current market price.
- */
-export enum RoutePriceWarningTypeJson {
-  LOW_INFO_WARNING = "LOW_INFO_WARNING",
-  BAD_PRICE_WARNING = "BAD_PRICE_WARNING",
-}
+export type PostHandlerJson =
+  | CosmWasmContractMsgWrapperJson
+  | AutopilotMsgWrapperJson;
 
 export interface RouteJson {
   /** Amount of source asset to be transferred or swapped */
@@ -1025,14 +1138,6 @@ export interface SendTokenErrorJson {
   type?: SendTokenErrorTypeJson;
 }
 
-/**
- * SendToken error types:
- * * `SEND_TOKEN_EXECUTION_ERROR` - Error occurred during the execute transaction
- */
-export enum SendTokenErrorTypeJson {
-  SEND_TOKEN_EXECUTION_ERROR = "SEND_TOKEN_EXECUTION_ERROR",
-}
-
 export interface SendTokenTxsJson {
   confirm_tx?: ChainTransactionJson | null;
   error?: SendTokenErrorJson | null;
@@ -1054,21 +1159,11 @@ export interface StatusErrorJson {
   type?: StatusErrorTypeJson;
 }
 
-/**
- * Packet error types:
- * * `STATUS_ERROR_UNKNOWN` - Unknown error
- * * `STATUS_ERROR_TRANSACTION_EXECUTION` - Error was encountered during transaction execution
- * * `STATUS_ERROR_INDEXING` - Error was encountered while indexing the transaction and packet data
- * * `STATUS_ERROR_TRANSFER` - The transfer failed to complete successfully
- */
-export enum StatusErrorTypeJson {
-  STATUS_ERROR_UNKNOWN = "STATUS_ERROR_UNKNOWN",
-  STATUS_ERROR_TRANSACTION_EXECUTION = "STATUS_ERROR_TRANSACTION_EXECUTION",
-  STATUS_ERROR_INDEXING = "STATUS_ERROR_INDEXING",
-  STATUS_ERROR_TRANSFER = "STATUS_ERROR_TRANSFER",
-}
-
-export type SwapJson = (SwapInWrapperJson | SwapOutWrapperJson | SmartSwapInWrapperJson) & {
+export type SwapJson = (
+  | SwapInWrapperJson
+  | SwapOutWrapperJson
+  | SmartSwapInWrapperJson
+) & {
   /** Estimated total affiliate fee generated by the swap */
   estimated_affiliate_fee?: string;
   /** Chain ID that the swap will be executed on (alias for chain_id) */
@@ -1183,25 +1278,6 @@ export interface TransactionExecutionErrorDetailsJson {
   message?: string;
 }
 
-/**
- * Transaction state:
- * * `STATE_SUBMITTED` - The initial transaction has been submitted to Skip Go API but not observed on chain yet
- * * `STATE_PENDING` - The initial transaction has been observed on chain, and there are still pending actions
- * * `STATE_COMPLETED_SUCCESS` - The route has completed successfully and the user has their tokens on the destination. (indicated by `transfer_asset_release`)
- * * `STATE_COMPLETED_ERROR` - The route errored somewhere and the user has their tokens unlocked in one of their wallets. Their tokens are either on the source chain, an intermediate chain, or the destination chain but as the wrong asset.
- * (Again, `transfer_asset_release` indicates where the tokens are)
- * * `STATE_ABANDONED` - Tracking for the transaction has been abandoned. This happens if the cross-chain  sequence of actions stalls for more than 10 minutes or if the initial transaction does not get observed in a block for 5 minutes.
- * * `STATE_PENDING_ERROR` - The overall transaction will fail, pending error propagation
- */
-export enum TransactionStateJson {
-  STATE_SUBMITTED = "STATE_SUBMITTED",
-  STATE_PENDING = "STATE_PENDING",
-  STATE_ABANDONED = "STATE_ABANDONED",
-  STATE_COMPLETED_SUCCESS = "STATE_COMPLETED_SUCCESS",
-  STATE_COMPLETED_ERROR = "STATE_COMPLETED_ERROR",
-  STATE_PENDING_ERROR = "STATE_PENDING_ERROR",
-}
-
 /** A transfer facilitated by the OP Init bridge */
 export interface OPInitTransferJson {
   /** Canonical chain-id of the source chain of the bridge transaction */
@@ -1254,34 +1330,6 @@ export interface OPInitTransferInfoJson {
 export interface OPInitTransferTxsJson {
   send_tx?: ChainTransactionJson | null;
   receive_tx?: ChainTransactionJson | null;
-}
-
-/**
- * OPInit transfer state:
- * * `OPINIT_TRANSFER_UNKNOWN` - Unknown error
- * * `OPINIT_TRANSFER_SENT` - The deposit transaction on the source chain has executed
- * * `OPINIT_TRANSFER_RECEIVED` - OPInit transfer has been received at the destination chain
- */
-export enum OPInitTransferStateJson {
-  OPINIT_TRANSFER_UNKNOWN = "OPINIT_TRANSFER_UNKNOWN",
-  OPINIT_TRANSFER_SENT = "OPINIT_TRANSFER_SENT",
-  OPINIT_TRANSFER_RECEIVED = "OPINIT_TRANSFER_RECEIVED",
-}
-
-/**
- * LayerZero transfer state:
- * * `LAYER_ZERO_TRANSFER_UNKNOWN` - Unknown error
- * * `LAYER_ZERO_TRANSFER_SENT` - The transaction on the source chain has executed
- * * `LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE` - The transfer has been delivered to the destination chain but there is an additional lz_compose transaction that still needs to be delivered before marking this transfer as LAYER_ZERO_TRANSFER_RECEIVED
- * * `LAYER_ZERO_TRANSFER_RECEIVED` - The transfer has been received at the destination chain
- * * `LAYER_ZERO_TRANSFER_FAILED` - The transfer has failed
- */
-export enum LayerZeroTransferStateJson {
-  LAYER_ZERO_TRANSFER_UNKNOWN = "LAYER_ZERO_TRANSFER_UNKNOWN",
-  LAYER_ZERO_TRANSFER_SENT = "LAYER_ZERO_TRANSFER_SENT",
-  LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE = "LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE",
-  LAYER_ZERO_TRANSFER_RECEIVED = "LAYER_ZERO_TRANSFER_RECEIVED",
-  LAYER_ZERO_TRANSFER_FAILED = "LAYER_ZERO_TRANSFER_FAILED",
 }
 
 /** A cross-chain transfer */
@@ -1344,22 +1392,6 @@ export interface TransferEventJson {
   go_fast_transfer?: GoFastTransferInfoJson;
   eureka_transfer?: EurekaTransferInfoJson;
   layer_zero_transfer?: LayerZeroTransferInfoJson;
-}
-
-/**
- * Transfer state:
- * * `TRANSFER_UNKNOWN` - Transfer state is not known.
- * * `TRANSFER_PENDING` - The send packet for the transfer has been committed and the transfer is pending.
- * * `TRANSFER_RECEIVED` - The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer.
- * * `TRANSFER_SUCCESS` - The transfer has been successfully completed and will not revert.
- * * `TRANSFER_FAILURE`- The transfer has failed.
- */
-export enum TransferStateJson {
-  TRANSFER_UNKNOWN = "TRANSFER_UNKNOWN",
-  TRANSFER_PENDING = "TRANSFER_PENDING",
-  TRANSFER_RECEIVED = "TRANSFER_RECEIVED",
-  TRANSFER_SUCCESS = "TRANSFER_SUCCESS",
-  TRANSFER_FAILURE = "TRANSFER_FAILURE",
 }
 
 /** Indicates location and denom of transfer asset release. */
@@ -1548,24 +1580,6 @@ export interface IbcCapabilitiesJson {
   cosmos_memo?: boolean;
   /** Whether the autopilot module is supported */
   cosmos_autopilot?: boolean;
-}
-
-/**
- * Fee type:
- * * SMART_RELAY - Fees for Smart relaying services.'
- */
-export enum FeeTypeJson {
-  SMART_RELAY = "SMART_RELAY",
-}
-
-/**
- * Indicates whether the fee is deducted from the transfer amount or charged additionally.
- * - FEE_BEHAVIOR_DEDUCTED: Fee is subtracted from the transfer amount (default, typical for Cosmos chains)
- * - FEE_BEHAVIOR_ADDITIONAL: Fee is charged on top of the transfer amount (typical for EVM chains with native tokens)
- */
-export enum FeeBehaviorJson {
-  FEE_BEHAVIOR_DEDUCTED = "FEE_BEHAVIOR_DEDUCTED",
-  FEE_BEHAVIOR_ADDITIONAL = "FEE_BEHAVIOR_ADDITIONAL",
 }
 
 export interface FeeJson {

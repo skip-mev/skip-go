@@ -20,11 +20,18 @@ export interface EthAccountProtoMsg {
 /**
  * EthAccount implements the authtypes.AccountI interface and embeds an
  * authtypes.BaseAccount type. It is compatible with the auth AccountKeeper.
+ * @name EthAccountAmino
+ * @package ethermint.types.v1
+ * @see proto type: ethermint.types.v1.EthAccount
  */
 export interface EthAccountAmino {
-  /** base_account is an authtypes.BaseAccount */
+  /**
+   * base_account is an authtypes.BaseAccount
+   */
   base_account?: BaseAccountAmino;
-  /** code_hash is the hash calculated from the code contents */
+  /**
+   * code_hash is the hash calculated from the code contents
+   */
   code_hash?: string;
 }
 export interface EthAccountAminoMsg {

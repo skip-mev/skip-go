@@ -1,7 +1,7 @@
 //@ts-nocheck
 import _m0 from "protobufjs/minimal.js";
 import { Decimal } from "@cosmjs/math";
-import { isSet, padDecimal } from "../../../helpers";
+import { isSet } from "../../../helpers";
 import { JsonSafe } from "../../../json-safe";
 /**
  * InflationDistribution defines the distribution in which inflation is
@@ -42,6 +42,9 @@ export interface InflationDistributionProtoMsg {
  * Model like this:
  * mintDistribution1 = distribution1 / (1 - teamVestingDistribution)
  * 0.5333333         = 40%           / (1 - 25%)
+ * @name InflationDistributionAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.InflationDistribution
  */
 export interface InflationDistributionAmino {
   /**
@@ -52,8 +55,8 @@ export interface InflationDistributionAmino {
   /**
    * Deprecated: usage_incentives defines the proportion of the minted minted_denom that is
    * to be allocated to the incentives module address
+   * @deprecated
    */
-  /** @deprecated */
   usage_incentives?: string;
   /**
    * community_pool defines the proportion of the minted minted_denom that is to
@@ -109,17 +112,30 @@ export interface ExponentialCalculationProtoMsg {
  * periodProvision = exponentialDecay       *  bondingIncentive
  * f(x)            = (a * (1 - r) ^ x + c)  *  (1 + max_variance - bondedRatio *
  * (max_variance / bonding_target))
+ * @name ExponentialCalculationAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.ExponentialCalculation
  */
 export interface ExponentialCalculationAmino {
-  /** a defines the initial value */
+  /**
+   * a defines the initial value
+   */
   a?: string;
-  /** r defines the reduction factor */
+  /**
+   * r defines the reduction factor
+   */
   r?: string;
-  /** c defines the parameter for long term inflation */
+  /**
+   * c defines the parameter for long term inflation
+   */
   c?: string;
-  /** bonding_target */
+  /**
+   * bonding_target
+   */
   bonding_target?: string;
-  /** max_variance */
+  /**
+   * max_variance
+   */
   max_variance?: string;
 }
 export interface ExponentialCalculationAminoMsg {
@@ -220,9 +236,9 @@ export const InflationDistribution = {
   },
   toAmino(message: InflationDistribution): InflationDistributionAmino {
     const obj: any = {};
-    obj.staking_rewards = padDecimal(message.stakingRewards) === "" ? undefined : padDecimal(message.stakingRewards);
-    obj.usage_incentives = padDecimal(message.usageIncentives) === "" ? undefined : padDecimal(message.usageIncentives);
-    obj.community_pool = padDecimal(message.communityPool) === "" ? undefined : padDecimal(message.communityPool);
+    obj.staking_rewards = message.stakingRewards === "" ? undefined : Decimal.fromUserInput(message.stakingRewards, 18).atomics;
+    obj.usage_incentives = message.usageIncentives === "" ? undefined : Decimal.fromUserInput(message.usageIncentives, 18).atomics;
+    obj.community_pool = message.communityPool === "" ? undefined : Decimal.fromUserInput(message.communityPool, 18).atomics;
     return obj;
   },
   fromAminoMsg(object: InflationDistributionAminoMsg): InflationDistribution {
@@ -353,11 +369,11 @@ export const ExponentialCalculation = {
   },
   toAmino(message: ExponentialCalculation): ExponentialCalculationAmino {
     const obj: any = {};
-    obj.a = padDecimal(message.a) === "" ? undefined : padDecimal(message.a);
-    obj.r = padDecimal(message.r) === "" ? undefined : padDecimal(message.r);
-    obj.c = padDecimal(message.c) === "" ? undefined : padDecimal(message.c);
-    obj.bonding_target = padDecimal(message.bondingTarget) === "" ? undefined : padDecimal(message.bondingTarget);
-    obj.max_variance = padDecimal(message.maxVariance) === "" ? undefined : padDecimal(message.maxVariance);
+    obj.a = message.a === "" ? undefined : Decimal.fromUserInput(message.a, 18).atomics;
+    obj.r = message.r === "" ? undefined : Decimal.fromUserInput(message.r, 18).atomics;
+    obj.c = message.c === "" ? undefined : Decimal.fromUserInput(message.c, 18).atomics;
+    obj.bonding_target = message.bondingTarget === "" ? undefined : Decimal.fromUserInput(message.bondingTarget, 18).atomics;
+    obj.max_variance = message.maxVariance === "" ? undefined : Decimal.fromUserInput(message.maxVariance, 18).atomics;
     return obj;
   },
   fromAminoMsg(object: ExponentialCalculationAminoMsg): ExponentialCalculation {

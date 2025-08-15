@@ -14,9 +14,16 @@ export interface ParamsProtoMsg {
   typeUrl: "/opinit.ophost.v1.Params";
   value: Uint8Array;
 }
-/** Params defines the set of ophost parameters. */
+/**
+ * Params defines the set of ophost parameters.
+ * @name ParamsAmino
+ * @package opinit.ophost.v1
+ * @see proto type: opinit.ophost.v1.Params
+ */
 export interface ParamsAmino {
-  /** The amount to be paid by l2 creator. */
+  /**
+   * The amount to be paid by l2 creator.
+   */
   registration_fee: CoinAmino[];
 }
 export interface ParamsAminoMsg {
@@ -54,27 +61,42 @@ export interface BridgeConfigProtoMsg {
   typeUrl: "/opinit.ophost.v1.BridgeConfig";
   value: Uint8Array;
 }
-/** BridgeConfig defines the set of bridge config. */
+/**
+ * BridgeConfig defines the set of bridge config.
+ * @name BridgeConfigAmino
+ * @package opinit.ophost.v1
+ * @see proto type: opinit.ophost.v1.BridgeConfig
+ */
 export interface BridgeConfigAmino {
-  /** The address of the challenger. */
+  /**
+   * The address of the challenger.
+   */
   challengers?: string[];
-  /** The address of the proposer. */
+  /**
+   * The address of the proposer.
+   */
   proposer?: string;
-  /** The information about batch submission. */
+  /**
+   * The information about batch submission.
+   */
   batch_info: BatchInfoAmino;
   /**
    * The time interval at which checkpoints must be submitted.
    * NOTE: this param is currently not used, but will be used for challenge in future.
    */
   submission_interval?: DurationAmino;
-  /** The minium time duration that must elapse before a withdrawal can be finalized. */
+  /**
+   * The minium time duration that must elapse before a withdrawal can be finalized.
+   */
   finalization_period?: DurationAmino;
   /**
    * The time of the first l2 block recorded.
    * NOTE: this param is currently not used, but will be used for challenge in future.
    */
   submission_start_time: string;
-  /** Normally it is IBC channelID for permissioned IBC relayer. */
+  /**
+   * Normally it is IBC channelID for permissioned IBC relayer.
+   */
   metadata?: string;
 }
 export interface BridgeConfigAminoMsg {
@@ -102,11 +124,20 @@ export interface BatchInfoProtoMsg {
   typeUrl: "/opinit.ophost.v1.BatchInfo";
   value: Uint8Array;
 }
-/** BatchInfo defines the set of batch information. */
+/**
+ * BatchInfo defines the set of batch information.
+ * @name BatchInfoAmino
+ * @package opinit.ophost.v1
+ * @see proto type: opinit.ophost.v1.BatchInfo
+ */
 export interface BatchInfoAmino {
-  /** The address of the batch submitter. */
+  /**
+   * The address of the batch submitter.
+   */
   submitter?: string;
-  /** The target chain */
+  /**
+   * The target chain
+   */
   chain?: string;
 }
 export interface BatchInfoAminoMsg {
@@ -127,7 +158,12 @@ export interface TokenPairProtoMsg {
   typeUrl: "/opinit.ophost.v1.TokenPair";
   value: Uint8Array;
 }
-/** TokenPair defines l1 and l2 token pair */
+/**
+ * TokenPair defines l1 and l2 token pair
+ * @name TokenPairAmino
+ * @package opinit.ophost.v1
+ * @see proto type: opinit.ophost.v1.TokenPair
+ */
 export interface TokenPairAmino {
   l1_denom?: string;
   l2_denom?: string;
@@ -154,13 +190,24 @@ export interface OutputProtoMsg {
   typeUrl: "/opinit.ophost.v1.Output";
   value: Uint8Array;
 }
-/** Output is a l2 block submitted by proposer. */
+/**
+ * Output is a l2 block submitted by proposer.
+ * @name OutputAmino
+ * @package opinit.ophost.v1
+ * @see proto type: opinit.ophost.v1.Output
+ */
 export interface OutputAmino {
-  /** Hash of the l2 output. */
+  /**
+   * Hash of the l2 output.
+   */
   output_root?: string;
-  /** Timestamp of the l1 block that the output root was submitted in. */
+  /**
+   * Timestamp of the l1 block that the output root was submitted in.
+   */
   l1_block_time: string;
-  /** The l2 block number that the output root was submitted in. */
+  /**
+   * The l2 block number that the output root was submitted in.
+   */
   l2_block_number?: string;
 }
 export interface OutputAminoMsg {
@@ -182,7 +229,12 @@ export interface BatchInfoWithOutputProtoMsg {
   typeUrl: "/opinit.ophost.v1.BatchInfoWithOutput";
   value: Uint8Array;
 }
-/** BatchInfoWithOutput defines the batch information with output. */
+/**
+ * BatchInfoWithOutput defines the batch information with output.
+ * @name BatchInfoWithOutputAmino
+ * @package opinit.ophost.v1
+ * @see proto type: opinit.ophost.v1.BatchInfoWithOutput
+ */
 export interface BatchInfoWithOutputAmino {
   batch_info: BatchInfoAmino;
   output: OutputAmino;
@@ -653,7 +705,7 @@ export const Output = {
           message.l1BlockTime = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         case 3:
-          message.l2BlockNumber = (reader.uint64() as Long);
+          message.l2BlockNumber = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -700,7 +752,7 @@ export const Output = {
     const obj: any = {};
     obj.output_root = message.outputRoot ? base64FromBytes(message.outputRoot) : undefined;
     obj.l1_block_time = message.l1BlockTime ? Timestamp.toAmino(toTimestamp(message.l1BlockTime)) : new Date();
-    obj.l2_block_number = !message.l2BlockNumber.isZero() ? message.l2BlockNumber.toString() : undefined;
+    obj.l2_block_number = !message.l2BlockNumber.isZero() ? message.l2BlockNumber?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: OutputAminoMsg): Output {

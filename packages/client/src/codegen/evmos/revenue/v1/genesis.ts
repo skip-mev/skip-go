@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { Revenue, RevenueAmino, RevenueSDKType } from "./revenue";
-import { Long, isSet, padDecimal } from "../../../helpers";
+import { Long, isSet } from "../../../helpers";
 import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 import { Decimal } from "@cosmjs/math";
@@ -15,11 +15,20 @@ export interface GenesisStateProtoMsg {
   typeUrl: "/evmos.revenue.v1.GenesisState";
   value: Uint8Array;
 }
-/** GenesisState defines the module's genesis state. */
+/**
+ * GenesisState defines the module's genesis state.
+ * @name GenesisStateAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.GenesisState
+ */
 export interface GenesisStateAmino {
-  /** params are the revenue module parameters */
+  /**
+   * params are the revenue module parameters
+   */
   params?: ParamsAmino;
-  /** revenues is a slice of active registered contracts for fee distribution */
+  /**
+   * revenues is a slice of active registered contracts for fee distribution
+   */
   revenues?: RevenueAmino[];
 }
 export interface GenesisStateAminoMsg {
@@ -50,9 +59,16 @@ export interface ParamsProtoMsg {
   typeUrl: "/evmos.revenue.v1.Params";
   value: Uint8Array;
 }
-/** Params defines the revenue module params */
+/**
+ * Params defines the revenue module params
+ * @name ParamsAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.Params
+ */
 export interface ParamsAmino {
-  /** enable_revenue defines a parameter to enable the revenue module */
+  /**
+   * enable_revenue defines a parameter to enable the revenue module
+   */
   enable_revenue?: boolean;
   /**
    * developer_shares defines the proportion of the transaction fees to be
@@ -209,7 +225,7 @@ export const Params = {
           message.developerShares = Decimal.fromAtomics(reader.string(), 18).toString();
           break;
         case 3:
-          message.addrDerivationCostCreate = (reader.uint64() as Long);
+          message.addrDerivationCostCreate = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -255,8 +271,8 @@ export const Params = {
   toAmino(message: Params): ParamsAmino {
     const obj: any = {};
     obj.enable_revenue = message.enableRevenue === false ? undefined : message.enableRevenue;
-    obj.developer_shares = padDecimal(message.developerShares) === "" ? undefined : padDecimal(message.developerShares);
-    obj.addr_derivation_cost_create = !message.addrDerivationCostCreate.isZero() ? message.addrDerivationCostCreate.toString() : undefined;
+    obj.developer_shares = message.developerShares === "" ? undefined : Decimal.fromUserInput(message.developerShares, 18).atomics;
+    obj.addr_derivation_cost_create = !message.addrDerivationCostCreate.isZero() ? message.addrDerivationCostCreate?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: ParamsAminoMsg): Params {

@@ -14,7 +14,12 @@ export interface PubKeyProtoMsg {
   typeUrl: "/cosmos.crypto.secp256r1.PubKey";
   value: Uint8Array;
 }
-/** PubKey defines a secp256r1 ECDSA public key. */
+/**
+ * PubKey defines a secp256r1 ECDSA public key.
+ * @name PubKeyAmino
+ * @package cosmos.crypto.secp256r1
+ * @see proto type: cosmos.crypto.secp256r1.PubKey
+ */
 export interface PubKeyAmino {
   /**
    * Point on secp256r1 curve in a compressed representation as specified in section
@@ -39,9 +44,16 @@ export interface PrivKeyProtoMsg {
   typeUrl: "/cosmos.crypto.secp256r1.PrivKey";
   value: Uint8Array;
 }
-/** PrivKey defines a secp256r1 ECDSA private key. */
+/**
+ * PrivKey defines a secp256r1 ECDSA private key.
+ * @name PrivKeyAmino
+ * @package cosmos.crypto.secp256r1
+ * @see proto type: cosmos.crypto.secp256r1.PrivKey
+ */
 export interface PrivKeyAmino {
-  /** secret number serialized using big-endian encoding */
+  /**
+   * secret number serialized using big-endian encoding
+   */
   secret?: string;
 }
 export interface PrivKeyAminoMsg {

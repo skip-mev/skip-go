@@ -142,6 +142,9 @@ export interface DurationProtoMsg {
  * encoded in JSON format as "3s", while 3 seconds and 1 nanosecond should
  * be expressed in JSON format as "3.000000001s", and 3 seconds and 1
  * microsecond should be expressed in JSON format as "3.000001s".
+ * @name DurationAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.Duration
  */
 export type DurationAmino = string;
 export interface DurationAminoMsg {
@@ -237,7 +240,7 @@ export const Duration = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.seconds = (reader.int64() as Long);
+          message.seconds = reader.int64() as Long;
           break;
         case 2:
           message.nanos = reader.int32();

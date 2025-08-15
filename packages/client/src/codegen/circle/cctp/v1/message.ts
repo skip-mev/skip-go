@@ -47,6 +47,9 @@ export interface MessageProtoMsg {
  * @param recipient address of recipient on destination chain as bytes32
  * @param destination_caller address of caller on destination chain as bytes32
  * @param message_body raw bytes of message body
+ * @name MessageAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.Message
  */
 export interface MessageAmino {
   version?: number;
@@ -146,7 +149,7 @@ export const Message = {
           message.destinationDomain = reader.uint32();
           break;
         case 4:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         case 5:
           message.sender = reader.bytes();
@@ -236,7 +239,7 @@ export const Message = {
     obj.version = message.version === 0 ? undefined : message.version;
     obj.source_domain = message.sourceDomain === 0 ? undefined : message.sourceDomain;
     obj.destination_domain = message.destinationDomain === 0 ? undefined : message.destinationDomain;
-    obj.nonce = !message.nonce.isZero() ? message.nonce.toString() : undefined;
+    obj.nonce = !message.nonce.isZero() ? message.nonce?.toString() : undefined;
     obj.sender = message.sender ? base64FromBytes(message.sender) : undefined;
     obj.recipient = message.recipient ? base64FromBytes(message.recipient) : undefined;
     obj.destination_caller = message.destinationCaller ? base64FromBytes(message.destinationCaller) : undefined;

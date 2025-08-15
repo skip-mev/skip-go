@@ -10,6 +10,11 @@ export interface MsgUpdateOwnerProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUpdateOwner";
   value: Uint8Array;
 }
+/**
+ * @name MsgUpdateOwnerAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUpdateOwner
+ */
 export interface MsgUpdateOwnerAmino {
   from?: string;
   new_owner?: string;
@@ -27,6 +32,11 @@ export interface MsgUpdateOwnerResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUpdateOwnerResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgUpdateOwnerResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUpdateOwnerResponse
+ */
 export interface MsgUpdateOwnerResponseAmino {}
 export interface MsgUpdateOwnerResponseAminoMsg {
   type: "cctp/UpdateOwnerResponse";
@@ -41,6 +51,11 @@ export interface MsgUpdateAttesterManagerProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUpdateAttesterManager";
   value: Uint8Array;
 }
+/**
+ * @name MsgUpdateAttesterManagerAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUpdateAttesterManager
+ */
 export interface MsgUpdateAttesterManagerAmino {
   from?: string;
   new_attester_manager?: string;
@@ -58,6 +73,11 @@ export interface MsgUpdateAttesterManagerResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUpdateAttesterManagerResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgUpdateAttesterManagerResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUpdateAttesterManagerResponse
+ */
 export interface MsgUpdateAttesterManagerResponseAmino {}
 export interface MsgUpdateAttesterManagerResponseAminoMsg {
   type: "cctp/UpdateAttesterManagerResponse";
@@ -72,6 +92,11 @@ export interface MsgUpdateTokenControllerProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUpdateTokenController";
   value: Uint8Array;
 }
+/**
+ * @name MsgUpdateTokenControllerAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUpdateTokenController
+ */
 export interface MsgUpdateTokenControllerAmino {
   from?: string;
   new_token_controller?: string;
@@ -89,6 +114,11 @@ export interface MsgUpdateTokenControllerResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUpdateTokenControllerResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgUpdateTokenControllerResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUpdateTokenControllerResponse
+ */
 export interface MsgUpdateTokenControllerResponseAmino {}
 export interface MsgUpdateTokenControllerResponseAminoMsg {
   type: "cctp/UpdateTokenControllerResponse";
@@ -103,6 +133,11 @@ export interface MsgUpdatePauserProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUpdatePauser";
   value: Uint8Array;
 }
+/**
+ * @name MsgUpdatePauserAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUpdatePauser
+ */
 export interface MsgUpdatePauserAmino {
   from?: string;
   new_pauser?: string;
@@ -120,6 +155,11 @@ export interface MsgUpdatePauserResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUpdatePauserResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgUpdatePauserResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUpdatePauserResponse
+ */
 export interface MsgUpdatePauserResponseAmino {}
 export interface MsgUpdatePauserResponseAminoMsg {
   type: "cctp/UpdatePauserResponse";
@@ -133,6 +173,11 @@ export interface MsgAcceptOwnerProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgAcceptOwner";
   value: Uint8Array;
 }
+/**
+ * @name MsgAcceptOwnerAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgAcceptOwner
+ */
 export interface MsgAcceptOwnerAmino {
   from?: string;
 }
@@ -148,6 +193,11 @@ export interface MsgAcceptOwnerResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgAcceptOwnerResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgAcceptOwnerResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgAcceptOwnerResponse
+ */
 export interface MsgAcceptOwnerResponseAmino {}
 export interface MsgAcceptOwnerResponseAminoMsg {
   type: "cctp/AcceptOwnerResponse";
@@ -162,6 +212,11 @@ export interface MsgEnableAttesterProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgEnableAttester";
   value: Uint8Array;
 }
+/**
+ * @name MsgEnableAttesterAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgEnableAttester
+ */
 export interface MsgEnableAttesterAmino {
   from?: string;
   attester?: string;
@@ -179,6 +234,11 @@ export interface MsgEnableAttesterResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgEnableAttesterResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgEnableAttesterResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgEnableAttesterResponse
+ */
 export interface MsgEnableAttesterResponseAmino {}
 export interface MsgEnableAttesterResponseAminoMsg {
   type: "cctp/EnableAttesterResponse";
@@ -193,6 +253,11 @@ export interface MsgDisableAttesterProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgDisableAttester";
   value: Uint8Array;
 }
+/**
+ * @name MsgDisableAttesterAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgDisableAttester
+ */
 export interface MsgDisableAttesterAmino {
   from?: string;
   attester?: string;
@@ -210,6 +275,11 @@ export interface MsgDisableAttesterResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgDisableAttesterResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgDisableAttesterResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgDisableAttesterResponse
+ */
 export interface MsgDisableAttesterResponseAmino {}
 export interface MsgDisableAttesterResponseAminoMsg {
   type: "cctp/DisableAttesterResponse";
@@ -223,6 +293,11 @@ export interface MsgPauseBurningAndMintingProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgPauseBurningAndMinting";
   value: Uint8Array;
 }
+/**
+ * @name MsgPauseBurningAndMintingAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgPauseBurningAndMinting
+ */
 export interface MsgPauseBurningAndMintingAmino {
   from?: string;
 }
@@ -238,6 +313,11 @@ export interface MsgPauseBurningAndMintingResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgPauseBurningAndMintingResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgPauseBurningAndMintingResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgPauseBurningAndMintingResponse
+ */
 export interface MsgPauseBurningAndMintingResponseAmino {}
 export interface MsgPauseBurningAndMintingResponseAminoMsg {
   type: "cctp/PauseBurningAndMintingResponse";
@@ -251,6 +331,11 @@ export interface MsgUnpauseBurningAndMintingProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUnpauseBurningAndMinting";
   value: Uint8Array;
 }
+/**
+ * @name MsgUnpauseBurningAndMintingAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUnpauseBurningAndMinting
+ */
 export interface MsgUnpauseBurningAndMintingAmino {
   from?: string;
 }
@@ -266,6 +351,11 @@ export interface MsgUnpauseBurningAndMintingResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUnpauseBurningAndMintingResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgUnpauseBurningAndMintingResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUnpauseBurningAndMintingResponse
+ */
 export interface MsgUnpauseBurningAndMintingResponseAmino {}
 export interface MsgUnpauseBurningAndMintingResponseAminoMsg {
   type: "cctp/UnpauseBurningAndMintingResponse";
@@ -279,6 +369,11 @@ export interface MsgPauseSendingAndReceivingMessagesProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgPauseSendingAndReceivingMessages";
   value: Uint8Array;
 }
+/**
+ * @name MsgPauseSendingAndReceivingMessagesAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgPauseSendingAndReceivingMessages
+ */
 export interface MsgPauseSendingAndReceivingMessagesAmino {
   from?: string;
 }
@@ -294,6 +389,11 @@ export interface MsgPauseSendingAndReceivingMessagesResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgPauseSendingAndReceivingMessagesResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgPauseSendingAndReceivingMessagesResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgPauseSendingAndReceivingMessagesResponse
+ */
 export interface MsgPauseSendingAndReceivingMessagesResponseAmino {}
 export interface MsgPauseSendingAndReceivingMessagesResponseAminoMsg {
   type: "cctp/PauseSendingAndReceivingMessagesResponse";
@@ -307,6 +407,11 @@ export interface MsgUnpauseSendingAndReceivingMessagesProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUnpauseSendingAndReceivingMessages";
   value: Uint8Array;
 }
+/**
+ * @name MsgUnpauseSendingAndReceivingMessagesAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUnpauseSendingAndReceivingMessages
+ */
 export interface MsgUnpauseSendingAndReceivingMessagesAmino {
   from?: string;
 }
@@ -322,6 +427,11 @@ export interface MsgUnpauseSendingAndReceivingMessagesResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUnpauseSendingAndReceivingMessagesResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgUnpauseSendingAndReceivingMessagesResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUnpauseSendingAndReceivingMessagesResponse
+ */
 export interface MsgUnpauseSendingAndReceivingMessagesResponseAmino {}
 export interface MsgUnpauseSendingAndReceivingMessagesResponseAminoMsg {
   type: "cctp/UnpauseSendingAndReceivingMessagesResponse";
@@ -336,6 +446,11 @@ export interface MsgUpdateMaxMessageBodySizeProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUpdateMaxMessageBodySize";
   value: Uint8Array;
 }
+/**
+ * @name MsgUpdateMaxMessageBodySizeAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUpdateMaxMessageBodySize
+ */
 export interface MsgUpdateMaxMessageBodySizeAmino {
   from?: string;
   message_size?: string;
@@ -353,6 +468,11 @@ export interface MsgUpdateMaxMessageBodySizeResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUpdateMaxMessageBodySizeResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgUpdateMaxMessageBodySizeResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUpdateMaxMessageBodySizeResponse
+ */
 export interface MsgUpdateMaxMessageBodySizeResponseAmino {}
 export interface MsgUpdateMaxMessageBodySizeResponseAminoMsg {
   type: "cctp/UpdateMaxMessageBodySizeResponse";
@@ -368,6 +488,11 @@ export interface MsgSetMaxBurnAmountPerMessageProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgSetMaxBurnAmountPerMessage";
   value: Uint8Array;
 }
+/**
+ * @name MsgSetMaxBurnAmountPerMessageAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgSetMaxBurnAmountPerMessage
+ */
 export interface MsgSetMaxBurnAmountPerMessageAmino {
   from?: string;
   local_token?: string;
@@ -387,6 +512,11 @@ export interface MsgSetMaxBurnAmountPerMessageResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgSetMaxBurnAmountPerMessageResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgSetMaxBurnAmountPerMessageResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgSetMaxBurnAmountPerMessageResponse
+ */
 export interface MsgSetMaxBurnAmountPerMessageResponseAmino {}
 export interface MsgSetMaxBurnAmountPerMessageResponseAminoMsg {
   type: "cctp/SetMaxBurnAmountPerMessageResponse";
@@ -404,6 +534,11 @@ export interface MsgDepositForBurnProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgDepositForBurn";
   value: Uint8Array;
 }
+/**
+ * @name MsgDepositForBurnAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgDepositForBurn
+ */
 export interface MsgDepositForBurnAmino {
   from?: string;
   amount?: string;
@@ -429,6 +564,11 @@ export interface MsgDepositForBurnResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgDepositForBurnResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgDepositForBurnResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgDepositForBurnResponse
+ */
 export interface MsgDepositForBurnResponseAmino {
   nonce?: string;
 }
@@ -451,6 +591,11 @@ export interface MsgDepositForBurnWithCallerProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgDepositForBurnWithCaller";
   value: Uint8Array;
 }
+/**
+ * @name MsgDepositForBurnWithCallerAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgDepositForBurnWithCaller
+ */
 export interface MsgDepositForBurnWithCallerAmino {
   from?: string;
   amount?: string;
@@ -478,6 +623,11 @@ export interface MsgDepositForBurnWithCallerResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgDepositForBurnWithCallerResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgDepositForBurnWithCallerResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgDepositForBurnWithCallerResponse
+ */
 export interface MsgDepositForBurnWithCallerResponseAmino {
   nonce?: string;
 }
@@ -499,6 +649,11 @@ export interface MsgReplaceDepositForBurnProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgReplaceDepositForBurn";
   value: Uint8Array;
 }
+/**
+ * @name MsgReplaceDepositForBurnAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgReplaceDepositForBurn
+ */
 export interface MsgReplaceDepositForBurnAmino {
   from?: string;
   original_message?: string;
@@ -522,6 +677,11 @@ export interface MsgReplaceDepositForBurnResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgReplaceDepositForBurnResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgReplaceDepositForBurnResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgReplaceDepositForBurnResponse
+ */
 export interface MsgReplaceDepositForBurnResponseAmino {}
 export interface MsgReplaceDepositForBurnResponseAminoMsg {
   type: "cctp/ReplaceDepositForBurnResponse";
@@ -537,6 +697,11 @@ export interface MsgReceiveMessageProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgReceiveMessage";
   value: Uint8Array;
 }
+/**
+ * @name MsgReceiveMessageAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgReceiveMessage
+ */
 export interface MsgReceiveMessageAmino {
   from?: string;
   message?: string;
@@ -558,6 +723,11 @@ export interface MsgReceiveMessageResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgReceiveMessageResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgReceiveMessageResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgReceiveMessageResponse
+ */
 export interface MsgReceiveMessageResponseAmino {
   success?: boolean;
 }
@@ -578,6 +748,11 @@ export interface MsgSendMessageProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgSendMessage";
   value: Uint8Array;
 }
+/**
+ * @name MsgSendMessageAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgSendMessage
+ */
 export interface MsgSendMessageAmino {
   from?: string;
   destination_domain?: number;
@@ -601,6 +776,11 @@ export interface MsgSendMessageResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgSendMessageResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgSendMessageResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgSendMessageResponse
+ */
 export interface MsgSendMessageResponseAmino {
   nonce?: string;
 }
@@ -622,6 +802,11 @@ export interface MsgSendMessageWithCallerProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgSendMessageWithCaller";
   value: Uint8Array;
 }
+/**
+ * @name MsgSendMessageWithCallerAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgSendMessageWithCaller
+ */
 export interface MsgSendMessageWithCallerAmino {
   from?: string;
   destination_domain?: number;
@@ -647,6 +832,11 @@ export interface MsgSendMessageWithCallerResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgSendMessageWithCallerResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgSendMessageWithCallerResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgSendMessageWithCallerResponse
+ */
 export interface MsgSendMessageWithCallerResponseAmino {
   nonce?: string;
 }
@@ -668,6 +858,11 @@ export interface MsgReplaceMessageProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgReplaceMessage";
   value: Uint8Array;
 }
+/**
+ * @name MsgReplaceMessageAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgReplaceMessage
+ */
 export interface MsgReplaceMessageAmino {
   from?: string;
   original_message?: string;
@@ -691,6 +886,11 @@ export interface MsgReplaceMessageResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgReplaceMessageResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgReplaceMessageResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgReplaceMessageResponse
+ */
 export interface MsgReplaceMessageResponseAmino {}
 export interface MsgReplaceMessageResponseAminoMsg {
   type: "cctp/ReplaceMessageResponse";
@@ -705,6 +905,11 @@ export interface MsgUpdateSignatureThresholdProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUpdateSignatureThreshold";
   value: Uint8Array;
 }
+/**
+ * @name MsgUpdateSignatureThresholdAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUpdateSignatureThreshold
+ */
 export interface MsgUpdateSignatureThresholdAmino {
   from?: string;
   amount?: number;
@@ -722,6 +927,11 @@ export interface MsgUpdateSignatureThresholdResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUpdateSignatureThresholdResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgUpdateSignatureThresholdResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUpdateSignatureThresholdResponse
+ */
 export interface MsgUpdateSignatureThresholdResponseAmino {}
 export interface MsgUpdateSignatureThresholdResponseAminoMsg {
   type: "cctp/UpdateSignatureThresholdResponse";
@@ -738,6 +948,11 @@ export interface MsgLinkTokenPairProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgLinkTokenPair";
   value: Uint8Array;
 }
+/**
+ * @name MsgLinkTokenPairAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgLinkTokenPair
+ */
 export interface MsgLinkTokenPairAmino {
   from?: string;
   remote_domain?: number;
@@ -759,6 +974,11 @@ export interface MsgLinkTokenPairResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgLinkTokenPairResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgLinkTokenPairResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgLinkTokenPairResponse
+ */
 export interface MsgLinkTokenPairResponseAmino {}
 export interface MsgLinkTokenPairResponseAminoMsg {
   type: "cctp/LinkTokenPairResponse";
@@ -775,6 +995,11 @@ export interface MsgUnlinkTokenPairProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUnlinkTokenPair";
   value: Uint8Array;
 }
+/**
+ * @name MsgUnlinkTokenPairAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUnlinkTokenPair
+ */
 export interface MsgUnlinkTokenPairAmino {
   from?: string;
   remote_domain?: number;
@@ -796,6 +1021,11 @@ export interface MsgUnlinkTokenPairResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUnlinkTokenPairResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgUnlinkTokenPairResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgUnlinkTokenPairResponse
+ */
 export interface MsgUnlinkTokenPairResponseAmino {}
 export interface MsgUnlinkTokenPairResponseAminoMsg {
   type: "cctp/UnlinkTokenPairResponse";
@@ -811,6 +1041,11 @@ export interface MsgAddRemoteTokenMessengerProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgAddRemoteTokenMessenger";
   value: Uint8Array;
 }
+/**
+ * @name MsgAddRemoteTokenMessengerAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgAddRemoteTokenMessenger
+ */
 export interface MsgAddRemoteTokenMessengerAmino {
   from?: string;
   domain_id?: number;
@@ -830,6 +1065,11 @@ export interface MsgAddRemoteTokenMessengerResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgAddRemoteTokenMessengerResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgAddRemoteTokenMessengerResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgAddRemoteTokenMessengerResponse
+ */
 export interface MsgAddRemoteTokenMessengerResponseAmino {}
 export interface MsgAddRemoteTokenMessengerResponseAminoMsg {
   type: "cctp/AddRemoteTokenMessengerResponse";
@@ -844,6 +1084,11 @@ export interface MsgRemoveRemoteTokenMessengerProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgRemoveRemoteTokenMessenger";
   value: Uint8Array;
 }
+/**
+ * @name MsgRemoveRemoteTokenMessengerAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgRemoveRemoteTokenMessenger
+ */
 export interface MsgRemoveRemoteTokenMessengerAmino {
   from?: string;
   domain_id?: number;
@@ -861,6 +1106,11 @@ export interface MsgRemoveRemoteTokenMessengerResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgRemoveRemoteTokenMessengerResponse";
   value: Uint8Array;
 }
+/**
+ * @name MsgRemoveRemoteTokenMessengerResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MsgRemoveRemoteTokenMessengerResponse
+ */
 export interface MsgRemoveRemoteTokenMessengerResponseAmino {}
 export interface MsgRemoveRemoteTokenMessengerResponseAminoMsg {
   type: "cctp/RemoveRemoteTokenMessengerResponse";
@@ -2541,7 +2791,7 @@ export const MsgUpdateMaxMessageBodySize = {
           message.from = reader.string();
           break;
         case 2:
-          message.messageSize = (reader.uint64() as Long);
+          message.messageSize = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -2581,7 +2831,7 @@ export const MsgUpdateMaxMessageBodySize = {
   toAmino(message: MsgUpdateMaxMessageBodySize): MsgUpdateMaxMessageBodySizeAmino {
     const obj: any = {};
     obj.from = message.from === "" ? undefined : message.from;
-    obj.message_size = !message.messageSize.isZero() ? message.messageSize.toString() : undefined;
+    obj.message_size = !message.messageSize.isZero() ? message.messageSize?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: MsgUpdateMaxMessageBodySizeAminoMsg): MsgUpdateMaxMessageBodySize {
@@ -2995,7 +3245,7 @@ export const MsgDepositForBurnResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -3028,7 +3278,7 @@ export const MsgDepositForBurnResponse = {
   },
   toAmino(message: MsgDepositForBurnResponse): MsgDepositForBurnResponseAmino {
     const obj: any = {};
-    obj.nonce = !message.nonce.isZero() ? message.nonce.toString() : undefined;
+    obj.nonce = !message.nonce.isZero() ? message.nonce?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: MsgDepositForBurnResponseAminoMsg): MsgDepositForBurnResponse {
@@ -3223,7 +3473,7 @@ export const MsgDepositForBurnWithCallerResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -3256,7 +3506,7 @@ export const MsgDepositForBurnWithCallerResponse = {
   },
   toAmino(message: MsgDepositForBurnWithCallerResponse): MsgDepositForBurnWithCallerResponseAmino {
     const obj: any = {};
-    obj.nonce = !message.nonce.isZero() ? message.nonce.toString() : undefined;
+    obj.nonce = !message.nonce.isZero() ? message.nonce?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: MsgDepositForBurnWithCallerResponseAminoMsg): MsgDepositForBurnWithCallerResponse {
@@ -3807,7 +4057,7 @@ export const MsgSendMessageResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -3840,7 +4090,7 @@ export const MsgSendMessageResponse = {
   },
   toAmino(message: MsgSendMessageResponse): MsgSendMessageResponseAmino {
     const obj: any = {};
-    obj.nonce = !message.nonce.isZero() ? message.nonce.toString() : undefined;
+    obj.nonce = !message.nonce.isZero() ? message.nonce?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: MsgSendMessageResponseAminoMsg): MsgSendMessageResponse {
@@ -4021,7 +4271,7 @@ export const MsgSendMessageWithCallerResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -4054,7 +4304,7 @@ export const MsgSendMessageWithCallerResponse = {
   },
   toAmino(message: MsgSendMessageWithCallerResponse): MsgSendMessageWithCallerResponseAmino {
     const obj: any = {};
-    obj.nonce = !message.nonce.isZero() ? message.nonce.toString() : undefined;
+    obj.nonce = !message.nonce.isZero() ? message.nonce?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: MsgSendMessageWithCallerResponseAminoMsg): MsgSendMessageWithCallerResponse {

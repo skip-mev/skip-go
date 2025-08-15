@@ -14,7 +14,12 @@ export interface SnapshotProtoMsg {
   typeUrl: "/cosmos.base.snapshots.v1beta1.Snapshot";
   value: Uint8Array;
 }
-/** Snapshot contains Tendermint state sync snapshot info. */
+/**
+ * Snapshot contains Tendermint state sync snapshot info.
+ * @name SnapshotAmino
+ * @package cosmos.base.snapshots.v1beta1
+ * @see proto type: cosmos.base.snapshots.v1beta1.Snapshot
+ */
 export interface SnapshotAmino {
   height?: string;
   format?: number;
@@ -43,9 +48,16 @@ export interface MetadataProtoMsg {
   typeUrl: "/cosmos.base.snapshots.v1beta1.Metadata";
   value: Uint8Array;
 }
-/** Metadata contains SDK-specific snapshot metadata. */
+/**
+ * Metadata contains SDK-specific snapshot metadata.
+ * @name MetadataAmino
+ * @package cosmos.base.snapshots.v1beta1
+ * @see proto type: cosmos.base.snapshots.v1beta1.Metadata
+ */
 export interface MetadataAmino {
-  /** SHA-256 chunk hashes */
+  /**
+   * SHA-256 chunk hashes
+   */
   chunk_hashes?: string[];
 }
 export interface MetadataAminoMsg {
@@ -79,15 +91,22 @@ export interface SnapshotItemProtoMsg {
  * SnapshotItem is an item contained in a rootmulti.Store snapshot.
  * 
  * Since: cosmos-sdk 0.46
+ * @name SnapshotItemAmino
+ * @package cosmos.base.snapshots.v1beta1
+ * @see proto type: cosmos.base.snapshots.v1beta1.SnapshotItem
  */
 export interface SnapshotItemAmino {
   store?: SnapshotStoreItemAmino;
   iavl?: SnapshotIAVLItemAmino;
   extension?: SnapshotExtensionMetaAmino;
   extension_payload?: SnapshotExtensionPayloadAmino;
-  /** @deprecated */
+  /**
+   * @deprecated
+   */
   kv?: SnapshotKVItemAmino;
-  /** @deprecated */
+  /**
+   * @deprecated
+   */
   schema?: SnapshotSchemaAmino;
 }
 export interface SnapshotItemAminoMsg {
@@ -125,6 +144,9 @@ export interface SnapshotStoreItemProtoMsg {
  * SnapshotStoreItem contains metadata about a snapshotted store.
  * 
  * Since: cosmos-sdk 0.46
+ * @name SnapshotStoreItemAmino
+ * @package cosmos.base.snapshots.v1beta1
+ * @see proto type: cosmos.base.snapshots.v1beta1.SnapshotStoreItem
  */
 export interface SnapshotStoreItemAmino {
   name?: string;
@@ -162,13 +184,20 @@ export interface SnapshotIAVLItemProtoMsg {
  * SnapshotIAVLItem is an exported IAVL node.
  * 
  * Since: cosmos-sdk 0.46
+ * @name SnapshotIAVLItemAmino
+ * @package cosmos.base.snapshots.v1beta1
+ * @see proto type: cosmos.base.snapshots.v1beta1.SnapshotIAVLItem
  */
 export interface SnapshotIAVLItemAmino {
   key?: string;
   value?: string;
-  /** version is block height */
+  /**
+   * version is block height
+   */
   version?: string;
-  /** height is depth of the tree. */
+  /**
+   * height is depth of the tree.
+   */
   height?: number;
 }
 export interface SnapshotIAVLItemAminoMsg {
@@ -203,6 +232,9 @@ export interface SnapshotExtensionMetaProtoMsg {
  * SnapshotExtensionMeta contains metadata about an external snapshotter.
  * 
  * Since: cosmos-sdk 0.46
+ * @name SnapshotExtensionMetaAmino
+ * @package cosmos.base.snapshots.v1beta1
+ * @see proto type: cosmos.base.snapshots.v1beta1.SnapshotExtensionMeta
  */
 export interface SnapshotExtensionMetaAmino {
   name?: string;
@@ -237,6 +269,9 @@ export interface SnapshotExtensionPayloadProtoMsg {
  * SnapshotExtensionPayload contains payloads of an external snapshotter.
  * 
  * Since: cosmos-sdk 0.46
+ * @name SnapshotExtensionPayloadAmino
+ * @package cosmos.base.snapshots.v1beta1
+ * @see proto type: cosmos.base.snapshots.v1beta1.SnapshotExtensionPayload
  */
 export interface SnapshotExtensionPayloadAmino {
   payload?: string;
@@ -273,8 +308,11 @@ export interface SnapshotKVItemProtoMsg {
  * 
  * Since: cosmos-sdk 0.46
  * Deprecated: This message was part of store/v2alpha1 which has been deleted from v0.47.
+ * @name SnapshotKVItemAmino
+ * @package cosmos.base.snapshots.v1beta1
+ * @see proto type: cosmos.base.snapshots.v1beta1.SnapshotKVItem
+ * @deprecated
  */
-/** @deprecated */
 export interface SnapshotKVItemAmino {
   key?: string;
   value?: string;
@@ -313,8 +351,11 @@ export interface SnapshotSchemaProtoMsg {
  * 
  * Since: cosmos-sdk 0.46
  * Deprecated: This message was part of store/v2alpha1 which has been deleted from v0.47.
+ * @name SnapshotSchemaAmino
+ * @package cosmos.base.snapshots.v1beta1
+ * @see proto type: cosmos.base.snapshots.v1beta1.SnapshotSchema
+ * @deprecated
  */
-/** @deprecated */
 export interface SnapshotSchemaAmino {
   keys?: string[];
 }
@@ -369,7 +410,7 @@ export const Snapshot = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.height = (reader.uint64() as Long);
+          message.height = reader.uint64() as Long;
           break;
         case 2:
           message.format = reader.uint32();
@@ -438,7 +479,7 @@ export const Snapshot = {
   },
   toAmino(message: Snapshot): SnapshotAmino {
     const obj: any = {};
-    obj.height = !message.height.isZero() ? message.height.toString() : undefined;
+    obj.height = !message.height.isZero() ? message.height?.toString() : undefined;
     obj.format = message.format === 0 ? undefined : message.format;
     obj.chunks = message.chunks === 0 ? undefined : message.chunks;
     obj.hash = message.hash ? base64FromBytes(message.hash) : undefined;
@@ -819,7 +860,7 @@ export const SnapshotIAVLItem = {
           message.value = reader.bytes();
           break;
         case 3:
-          message.version = (reader.int64() as Long);
+          message.version = reader.int64() as Long;
           break;
         case 4:
           message.height = reader.int32();
@@ -875,7 +916,7 @@ export const SnapshotIAVLItem = {
     const obj: any = {};
     obj.key = message.key ? base64FromBytes(message.key) : undefined;
     obj.value = message.value ? base64FromBytes(message.value) : undefined;
-    obj.version = !message.version.isZero() ? message.version.toString() : undefined;
+    obj.version = !message.version.isZero() ? message.version?.toString() : undefined;
     obj.height = message.height === 0 ? undefined : message.height;
     return obj;
   },

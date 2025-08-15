@@ -16,6 +16,9 @@ export interface MaxMessageBodySizeProtoMsg {
 /**
  * Message format for BurningAndMintingPaused
  * @param paused true if paused, false if not paused
+ * @name MaxMessageBodySizeAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MaxMessageBodySize
  */
 export interface MaxMessageBodySizeAmino {
   amount?: string;
@@ -52,7 +55,7 @@ export const MaxMessageBodySize = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.amount = (reader.uint64() as Long);
+          message.amount = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -85,7 +88,7 @@ export const MaxMessageBodySize = {
   },
   toAmino(message: MaxMessageBodySize): MaxMessageBodySizeAmino {
     const obj: any = {};
-    obj.amount = !message.amount.isZero() ? message.amount.toString() : undefined;
+    obj.amount = !message.amount.isZero() ? message.amount?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: MaxMessageBodySizeAminoMsg): MaxMessageBodySize {

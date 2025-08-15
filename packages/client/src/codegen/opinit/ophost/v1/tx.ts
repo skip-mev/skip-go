@@ -15,7 +15,12 @@ export interface MsgInitiateTokenDepositProtoMsg {
   typeUrl: "/opinit.ophost.v1.MsgInitiateTokenDeposit";
   value: Uint8Array;
 }
-/** MsgInitiateTokenDeposit defines a SDK message for adding a new validator. */
+/**
+ * MsgInitiateTokenDeposit defines a SDK message for adding a new validator.
+ * @name MsgInitiateTokenDepositAmino
+ * @package opinit.ophost.v1
+ * @see proto type: opinit.ophost.v1.MsgInitiateTokenDeposit
+ */
 export interface MsgInitiateTokenDepositAmino {
   sender?: string;
   bridge_id?: string;
@@ -43,7 +48,12 @@ export interface MsgInitiateTokenDepositResponseProtoMsg {
   typeUrl: "/opinit.ophost.v1.MsgInitiateTokenDepositResponse";
   value: Uint8Array;
 }
-/** MsgInitiateTokenDepositResponse returns a message handle result. */
+/**
+ * MsgInitiateTokenDepositResponse returns a message handle result.
+ * @name MsgInitiateTokenDepositResponseAmino
+ * @package opinit.ophost.v1
+ * @see proto type: opinit.ophost.v1.MsgInitiateTokenDepositResponse
+ */
 export interface MsgInitiateTokenDepositResponseAmino {
   sequence?: string;
 }
@@ -95,7 +105,7 @@ export const MsgInitiateTokenDeposit = {
           message.sender = reader.string();
           break;
         case 2:
-          message.bridgeId = (reader.uint64() as Long);
+          message.bridgeId = reader.uint64() as Long;
           break;
         case 3:
           message.to = reader.string();
@@ -162,7 +172,7 @@ export const MsgInitiateTokenDeposit = {
   toAmino(message: MsgInitiateTokenDeposit): MsgInitiateTokenDepositAmino {
     const obj: any = {};
     obj.sender = message.sender === "" ? undefined : message.sender;
-    obj.bridge_id = !message.bridgeId.isZero() ? message.bridgeId.toString() : undefined;
+    obj.bridge_id = !message.bridgeId.isZero() ? message.bridgeId?.toString() : undefined;
     obj.to = message.to === "" ? undefined : message.to;
     obj.amount = message.amount ? Coin.toAmino(message.amount) : Coin.toAmino(Coin.fromPartial({}));
     obj.data = message.data ? base64FromBytes(message.data) : undefined;
@@ -211,7 +221,7 @@ export const MsgInitiateTokenDepositResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.sequence = (reader.uint64() as Long);
+          message.sequence = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -244,7 +254,7 @@ export const MsgInitiateTokenDepositResponse = {
   },
   toAmino(message: MsgInitiateTokenDepositResponse): MsgInitiateTokenDepositResponseAmino {
     const obj: any = {};
-    obj.sequence = !message.sequence.isZero() ? message.sequence.toString() : undefined;
+    obj.sequence = !message.sequence.isZero() ? message.sequence?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: MsgInitiateTokenDepositResponseAminoMsg): MsgInitiateTokenDepositResponse {

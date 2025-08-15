@@ -17,9 +17,16 @@ export interface MsgUpdateParamsProtoMsg {
   typeUrl: "/evmos.inflation.v1.MsgUpdateParams";
   value: Uint8Array;
 }
-/** MsgUpdateParams defines a Msg for updating the x/inflation module parameters. */
+/**
+ * MsgUpdateParams defines a Msg for updating the x/inflation module parameters.
+ * @name MsgUpdateParamsAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.MsgUpdateParams
+ */
 export interface MsgUpdateParamsAmino {
-  /** authority is the address of the governance account. */
+  /**
+   * authority is the address of the governance account.
+   */
   authority?: string;
   /**
    * params defines the x/inflation parameters to update.
@@ -48,6 +55,9 @@ export interface MsgUpdateParamsResponseProtoMsg {
 /**
  * MsgUpdateParamsResponse defines the response structure for executing a
  * MsgUpdateParams message.
+ * @name MsgUpdateParamsResponseAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.MsgUpdateParamsResponse
  */
 export interface MsgUpdateParamsResponseAmino {}
 export interface MsgUpdateParamsResponseAminoMsg {

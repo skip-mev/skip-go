@@ -22,6 +22,9 @@ export interface PubKeyProtoMsg {
  * It must not be used in a non Tendermint key context because it doesn't implement
  * ADR-28. Nevertheless, you will like to use ed25519 in app user level
  * then you must create a new proto message and follow ADR-28 for Address construction.
+ * @name PubKeyAmino
+ * @package cosmos.crypto.ed25519
+ * @see proto type: cosmos.crypto.ed25519.PubKey
  */
 export interface PubKeyAmino {
   key?: string;
@@ -54,6 +57,9 @@ export interface PrivKeyProtoMsg {
 /**
  * Deprecated: PrivKey defines a ed25519 private key.
  * NOTE: ed25519 keys must not be used in SDK apps except in a tendermint validator context.
+ * @name PrivKeyAmino
+ * @package cosmos.crypto.ed25519
+ * @see proto type: cosmos.crypto.ed25519.PrivKey
  */
 export interface PrivKeyAmino {
   key?: string;

@@ -17,15 +17,28 @@ export interface MsgSendProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.MsgSend";
   value: Uint8Array;
 }
-/** MsgSend represents a message to send a nft from one account to another account. */
+/**
+ * MsgSend represents a message to send a nft from one account to another account.
+ * @name MsgSendAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.MsgSend
+ */
 export interface MsgSendAmino {
-  /** class_id defines the unique identifier of the nft classification, similar to the contract address of ERC721 */
+  /**
+   * class_id defines the unique identifier of the nft classification, similar to the contract address of ERC721
+   */
   class_id?: string;
-  /** id defines the unique identification of nft */
+  /**
+   * id defines the unique identification of nft
+   */
   id?: string;
-  /** sender is the address of the owner of nft */
+  /**
+   * sender is the address of the owner of nft
+   */
   sender?: string;
-  /** receiver is the receiver address of nft */
+  /**
+   * receiver is the receiver address of nft
+   */
   receiver?: string;
 }
 export interface MsgSendAminoMsg {
@@ -45,7 +58,12 @@ export interface MsgSendResponseProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.MsgSendResponse";
   value: Uint8Array;
 }
-/** MsgSendResponse defines the Msg/Send response type. */
+/**
+ * MsgSendResponse defines the Msg/Send response type.
+ * @name MsgSendResponseAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.MsgSendResponse
+ */
 export interface MsgSendResponseAmino {}
 export interface MsgSendResponseAminoMsg {
   type: "cosmos-sdk/MsgSendResponse";

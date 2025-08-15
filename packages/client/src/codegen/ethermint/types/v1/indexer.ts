@@ -32,20 +32,33 @@ export interface TxResultProtoMsg {
   typeUrl: "/ethermint.types.v1.TxResult";
   value: Uint8Array;
 }
-/** TxResult is the value stored in eth tx indexer */
+/**
+ * TxResult is the value stored in eth tx indexer
+ * @name TxResultAmino
+ * @package ethermint.types.v1
+ * @see proto type: ethermint.types.v1.TxResult
+ */
 export interface TxResultAmino {
-  /** height of the blockchain */
+  /**
+   * height of the blockchain
+   */
   height?: string;
-  /** tx_index of the cosmos transaction */
+  /**
+   * tx_index of the cosmos transaction
+   */
   tx_index?: number;
-  /** msg_index in a batch transaction */
+  /**
+   * msg_index in a batch transaction
+   */
   msg_index?: number;
   /**
    * eth_tx_index is the index in the list of valid eth tx in the block,
    * aka. the transaction list returned by eth_getBlock api.
    */
   eth_tx_index?: number;
-  /** failed is true if the eth transaction did not go succeed */
+  /**
+   * failed is true if the eth transaction did not go succeed
+   */
   failed?: boolean;
   /**
    * gas_used by the transaction. If it exceeds the block gas limit,
@@ -117,7 +130,7 @@ export const TxResult = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.height = (reader.int64() as Long);
+          message.height = reader.int64() as Long;
           break;
         case 2:
           message.txIndex = reader.uint32();
@@ -132,10 +145,10 @@ export const TxResult = {
           message.failed = reader.bool();
           break;
         case 6:
-          message.gasUsed = (reader.uint64() as Long);
+          message.gasUsed = reader.uint64() as Long;
           break;
         case 7:
-          message.cumulativeGasUsed = (reader.uint64() as Long);
+          message.cumulativeGasUsed = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -204,13 +217,13 @@ export const TxResult = {
   },
   toAmino(message: TxResult): TxResultAmino {
     const obj: any = {};
-    obj.height = !message.height.isZero() ? message.height.toString() : undefined;
+    obj.height = !message.height.isZero() ? message.height?.toString() : undefined;
     obj.tx_index = message.txIndex === 0 ? undefined : message.txIndex;
     obj.msg_index = message.msgIndex === 0 ? undefined : message.msgIndex;
     obj.eth_tx_index = message.ethTxIndex === 0 ? undefined : message.ethTxIndex;
     obj.failed = message.failed === false ? undefined : message.failed;
-    obj.gas_used = !message.gasUsed.isZero() ? message.gasUsed.toString() : undefined;
-    obj.cumulative_gas_used = !message.cumulativeGasUsed.isZero() ? message.cumulativeGasUsed.toString() : undefined;
+    obj.gas_used = !message.gasUsed.isZero() ? message.gasUsed?.toString() : undefined;
+    obj.cumulative_gas_used = !message.cumulativeGasUsed.isZero() ? message.cumulativeGasUsed?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: TxResultAminoMsg): TxResult {

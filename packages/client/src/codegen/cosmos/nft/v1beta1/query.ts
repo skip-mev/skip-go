@@ -15,11 +15,20 @@ export interface QueryBalanceRequestProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QueryBalanceRequest";
   value: Uint8Array;
 }
-/** QueryBalanceRequest is the request type for the Query/Balance RPC method */
+/**
+ * QueryBalanceRequest is the request type for the Query/Balance RPC method
+ * @name QueryBalanceRequestAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QueryBalanceRequest
+ */
 export interface QueryBalanceRequestAmino {
-  /** class_id associated with the nft */
+  /**
+   * class_id associated with the nft
+   */
   class_id?: string;
-  /** owner is the owner address of the nft */
+  /**
+   * owner is the owner address of the nft
+   */
   owner?: string;
 }
 export interface QueryBalanceRequestAminoMsg {
@@ -40,9 +49,16 @@ export interface QueryBalanceResponseProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QueryBalanceResponse";
   value: Uint8Array;
 }
-/** QueryBalanceResponse is the response type for the Query/Balance RPC method */
+/**
+ * QueryBalanceResponse is the response type for the Query/Balance RPC method
+ * @name QueryBalanceResponseAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QueryBalanceResponse
+ */
 export interface QueryBalanceResponseAmino {
-  /** amount is the number of all NFTs of a given class owned by the owner */
+  /**
+   * amount is the number of all NFTs of a given class owned by the owner
+   */
   amount?: string;
 }
 export interface QueryBalanceResponseAminoMsg {
@@ -64,11 +80,20 @@ export interface QueryOwnerRequestProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QueryOwnerRequest";
   value: Uint8Array;
 }
-/** QueryOwnerRequest is the request type for the Query/Owner RPC method */
+/**
+ * QueryOwnerRequest is the request type for the Query/Owner RPC method
+ * @name QueryOwnerRequestAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QueryOwnerRequest
+ */
 export interface QueryOwnerRequestAmino {
-  /** class_id associated with the nft */
+  /**
+   * class_id associated with the nft
+   */
   class_id?: string;
-  /** id is a unique identifier of the NFT */
+  /**
+   * id is a unique identifier of the NFT
+   */
   id?: string;
 }
 export interface QueryOwnerRequestAminoMsg {
@@ -89,9 +114,16 @@ export interface QueryOwnerResponseProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QueryOwnerResponse";
   value: Uint8Array;
 }
-/** QueryOwnerResponse is the response type for the Query/Owner RPC method */
+/**
+ * QueryOwnerResponse is the response type for the Query/Owner RPC method
+ * @name QueryOwnerResponseAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QueryOwnerResponse
+ */
 export interface QueryOwnerResponseAmino {
-  /** owner is the owner address of the nft */
+  /**
+   * owner is the owner address of the nft
+   */
   owner?: string;
 }
 export interface QueryOwnerResponseAminoMsg {
@@ -111,9 +143,16 @@ export interface QuerySupplyRequestProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QuerySupplyRequest";
   value: Uint8Array;
 }
-/** QuerySupplyRequest is the request type for the Query/Supply RPC method */
+/**
+ * QuerySupplyRequest is the request type for the Query/Supply RPC method
+ * @name QuerySupplyRequestAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QuerySupplyRequest
+ */
 export interface QuerySupplyRequestAmino {
-  /** class_id associated with the nft */
+  /**
+   * class_id associated with the nft
+   */
   class_id?: string;
 }
 export interface QuerySupplyRequestAminoMsg {
@@ -133,9 +172,16 @@ export interface QuerySupplyResponseProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QuerySupplyResponse";
   value: Uint8Array;
 }
-/** QuerySupplyResponse is the response type for the Query/Supply RPC method */
+/**
+ * QuerySupplyResponse is the response type for the Query/Supply RPC method
+ * @name QuerySupplyResponseAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QuerySupplyResponse
+ */
 export interface QuerySupplyResponseAmino {
-  /** amount is the number of all NFTs from the given class */
+  /**
+   * amount is the number of all NFTs from the given class
+   */
   amount?: string;
 }
 export interface QuerySupplyResponseAminoMsg {
@@ -159,13 +205,24 @@ export interface QueryNFTsRequestProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QueryNFTsRequest";
   value: Uint8Array;
 }
-/** QueryNFTstRequest is the request type for the Query/NFTs RPC method */
+/**
+ * QueryNFTstRequest is the request type for the Query/NFTs RPC method
+ * @name QueryNFTsRequestAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QueryNFTsRequest
+ */
 export interface QueryNFTsRequestAmino {
-  /** class_id associated with the nft */
+  /**
+   * class_id associated with the nft
+   */
   class_id?: string;
-  /** owner is the owner address of the nft */
+  /**
+   * owner is the owner address of the nft
+   */
   owner?: string;
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryNFTsRequestAminoMsg {
@@ -189,11 +246,20 @@ export interface QueryNFTsResponseProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QueryNFTsResponse";
   value: Uint8Array;
 }
-/** QueryNFTsResponse is the response type for the Query/NFTs RPC methods */
+/**
+ * QueryNFTsResponse is the response type for the Query/NFTs RPC methods
+ * @name QueryNFTsResponseAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QueryNFTsResponse
+ */
 export interface QueryNFTsResponseAmino {
-  /** NFT defines the NFT */
+  /**
+   * NFT defines the NFT
+   */
   nfts?: NFTAmino[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryNFTsResponseAminoMsg {
@@ -216,11 +282,20 @@ export interface QueryNFTRequestProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QueryNFTRequest";
   value: Uint8Array;
 }
-/** QueryNFTRequest is the request type for the Query/NFT RPC method */
+/**
+ * QueryNFTRequest is the request type for the Query/NFT RPC method
+ * @name QueryNFTRequestAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QueryNFTRequest
+ */
 export interface QueryNFTRequestAmino {
-  /** class_id associated with the nft */
+  /**
+   * class_id associated with the nft
+   */
   class_id?: string;
-  /** id is a unique identifier of the NFT */
+  /**
+   * id is a unique identifier of the NFT
+   */
   id?: string;
 }
 export interface QueryNFTRequestAminoMsg {
@@ -241,9 +316,16 @@ export interface QueryNFTResponseProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QueryNFTResponse";
   value: Uint8Array;
 }
-/** QueryNFTResponse is the response type for the Query/NFT RPC method */
+/**
+ * QueryNFTResponse is the response type for the Query/NFT RPC method
+ * @name QueryNFTResponseAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QueryNFTResponse
+ */
 export interface QueryNFTResponseAmino {
-  /** owner is the owner address of the nft */
+  /**
+   * owner is the owner address of the nft
+   */
   nft?: NFTAmino;
 }
 export interface QueryNFTResponseAminoMsg {
@@ -263,9 +345,16 @@ export interface QueryClassRequestProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QueryClassRequest";
   value: Uint8Array;
 }
-/** QueryClassRequest is the request type for the Query/Class RPC method */
+/**
+ * QueryClassRequest is the request type for the Query/Class RPC method
+ * @name QueryClassRequestAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QueryClassRequest
+ */
 export interface QueryClassRequestAmino {
-  /** class_id associated with the nft */
+  /**
+   * class_id associated with the nft
+   */
   class_id?: string;
 }
 export interface QueryClassRequestAminoMsg {
@@ -285,9 +374,16 @@ export interface QueryClassResponseProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QueryClassResponse";
   value: Uint8Array;
 }
-/** QueryClassResponse is the response type for the Query/Class RPC method */
+/**
+ * QueryClassResponse is the response type for the Query/Class RPC method
+ * @name QueryClassResponseAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QueryClassResponse
+ */
 export interface QueryClassResponseAmino {
-  /** class defines the class of the nft type. */
+  /**
+   * class defines the class of the nft type.
+   */
   class?: ClassAmino;
 }
 export interface QueryClassResponseAminoMsg {
@@ -307,9 +403,16 @@ export interface QueryClassesRequestProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QueryClassesRequest";
   value: Uint8Array;
 }
-/** QueryClassesRequest is the request type for the Query/Classes RPC method */
+/**
+ * QueryClassesRequest is the request type for the Query/Classes RPC method
+ * @name QueryClassesRequestAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QueryClassesRequest
+ */
 export interface QueryClassesRequestAmino {
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryClassesRequestAminoMsg {
@@ -331,11 +434,20 @@ export interface QueryClassesResponseProtoMsg {
   typeUrl: "/cosmos.nft.v1beta1.QueryClassesResponse";
   value: Uint8Array;
 }
-/** QueryClassesResponse is the response type for the Query/Classes RPC method */
+/**
+ * QueryClassesResponse is the response type for the Query/Classes RPC method
+ * @name QueryClassesResponseAmino
+ * @package cosmos.nft.v1beta1
+ * @see proto type: cosmos.nft.v1beta1.QueryClassesResponse
+ */
 export interface QueryClassesResponseAmino {
-  /** class defines the class of the nft type. */
+  /**
+   * class defines the class of the nft type.
+   */
   classes?: ClassAmino[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryClassesResponseAminoMsg {
@@ -461,7 +573,7 @@ export const QueryBalanceResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.amount = (reader.uint64() as Long);
+          message.amount = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -494,7 +606,7 @@ export const QueryBalanceResponse = {
   },
   toAmino(message: QueryBalanceResponse): QueryBalanceResponseAmino {
     const obj: any = {};
-    obj.amount = !message.amount.isZero() ? message.amount.toString() : undefined;
+    obj.amount = !message.amount.isZero() ? message.amount?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: QueryBalanceResponseAminoMsg): QueryBalanceResponse {
@@ -791,7 +903,7 @@ export const QuerySupplyResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.amount = (reader.uint64() as Long);
+          message.amount = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -824,7 +936,7 @@ export const QuerySupplyResponse = {
   },
   toAmino(message: QuerySupplyResponse): QuerySupplyResponseAmino {
     const obj: any = {};
-    obj.amount = !message.amount.isZero() ? message.amount.toString() : undefined;
+    obj.amount = !message.amount.isZero() ? message.amount?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: QuerySupplyResponseAminoMsg): QuerySupplyResponse {

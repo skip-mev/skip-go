@@ -20,9 +20,14 @@ export interface QueryTokenPairsRequestProtoMsg {
 /**
  * QueryTokenPairsRequest is the request type for the Query/TokenPairs RPC
  * method.
+ * @name QueryTokenPairsRequestAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.QueryTokenPairsRequest
  */
 export interface QueryTokenPairsRequestAmino {
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryTokenPairsRequestAminoMsg {
@@ -53,11 +58,18 @@ export interface QueryTokenPairsResponseProtoMsg {
 /**
  * QueryTokenPairsResponse is the response type for the Query/TokenPairs RPC
  * method.
+ * @name QueryTokenPairsResponseAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.QueryTokenPairsResponse
  */
 export interface QueryTokenPairsResponseAmino {
-  /** token_pairs is a slice of registered token pairs for the erc20 module */
+  /**
+   * token_pairs is a slice of registered token pairs for the erc20 module
+   */
   token_pairs?: TokenPairAmino[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryTokenPairsResponseAminoMsg {
@@ -84,7 +96,12 @@ export interface QueryTokenPairRequestProtoMsg {
   typeUrl: "/evmos.erc20.v1.QueryTokenPairRequest";
   value: Uint8Array;
 }
-/** QueryTokenPairRequest is the request type for the Query/TokenPair RPC method. */
+/**
+ * QueryTokenPairRequest is the request type for the Query/TokenPair RPC method.
+ * @name QueryTokenPairRequestAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.QueryTokenPairRequest
+ */
 export interface QueryTokenPairRequestAmino {
   /**
    * token identifier can be either the hex contract address of the ERC20 or the
@@ -115,9 +132,14 @@ export interface QueryTokenPairResponseProtoMsg {
 /**
  * QueryTokenPairResponse is the response type for the Query/TokenPair RPC
  * method.
+ * @name QueryTokenPairResponseAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.QueryTokenPairResponse
  */
 export interface QueryTokenPairResponseAmino {
-  /** token_pairs returns the info about a registered token pair for the erc20 module */
+  /**
+   * token_pairs returns the info about a registered token pair for the erc20 module
+   */
   token_pair?: TokenPairAmino;
 }
 export interface QueryTokenPairResponseAminoMsg {
@@ -137,7 +159,12 @@ export interface QueryParamsRequestProtoMsg {
   typeUrl: "/evmos.erc20.v1.QueryParamsRequest";
   value: Uint8Array;
 }
-/** QueryParamsRequest is the request type for the Query/Params RPC method. */
+/**
+ * QueryParamsRequest is the request type for the Query/Params RPC method.
+ * @name QueryParamsRequestAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.QueryParamsRequest
+ */
 export interface QueryParamsRequestAmino {}
 export interface QueryParamsRequestAminoMsg {
   type: "erc20/QueryParamsRequest";
@@ -160,9 +187,14 @@ export interface QueryParamsResponseProtoMsg {
 /**
  * QueryParamsResponse is the response type for the Query/Params RPC
  * method.
+ * @name QueryParamsResponseAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.QueryParamsResponse
  */
 export interface QueryParamsResponseAmino {
-  /** params are the erc20 module parameters */
+  /**
+   * params are the erc20 module parameters
+   */
   params?: ParamsAmino;
 }
 export interface QueryParamsResponseAminoMsg {

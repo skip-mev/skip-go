@@ -16,6 +16,9 @@ export interface AttesterEnabledProtoMsg {
 /**
  * Emitted when an attester is enabled
  * @param attester newly enabled attester
+ * @name AttesterEnabledAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.AttesterEnabled
  */
 export interface AttesterEnabledAmino {
   attester?: string;
@@ -45,6 +48,9 @@ export interface AttesterDisabledProtoMsg {
 /**
  * Emitted when an attester is disabled
  * @param attester newly disabled attester
+ * @name AttesterDisabledAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.AttesterDisabled
  */
 export interface AttesterDisabledAmino {
   attester?: string;
@@ -77,6 +83,9 @@ export interface SignatureThresholdUpdatedProtoMsg {
  * Emitted when threshold number of attestations (m in m/n multisig) is updated
  * @param old_signature_threshold old signature threshold
  * @param new_signature_threshold new signature threshold
+ * @name SignatureThresholdUpdatedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.SignatureThresholdUpdated
  */
 export interface SignatureThresholdUpdatedAmino {
   old_signature_threshold?: string;
@@ -112,6 +121,9 @@ export interface OwnerUpdatedProtoMsg {
  * Emitted when owner address is updated
  * @param previous_owner representing the address of the previous owner
  * @param new_owner representing the address of the new owner
+ * @name OwnerUpdatedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.OwnerUpdated
  */
 export interface OwnerUpdatedAmino {
   previous_owner?: string;
@@ -147,6 +159,9 @@ export interface OwnershipTransferStartedProtoMsg {
  * Emitted when starting the two stage transfer ownership process
  * @param previousOwner representing the address of the previous owner
  * @param newOwner representing the address of the new owner
+ * @name OwnershipTransferStartedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.OwnershipTransferStarted
  */
 export interface OwnershipTransferStartedAmino {
   previous_owner?: string;
@@ -182,6 +197,9 @@ export interface PauserUpdatedProtoMsg {
  * Emitted when pauser address is updated
  * @param previous_pauser representing the address of the previous pauser
  * @param new_pauser representing the address of the new pauser
+ * @name PauserUpdatedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.PauserUpdated
  */
 export interface PauserUpdatedAmino {
   previous_pauser?: string;
@@ -221,6 +239,9 @@ export interface AttesterManagerUpdatedProtoMsg {
  * attester manager
  * @param new_attester_manager representing the address of the new attester
  * manager
+ * @name AttesterManagerUpdatedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.AttesterManagerUpdated
  */
 export interface AttesterManagerUpdatedAmino {
   previous_attester_manager?: string;
@@ -262,6 +283,9 @@ export interface TokenControllerUpdatedProtoMsg {
  * token controller
  * @param new_token_controller representing the address of the new token
  * controller
+ * @name TokenControllerUpdatedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.TokenControllerUpdated
  */
 export interface TokenControllerUpdatedAmino {
   previous_token_controller?: string;
@@ -288,7 +312,12 @@ export interface BurningAndMintingPausedEventProtoMsg {
   typeUrl: "/circle.cctp.v1.BurningAndMintingPausedEvent";
   value: Uint8Array;
 }
-/** Emitted when burning and minting tokens is paused */
+/**
+ * Emitted when burning and minting tokens is paused
+ * @name BurningAndMintingPausedEventAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.BurningAndMintingPausedEvent
+ */
 export interface BurningAndMintingPausedEventAmino {}
 export interface BurningAndMintingPausedEventAminoMsg {
   type: "/circle.cctp.v1.BurningAndMintingPausedEvent";
@@ -302,7 +331,12 @@ export interface BurningAndMintingUnpausedEventProtoMsg {
   typeUrl: "/circle.cctp.v1.BurningAndMintingUnpausedEvent";
   value: Uint8Array;
 }
-/** Emitted when burning and minting tokens is unpaused */
+/**
+ * Emitted when burning and minting tokens is unpaused
+ * @name BurningAndMintingUnpausedEventAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.BurningAndMintingUnpausedEvent
+ */
 export interface BurningAndMintingUnpausedEventAmino {}
 export interface BurningAndMintingUnpausedEventAminoMsg {
   type: "/circle.cctp.v1.BurningAndMintingUnpausedEvent";
@@ -316,7 +350,12 @@ export interface SendingAndReceivingPausedEventProtoMsg {
   typeUrl: "/circle.cctp.v1.SendingAndReceivingPausedEvent";
   value: Uint8Array;
 }
-/** Emitted when sending and receiving messages is paused */
+/**
+ * Emitted when sending and receiving messages is paused
+ * @name SendingAndReceivingPausedEventAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.SendingAndReceivingPausedEvent
+ */
 export interface SendingAndReceivingPausedEventAmino {}
 export interface SendingAndReceivingPausedEventAminoMsg {
   type: "/circle.cctp.v1.SendingAndReceivingPausedEvent";
@@ -330,7 +369,12 @@ export interface SendingAndReceivingUnpausedEventProtoMsg {
   typeUrl: "/circle.cctp.v1.SendingAndReceivingUnpausedEvent";
   value: Uint8Array;
 }
-/** Emitted when sending and receiving messages is paused */
+/**
+ * Emitted when sending and receiving messages is paused
+ * @name SendingAndReceivingUnpausedEventAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.SendingAndReceivingUnpausedEvent
+ */
 export interface SendingAndReceivingUnpausedEventAmino {}
 export interface SendingAndReceivingUnpausedEventAminoMsg {
   type: "/circle.cctp.v1.SendingAndReceivingUnpausedEvent";
@@ -381,6 +425,9 @@ export interface DepositForBurnProtoMsg {
  * @param destination_caller authorized caller as bytes32 of receiveMessage() on
  * destination domain, if not equal to bytes32(0). If equal to bytes32(0), any
  * address can call receiveMessage().
+ * @name DepositForBurnAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.DepositForBurn
  */
 export interface DepositForBurnAmino {
   nonce?: string;
@@ -441,6 +488,9 @@ export interface MintAndWithdrawProtoMsg {
  * @param mint_recipient recipient address of minted tokens
  * @param amount amount of minted tokens
  * @param mint_token contract address of minted token
+ * @name MintAndWithdrawAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MintAndWithdraw
  */
 export interface MintAndWithdrawAmino {
   mint_recipient?: string;
@@ -482,6 +532,9 @@ export interface TokenPairLinkedProtoMsg {
  * @param local_token local token to support
  * @param remote_domain remote domain
  * @param remote_token token on `remoteDomain` corresponding to `localToken`
+ * @name TokenPairLinkedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.TokenPairLinked
  */
 export interface TokenPairLinkedAmino {
   local_token?: string;
@@ -523,6 +576,9 @@ export interface TokenPairUnlinkedProtoMsg {
  * @param local_token local token address
  * @param remote_domain remote domain
  * @param remote_token token on `remoteDomain` unlinked from `localToken`
+ * @name TokenPairUnlinkedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.TokenPairUnlinked
  */
 export interface TokenPairUnlinkedAmino {
   local_token?: string;
@@ -558,6 +614,9 @@ export interface MessageSentProtoMsg {
 /**
  * Emitted when a new message is dispatched
  * @param message Raw bytes of message
+ * @name MessageSentAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MessageSent
  */
 export interface MessageSentAmino {
   message?: string;
@@ -599,6 +658,9 @@ export interface MessageReceivedProtoMsg {
  * @param nonce the nonce unique to this message
  * @param sender the sender of this message
  * @param message_body message body bytes
+ * @name MessageReceivedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MessageReceived
  */
 export interface MessageReceivedAmino {
   caller?: string;
@@ -640,6 +702,9 @@ export interface MaxMessageBodySizeUpdatedProtoMsg {
 /**
  * Emitted when max message body size is updated
  * @param new_max_message_body_size new maximum message body size, in bytes
+ * @name MaxMessageBodySizeUpdatedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.MaxMessageBodySizeUpdated
  */
 export interface MaxMessageBodySizeUpdatedAmino {
   new_max_message_body_size?: string;
@@ -672,6 +737,9 @@ export interface RemoteTokenMessengerAddedProtoMsg {
  * Emitted when a RemoteTokenMessenger is added
  * @param domain remote domain
  * @param remote_token_messenger RemoteTokenMessenger on domain
+ * @name RemoteTokenMessengerAddedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.RemoteTokenMessengerAdded
  */
 export interface RemoteTokenMessengerAddedAmino {
   domain?: number;
@@ -707,6 +775,9 @@ export interface RemoteTokenMessengerRemovedProtoMsg {
  * Emitted when a RemoteTokenMessenger is removed
  * @param domain remote domain
  * @param remote_token_messenger RemoteTokenMessenger on domain
+ * @name RemoteTokenMessengerRemovedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.RemoteTokenMessengerRemoved
  */
 export interface RemoteTokenMessengerRemovedAmino {
   domain?: number;
@@ -744,6 +815,9 @@ export interface SetBurnLimitPerMessageProtoMsg {
  * @param local_token
  * @param old_amount old max burn amount
  * @param new_amount new max burn amount
+ * @name SetBurnLimitPerMessageAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.SetBurnLimitPerMessage
  */
 export interface SetBurnLimitPerMessageAmino {
   token?: string;
@@ -934,10 +1008,10 @@ export const SignatureThresholdUpdated = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.oldSignatureThreshold = (reader.uint64() as Long);
+          message.oldSignatureThreshold = reader.uint64() as Long;
           break;
         case 2:
-          message.newSignatureThreshold = (reader.uint64() as Long);
+          message.newSignatureThreshold = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -976,8 +1050,8 @@ export const SignatureThresholdUpdated = {
   },
   toAmino(message: SignatureThresholdUpdated): SignatureThresholdUpdatedAmino {
     const obj: any = {};
-    obj.old_signature_threshold = !message.oldSignatureThreshold.isZero() ? message.oldSignatureThreshold.toString() : undefined;
-    obj.new_signature_threshold = !message.newSignatureThreshold.isZero() ? message.newSignatureThreshold.toString() : undefined;
+    obj.old_signature_threshold = !message.oldSignatureThreshold.isZero() ? message.oldSignatureThreshold?.toString() : undefined;
+    obj.new_signature_threshold = !message.newSignatureThreshold.isZero() ? message.newSignatureThreshold?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: SignatureThresholdUpdatedAminoMsg): SignatureThresholdUpdated {
@@ -1708,7 +1782,7 @@ export const DepositForBurn = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         case 2:
           message.burnToken = reader.string();
@@ -1804,7 +1878,7 @@ export const DepositForBurn = {
   },
   toAmino(message: DepositForBurn): DepositForBurnAmino {
     const obj: any = {};
-    obj.nonce = !message.nonce.isZero() ? message.nonce.toString() : undefined;
+    obj.nonce = !message.nonce.isZero() ? message.nonce?.toString() : undefined;
     obj.burn_token = message.burnToken === "" ? undefined : message.burnToken;
     obj.amount = message.amount === "" ? undefined : message.amount;
     obj.depositor = message.depositor === "" ? undefined : message.depositor;
@@ -2249,7 +2323,7 @@ export const MessageReceived = {
           message.sourceDomain = reader.uint32();
           break;
         case 3:
-          message.nonce = (reader.uint64() as Long);
+          message.nonce = reader.uint64() as Long;
           break;
         case 4:
           message.sender = reader.bytes();
@@ -2314,7 +2388,7 @@ export const MessageReceived = {
     const obj: any = {};
     obj.caller = message.caller === "" ? undefined : message.caller;
     obj.source_domain = message.sourceDomain === 0 ? undefined : message.sourceDomain;
-    obj.nonce = !message.nonce.isZero() ? message.nonce.toString() : undefined;
+    obj.nonce = !message.nonce.isZero() ? message.nonce?.toString() : undefined;
     obj.sender = message.sender ? base64FromBytes(message.sender) : undefined;
     obj.message_body = message.messageBody ? base64FromBytes(message.messageBody) : undefined;
     return obj;
@@ -2356,7 +2430,7 @@ export const MaxMessageBodySizeUpdated = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.newMaxMessageBodySize = (reader.uint64() as Long);
+          message.newMaxMessageBodySize = reader.uint64() as Long;
           break;
         default:
           reader.skipType(tag & 7);
@@ -2389,7 +2463,7 @@ export const MaxMessageBodySizeUpdated = {
   },
   toAmino(message: MaxMessageBodySizeUpdated): MaxMessageBodySizeUpdatedAmino {
     const obj: any = {};
-    obj.new_max_message_body_size = !message.newMaxMessageBodySize.isZero() ? message.newMaxMessageBodySize.toString() : undefined;
+    obj.new_max_message_body_size = !message.newMaxMessageBodySize.isZero() ? message.newMaxMessageBodySize?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: MaxMessageBodySizeUpdatedAminoMsg): MaxMessageBodySizeUpdated {
