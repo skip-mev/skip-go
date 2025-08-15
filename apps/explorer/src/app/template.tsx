@@ -9,6 +9,8 @@ import { Provider, jotaiStore, useSetAtom } from "@/jotai";
 import { Modals, NiceModal } from "@/nice-modal";
 import { AssetAndChainSelectorModal } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 import { themeAtom } from "@/state/skipClient";
+import { ViewRawDataModal } from "../components/modals/ViewRawData";
+import { ExplorerModals } from "../constants/modal";
 
 export default function Template({ children }: { children: ReactNode }) {
   return (
@@ -98,6 +100,7 @@ export const ClientOnly: React.FC<ClientOnlyProps> = ({ children }) => {
 export const RegisterModals = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     NiceModal.register(Modals.AssetAndChainSelectorModal, AssetAndChainSelectorModal);
+    NiceModal.register(ExplorerModals.ViewRawDataModal, ViewRawDataModal);
   }, []);
 
   return children

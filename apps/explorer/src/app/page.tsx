@@ -14,13 +14,15 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { NiceModal, Modals } from "@/nice-modal";
 import { GhostButton } from "@/components/Button";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
+import { ExplorerModals } from "../constants/modal";
 
 export default function Home() {
   const [txHash, setTxHash] = useState("BA47144AF79143EECEDA00BC758FA52D8B124934C7051A78B20DAC9DC42C1BCB");
   const [chainId, setChainId] = useState("osmosis-1");
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>([]);
   const [transactionStatusResponse, setTransactionStatusResponse] = useState<TxStatusResponse | null>(null);
-  
+  const [rawData, setRawData] = useState<string>("");
+
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const uniqueAssetsBySymbol = useAtomValue(uniqueAssetsBySymbolAtom);
@@ -64,12 +66,13 @@ export default function Home() {
     setSkipClientConfig(defaultSkipClientConfig);
     setOnlyTestnets(false);
   }, [setSkipClientConfig, setOnlyTestnets]);
-  
+
   const getTxStatus = async () => {
     const response = await transactionStatus({
       txHash,
       chainId,
     })
+    setRawData(JSON.stringify(response, null, 2));
     const transferEvents = getTransferEventsFromTxStatusResponse([response]);
 
     setTransactionStatusResponse(response);
@@ -80,7 +83,7 @@ export default function Home() {
 
   const transactionDetails = useMemo(() => {
     const chainIds = uniqueTransfers?.map((event) => event.chainId);
-    
+
     return {
       txHash: transferEvents?.[0]?.fromTxHash ?? "",
       state: transactionStatusResponse?.state,
@@ -106,7 +109,7 @@ export default function Home() {
             selectChain: true,
           });
         }}>open modal</button>
-        
+
         <input type="text" value={txHash} onChange={(e) => setTxHash(e.target.value)} placeholder="tx hash"/>
         <input type="text" value={chainId} onChange={(e) => setChainId(e.target.value)} placeholder="chain id"/>
         <SmallTextButton onClick={getTxStatus}>get tx info</SmallTextButton>
@@ -121,7 +124,14 @@ export default function Home() {
                 </GhostButton>
               </Column>
               <Column align="flex-end" width={355}>
-                <GhostButton gap={5} onClick={() => {}}>
+                <GhostButton gap={5} onClick={() => {
+                  NiceModal.show(ExplorerModals.ViewRawDataModal, {
+                    data: rawData,
+                    onClose: () => {
+                      console.log("ViewRawDataModal closed");
+                    },
+                  });
+                }}>
                   View raw data <HamburgerIcon />
                 </GhostButton>
               </Column>
@@ -147,7 +157,7 @@ export default function Home() {
           </>
         )
       }
-      
+
     </Column>
   );
 }
