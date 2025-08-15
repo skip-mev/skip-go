@@ -50,6 +50,22 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
       txHistoryItem,
     });
 
+    const explorerData = useMemo(() => {
+      const jsonString = JSON.stringify({
+        route: historyItem?.route,
+        userAddresses: historyItem?.userAddresses,
+        transactionDetails: historyItem?.transactionDetails,
+      });
+
+      const base64Encoded = Buffer.from(jsonString).toString("base64");
+
+      return base64Encoded;
+    }, [historyItem]);
+
+    console.log("explorerData", explorerData, "length", explorerData.length);
+
+    console.log("decoded", Buffer.from(explorerData, "base64").toString("utf-8"));
+
     const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
 
     const {
