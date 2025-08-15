@@ -38,15 +38,26 @@ export interface MsgSubmitProposalProtoMsg {
 /**
  * MsgSubmitProposal defines an sdk.Msg type that supports submitting arbitrary
  * proposal Content.
+ * @name MsgSubmitProposalAmino
+ * @package cosmos.gov.v1
+ * @see proto type: cosmos.gov.v1.MsgSubmitProposal
  */
 export interface MsgSubmitProposalAmino {
-  /** messages are the arbitrary messages to be executed if proposal passes. */
+  /**
+   * messages are the arbitrary messages to be executed if proposal passes.
+   */
   messages?: AnyAmino[];
-  /** initial_deposit is the deposit value that must be paid at proposal submission. */
+  /**
+   * initial_deposit is the deposit value that must be paid at proposal submission.
+   */
   initial_deposit: CoinAmino[];
-  /** proposer is the account address of the proposer. */
+  /**
+   * proposer is the account address of the proposer.
+   */
   proposer?: string;
-  /** metadata is any arbitrary metadata attached to the proposal. */
+  /**
+   * metadata is any arbitrary metadata attached to the proposal.
+   */
   metadata?: string;
   /**
    * title is the title of the proposal.
@@ -86,9 +97,16 @@ export interface MsgSubmitProposalResponseProtoMsg {
   typeUrl: "/cosmos.gov.v1.MsgSubmitProposalResponse";
   value: Uint8Array;
 }
-/** MsgSubmitProposalResponse defines the Msg/SubmitProposal response type. */
+/**
+ * MsgSubmitProposalResponse defines the Msg/SubmitProposal response type.
+ * @name MsgSubmitProposalResponseAmino
+ * @package cosmos.gov.v1
+ * @see proto type: cosmos.gov.v1.MsgSubmitProposalResponse
+ */
 export interface MsgSubmitProposalResponseAmino {
-  /** proposal_id defines the unique id of the proposal. */
+  /**
+   * proposal_id defines the unique id of the proposal.
+   */
   proposal_id?: string;
 }
 export interface MsgSubmitProposalResponseAminoMsg {
@@ -116,11 +134,18 @@ export interface MsgExecLegacyContentProtoMsg {
 /**
  * MsgExecLegacyContent is used to wrap the legacy content field into a message.
  * This ensures backwards compatibility with v1beta1.MsgSubmitProposal.
+ * @name MsgExecLegacyContentAmino
+ * @package cosmos.gov.v1
+ * @see proto type: cosmos.gov.v1.MsgExecLegacyContent
  */
 export interface MsgExecLegacyContentAmino {
-  /** content is the proposal's content. */
+  /**
+   * content is the proposal's content.
+   */
   content?: AnyAmino;
-  /** authority must be the gov module address. */
+  /**
+   * authority must be the gov module address.
+   */
   authority?: string;
 }
 export interface MsgExecLegacyContentAminoMsg {
@@ -141,7 +166,12 @@ export interface MsgExecLegacyContentResponseProtoMsg {
   typeUrl: "/cosmos.gov.v1.MsgExecLegacyContentResponse";
   value: Uint8Array;
 }
-/** MsgExecLegacyContentResponse defines the Msg/ExecLegacyContent response type. */
+/**
+ * MsgExecLegacyContentResponse defines the Msg/ExecLegacyContent response type.
+ * @name MsgExecLegacyContentResponseAmino
+ * @package cosmos.gov.v1
+ * @see proto type: cosmos.gov.v1.MsgExecLegacyContentResponse
+ */
 export interface MsgExecLegacyContentResponseAmino {}
 export interface MsgExecLegacyContentResponseAminoMsg {
   type: "cosmos-sdk/v1/MsgExecLegacyContentResponse";
@@ -164,15 +194,28 @@ export interface MsgVoteProtoMsg {
   typeUrl: "/cosmos.gov.v1.MsgVote";
   value: Uint8Array;
 }
-/** MsgVote defines a message to cast a vote. */
+/**
+ * MsgVote defines a message to cast a vote.
+ * @name MsgVoteAmino
+ * @package cosmos.gov.v1
+ * @see proto type: cosmos.gov.v1.MsgVote
+ */
 export interface MsgVoteAmino {
-  /** proposal_id defines the unique id of the proposal. */
+  /**
+   * proposal_id defines the unique id of the proposal.
+   */
   proposal_id: string;
-  /** voter is the voter address for the proposal. */
+  /**
+   * voter is the voter address for the proposal.
+   */
   voter?: string;
-  /** option defines the vote option. */
+  /**
+   * option defines the vote option.
+   */
   option?: VoteOption;
-  /** metadata is any arbitrary metadata attached to the Vote. */
+  /**
+   * metadata is any arbitrary metadata attached to the Vote.
+   */
   metadata?: string;
 }
 export interface MsgVoteAminoMsg {
@@ -192,7 +235,12 @@ export interface MsgVoteResponseProtoMsg {
   typeUrl: "/cosmos.gov.v1.MsgVoteResponse";
   value: Uint8Array;
 }
-/** MsgVoteResponse defines the Msg/Vote response type. */
+/**
+ * MsgVoteResponse defines the Msg/Vote response type.
+ * @name MsgVoteResponseAmino
+ * @package cosmos.gov.v1
+ * @see proto type: cosmos.gov.v1.MsgVoteResponse
+ */
 export interface MsgVoteResponseAmino {}
 export interface MsgVoteResponseAminoMsg {
   type: "cosmos-sdk/v1/MsgVoteResponse";
@@ -215,15 +263,28 @@ export interface MsgVoteWeightedProtoMsg {
   typeUrl: "/cosmos.gov.v1.MsgVoteWeighted";
   value: Uint8Array;
 }
-/** MsgVoteWeighted defines a message to cast a vote. */
+/**
+ * MsgVoteWeighted defines a message to cast a vote.
+ * @name MsgVoteWeightedAmino
+ * @package cosmos.gov.v1
+ * @see proto type: cosmos.gov.v1.MsgVoteWeighted
+ */
 export interface MsgVoteWeightedAmino {
-  /** proposal_id defines the unique id of the proposal. */
+  /**
+   * proposal_id defines the unique id of the proposal.
+   */
   proposal_id: string;
-  /** voter is the voter address for the proposal. */
+  /**
+   * voter is the voter address for the proposal.
+   */
   voter?: string;
-  /** options defines the weighted vote options. */
+  /**
+   * options defines the weighted vote options.
+   */
   options?: WeightedVoteOptionAmino[];
-  /** metadata is any arbitrary metadata attached to the VoteWeighted. */
+  /**
+   * metadata is any arbitrary metadata attached to the VoteWeighted.
+   */
   metadata?: string;
 }
 export interface MsgVoteWeightedAminoMsg {
@@ -243,7 +304,12 @@ export interface MsgVoteWeightedResponseProtoMsg {
   typeUrl: "/cosmos.gov.v1.MsgVoteWeightedResponse";
   value: Uint8Array;
 }
-/** MsgVoteWeightedResponse defines the Msg/VoteWeighted response type. */
+/**
+ * MsgVoteWeightedResponse defines the Msg/VoteWeighted response type.
+ * @name MsgVoteWeightedResponseAmino
+ * @package cosmos.gov.v1
+ * @see proto type: cosmos.gov.v1.MsgVoteWeightedResponse
+ */
 export interface MsgVoteWeightedResponseAmino {}
 export interface MsgVoteWeightedResponseAminoMsg {
   type: "cosmos-sdk/v1/MsgVoteWeightedResponse";
@@ -264,13 +330,24 @@ export interface MsgDepositProtoMsg {
   typeUrl: "/cosmos.gov.v1.MsgDeposit";
   value: Uint8Array;
 }
-/** MsgDeposit defines a message to submit a deposit to an existing proposal. */
+/**
+ * MsgDeposit defines a message to submit a deposit to an existing proposal.
+ * @name MsgDepositAmino
+ * @package cosmos.gov.v1
+ * @see proto type: cosmos.gov.v1.MsgDeposit
+ */
 export interface MsgDepositAmino {
-  /** proposal_id defines the unique id of the proposal. */
+  /**
+   * proposal_id defines the unique id of the proposal.
+   */
   proposal_id: string;
-  /** depositor defines the deposit addresses from the proposals. */
+  /**
+   * depositor defines the deposit addresses from the proposals.
+   */
   depositor?: string;
-  /** amount to be deposited by depositor. */
+  /**
+   * amount to be deposited by depositor.
+   */
   amount: CoinAmino[];
 }
 export interface MsgDepositAminoMsg {
@@ -289,7 +366,12 @@ export interface MsgDepositResponseProtoMsg {
   typeUrl: "/cosmos.gov.v1.MsgDepositResponse";
   value: Uint8Array;
 }
-/** MsgDepositResponse defines the Msg/Deposit response type. */
+/**
+ * MsgDepositResponse defines the Msg/Deposit response type.
+ * @name MsgDepositResponseAmino
+ * @package cosmos.gov.v1
+ * @see proto type: cosmos.gov.v1.MsgDepositResponse
+ */
 export interface MsgDepositResponseAmino {}
 export interface MsgDepositResponseAminoMsg {
   type: "cosmos-sdk/v1/MsgDepositResponse";
@@ -320,9 +402,14 @@ export interface MsgUpdateParamsProtoMsg {
  * MsgUpdateParams is the Msg/UpdateParams request type.
  * 
  * Since: cosmos-sdk 0.47
+ * @name MsgUpdateParamsAmino
+ * @package cosmos.gov.v1
+ * @see proto type: cosmos.gov.v1.MsgUpdateParams
  */
 export interface MsgUpdateParamsAmino {
-  /** authority is the address that controls the module (defaults to x/gov unless overwritten). */
+  /**
+   * authority is the address that controls the module (defaults to x/gov unless overwritten).
+   */
   authority?: string;
   /**
    * params defines the x/gov parameters to update.
@@ -360,6 +447,9 @@ export interface MsgUpdateParamsResponseProtoMsg {
  * MsgUpdateParams message.
  * 
  * Since: cosmos-sdk 0.47
+ * @name MsgUpdateParamsResponseAmino
+ * @package cosmos.gov.v1
+ * @see proto type: cosmos.gov.v1.MsgUpdateParamsResponse
  */
 export interface MsgUpdateParamsResponseAmino {}
 export interface MsgUpdateParamsResponseAminoMsg {
@@ -588,7 +678,7 @@ export const MsgSubmitProposalResponse = {
   },
   toAmino(message: MsgSubmitProposalResponse): MsgSubmitProposalResponseAmino {
     const obj: any = {};
-    obj.proposal_id = !message.proposalId.isZero() ? message.proposalId.toString() : undefined;
+    obj.proposal_id = !message.proposalId.isZero() ? message.proposalId?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: MsgSubmitProposalResponseAminoMsg): MsgSubmitProposalResponse {
@@ -862,7 +952,7 @@ export const MsgVote = {
   },
   toAmino(message: MsgVote): MsgVoteAmino {
     const obj: any = {};
-    obj.proposal_id = message.proposalId ? message.proposalId.toString() : "0";
+    obj.proposal_id = message.proposalId ? message.proposalId?.toString() : "0";
     obj.voter = message.voter === "" ? undefined : message.voter;
     obj.option = message.option === 0 ? undefined : message.option;
     obj.metadata = message.metadata === "" ? undefined : message.metadata;
@@ -1048,7 +1138,7 @@ export const MsgVoteWeighted = {
   },
   toAmino(message: MsgVoteWeighted): MsgVoteWeightedAmino {
     const obj: any = {};
-    obj.proposal_id = message.proposalId ? message.proposalId.toString() : "0";
+    obj.proposal_id = message.proposalId ? message.proposalId?.toString() : "0";
     obj.voter = message.voter === "" ? undefined : message.voter;
     if (message.options) {
       obj.options = message.options.map(e => e ? WeightedVoteOption.toAmino(e) : undefined);
@@ -1225,7 +1315,7 @@ export const MsgDeposit = {
   },
   toAmino(message: MsgDeposit): MsgDepositAmino {
     const obj: any = {};
-    obj.proposal_id = message.proposalId ? message.proposalId.toString() : "0";
+    obj.proposal_id = message.proposalId ? message.proposalId?.toString() : "0";
     obj.depositor = message.depositor === "" ? undefined : message.depositor;
     if (message.amount) {
       obj.amount = message.amount.map(e => e ? Coin.toAmino(e) : undefined);

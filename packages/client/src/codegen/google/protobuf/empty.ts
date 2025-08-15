@@ -27,6 +27,9 @@ export interface EmptyProtoMsg {
  *     }
  * 
  * The JSON representation for `Empty` is empty JSON object `{}`.
+ * @name EmptyAmino
+ * @package google.protobuf
+ * @see proto type: google.protobuf.Empty
  */
 export interface EmptyAmino {}
 export interface EmptyAminoMsg {

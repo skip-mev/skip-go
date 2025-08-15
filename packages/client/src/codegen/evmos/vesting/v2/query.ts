@@ -12,9 +12,16 @@ export interface QueryBalancesRequestProtoMsg {
   typeUrl: "/evmos.vesting.v2.QueryBalancesRequest";
   value: Uint8Array;
 }
-/** QueryBalancesRequest is the request type for the Query/Balances RPC method. */
+/**
+ * QueryBalancesRequest is the request type for the Query/Balances RPC method.
+ * @name QueryBalancesRequestAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.QueryBalancesRequest
+ */
 export interface QueryBalancesRequestAmino {
-  /** address of the clawback vesting account */
+  /**
+   * address of the clawback vesting account
+   */
   address?: string;
 }
 export interface QueryBalancesRequestAminoMsg {
@@ -44,13 +51,22 @@ export interface QueryBalancesResponseProtoMsg {
 /**
  * QueryBalancesResponse is the response type for the Query/Balances RPC
  * method.
+ * @name QueryBalancesResponseAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.QueryBalancesResponse
  */
 export interface QueryBalancesResponseAmino {
-  /** locked defines the current amount of locked tokens */
+  /**
+   * locked defines the current amount of locked tokens
+   */
   locked?: CoinAmino[];
-  /** unvested defines the current amount of unvested tokens */
+  /**
+   * unvested defines the current amount of unvested tokens
+   */
   unvested?: CoinAmino[];
-  /** vested defines the current amount of vested tokens */
+  /**
+   * vested defines the current amount of vested tokens
+   */
   vested?: CoinAmino[];
 }
 export interface QueryBalancesResponseAminoMsg {

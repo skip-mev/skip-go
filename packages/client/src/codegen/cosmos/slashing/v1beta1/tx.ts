@@ -11,7 +11,12 @@ export interface MsgUnjailProtoMsg {
   typeUrl: "/cosmos.slashing.v1beta1.MsgUnjail";
   value: Uint8Array;
 }
-/** MsgUnjail defines the Msg/Unjail request type */
+/**
+ * MsgUnjail defines the Msg/Unjail request type
+ * @name MsgUnjailAmino
+ * @package cosmos.slashing.v1beta1
+ * @see proto type: cosmos.slashing.v1beta1.MsgUnjail
+ */
 export interface MsgUnjailAmino {
   validator_addr: string;
 }
@@ -29,7 +34,12 @@ export interface MsgUnjailResponseProtoMsg {
   typeUrl: "/cosmos.slashing.v1beta1.MsgUnjailResponse";
   value: Uint8Array;
 }
-/** MsgUnjailResponse defines the Msg/Unjail response type */
+/**
+ * MsgUnjailResponse defines the Msg/Unjail response type
+ * @name MsgUnjailResponseAmino
+ * @package cosmos.slashing.v1beta1
+ * @see proto type: cosmos.slashing.v1beta1.MsgUnjailResponse
+ */
 export interface MsgUnjailResponseAmino {}
 export interface MsgUnjailResponseAminoMsg {
   type: "cosmos-sdk/MsgUnjailResponse";
@@ -60,9 +70,14 @@ export interface MsgUpdateParamsProtoMsg {
  * MsgUpdateParams is the Msg/UpdateParams request type.
  * 
  * Since: cosmos-sdk 0.47
+ * @name MsgUpdateParamsAmino
+ * @package cosmos.slashing.v1beta1
+ * @see proto type: cosmos.slashing.v1beta1.MsgUpdateParams
  */
 export interface MsgUpdateParamsAmino {
-  /** authority is the address that controls the module (defaults to x/gov unless overwritten). */
+  /**
+   * authority is the address that controls the module (defaults to x/gov unless overwritten).
+   */
   authority?: string;
   /**
    * params defines the x/slashing parameters to update.
@@ -100,6 +115,9 @@ export interface MsgUpdateParamsResponseProtoMsg {
  * MsgUpdateParams message.
  * 
  * Since: cosmos-sdk 0.47
+ * @name MsgUpdateParamsResponseAmino
+ * @package cosmos.slashing.v1beta1
+ * @see proto type: cosmos.slashing.v1beta1.MsgUpdateParamsResponse
  */
 export interface MsgUpdateParamsResponseAmino {}
 export interface MsgUpdateParamsResponseAminoMsg {

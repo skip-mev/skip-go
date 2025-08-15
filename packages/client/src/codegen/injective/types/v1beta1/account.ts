@@ -18,6 +18,9 @@ export interface EthAccountProtoMsg {
 /**
  * EthAccount implements the authtypes.AccountI interface and embeds an
  * authtypes.BaseAccount type. It is compatible with the auth AccountKeeper.
+ * @name EthAccountAmino
+ * @package injective.types.v1beta1
+ * @see proto type: injective.types.v1beta1.EthAccount
  */
 export interface EthAccountAmino {
   base_account?: BaseAccountAmino;

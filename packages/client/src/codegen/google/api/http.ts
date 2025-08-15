@@ -32,6 +32,9 @@ export interface HttpProtoMsg {
  * Defines the HTTP configuration for an API service. It contains a list of
  * [HttpRule][google.api.HttpRule], each specifying the mapping of an RPC method
  * to one or more HTTP REST API methods.
+ * @name HttpAmino
+ * @package google.api
+ * @see proto type: google.api.Http
  */
 export interface HttpAmino {
   /**
@@ -660,6 +663,9 @@ export interface HttpRuleProtoMsg {
  * If an API needs to use a JSON array for request or response body, it can map
  * the request or response body to a repeated field. However, some gRPC
  * Transcoding implementations may not support this feature.
+ * @name HttpRuleAmino
+ * @package google.api
+ * @see proto type: google.api.HttpRule
  */
 export interface HttpRuleAmino {
   /**
@@ -673,13 +679,21 @@ export interface HttpRuleAmino {
    * resources.
    */
   get?: string;
-  /** Maps to HTTP PUT. Used for replacing a resource. */
+  /**
+   * Maps to HTTP PUT. Used for replacing a resource.
+   */
   put?: string;
-  /** Maps to HTTP POST. Used for creating a resource or performing an action. */
+  /**
+   * Maps to HTTP POST. Used for creating a resource or performing an action.
+   */
   post?: string;
-  /** Maps to HTTP DELETE. Used for deleting a resource. */
+  /**
+   * Maps to HTTP DELETE. Used for deleting a resource.
+   */
   delete?: string;
-  /** Maps to HTTP PATCH. Used for updating a resource. */
+  /**
+   * Maps to HTTP PATCH. Used for updating a resource.
+   */
   patch?: string;
   /**
    * The custom pattern is used for specifying an HTTP method that is not
@@ -1011,11 +1025,20 @@ export interface CustomHttpPatternProtoMsg {
   typeUrl: "/google.api.CustomHttpPattern";
   value: Uint8Array;
 }
-/** A custom pattern is used for defining custom HTTP verb. */
+/**
+ * A custom pattern is used for defining custom HTTP verb.
+ * @name CustomHttpPatternAmino
+ * @package google.api
+ * @see proto type: google.api.CustomHttpPattern
+ */
 export interface CustomHttpPatternAmino {
-  /** The name of this custom HTTP verb. */
+  /**
+   * The name of this custom HTTP verb.
+   */
   kind?: string;
-  /** The path matched by this custom verb. */
+  /**
+   * The path matched by this custom verb.
+   */
   path?: string;
 }
 export interface CustomHttpPatternAminoMsg {

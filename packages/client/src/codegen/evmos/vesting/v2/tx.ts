@@ -24,13 +24,22 @@ export interface MsgCreateClawbackVestingAccountProtoMsg {
 /**
  * MsgCreateClawbackVestingAccount defines a message that enables creating a
  * ClawbackVestingAccount.
+ * @name MsgCreateClawbackVestingAccountAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.MsgCreateClawbackVestingAccount
  */
 export interface MsgCreateClawbackVestingAccountAmino {
-  /** funder_address specifies the account that will be able to fund the vesting account */
+  /**
+   * funder_address specifies the account that will be able to fund the vesting account
+   */
   funder_address?: string;
-  /** vesting_address specifies the address that will receive the vesting tokens */
+  /**
+   * vesting_address specifies the address that will receive the vesting tokens
+   */
   vesting_address?: string;
-  /** enable_gov_clawback specifies whether the governance module can clawback this account */
+  /**
+   * enable_gov_clawback specifies whether the governance module can clawback this account
+   */
   enable_gov_clawback?: boolean;
 }
 export interface MsgCreateClawbackVestingAccountAminoMsg {
@@ -58,6 +67,9 @@ export interface MsgCreateClawbackVestingAccountResponseProtoMsg {
 /**
  * MsgCreateClawbackVestingAccountResponse defines the
  * MsgCreateClawbackVestingAccount response type.
+ * @name MsgCreateClawbackVestingAccountResponseAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.MsgCreateClawbackVestingAccountResponse
  */
 export interface MsgCreateClawbackVestingAccountResponseAmino {}
 export interface MsgCreateClawbackVestingAccountResponseAminoMsg {
@@ -92,17 +104,30 @@ export interface MsgFundVestingAccountProtoMsg {
 /**
  * MsgFundVestingAccount defines a message that enables funding an existing clawback
  * vesting account.
+ * @name MsgFundVestingAccountAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.MsgFundVestingAccount
  */
 export interface MsgFundVestingAccountAmino {
-  /** funder_address specifies the account that funds the vesting account */
+  /**
+   * funder_address specifies the account that funds the vesting account
+   */
   funder_address?: string;
-  /** vesting_address specifies the account that receives the funds */
+  /**
+   * vesting_address specifies the account that receives the funds
+   */
   vesting_address?: string;
-  /** start_time defines the time at which the vesting period begins */
+  /**
+   * start_time defines the time at which the vesting period begins
+   */
   start_time?: string;
-  /** lockup_periods defines the unlocking schedule relative to the start_time */
+  /**
+   * lockup_periods defines the unlocking schedule relative to the start_time
+   */
   lockup_periods?: PeriodAmino[];
-  /** vesting_periods defines the vesting schedule relative to the start_time */
+  /**
+   * vesting_periods defines the vesting schedule relative to the start_time
+   */
   vesting_periods?: PeriodAmino[];
 }
 export interface MsgFundVestingAccountAminoMsg {
@@ -132,6 +157,9 @@ export interface MsgFundVestingAccountResponseProtoMsg {
 /**
  * MsgFundVestingAccountResponse defines the
  * MsgFundVestingAccount response type.
+ * @name MsgFundVestingAccountResponseAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.MsgFundVestingAccountResponse
  */
 export interface MsgFundVestingAccountResponseAmino {}
 export interface MsgFundVestingAccountResponseAminoMsg {
@@ -169,9 +197,14 @@ export interface MsgClawbackProtoMsg {
 /**
  * MsgClawback defines a message that removes unvested tokens from a
  * ClawbackVestingAccount.
+ * @name MsgClawbackAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.MsgClawback
  */
 export interface MsgClawbackAmino {
-  /** funder_address is the address which funded the account */
+  /**
+   * funder_address is the address which funded the account
+   */
   funder_address?: string;
   /**
    * account_address is the address of the ClawbackVestingAccount to claw back
@@ -207,9 +240,16 @@ export interface MsgClawbackResponseProtoMsg {
   typeUrl: "/evmos.vesting.v2.MsgClawbackResponse";
   value: Uint8Array;
 }
-/** MsgClawbackResponse defines the MsgClawback response type. */
+/**
+ * MsgClawbackResponse defines the MsgClawback response type.
+ * @name MsgClawbackResponseAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.MsgClawbackResponse
+ */
 export interface MsgClawbackResponseAmino {
-  /** coins is the slice of clawed back coins */
+  /**
+   * coins is the slice of clawed back coins
+   */
   coins?: CoinAmino[];
 }
 export interface MsgClawbackResponseAminoMsg {
@@ -239,13 +279,22 @@ export interface MsgUpdateVestingFunderProtoMsg {
 /**
  * MsgUpdateVestingFunder defines a message that updates the funder account of a
  * ClawbackVestingAccount.
+ * @name MsgUpdateVestingFunderAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.MsgUpdateVestingFunder
  */
 export interface MsgUpdateVestingFunderAmino {
-  /** funder_address is the current funder address of the ClawbackVestingAccount */
+  /**
+   * funder_address is the current funder address of the ClawbackVestingAccount
+   */
   funder_address?: string;
-  /** new_funder_address is the new address to replace the existing funder_address */
+  /**
+   * new_funder_address is the new address to replace the existing funder_address
+   */
   new_funder_address?: string;
-  /** vesting_address is the address of the ClawbackVestingAccount being updated */
+  /**
+   * vesting_address is the address of the ClawbackVestingAccount being updated
+   */
   vesting_address?: string;
 }
 export interface MsgUpdateVestingFunderAminoMsg {
@@ -273,6 +322,9 @@ export interface MsgUpdateVestingFunderResponseProtoMsg {
 /**
  * MsgUpdateVestingFunderResponse defines the MsgUpdateVestingFunder response
  * type.
+ * @name MsgUpdateVestingFunderResponseAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.MsgUpdateVestingFunderResponse
  */
 export interface MsgUpdateVestingFunderResponseAmino {}
 export interface MsgUpdateVestingFunderResponseAminoMsg {
@@ -293,9 +345,16 @@ export interface MsgConvertVestingAccountProtoMsg {
   typeUrl: "/evmos.vesting.v2.MsgConvertVestingAccount";
   value: Uint8Array;
 }
-/** MsgConvertVestingAccount defines a message that enables converting a vesting account to an eth account */
+/**
+ * MsgConvertVestingAccount defines a message that enables converting a vesting account to an eth account
+ * @name MsgConvertVestingAccountAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.MsgConvertVestingAccount
+ */
 export interface MsgConvertVestingAccountAmino {
-  /** vesting_address is the address of the vesting account to convert */
+  /**
+   * vesting_address is the address of the vesting account to convert
+   */
   vesting_address?: string;
 }
 export interface MsgConvertVestingAccountAminoMsg {
@@ -312,7 +371,12 @@ export interface MsgConvertVestingAccountResponseProtoMsg {
   typeUrl: "/evmos.vesting.v2.MsgConvertVestingAccountResponse";
   value: Uint8Array;
 }
-/** MsgConvertVestingAccountResponse defines the MsgConvertVestingAccount response type. */
+/**
+ * MsgConvertVestingAccountResponse defines the MsgConvertVestingAccount response type.
+ * @name MsgConvertVestingAccountResponseAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.MsgConvertVestingAccountResponse
+ */
 export interface MsgConvertVestingAccountResponseAmino {}
 export interface MsgConvertVestingAccountResponseAminoMsg {
   type: "evmos/MsgConvertVestingAccountResponse";

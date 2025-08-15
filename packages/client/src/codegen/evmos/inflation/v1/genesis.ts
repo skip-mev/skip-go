@@ -20,17 +20,32 @@ export interface GenesisStateProtoMsg {
   typeUrl: "/evmos.inflation.v1.GenesisState";
   value: Uint8Array;
 }
-/** GenesisState defines the inflation module's genesis state. */
+/**
+ * GenesisState defines the inflation module's genesis state.
+ * @name GenesisStateAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.GenesisState
+ */
 export interface GenesisStateAmino {
-  /** params defines all the parameters of the module. */
+  /**
+   * params defines all the parameters of the module.
+   */
   params?: ParamsAmino;
-  /** period is the amount of past periods, based on the epochs per period param */
+  /**
+   * period is the amount of past periods, based on the epochs per period param
+   */
   period?: string;
-  /** epoch_identifier for inflation */
+  /**
+   * epoch_identifier for inflation
+   */
   epoch_identifier?: string;
-  /** epochs_per_period is the number of epochs after which inflation is recalculated */
+  /**
+   * epochs_per_period is the number of epochs after which inflation is recalculated
+   */
   epochs_per_period?: string;
-  /** skipped_epochs is the number of epochs that have passed while inflation is disabled */
+  /**
+   * skipped_epochs is the number of epochs that have passed while inflation is disabled
+   */
   skipped_epochs?: string;
 }
 export interface GenesisStateAminoMsg {
@@ -60,15 +75,28 @@ export interface ParamsProtoMsg {
   typeUrl: "/evmos.inflation.v1.Params";
   value: Uint8Array;
 }
-/** Params holds parameters for the inflation module. */
+/**
+ * Params holds parameters for the inflation module.
+ * @name ParamsAmino
+ * @package evmos.inflation.v1
+ * @see proto type: evmos.inflation.v1.Params
+ */
 export interface ParamsAmino {
-  /** mint_denom specifies the type of coin to mint */
+  /**
+   * mint_denom specifies the type of coin to mint
+   */
   mint_denom?: string;
-  /** exponential_calculation takes in the variables to calculate exponential inflation */
+  /**
+   * exponential_calculation takes in the variables to calculate exponential inflation
+   */
   exponential_calculation?: ExponentialCalculationAmino;
-  /** inflation_distribution of the minted denom */
+  /**
+   * inflation_distribution of the minted denom
+   */
   inflation_distribution?: InflationDistributionAmino;
-  /** enable_inflation is the parameter that enables inflation and halts increasing the skipped_epochs */
+  /**
+   * enable_inflation is the parameter that enables inflation and halts increasing the skipped_epochs
+   */
   enable_inflation?: boolean;
 }
 export interface ParamsAminoMsg {
@@ -189,10 +217,10 @@ export const GenesisState = {
   toAmino(message: GenesisState): GenesisStateAmino {
     const obj: any = {};
     obj.params = message.params ? Params.toAmino(message.params) : undefined;
-    obj.period = !message.period.isZero() ? message.period.toString() : undefined;
+    obj.period = !message.period.isZero() ? message.period?.toString() : undefined;
     obj.epoch_identifier = message.epochIdentifier === "" ? undefined : message.epochIdentifier;
-    obj.epochs_per_period = !message.epochsPerPeriod.isZero() ? message.epochsPerPeriod.toString() : undefined;
-    obj.skipped_epochs = !message.skippedEpochs.isZero() ? message.skippedEpochs.toString() : undefined;
+    obj.epochs_per_period = !message.epochsPerPeriod.isZero() ? message.epochsPerPeriod?.toString() : undefined;
+    obj.skipped_epochs = !message.skippedEpochs.isZero() ? message.skippedEpochs?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: GenesisStateAminoMsg): GenesisState {

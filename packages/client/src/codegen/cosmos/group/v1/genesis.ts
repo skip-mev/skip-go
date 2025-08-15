@@ -35,32 +35,47 @@ export interface GenesisStateProtoMsg {
   typeUrl: "/cosmos.group.v1.GenesisState";
   value: Uint8Array;
 }
-/** GenesisState defines the group module's genesis state. */
+/**
+ * GenesisState defines the group module's genesis state.
+ * @name GenesisStateAmino
+ * @package cosmos.group.v1
+ * @see proto type: cosmos.group.v1.GenesisState
+ */
 export interface GenesisStateAmino {
   /**
    * group_seq is the group table orm.Sequence,
    * it is used to get the next group ID.
    */
   group_seq?: string;
-  /** groups is the list of groups info. */
+  /**
+   * groups is the list of groups info.
+   */
   groups?: GroupInfoAmino[];
-  /** group_members is the list of groups members. */
+  /**
+   * group_members is the list of groups members.
+   */
   group_members?: GroupMemberAmino[];
   /**
    * group_policy_seq is the group policy table orm.Sequence,
    * it is used to generate the next group policy account address.
    */
   group_policy_seq?: string;
-  /** group_policies is the list of group policies info. */
+  /**
+   * group_policies is the list of group policies info.
+   */
   group_policies?: GroupPolicyInfoAmino[];
   /**
    * proposal_seq is the proposal table orm.Sequence,
    * it is used to get the next proposal ID.
    */
   proposal_seq?: string;
-  /** proposals is the list of proposals. */
+  /**
+   * proposals is the list of proposals.
+   */
   proposals?: ProposalAmino[];
-  /** votes is the list of votes. */
+  /**
+   * votes is the list of votes.
+   */
   votes?: VoteAmino[];
 }
 export interface GenesisStateAminoMsg {
@@ -233,7 +248,7 @@ export const GenesisState = {
   },
   toAmino(message: GenesisState): GenesisStateAmino {
     const obj: any = {};
-    obj.group_seq = !message.groupSeq.isZero() ? message.groupSeq.toString() : undefined;
+    obj.group_seq = !message.groupSeq.isZero() ? message.groupSeq?.toString() : undefined;
     if (message.groups) {
       obj.groups = message.groups.map(e => e ? GroupInfo.toAmino(e) : undefined);
     } else {
@@ -244,13 +259,13 @@ export const GenesisState = {
     } else {
       obj.group_members = message.groupMembers;
     }
-    obj.group_policy_seq = !message.groupPolicySeq.isZero() ? message.groupPolicySeq.toString() : undefined;
+    obj.group_policy_seq = !message.groupPolicySeq.isZero() ? message.groupPolicySeq?.toString() : undefined;
     if (message.groupPolicies) {
       obj.group_policies = message.groupPolicies.map(e => e ? GroupPolicyInfo.toAmino(e) : undefined);
     } else {
       obj.group_policies = message.groupPolicies;
     }
-    obj.proposal_seq = !message.proposalSeq.isZero() ? message.proposalSeq.toString() : undefined;
+    obj.proposal_seq = !message.proposalSeq.isZero() ? message.proposalSeq?.toString() : undefined;
     if (message.proposals) {
       obj.proposals = message.proposals.map(e => e ? Proposal.toAmino(e) : undefined);
     } else {

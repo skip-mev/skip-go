@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { Incentive, IncentiveAmino, IncentiveSDKType, GasMeter, GasMeterAmino, GasMeterSDKType } from "./incentives";
 import _m0 from "protobufjs/minimal.js";
-import { isSet, padDecimal } from "../../../helpers";
+import { isSet } from "../../../helpers";
 import { JsonSafe } from "../../../json-safe";
 import { Decimal } from "@cosmjs/math";
 /** GenesisState defines the module's genesis state. */
@@ -17,13 +17,24 @@ export interface GenesisStateProtoMsg {
   typeUrl: "/evmos.incentives.v1.GenesisState";
   value: Uint8Array;
 }
-/** GenesisState defines the module's genesis state. */
+/**
+ * GenesisState defines the module's genesis state.
+ * @name GenesisStateAmino
+ * @package evmos.incentives.v1
+ * @see proto type: evmos.incentives.v1.GenesisState
+ */
 export interface GenesisStateAmino {
-  /** params are the incentives module parameters */
+  /**
+   * params are the incentives module parameters
+   */
   params?: ParamsAmino;
-  /** incentives is a slice of active incentives */
+  /**
+   * incentives is a slice of active incentives
+   */
   incentives?: IncentiveAmino[];
-  /** gas_meters is a slice of active Gasmeters */
+  /**
+   * gas_meters is a slice of active Gasmeters
+   */
   gas_meters?: GasMeterAmino[];
 }
 export interface GenesisStateAminoMsg {
@@ -51,15 +62,28 @@ export interface ParamsProtoMsg {
   typeUrl: "/evmos.incentives.v1.Params";
   value: Uint8Array;
 }
-/** Params defines the incentives module params */
+/**
+ * Params defines the incentives module params
+ * @name ParamsAmino
+ * @package evmos.incentives.v1
+ * @see proto type: evmos.incentives.v1.Params
+ */
 export interface ParamsAmino {
-  /** enable_incentives is the parameter to enable incentives */
+  /**
+   * enable_incentives is the parameter to enable incentives
+   */
   enable_incentives?: boolean;
-  /** allocation_limit is the maximum percentage an incentive can allocate per denomination */
+  /**
+   * allocation_limit is the maximum percentage an incentive can allocate per denomination
+   */
   allocation_limit?: string;
-  /** incentives_epoch_identifier for the epochs module hooks */
+  /**
+   * incentives_epoch_identifier for the epochs module hooks
+   */
   incentives_epoch_identifier?: string;
-  /** reward_scaler is the scaling factor for capping rewards */
+  /**
+   * reward_scaler is the scaling factor for capping rewards
+   */
   reward_scaler?: string;
 }
 export interface ParamsAminoMsg {
@@ -286,9 +310,9 @@ export const Params = {
   toAmino(message: Params): ParamsAmino {
     const obj: any = {};
     obj.enable_incentives = message.enableIncentives === false ? undefined : message.enableIncentives;
-    obj.allocation_limit = padDecimal(message.allocationLimit) === "" ? undefined : padDecimal(message.allocationLimit);
+    obj.allocation_limit = message.allocationLimit === "" ? undefined : Decimal.fromUserInput(message.allocationLimit, 18).atomics;
     obj.incentives_epoch_identifier = message.incentivesEpochIdentifier === "" ? undefined : message.incentivesEpochIdentifier;
-    obj.reward_scaler = padDecimal(message.rewardScaler) === "" ? undefined : padDecimal(message.rewardScaler);
+    obj.reward_scaler = message.rewardScaler === "" ? undefined : Decimal.fromUserInput(message.rewardScaler, 18).atomics;
     return obj;
   },
   fromAminoMsg(object: ParamsAminoMsg): Params {

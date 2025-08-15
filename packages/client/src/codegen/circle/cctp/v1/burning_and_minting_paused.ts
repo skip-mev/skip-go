@@ -16,6 +16,9 @@ export interface BurningAndMintingPausedProtoMsg {
 /**
  * Message format for BurningAndMintingPaused
  * @param paused true if paused, false if not paused
+ * @name BurningAndMintingPausedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.BurningAndMintingPaused
  */
 export interface BurningAndMintingPausedAmino {
   paused?: boolean;

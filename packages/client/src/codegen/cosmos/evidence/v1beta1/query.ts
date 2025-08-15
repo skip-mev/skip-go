@@ -23,13 +23,18 @@ export interface QueryEvidenceRequestProtoMsg {
   typeUrl: "/cosmos.evidence.v1beta1.QueryEvidenceRequest";
   value: Uint8Array;
 }
-/** QueryEvidenceRequest is the request type for the Query/Evidence RPC method. */
+/**
+ * QueryEvidenceRequest is the request type for the Query/Evidence RPC method.
+ * @name QueryEvidenceRequestAmino
+ * @package cosmos.evidence.v1beta1
+ * @see proto type: cosmos.evidence.v1beta1.QueryEvidenceRequest
+ */
 export interface QueryEvidenceRequestAmino {
   /**
    * evidence_hash defines the hash of the requested evidence.
    * Deprecated: Use hash, a HEX encoded string, instead.
+   * @deprecated
    */
-  /** @deprecated */
   evidence_hash?: string;
   /**
    * hash defines the evidence hash of the requested evidence.
@@ -57,9 +62,16 @@ export interface QueryEvidenceResponseProtoMsg {
   typeUrl: "/cosmos.evidence.v1beta1.QueryEvidenceResponse";
   value: Uint8Array;
 }
-/** QueryEvidenceResponse is the response type for the Query/Evidence RPC method. */
+/**
+ * QueryEvidenceResponse is the response type for the Query/Evidence RPC method.
+ * @name QueryEvidenceResponseAmino
+ * @package cosmos.evidence.v1beta1
+ * @see proto type: cosmos.evidence.v1beta1.QueryEvidenceResponse
+ */
 export interface QueryEvidenceResponseAmino {
-  /** evidence returns the requested evidence. */
+  /**
+   * evidence returns the requested evidence.
+   */
   evidence?: AnyAmino;
 }
 export interface QueryEvidenceResponseAminoMsg {
@@ -85,9 +97,14 @@ export interface QueryAllEvidenceRequestProtoMsg {
 /**
  * QueryEvidenceRequest is the request type for the Query/AllEvidence RPC
  * method.
+ * @name QueryAllEvidenceRequestAmino
+ * @package cosmos.evidence.v1beta1
+ * @see proto type: cosmos.evidence.v1beta1.QueryAllEvidenceRequest
  */
 export interface QueryAllEvidenceRequestAmino {
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryAllEvidenceRequestAminoMsg {
@@ -118,11 +135,18 @@ export interface QueryAllEvidenceResponseProtoMsg {
 /**
  * QueryAllEvidenceResponse is the response type for the Query/AllEvidence RPC
  * method.
+ * @name QueryAllEvidenceResponseAmino
+ * @package cosmos.evidence.v1beta1
+ * @see proto type: cosmos.evidence.v1beta1.QueryAllEvidenceResponse
  */
 export interface QueryAllEvidenceResponseAmino {
-  /** evidence returns all evidences. */
+  /**
+   * evidence returns all evidences.
+   */
   evidence?: AnyAmino[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryAllEvidenceResponseAminoMsg {

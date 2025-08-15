@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { Long, isSet, padDecimal } from "../../../helpers";
+import { Long, isSet } from "../../../helpers";
 import _m0 from "protobufjs/minimal.js";
 import { Decimal } from "@cosmjs/math";
 import { JsonSafe } from "../../../json-safe";
@@ -33,9 +33,16 @@ export interface ParamsProtoMsg {
   typeUrl: "/ethermint.feemarket.v1.Params";
   value: Uint8Array;
 }
-/** Params defines the EVM module parameters */
+/**
+ * Params defines the EVM module parameters
+ * @name ParamsAmino
+ * @package ethermint.feemarket.v1
+ * @see proto type: ethermint.feemarket.v1.Params
+ */
 export interface ParamsAmino {
-  /** no_base_fee forces the EIP-1559 base fee to 0 (needed for 0 price calls) */
+  /**
+   * no_base_fee forces the EIP-1559 base fee to 0 (needed for 0 price calls)
+   */
   no_base_fee?: boolean;
   /**
    * base_fee_change_denominator bounds the amount the base fee can change
@@ -47,11 +54,17 @@ export interface ParamsAmino {
    * have.
    */
   elasticity_multiplier?: number;
-  /** enable_height defines at which block height the base fee calculation is enabled. */
+  /**
+   * enable_height defines at which block height the base fee calculation is enabled.
+   */
   enable_height?: string;
-  /** base_fee for EIP-1559 blocks. */
+  /**
+   * base_fee for EIP-1559 blocks.
+   */
   base_fee?: string;
-  /** min_gas_price defines the minimum gas price value for cosmos and eth transactions */
+  /**
+   * min_gas_price defines the minimum gas price value for cosmos and eth transactions
+   */
   min_gas_price?: string;
   /**
    * min_gas_multiplier bounds the minimum gas used to be charged
@@ -208,10 +221,10 @@ export const Params = {
     obj.no_base_fee = message.noBaseFee === false ? undefined : message.noBaseFee;
     obj.base_fee_change_denominator = message.baseFeeChangeDenominator === 0 ? undefined : message.baseFeeChangeDenominator;
     obj.elasticity_multiplier = message.elasticityMultiplier === 0 ? undefined : message.elasticityMultiplier;
-    obj.enable_height = !message.enableHeight.isZero() ? message.enableHeight.toString() : undefined;
+    obj.enable_height = !message.enableHeight.isZero() ? message.enableHeight?.toString() : undefined;
     obj.base_fee = message.baseFee === "" ? undefined : message.baseFee;
-    obj.min_gas_price = padDecimal(message.minGasPrice) === "" ? undefined : padDecimal(message.minGasPrice);
-    obj.min_gas_multiplier = padDecimal(message.minGasMultiplier) === "" ? undefined : padDecimal(message.minGasMultiplier);
+    obj.min_gas_price = message.minGasPrice === "" ? undefined : Decimal.fromUserInput(message.minGasPrice, 18).atomics;
+    obj.min_gas_multiplier = message.minGasMultiplier === "" ? undefined : Decimal.fromUserInput(message.minGasMultiplier, 18).atomics;
     return obj;
   },
   fromAminoMsg(object: ParamsAminoMsg): Params {

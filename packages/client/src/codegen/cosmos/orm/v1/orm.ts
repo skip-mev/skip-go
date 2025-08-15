@@ -19,11 +19,20 @@ export interface TableDescriptorProtoMsg {
   typeUrl: "/cosmos.orm.v1.TableDescriptor";
   value: Uint8Array;
 }
-/** TableDescriptor describes an ORM table. */
+/**
+ * TableDescriptor describes an ORM table.
+ * @name TableDescriptorAmino
+ * @package cosmos.orm.v1
+ * @see proto type: cosmos.orm.v1.TableDescriptor
+ */
 export interface TableDescriptorAmino {
-  /** primary_key defines the primary key for the table. */
+  /**
+   * primary_key defines the primary key for the table.
+   */
   primary_key?: PrimaryKeyDescriptorAmino;
-  /** index defines one or more secondary indexes. */
+  /**
+   * index defines one or more secondary indexes.
+   */
   index?: SecondaryIndexDescriptorAmino[];
   /**
    * id is a non-zero integer ID that must be unique within the
@@ -88,7 +97,12 @@ export interface PrimaryKeyDescriptorProtoMsg {
   typeUrl: "/cosmos.orm.v1.PrimaryKeyDescriptor";
   value: Uint8Array;
 }
-/** PrimaryKeyDescriptor describes a table primary key. */
+/**
+ * PrimaryKeyDescriptor describes a table primary key.
+ * @name PrimaryKeyDescriptorAmino
+ * @package cosmos.orm.v1
+ * @see proto type: cosmos.orm.v1.PrimaryKeyDescriptor
+ */
 export interface PrimaryKeyDescriptorAmino {
   /**
    * fields is a comma-separated list of fields in the primary key. Spaces are
@@ -166,7 +180,12 @@ export interface SecondaryIndexDescriptorProtoMsg {
   typeUrl: "/cosmos.orm.v1.SecondaryIndexDescriptor";
   value: Uint8Array;
 }
-/** PrimaryKeyDescriptor describes a table secondary index. */
+/**
+ * PrimaryKeyDescriptor describes a table secondary index.
+ * @name SecondaryIndexDescriptorAmino
+ * @package cosmos.orm.v1
+ * @see proto type: cosmos.orm.v1.SecondaryIndexDescriptor
+ */
 export interface SecondaryIndexDescriptorAmino {
   /**
    * fields is a comma-separated list of fields in the index. The supported
@@ -186,7 +205,9 @@ export interface SecondaryIndexDescriptorAmino {
    * be auto-generated.
    */
   id?: number;
-  /** unique specifies that this an unique index. */
+  /**
+   * unique specifies that this an unique index.
+   */
   unique?: boolean;
 }
 export interface SecondaryIndexDescriptorAminoMsg {
@@ -212,7 +233,12 @@ export interface SingletonDescriptorProtoMsg {
   typeUrl: "/cosmos.orm.v1.SingletonDescriptor";
   value: Uint8Array;
 }
-/** TableDescriptor describes an ORM singleton table which has at most one instance. */
+/**
+ * TableDescriptor describes an ORM singleton table which has at most one instance.
+ * @name SingletonDescriptorAmino
+ * @package cosmos.orm.v1
+ * @see proto type: cosmos.orm.v1.SingletonDescriptor
+ */
 export interface SingletonDescriptorAmino {
   /**
    * id is a non-zero integer ID that must be unique within the

@@ -40,9 +40,16 @@ export interface ModuleProtoMsg {
   typeUrl: "/cosmos.app.runtime.v1alpha1.Module";
   value: Uint8Array;
 }
-/** Module is the config object for the runtime module. */
+/**
+ * Module is the config object for the runtime module.
+ * @name ModuleAmino
+ * @package cosmos.app.runtime.v1alpha1
+ * @see proto type: cosmos.app.runtime.v1alpha1.Module
+ */
 export interface ModuleAmino {
-  /** app_name is the name of the app. */
+  /**
+   * app_name is the name of the app.
+   */
   app_name?: string;
   /**
    * begin_blockers specifies the module names of begin blockers
@@ -104,11 +111,18 @@ export interface StoreKeyConfigProtoMsg {
 /**
  * StoreKeyConfig may be supplied to override the default module store key, which
  * is the module name.
+ * @name StoreKeyConfigAmino
+ * @package cosmos.app.runtime.v1alpha1
+ * @see proto type: cosmos.app.runtime.v1alpha1.StoreKeyConfig
  */
 export interface StoreKeyConfigAmino {
-  /** name of the module to override the store key of */
+  /**
+   * name of the module to override the store key of
+   */
   module_name?: string;
-  /** the kv store key to use instead of the module name. */
+  /**
+   * the kv store key to use instead of the module name.
+   */
   kv_store_key?: string;
 }
 export interface StoreKeyConfigAminoMsg {

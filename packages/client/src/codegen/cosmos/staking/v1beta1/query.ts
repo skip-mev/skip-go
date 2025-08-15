@@ -15,11 +15,20 @@ export interface QueryValidatorsRequestProtoMsg {
   typeUrl: "/cosmos.staking.v1beta1.QueryValidatorsRequest";
   value: Uint8Array;
 }
-/** QueryValidatorsRequest is request type for Query/Validators RPC method. */
+/**
+ * QueryValidatorsRequest is request type for Query/Validators RPC method.
+ * @name QueryValidatorsRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryValidatorsRequest
+ */
 export interface QueryValidatorsRequestAmino {
-  /** status enables to query for validators matching a given status. */
+  /**
+   * status enables to query for validators matching a given status.
+   */
   status?: string;
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryValidatorsRequestAminoMsg {
@@ -42,11 +51,20 @@ export interface QueryValidatorsResponseProtoMsg {
   typeUrl: "/cosmos.staking.v1beta1.QueryValidatorsResponse";
   value: Uint8Array;
 }
-/** QueryValidatorsResponse is response type for the Query/Validators RPC method */
+/**
+ * QueryValidatorsResponse is response type for the Query/Validators RPC method
+ * @name QueryValidatorsResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryValidatorsResponse
+ */
 export interface QueryValidatorsResponseAmino {
-  /** validators contains all the queried validators. */
+  /**
+   * validators contains all the queried validators.
+   */
   validators: ValidatorAmino[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryValidatorsResponseAminoMsg {
@@ -67,9 +85,16 @@ export interface QueryValidatorRequestProtoMsg {
   typeUrl: "/cosmos.staking.v1beta1.QueryValidatorRequest";
   value: Uint8Array;
 }
-/** QueryValidatorRequest is response type for the Query/Validator RPC method */
+/**
+ * QueryValidatorRequest is response type for the Query/Validator RPC method
+ * @name QueryValidatorRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryValidatorRequest
+ */
 export interface QueryValidatorRequestAmino {
-  /** validator_addr defines the validator address to query for. */
+  /**
+   * validator_addr defines the validator address to query for.
+   */
   validator_addr?: string;
 }
 export interface QueryValidatorRequestAminoMsg {
@@ -89,9 +114,16 @@ export interface QueryValidatorResponseProtoMsg {
   typeUrl: "/cosmos.staking.v1beta1.QueryValidatorResponse";
   value: Uint8Array;
 }
-/** QueryValidatorResponse is response type for the Query/Validator RPC method */
+/**
+ * QueryValidatorResponse is response type for the Query/Validator RPC method
+ * @name QueryValidatorResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryValidatorResponse
+ */
 export interface QueryValidatorResponseAmino {
-  /** validator defines the validator info. */
+  /**
+   * validator defines the validator info.
+   */
   validator: ValidatorAmino;
 }
 export interface QueryValidatorResponseAminoMsg {
@@ -119,11 +151,18 @@ export interface QueryValidatorDelegationsRequestProtoMsg {
 /**
  * QueryValidatorDelegationsRequest is request type for the
  * Query/ValidatorDelegations RPC method
+ * @name QueryValidatorDelegationsRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryValidatorDelegationsRequest
  */
 export interface QueryValidatorDelegationsRequestAmino {
-  /** validator_addr defines the validator address to query for. */
+  /**
+   * validator_addr defines the validator address to query for.
+   */
   validator_addr?: string;
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryValidatorDelegationsRequestAminoMsg {
@@ -154,10 +193,15 @@ export interface QueryValidatorDelegationsResponseProtoMsg {
 /**
  * QueryValidatorDelegationsResponse is response type for the
  * Query/ValidatorDelegations RPC method
+ * @name QueryValidatorDelegationsResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryValidatorDelegationsResponse
  */
 export interface QueryValidatorDelegationsResponseAmino {
   delegation_responses: DelegationResponseAmino[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryValidatorDelegationsResponseAminoMsg {
@@ -189,11 +233,18 @@ export interface QueryValidatorUnbondingDelegationsRequestProtoMsg {
 /**
  * QueryValidatorUnbondingDelegationsRequest is required type for the
  * Query/ValidatorUnbondingDelegations RPC method
+ * @name QueryValidatorUnbondingDelegationsRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryValidatorUnbondingDelegationsRequest
  */
 export interface QueryValidatorUnbondingDelegationsRequestAmino {
-  /** validator_addr defines the validator address to query for. */
+  /**
+   * validator_addr defines the validator address to query for.
+   */
   validator_addr?: string;
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryValidatorUnbondingDelegationsRequestAminoMsg {
@@ -224,10 +275,15 @@ export interface QueryValidatorUnbondingDelegationsResponseProtoMsg {
 /**
  * QueryValidatorUnbondingDelegationsResponse is response type for the
  * Query/ValidatorUnbondingDelegations RPC method.
+ * @name QueryValidatorUnbondingDelegationsResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryValidatorUnbondingDelegationsResponse
  */
 export interface QueryValidatorUnbondingDelegationsResponseAmino {
   unbonding_responses: UnbondingDelegationAmino[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryValidatorUnbondingDelegationsResponseAminoMsg {
@@ -253,11 +309,20 @@ export interface QueryDelegationRequestProtoMsg {
   typeUrl: "/cosmos.staking.v1beta1.QueryDelegationRequest";
   value: Uint8Array;
 }
-/** QueryDelegationRequest is request type for the Query/Delegation RPC method. */
+/**
+ * QueryDelegationRequest is request type for the Query/Delegation RPC method.
+ * @name QueryDelegationRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryDelegationRequest
+ */
 export interface QueryDelegationRequestAmino {
-  /** delegator_addr defines the delegator address to query for. */
+  /**
+   * delegator_addr defines the delegator address to query for.
+   */
   delegator_addr?: string;
-  /** validator_addr defines the validator address to query for. */
+  /**
+   * validator_addr defines the validator address to query for.
+   */
   validator_addr?: string;
 }
 export interface QueryDelegationRequestAminoMsg {
@@ -278,9 +343,16 @@ export interface QueryDelegationResponseProtoMsg {
   typeUrl: "/cosmos.staking.v1beta1.QueryDelegationResponse";
   value: Uint8Array;
 }
-/** QueryDelegationResponse is response type for the Query/Delegation RPC method. */
+/**
+ * QueryDelegationResponse is response type for the Query/Delegation RPC method.
+ * @name QueryDelegationResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryDelegationResponse
+ */
 export interface QueryDelegationResponseAmino {
-  /** delegation_responses defines the delegation info of a delegation. */
+  /**
+   * delegation_responses defines the delegation info of a delegation.
+   */
   delegation_response?: DelegationResponseAmino;
 }
 export interface QueryDelegationResponseAminoMsg {
@@ -308,11 +380,18 @@ export interface QueryUnbondingDelegationRequestProtoMsg {
 /**
  * QueryUnbondingDelegationRequest is request type for the
  * Query/UnbondingDelegation RPC method.
+ * @name QueryUnbondingDelegationRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryUnbondingDelegationRequest
  */
 export interface QueryUnbondingDelegationRequestAmino {
-  /** delegator_addr defines the delegator address to query for. */
+  /**
+   * delegator_addr defines the delegator address to query for.
+   */
   delegator_addr?: string;
-  /** validator_addr defines the validator address to query for. */
+  /**
+   * validator_addr defines the validator address to query for.
+   */
   validator_addr?: string;
 }
 export interface QueryUnbondingDelegationRequestAminoMsg {
@@ -342,9 +421,14 @@ export interface QueryUnbondingDelegationResponseProtoMsg {
 /**
  * QueryDelegationResponse is response type for the Query/UnbondingDelegation
  * RPC method.
+ * @name QueryUnbondingDelegationResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryUnbondingDelegationResponse
  */
 export interface QueryUnbondingDelegationResponseAmino {
-  /** unbond defines the unbonding information of a delegation. */
+  /**
+   * unbond defines the unbonding information of a delegation.
+   */
   unbond: UnbondingDelegationAmino;
 }
 export interface QueryUnbondingDelegationResponseAminoMsg {
@@ -375,11 +459,18 @@ export interface QueryDelegatorDelegationsRequestProtoMsg {
 /**
  * QueryDelegatorDelegationsRequest is request type for the
  * Query/DelegatorDelegations RPC method.
+ * @name QueryDelegatorDelegationsRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryDelegatorDelegationsRequest
  */
 export interface QueryDelegatorDelegationsRequestAmino {
-  /** delegator_addr defines the delegator address to query for. */
+  /**
+   * delegator_addr defines the delegator address to query for.
+   */
   delegator_addr?: string;
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryDelegatorDelegationsRequestAminoMsg {
@@ -411,11 +502,18 @@ export interface QueryDelegatorDelegationsResponseProtoMsg {
 /**
  * QueryDelegatorDelegationsResponse is response type for the
  * Query/DelegatorDelegations RPC method.
+ * @name QueryDelegatorDelegationsResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryDelegatorDelegationsResponse
  */
 export interface QueryDelegatorDelegationsResponseAmino {
-  /** delegation_responses defines all the delegations' info of a delegator. */
+  /**
+   * delegation_responses defines all the delegations' info of a delegator.
+   */
   delegation_responses: DelegationResponseAmino[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryDelegatorDelegationsResponseAminoMsg {
@@ -447,11 +545,18 @@ export interface QueryDelegatorUnbondingDelegationsRequestProtoMsg {
 /**
  * QueryDelegatorUnbondingDelegationsRequest is request type for the
  * Query/DelegatorUnbondingDelegations RPC method.
+ * @name QueryDelegatorUnbondingDelegationsRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryDelegatorUnbondingDelegationsRequest
  */
 export interface QueryDelegatorUnbondingDelegationsRequestAmino {
-  /** delegator_addr defines the delegator address to query for. */
+  /**
+   * delegator_addr defines the delegator address to query for.
+   */
   delegator_addr?: string;
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryDelegatorUnbondingDelegationsRequestAminoMsg {
@@ -482,10 +587,15 @@ export interface QueryDelegatorUnbondingDelegationsResponseProtoMsg {
 /**
  * QueryUnbondingDelegatorDelegationsResponse is response type for the
  * Query/UnbondingDelegatorDelegations RPC method.
+ * @name QueryDelegatorUnbondingDelegationsResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryDelegatorUnbondingDelegationsResponse
  */
 export interface QueryDelegatorUnbondingDelegationsResponseAmino {
   unbonding_responses: UnbondingDelegationAmino[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryDelegatorUnbondingDelegationsResponseAminoMsg {
@@ -521,15 +631,26 @@ export interface QueryRedelegationsRequestProtoMsg {
 /**
  * QueryRedelegationsRequest is request type for the Query/Redelegations RPC
  * method.
+ * @name QueryRedelegationsRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryRedelegationsRequest
  */
 export interface QueryRedelegationsRequestAmino {
-  /** delegator_addr defines the delegator address to query for. */
+  /**
+   * delegator_addr defines the delegator address to query for.
+   */
   delegator_addr?: string;
-  /** src_validator_addr defines the validator address to redelegate from. */
+  /**
+   * src_validator_addr defines the validator address to redelegate from.
+   */
   src_validator_addr?: string;
-  /** dst_validator_addr defines the validator address to redelegate to. */
+  /**
+   * dst_validator_addr defines the validator address to redelegate to.
+   */
   dst_validator_addr?: string;
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryRedelegationsRequestAminoMsg {
@@ -562,10 +683,15 @@ export interface QueryRedelegationsResponseProtoMsg {
 /**
  * QueryRedelegationsResponse is response type for the Query/Redelegations RPC
  * method.
+ * @name QueryRedelegationsResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryRedelegationsResponse
  */
 export interface QueryRedelegationsResponseAmino {
   redelegation_responses: RedelegationResponseAmino[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryRedelegationsResponseAminoMsg {
@@ -597,11 +723,18 @@ export interface QueryDelegatorValidatorsRequestProtoMsg {
 /**
  * QueryDelegatorValidatorsRequest is request type for the
  * Query/DelegatorValidators RPC method.
+ * @name QueryDelegatorValidatorsRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryDelegatorValidatorsRequest
  */
 export interface QueryDelegatorValidatorsRequestAmino {
-  /** delegator_addr defines the delegator address to query for. */
+  /**
+   * delegator_addr defines the delegator address to query for.
+   */
   delegator_addr?: string;
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryDelegatorValidatorsRequestAminoMsg {
@@ -633,11 +766,18 @@ export interface QueryDelegatorValidatorsResponseProtoMsg {
 /**
  * QueryDelegatorValidatorsResponse is response type for the
  * Query/DelegatorValidators RPC method.
+ * @name QueryDelegatorValidatorsResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryDelegatorValidatorsResponse
  */
 export interface QueryDelegatorValidatorsResponseAmino {
-  /** validators defines the validators' info of a delegator. */
+  /**
+   * validators defines the validators' info of a delegator.
+   */
   validators: ValidatorAmino[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryDelegatorValidatorsResponseAminoMsg {
@@ -669,11 +809,18 @@ export interface QueryDelegatorValidatorRequestProtoMsg {
 /**
  * QueryDelegatorValidatorRequest is request type for the
  * Query/DelegatorValidator RPC method.
+ * @name QueryDelegatorValidatorRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryDelegatorValidatorRequest
  */
 export interface QueryDelegatorValidatorRequestAmino {
-  /** delegator_addr defines the delegator address to query for. */
+  /**
+   * delegator_addr defines the delegator address to query for.
+   */
   delegator_addr?: string;
-  /** validator_addr defines the validator address to query for. */
+  /**
+   * validator_addr defines the validator address to query for.
+   */
   validator_addr?: string;
 }
 export interface QueryDelegatorValidatorRequestAminoMsg {
@@ -703,9 +850,14 @@ export interface QueryDelegatorValidatorResponseProtoMsg {
 /**
  * QueryDelegatorValidatorResponse response type for the
  * Query/DelegatorValidator RPC method.
+ * @name QueryDelegatorValidatorResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryDelegatorValidatorResponse
  */
 export interface QueryDelegatorValidatorResponseAmino {
-  /** validator defines the validator info. */
+  /**
+   * validator defines the validator info.
+   */
   validator: ValidatorAmino;
 }
 export interface QueryDelegatorValidatorResponseAminoMsg {
@@ -734,9 +886,14 @@ export interface QueryHistoricalInfoRequestProtoMsg {
 /**
  * QueryHistoricalInfoRequest is request type for the Query/HistoricalInfo RPC
  * method.
+ * @name QueryHistoricalInfoRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryHistoricalInfoRequest
  */
 export interface QueryHistoricalInfoRequestAmino {
-  /** height defines at which height to query the historical info. */
+  /**
+   * height defines at which height to query the historical info.
+   */
   height?: string;
 }
 export interface QueryHistoricalInfoRequestAminoMsg {
@@ -765,9 +922,14 @@ export interface QueryHistoricalInfoResponseProtoMsg {
 /**
  * QueryHistoricalInfoResponse is response type for the Query/HistoricalInfo RPC
  * method.
+ * @name QueryHistoricalInfoResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryHistoricalInfoResponse
  */
 export interface QueryHistoricalInfoResponseAmino {
-  /** hist defines the historical info at the given height. */
+  /**
+   * hist defines the historical info at the given height.
+   */
   hist?: HistoricalInfoAmino;
 }
 export interface QueryHistoricalInfoResponseAminoMsg {
@@ -787,7 +949,12 @@ export interface QueryPoolRequestProtoMsg {
   typeUrl: "/cosmos.staking.v1beta1.QueryPoolRequest";
   value: Uint8Array;
 }
-/** QueryPoolRequest is request type for the Query/Pool RPC method. */
+/**
+ * QueryPoolRequest is request type for the Query/Pool RPC method.
+ * @name QueryPoolRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryPoolRequest
+ */
 export interface QueryPoolRequestAmino {}
 export interface QueryPoolRequestAminoMsg {
   type: "cosmos-sdk/QueryPoolRequest";
@@ -804,9 +971,16 @@ export interface QueryPoolResponseProtoMsg {
   typeUrl: "/cosmos.staking.v1beta1.QueryPoolResponse";
   value: Uint8Array;
 }
-/** QueryPoolResponse is response type for the Query/Pool RPC method. */
+/**
+ * QueryPoolResponse is response type for the Query/Pool RPC method.
+ * @name QueryPoolResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryPoolResponse
+ */
 export interface QueryPoolResponseAmino {
-  /** pool defines the pool info. */
+  /**
+   * pool defines the pool info.
+   */
   pool: PoolAmino;
 }
 export interface QueryPoolResponseAminoMsg {
@@ -823,7 +997,12 @@ export interface QueryParamsRequestProtoMsg {
   typeUrl: "/cosmos.staking.v1beta1.QueryParamsRequest";
   value: Uint8Array;
 }
-/** QueryParamsRequest is request type for the Query/Params RPC method. */
+/**
+ * QueryParamsRequest is request type for the Query/Params RPC method.
+ * @name QueryParamsRequestAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryParamsRequest
+ */
 export interface QueryParamsRequestAmino {}
 export interface QueryParamsRequestAminoMsg {
   type: "cosmos-sdk/QueryParamsRequest";
@@ -840,9 +1019,16 @@ export interface QueryParamsResponseProtoMsg {
   typeUrl: "/cosmos.staking.v1beta1.QueryParamsResponse";
   value: Uint8Array;
 }
-/** QueryParamsResponse is response type for the Query/Params RPC method. */
+/**
+ * QueryParamsResponse is response type for the Query/Params RPC method.
+ * @name QueryParamsResponseAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.QueryParamsResponse
+ */
 export interface QueryParamsResponseAmino {
-  /** params holds all the parameters of this module. */
+  /**
+   * params holds all the parameters of this module.
+   */
   params: ParamsAmino;
 }
 export interface QueryParamsResponseAminoMsg {
@@ -2953,7 +3139,7 @@ export const QueryHistoricalInfoRequest = {
   },
   toAmino(message: QueryHistoricalInfoRequest): QueryHistoricalInfoRequestAmino {
     const obj: any = {};
-    obj.height = !message.height.isZero() ? message.height.toString() : undefined;
+    obj.height = !message.height.isZero() ? message.height?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: QueryHistoricalInfoRequestAminoMsg): QueryHistoricalInfoRequest {

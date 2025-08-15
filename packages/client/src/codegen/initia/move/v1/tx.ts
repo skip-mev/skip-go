@@ -66,15 +66,28 @@ export interface MsgExecuteProtoMsg {
   typeUrl: "/initia.move.v1.MsgExecute";
   value: Uint8Array;
 }
-/** MsgExecute is the message to execute the given module function */
+/**
+ * MsgExecute is the message to execute the given module function
+ * @name MsgExecuteAmino
+ * @package initia.move.v1
+ * @see proto type: initia.move.v1.MsgExecute
+ */
 export interface MsgExecuteAmino {
-  /** Sender is the that actor that signed the messages */
+  /**
+   * Sender is the that actor that signed the messages
+   */
   sender?: string;
-  /** ModuleAddr is the address of the module deployer */
+  /**
+   * ModuleAddr is the address of the module deployer
+   */
   module_address?: string;
-  /** ModuleName is the name of module to execute */
+  /**
+   * ModuleName is the name of module to execute
+   */
   module_name?: string;
-  /** FunctionName is the name of a function to execute */
+  /**
+   * FunctionName is the name of a function to execute
+   */
   function_name?: string;
   /**
    * TypeArgs is the type arguments of a function to execute
@@ -107,7 +120,12 @@ export interface MsgExecuteResponseProtoMsg {
   typeUrl: "/initia.move.v1.MsgExecuteResponse";
   value: Uint8Array;
 }
-/** MsgExecuteResponse returns execution result data. */
+/**
+ * MsgExecuteResponse returns execution result data.
+ * @name MsgExecuteResponseAmino
+ * @package initia.move.v1
+ * @see proto type: initia.move.v1.MsgExecuteResponse
+ */
 export interface MsgExecuteResponseAmino {}
 export interface MsgExecuteResponseAminoMsg {
   type: "/initia.move.v1.MsgExecuteResponse";
@@ -140,6 +158,9 @@ export interface InterfaceDescriptorProtoMsg {
 /**
  * InterfaceDescriptor describes an interface type to be used with
  * accepts_interface and implements_interface and declared by declare_interface.
+ * @name InterfaceDescriptorAmino
+ * @package initia.move.v1
+ * @see proto type: initia.move.v1.InterfaceDescriptor
  */
 export interface InterfaceDescriptorAmino {
   /**
@@ -210,6 +231,9 @@ export interface ScalarDescriptorProtoMsg {
  * Scalars should ideally define an encoding such that there is only one
  * valid syntactical representation for a given semantic meaning,
  * i.e. the encoding should be deterministic.
+ * @name ScalarDescriptorAmino
+ * @package initia.move.v1
+ * @see proto type: initia.move.v1.ScalarDescriptor
  */
 export interface ScalarDescriptorAmino {
   /**

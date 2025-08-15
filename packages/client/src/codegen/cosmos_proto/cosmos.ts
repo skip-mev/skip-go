@@ -65,6 +65,9 @@ export interface InterfaceDescriptorProtoMsg {
 /**
  * InterfaceDescriptor describes an interface type to be used with
  * accepts_interface and implements_interface and declared by declare_interface.
+ * @name InterfaceDescriptorAmino
+ * @package cosmos_proto
+ * @see proto type: cosmos_proto.InterfaceDescriptor
  */
 export interface InterfaceDescriptorAmino {
   /**
@@ -135,6 +138,9 @@ export interface ScalarDescriptorProtoMsg {
  * Scalars should ideally define an encoding such that there is only one
  * valid syntactical representation for a given semantic meaning,
  * i.e. the encoding should be deterministic.
+ * @name ScalarDescriptorAmino
+ * @package cosmos_proto
+ * @see proto type: cosmos_proto.ScalarDescriptor
  */
 export interface ScalarDescriptorAmino {
   /**

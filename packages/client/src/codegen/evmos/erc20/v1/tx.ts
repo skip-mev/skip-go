@@ -20,16 +20,25 @@ export interface MsgConvertCoinProtoMsg {
   typeUrl: "/evmos.erc20.v1.MsgConvertCoin";
   value: Uint8Array;
 }
-/** MsgConvertCoin defines a Msg to convert a native Cosmos coin to a ERC20 token */
+/**
+ * MsgConvertCoin defines a Msg to convert a native Cosmos coin to a ERC20 token
+ * @name MsgConvertCoinAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.MsgConvertCoin
+ */
 export interface MsgConvertCoinAmino {
   /**
    * coin is a Cosmos coin whose denomination is registered in a token pair. The coin
    * amount defines the amount of coins to convert.
    */
   coin?: CoinAmino;
-  /** receiver is the hex address to receive ERC20 token */
+  /**
+   * receiver is the hex address to receive ERC20 token
+   */
   receiver?: string;
-  /** sender is the cosmos bech32 address from the owner of the given Cosmos coins */
+  /**
+   * sender is the cosmos bech32 address from the owner of the given Cosmos coins
+   */
   sender?: string;
 }
 export interface MsgConvertCoinAminoMsg {
@@ -48,7 +57,12 @@ export interface MsgConvertCoinResponseProtoMsg {
   typeUrl: "/evmos.erc20.v1.MsgConvertCoinResponse";
   value: Uint8Array;
 }
-/** MsgConvertCoinResponse returns no fields */
+/**
+ * MsgConvertCoinResponse returns no fields
+ * @name MsgConvertCoinResponseAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.MsgConvertCoinResponse
+ */
 export interface MsgConvertCoinResponseAmino {}
 export interface MsgConvertCoinResponseAminoMsg {
   type: "evmos/MsgConvertCoinResponse";
@@ -77,15 +91,26 @@ export interface MsgConvertERC20ProtoMsg {
 /**
  * MsgConvertERC20 defines a Msg to convert a ERC20 token to a native Cosmos
  * coin.
+ * @name MsgConvertERC20Amino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.MsgConvertERC20
  */
 export interface MsgConvertERC20Amino {
-  /** contract_address of an ERC20 token contract, that is registered in a token pair */
+  /**
+   * contract_address of an ERC20 token contract, that is registered in a token pair
+   */
   contract_address?: string;
-  /** amount of ERC20 tokens to convert */
+  /**
+   * amount of ERC20 tokens to convert
+   */
   amount?: string;
-  /** receiver is the bech32 address to receive native Cosmos coins */
+  /**
+   * receiver is the bech32 address to receive native Cosmos coins
+   */
   receiver?: string;
-  /** sender is the hex address from the owner of the given ERC20 tokens */
+  /**
+   * sender is the hex address from the owner of the given ERC20 tokens
+   */
   sender?: string;
 }
 export interface MsgConvertERC20AminoMsg {
@@ -108,7 +133,12 @@ export interface MsgConvertERC20ResponseProtoMsg {
   typeUrl: "/evmos.erc20.v1.MsgConvertERC20Response";
   value: Uint8Array;
 }
-/** MsgConvertERC20Response returns no fields */
+/**
+ * MsgConvertERC20Response returns no fields
+ * @name MsgConvertERC20ResponseAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.MsgConvertERC20Response
+ */
 export interface MsgConvertERC20ResponseAmino {}
 export interface MsgConvertERC20ResponseAminoMsg {
   type: "evmos/MsgConvertERC20Response";
@@ -136,9 +166,14 @@ export interface MsgUpdateParamsProtoMsg {
 /**
  * MsgUpdateParams is the Msg/UpdateParams request type for Erc20 parameters.
  * Since: cosmos-sdk 0.47
+ * @name MsgUpdateParamsAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.MsgUpdateParams
  */
 export interface MsgUpdateParamsAmino {
-  /** authority is the address of the governance account. */
+  /**
+   * authority is the address of the governance account.
+   */
   authority?: string;
   /**
    * params defines the x/evm parameters to update.
@@ -172,6 +207,9 @@ export interface MsgUpdateParamsResponseProtoMsg {
  * MsgUpdateParamsResponse defines the response structure for executing a
  * MsgUpdateParams message.
  * Since: cosmos-sdk 0.47
+ * @name MsgUpdateParamsResponseAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.MsgUpdateParamsResponse
  */
 export interface MsgUpdateParamsResponseAmino {}
 export interface MsgUpdateParamsResponseAminoMsg {

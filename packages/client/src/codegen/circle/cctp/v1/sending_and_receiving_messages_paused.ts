@@ -16,6 +16,9 @@ export interface SendingAndReceivingMessagesPausedProtoMsg {
 /**
  * Message format for SendingAndReceivingMessagesPaused
  * @param paused true if paused, false if not paused
+ * @name SendingAndReceivingMessagesPausedAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.SendingAndReceivingMessagesPaused
  */
 export interface SendingAndReceivingMessagesPausedAmino {
   paused?: boolean;

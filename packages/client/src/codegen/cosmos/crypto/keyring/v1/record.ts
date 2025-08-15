@@ -23,19 +23,36 @@ export interface RecordProtoMsg {
   typeUrl: "/cosmos.crypto.keyring.v1.Record";
   value: Uint8Array;
 }
-/** Record is used for representing a key in the keyring. */
+/**
+ * Record is used for representing a key in the keyring.
+ * @name RecordAmino
+ * @package cosmos.crypto.keyring.v1
+ * @see proto type: cosmos.crypto.keyring.v1.Record
+ */
 export interface RecordAmino {
-  /** name represents a name of Record */
+  /**
+   * name represents a name of Record
+   */
   name?: string;
-  /** pub_key represents a public key in any format */
+  /**
+   * pub_key represents a public key in any format
+   */
   pub_key?: AnyAmino;
-  /** local stores the private key locally. */
+  /**
+   * local stores the private key locally.
+   */
   local?: Record_LocalAmino;
-  /** ledger stores the information about a Ledger key. */
+  /**
+   * ledger stores the information about a Ledger key.
+   */
   ledger?: Record_LedgerAmino;
-  /** Multi does not store any other information. */
+  /**
+   * Multi does not store any other information.
+   */
   multi?: Record_MultiAmino;
-  /** Offline does not store any other information. */
+  /**
+   * Offline does not store any other information.
+   */
   offline?: Record_OfflineAmino;
 }
 export interface RecordAminoMsg {
@@ -65,6 +82,9 @@ export interface Record_LocalProtoMsg {
 /**
  * Item is a keyring item stored in a keyring backend.
  * Local item
+ * @name Record_LocalAmino
+ * @package cosmos.crypto.keyring.v1
+ * @see proto type: cosmos.crypto.keyring.v1.Record_Local
  */
 export interface Record_LocalAmino {
   priv_key?: AnyAmino;
@@ -88,7 +108,12 @@ export interface Record_LedgerProtoMsg {
   typeUrl: "/cosmos.crypto.keyring.v1.Ledger";
   value: Uint8Array;
 }
-/** Ledger item */
+/**
+ * Ledger item
+ * @name Record_LedgerAmino
+ * @package cosmos.crypto.keyring.v1
+ * @see proto type: cosmos.crypto.keyring.v1.Record_Ledger
+ */
 export interface Record_LedgerAmino {
   path?: BIP44ParamsAmino;
 }
@@ -106,7 +131,12 @@ export interface Record_MultiProtoMsg {
   typeUrl: "/cosmos.crypto.keyring.v1.Multi";
   value: Uint8Array;
 }
-/** Multi item */
+/**
+ * Multi item
+ * @name Record_MultiAmino
+ * @package cosmos.crypto.keyring.v1
+ * @see proto type: cosmos.crypto.keyring.v1.Record_Multi
+ */
 export interface Record_MultiAmino {}
 export interface Record_MultiAminoMsg {
   type: "cosmos-sdk/Multi";
@@ -120,7 +150,12 @@ export interface Record_OfflineProtoMsg {
   typeUrl: "/cosmos.crypto.keyring.v1.Offline";
   value: Uint8Array;
 }
-/** Offline item */
+/**
+ * Offline item
+ * @name Record_OfflineAmino
+ * @package cosmos.crypto.keyring.v1
+ * @see proto type: cosmos.crypto.keyring.v1.Record_Offline
+ */
 export interface Record_OfflineAmino {}
 export interface Record_OfflineAminoMsg {
   type: "cosmos-sdk/Offline";

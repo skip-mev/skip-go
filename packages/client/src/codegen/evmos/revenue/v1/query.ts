@@ -14,9 +14,16 @@ export interface QueryRevenuesRequestProtoMsg {
   typeUrl: "/evmos.revenue.v1.QueryRevenuesRequest";
   value: Uint8Array;
 }
-/** QueryRevenuesRequest is the request type for the Query/Revenues RPC method. */
+/**
+ * QueryRevenuesRequest is the request type for the Query/Revenues RPC method.
+ * @name QueryRevenuesRequestAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.QueryRevenuesRequest
+ */
 export interface QueryRevenuesRequestAmino {
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryRevenuesRequestAminoMsg {
@@ -38,11 +45,20 @@ export interface QueryRevenuesResponseProtoMsg {
   typeUrl: "/evmos.revenue.v1.QueryRevenuesResponse";
   value: Uint8Array;
 }
-/** QueryRevenuesResponse is the response type for the Query/Revenues RPC method. */
+/**
+ * QueryRevenuesResponse is the response type for the Query/Revenues RPC method.
+ * @name QueryRevenuesResponseAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.QueryRevenuesResponse
+ */
 export interface QueryRevenuesResponseAmino {
-  /** revenues is a slice of all stored Reveneue */
+  /**
+   * revenues is a slice of all stored Reveneue
+   */
   revenues?: RevenueAmino[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryRevenuesResponseAminoMsg {
@@ -63,9 +79,16 @@ export interface QueryRevenueRequestProtoMsg {
   typeUrl: "/evmos.revenue.v1.QueryRevenueRequest";
   value: Uint8Array;
 }
-/** QueryRevenueRequest is the request type for the Query/Revenue RPC method. */
+/**
+ * QueryRevenueRequest is the request type for the Query/Revenue RPC method.
+ * @name QueryRevenueRequestAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.QueryRevenueRequest
+ */
 export interface QueryRevenueRequestAmino {
-  /** contract_address of a registered contract in hex format */
+  /**
+   * contract_address of a registered contract in hex format
+   */
   contract_address?: string;
 }
 export interface QueryRevenueRequestAminoMsg {
@@ -85,9 +108,16 @@ export interface QueryRevenueResponseProtoMsg {
   typeUrl: "/evmos.revenue.v1.QueryRevenueResponse";
   value: Uint8Array;
 }
-/** QueryRevenueResponse is the response type for the Query/Revenue RPC method. */
+/**
+ * QueryRevenueResponse is the response type for the Query/Revenue RPC method.
+ * @name QueryRevenueResponseAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.QueryRevenueResponse
+ */
 export interface QueryRevenueResponseAmino {
-  /** revenue is a stored Reveneue for the queried contract */
+  /**
+   * revenue is a stored Reveneue for the queried contract
+   */
   revenue?: RevenueAmino;
 }
 export interface QueryRevenueResponseAminoMsg {
@@ -104,7 +134,12 @@ export interface QueryParamsRequestProtoMsg {
   typeUrl: "/evmos.revenue.v1.QueryParamsRequest";
   value: Uint8Array;
 }
-/** QueryParamsRequest is the request type for the Query/Params RPC method. */
+/**
+ * QueryParamsRequest is the request type for the Query/Params RPC method.
+ * @name QueryParamsRequestAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.QueryParamsRequest
+ */
 export interface QueryParamsRequestAmino {}
 export interface QueryParamsRequestAminoMsg {
   type: "revenue/QueryParamsRequest";
@@ -121,9 +156,16 @@ export interface QueryParamsResponseProtoMsg {
   typeUrl: "/evmos.revenue.v1.QueryParamsResponse";
   value: Uint8Array;
 }
-/** QueryParamsResponse is the response type for the Query/Params RPC method. */
+/**
+ * QueryParamsResponse is the response type for the Query/Params RPC method.
+ * @name QueryParamsResponseAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.QueryParamsResponse
+ */
 export interface QueryParamsResponseAmino {
-  /** params is the returned revenue parameter */
+  /**
+   * params is the returned revenue parameter
+   */
   params?: ParamsAmino;
 }
 export interface QueryParamsResponseAminoMsg {
@@ -151,11 +193,18 @@ export interface QueryDeployerRevenuesRequestProtoMsg {
 /**
  * QueryDeployerRevenuesRequest is the request type for the
  * Query/DeployerRevenues RPC method.
+ * @name QueryDeployerRevenuesRequestAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.QueryDeployerRevenuesRequest
  */
 export interface QueryDeployerRevenuesRequestAmino {
-  /** deployer_address in bech32 format */
+  /**
+   * deployer_address in bech32 format
+   */
   deployer_address?: string;
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryDeployerRevenuesRequestAminoMsg {
@@ -187,11 +236,18 @@ export interface QueryDeployerRevenuesResponseProtoMsg {
 /**
  * QueryDeployerRevenuesResponse is the response type for the
  * Query/DeployerRevenues RPC method.
+ * @name QueryDeployerRevenuesResponseAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.QueryDeployerRevenuesResponse
  */
 export interface QueryDeployerRevenuesResponseAmino {
-  /** contract_addresses is the slice of registered contract addresses for a deployer */
+  /**
+   * contract_addresses is the slice of registered contract addresses for a deployer
+   */
   contract_addresses?: string[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryDeployerRevenuesResponseAminoMsg {
@@ -223,11 +279,18 @@ export interface QueryWithdrawerRevenuesRequestProtoMsg {
 /**
  * QueryWithdrawerRevenuesRequest is the request type for the
  * Query/WithdrawerRevenues RPC method.
+ * @name QueryWithdrawerRevenuesRequestAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.QueryWithdrawerRevenuesRequest
  */
 export interface QueryWithdrawerRevenuesRequestAmino {
-  /** withdrawer_address in bech32 format */
+  /**
+   * withdrawer_address in bech32 format
+   */
   withdrawer_address?: string;
-  /** pagination defines an optional pagination for the request. */
+  /**
+   * pagination defines an optional pagination for the request.
+   */
   pagination?: PageRequestAmino;
 }
 export interface QueryWithdrawerRevenuesRequestAminoMsg {
@@ -259,11 +322,18 @@ export interface QueryWithdrawerRevenuesResponseProtoMsg {
 /**
  * QueryWithdrawerRevenuesResponse is the response type for the
  * Query/WithdrawerRevenues RPC method.
+ * @name QueryWithdrawerRevenuesResponseAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.QueryWithdrawerRevenuesResponse
  */
 export interface QueryWithdrawerRevenuesResponseAmino {
-  /** contract_addresses is the slice of registered contract addresses for a withdrawer */
+  /**
+   * contract_addresses is the slice of registered contract addresses for a withdrawer
+   */
   contract_addresses?: string[];
-  /** pagination defines the pagination in the response. */
+  /**
+   * pagination defines the pagination in the response.
+   */
   pagination?: PageResponseAmino;
 }
 export interface QueryWithdrawerRevenuesResponseAminoMsg {
