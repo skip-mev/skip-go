@@ -9,7 +9,12 @@ export interface QueryParamsRequestProtoMsg {
   typeUrl: "/cosmos.consensus.v1.QueryParamsRequest";
   value: Uint8Array;
 }
-/** QueryParamsRequest defines the request type for querying x/consensus parameters. */
+/**
+ * QueryParamsRequest defines the request type for querying x/consensus parameters.
+ * @name QueryParamsRequestAmino
+ * @package cosmos.consensus.v1
+ * @see proto type: cosmos.consensus.v1.QueryParamsRequest
+ */
 export interface QueryParamsRequestAmino {}
 export interface QueryParamsRequestAminoMsg {
   type: "cosmos-sdk/QueryParamsRequest";
@@ -30,7 +35,12 @@ export interface QueryParamsResponseProtoMsg {
   typeUrl: "/cosmos.consensus.v1.QueryParamsResponse";
   value: Uint8Array;
 }
-/** QueryParamsResponse defines the response type for querying x/consensus parameters. */
+/**
+ * QueryParamsResponse defines the response type for querying x/consensus parameters.
+ * @name QueryParamsResponseAmino
+ * @package cosmos.consensus.v1
+ * @see proto type: cosmos.consensus.v1.QueryParamsResponse
+ */
 export interface QueryParamsResponseAmino {
   /**
    * params are the tendermint consensus params stored in the consensus module.

@@ -19,9 +19,14 @@ export interface PubKeyProtoMsg {
  * PubKey defines a type alias for an ecdsa.PublicKey that implements
  * Tendermint's PubKey interface. It represents the 33-byte compressed public
  * key format.
+ * @name PubKeyAmino
+ * @package ethermint.crypto.v1.ethsecp256k1
+ * @see proto type: ethermint.crypto.v1.ethsecp256k1.PubKey
  */
 export interface PubKeyAmino {
-  /** key is the public key in byte form */
+  /**
+   * key is the public key in byte form
+   */
   key?: string;
 }
 export interface PubKeyAminoMsg {
@@ -51,9 +56,14 @@ export interface PrivKeyProtoMsg {
 /**
  * PrivKey defines a type alias for an ecdsa.PrivateKey that implements
  * Tendermint's PrivateKey interface.
+ * @name PrivKeyAmino
+ * @package ethermint.crypto.v1.ethsecp256k1
+ * @see proto type: ethermint.crypto.v1.ethsecp256k1.PrivKey
  */
 export interface PrivKeyAmino {
-  /** key is the private key in byte form */
+  /**
+   * key is the private key in byte form
+   */
   key?: string;
 }
 export interface PrivKeyAminoMsg {

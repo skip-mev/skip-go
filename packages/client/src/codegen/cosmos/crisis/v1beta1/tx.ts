@@ -16,13 +16,24 @@ export interface MsgVerifyInvariantProtoMsg {
   typeUrl: "/cosmos.crisis.v1beta1.MsgVerifyInvariant";
   value: Uint8Array;
 }
-/** MsgVerifyInvariant represents a message to verify a particular invariance. */
+/**
+ * MsgVerifyInvariant represents a message to verify a particular invariance.
+ * @name MsgVerifyInvariantAmino
+ * @package cosmos.crisis.v1beta1
+ * @see proto type: cosmos.crisis.v1beta1.MsgVerifyInvariant
+ */
 export interface MsgVerifyInvariantAmino {
-  /** sender is the account address of private key to send coins to fee collector account. */
+  /**
+   * sender is the account address of private key to send coins to fee collector account.
+   */
   sender?: string;
-  /** name of the invariant module. */
+  /**
+   * name of the invariant module.
+   */
   invariant_module_name?: string;
-  /** invariant_route is the msg's invariant route. */
+  /**
+   * invariant_route is the msg's invariant route.
+   */
   invariant_route?: string;
 }
 export interface MsgVerifyInvariantAminoMsg {
@@ -41,7 +52,12 @@ export interface MsgVerifyInvariantResponseProtoMsg {
   typeUrl: "/cosmos.crisis.v1beta1.MsgVerifyInvariantResponse";
   value: Uint8Array;
 }
-/** MsgVerifyInvariantResponse defines the Msg/VerifyInvariant response type. */
+/**
+ * MsgVerifyInvariantResponse defines the Msg/VerifyInvariant response type.
+ * @name MsgVerifyInvariantResponseAmino
+ * @package cosmos.crisis.v1beta1
+ * @see proto type: cosmos.crisis.v1beta1.MsgVerifyInvariantResponse
+ */
 export interface MsgVerifyInvariantResponseAmino {}
 export interface MsgVerifyInvariantResponseAminoMsg {
   type: "cosmos-sdk/MsgVerifyInvariantResponse";
@@ -68,11 +84,18 @@ export interface MsgUpdateParamsProtoMsg {
  * MsgUpdateParams is the Msg/UpdateParams request type.
  * 
  * Since: cosmos-sdk 0.47
+ * @name MsgUpdateParamsAmino
+ * @package cosmos.crisis.v1beta1
+ * @see proto type: cosmos.crisis.v1beta1.MsgUpdateParams
  */
 export interface MsgUpdateParamsAmino {
-  /** authority is the address that controls the module (defaults to x/gov unless overwritten). */
+  /**
+   * authority is the address that controls the module (defaults to x/gov unless overwritten).
+   */
   authority?: string;
-  /** constant_fee defines the x/crisis parameter. */
+  /**
+   * constant_fee defines the x/crisis parameter.
+   */
   constant_fee: CoinAmino;
 }
 export interface MsgUpdateParamsAminoMsg {
@@ -104,6 +127,9 @@ export interface MsgUpdateParamsResponseProtoMsg {
  * MsgUpdateParams message.
  * 
  * Since: cosmos-sdk 0.47
+ * @name MsgUpdateParamsResponseAmino
+ * @package cosmos.crisis.v1beta1
+ * @see proto type: cosmos.crisis.v1beta1.MsgUpdateParamsResponse
  */
 export interface MsgUpdateParamsResponseAmino {}
 export interface MsgUpdateParamsResponseAminoMsg {

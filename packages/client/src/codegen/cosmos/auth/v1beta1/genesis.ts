@@ -15,11 +15,20 @@ export interface GenesisStateProtoMsg {
   typeUrl: "/cosmos.auth.v1beta1.GenesisState";
   value: Uint8Array;
 }
-/** GenesisState defines the auth module's genesis state. */
+/**
+ * GenesisState defines the auth module's genesis state.
+ * @name GenesisStateAmino
+ * @package cosmos.auth.v1beta1
+ * @see proto type: cosmos.auth.v1beta1.GenesisState
+ */
 export interface GenesisStateAmino {
-  /** params defines all the parameters of the module. */
+  /**
+   * params defines all the parameters of the module.
+   */
   params: ParamsAmino;
-  /** accounts are the accounts present at genesis. */
+  /**
+   * accounts are the accounts present at genesis.
+   */
   accounts?: AnyAmino[];
 }
 export interface GenesisStateAminoMsg {

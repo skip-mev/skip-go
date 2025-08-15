@@ -23,13 +23,24 @@ export interface MsgEthereumTxProtoMsg {
   typeUrl: "/ethermint.evm.v1.MsgEthereumTx";
   value: Uint8Array;
 }
-/** MsgEthereumTx encapsulates an Ethereum transaction as an SDK message. */
+/**
+ * MsgEthereumTx encapsulates an Ethereum transaction as an SDK message.
+ * @name MsgEthereumTxAmino
+ * @package ethermint.evm.v1
+ * @see proto type: ethermint.evm.v1.MsgEthereumTx
+ */
 export interface MsgEthereumTxAmino {
-  /** data is inner transaction data of the Ethereum transaction */
+  /**
+   * data is inner transaction data of the Ethereum transaction
+   */
   data?: AnyAmino;
-  /** size is the encoded storage size of the transaction (DEPRECATED) */
+  /**
+   * size is the encoded storage size of the transaction (DEPRECATED)
+   */
   size: number;
-  /** hash of the transaction in hex format */
+  /**
+   * hash of the transaction in hex format
+   */
   hash?: string;
   /**
    * from is the ethereum signer address in hex format. This address value is checked
@@ -82,25 +93,46 @@ export interface LegacyTxProtoMsg {
  * LegacyTx is the transaction data of regular Ethereum transactions.
  * NOTE: All non-protected transactions (i.e non EIP155 signed) will fail if the
  * AllowUnprotectedTxs parameter is disabled.
+ * @name LegacyTxAmino
+ * @package ethermint.evm.v1
+ * @see proto type: ethermint.evm.v1.LegacyTx
  */
 export interface LegacyTxAmino {
-  /** nonce corresponds to the account nonce (transaction sequence). */
+  /**
+   * nonce corresponds to the account nonce (transaction sequence).
+   */
   nonce?: string;
-  /** gas_price defines the value for each gas unit */
+  /**
+   * gas_price defines the value for each gas unit
+   */
   gas_price?: string;
-  /** gas defines the gas limit defined for the transaction. */
+  /**
+   * gas defines the gas limit defined for the transaction.
+   */
   gas?: string;
-  /** to is the hex formatted address of the recipient */
+  /**
+   * to is the hex formatted address of the recipient
+   */
   to?: string;
-  /** value defines the unsigned integer value of the transaction amount. */
+  /**
+   * value defines the unsigned integer value of the transaction amount.
+   */
   value?: string;
-  /** data is the data payload bytes of the transaction. */
+  /**
+   * data is the data payload bytes of the transaction.
+   */
   data?: string;
-  /** v defines the signature value */
+  /**
+   * v defines the signature value
+   */
   v?: string;
-  /** r defines the signature value */
+  /**
+   * r defines the signature value
+   */
   r?: string;
-  /** s define the signature value */
+  /**
+   * s define the signature value
+   */
   s?: string;
 }
 export interface LegacyTxAminoMsg {
@@ -152,29 +184,56 @@ export interface AccessListTxProtoMsg {
   typeUrl: "/ethermint.evm.v1.AccessListTx";
   value: Uint8Array;
 }
-/** AccessListTx is the data of EIP-2930 access list transactions. */
+/**
+ * AccessListTx is the data of EIP-2930 access list transactions.
+ * @name AccessListTxAmino
+ * @package ethermint.evm.v1
+ * @see proto type: ethermint.evm.v1.AccessListTx
+ */
 export interface AccessListTxAmino {
-  /** chain_id of the destination EVM chain */
+  /**
+   * chain_id of the destination EVM chain
+   */
   chain_id: string;
-  /** nonce corresponds to the account nonce (transaction sequence). */
+  /**
+   * nonce corresponds to the account nonce (transaction sequence).
+   */
   nonce?: string;
-  /** gas_price defines the value for each gas unit */
+  /**
+   * gas_price defines the value for each gas unit
+   */
   gas_price?: string;
-  /** gas defines the gas limit defined for the transaction. */
+  /**
+   * gas defines the gas limit defined for the transaction.
+   */
   gas?: string;
-  /** to is the recipient address in hex format */
+  /**
+   * to is the recipient address in hex format
+   */
   to?: string;
-  /** value defines the unsigned integer value of the transaction amount. */
+  /**
+   * value defines the unsigned integer value of the transaction amount.
+   */
   value?: string;
-  /** data is the data payload bytes of the transaction. */
+  /**
+   * data is the data payload bytes of the transaction.
+   */
   data?: string;
-  /** accesses is an array of access tuples */
+  /**
+   * accesses is an array of access tuples
+   */
   accesses: AccessTupleAmino[];
-  /** v defines the signature value */
+  /**
+   * v defines the signature value
+   */
   v?: string;
-  /** r defines the signature value */
+  /**
+   * r defines the signature value
+   */
   r?: string;
-  /** s define the signature value */
+  /**
+   * s define the signature value
+   */
   s?: string;
 }
 export interface AccessListTxAminoMsg {
@@ -226,31 +285,60 @@ export interface DynamicFeeTxProtoMsg {
   typeUrl: "/ethermint.evm.v1.DynamicFeeTx";
   value: Uint8Array;
 }
-/** DynamicFeeTx is the data of EIP-1559 dinamic fee transactions. */
+/**
+ * DynamicFeeTx is the data of EIP-1559 dinamic fee transactions.
+ * @name DynamicFeeTxAmino
+ * @package ethermint.evm.v1
+ * @see proto type: ethermint.evm.v1.DynamicFeeTx
+ */
 export interface DynamicFeeTxAmino {
-  /** chain_id of the destination EVM chain */
+  /**
+   * chain_id of the destination EVM chain
+   */
   chain_id: string;
-  /** nonce corresponds to the account nonce (transaction sequence). */
+  /**
+   * nonce corresponds to the account nonce (transaction sequence).
+   */
   nonce?: string;
-  /** gas_tip_cap defines the max value for the gas tip */
+  /**
+   * gas_tip_cap defines the max value for the gas tip
+   */
   gas_tip_cap?: string;
-  /** gas_fee_cap defines the max value for the gas fee */
+  /**
+   * gas_fee_cap defines the max value for the gas fee
+   */
   gas_fee_cap?: string;
-  /** gas defines the gas limit defined for the transaction. */
+  /**
+   * gas defines the gas limit defined for the transaction.
+   */
   gas?: string;
-  /** to is the hex formatted address of the recipient */
+  /**
+   * to is the hex formatted address of the recipient
+   */
   to?: string;
-  /** value defines the the transaction amount. */
+  /**
+   * value defines the the transaction amount.
+   */
   value?: string;
-  /** data is the data payload bytes of the transaction. */
+  /**
+   * data is the data payload bytes of the transaction.
+   */
   data?: string;
-  /** accesses is an array of access tuples */
+  /**
+   * accesses is an array of access tuples
+   */
   accesses: AccessTupleAmino[];
-  /** v defines the signature value */
+  /**
+   * v defines the signature value
+   */
   v?: string;
-  /** r defines the signature value */
+  /**
+   * r defines the signature value
+   */
   r?: string;
-  /** s define the signature value */
+  /**
+   * s define the signature value
+   */
   s?: string;
 }
 export interface DynamicFeeTxAminoMsg {
@@ -278,7 +366,12 @@ export interface ExtensionOptionsEthereumTxProtoMsg {
   typeUrl: "/ethermint.evm.v1.ExtensionOptionsEthereumTx";
   value: Uint8Array;
 }
-/** ExtensionOptionsEthereumTx is an extension option for ethereum transactions */
+/**
+ * ExtensionOptionsEthereumTx is an extension option for ethereum transactions
+ * @name ExtensionOptionsEthereumTxAmino
+ * @package ethermint.evm.v1
+ * @see proto type: ethermint.evm.v1.ExtensionOptionsEthereumTx
+ */
 export interface ExtensionOptionsEthereumTxAmino {}
 export interface ExtensionOptionsEthereumTxAminoMsg {
   type: "evm/ExtensionOptionsEthereumTx";
@@ -313,7 +406,12 @@ export interface MsgEthereumTxResponseProtoMsg {
   typeUrl: "/ethermint.evm.v1.MsgEthereumTxResponse";
   value: Uint8Array;
 }
-/** MsgEthereumTxResponse defines the Msg/EthereumTx response type. */
+/**
+ * MsgEthereumTxResponse defines the Msg/EthereumTx response type.
+ * @name MsgEthereumTxResponseAmino
+ * @package ethermint.evm.v1
+ * @see proto type: ethermint.evm.v1.MsgEthereumTxResponse
+ */
 export interface MsgEthereumTxResponseAmino {
   /**
    * hash of the ethereum transaction in hex format. This hash differs from the
@@ -331,9 +429,13 @@ export interface MsgEthereumTxResponseAmino {
    * opcode)
    */
   ret?: string;
-  /** vm_error is the error returned by vm execution */
+  /**
+   * vm_error is the error returned by vm execution
+   */
   vm_error?: string;
-  /** gas_used specifies how much gas was consumed by the transaction */
+  /**
+   * gas_used specifies how much gas was consumed by the transaction
+   */
   gas_used?: string;
 }
 export interface MsgEthereumTxResponseAminoMsg {
@@ -362,9 +464,16 @@ export interface MsgUpdateParamsProtoMsg {
   typeUrl: "/ethermint.evm.v1.MsgUpdateParams";
   value: Uint8Array;
 }
-/** MsgUpdateParams defines a Msg for updating the x/evm module parameters. */
+/**
+ * MsgUpdateParams defines a Msg for updating the x/evm module parameters.
+ * @name MsgUpdateParamsAmino
+ * @package ethermint.evm.v1
+ * @see proto type: ethermint.evm.v1.MsgUpdateParams
+ */
 export interface MsgUpdateParamsAmino {
-  /** authority is the address of the governance account. */
+  /**
+   * authority is the address of the governance account.
+   */
   authority?: string;
   /**
    * params defines the x/evm parameters to update.
@@ -393,6 +502,9 @@ export interface MsgUpdateParamsResponseProtoMsg {
 /**
  * MsgUpdateParamsResponse defines the response structure for executing a
  * MsgUpdateParams message.
+ * @name MsgUpdateParamsResponseAmino
+ * @package ethermint.evm.v1
+ * @see proto type: ethermint.evm.v1.MsgUpdateParamsResponse
  */
 export interface MsgUpdateParamsResponseAmino {}
 export interface MsgUpdateParamsResponseAminoMsg {
@@ -683,9 +795,9 @@ export const LegacyTx = {
   },
   toAmino(message: LegacyTx): LegacyTxAmino {
     const obj: any = {};
-    obj.nonce = !message.nonce.isZero() ? message.nonce.toString() : undefined;
+    obj.nonce = !message.nonce.isZero() ? message.nonce?.toString() : undefined;
     obj.gas_price = message.gasPrice === "" ? undefined : message.gasPrice;
-    obj.gas = !message.gas.isZero() ? message.gas.toString() : undefined;
+    obj.gas = !message.gas.isZero() ? message.gas?.toString() : undefined;
     obj.to = message.to === "" ? undefined : message.to;
     obj.value = message.value === "" ? undefined : message.value;
     obj.data = message.data ? base64FromBytes(message.data) : undefined;
@@ -903,9 +1015,9 @@ export const AccessListTx = {
   toAmino(message: AccessListTx): AccessListTxAmino {
     const obj: any = {};
     obj.chain_id = message.chainId ?? "";
-    obj.nonce = !message.nonce.isZero() ? message.nonce.toString() : undefined;
+    obj.nonce = !message.nonce.isZero() ? message.nonce?.toString() : undefined;
     obj.gas_price = message.gasPrice === "" ? undefined : message.gasPrice;
-    obj.gas = !message.gas.isZero() ? message.gas.toString() : undefined;
+    obj.gas = !message.gas.isZero() ? message.gas?.toString() : undefined;
     obj.to = message.to === "" ? undefined : message.to;
     obj.value = message.value === "" ? undefined : message.value;
     obj.data = message.data ? base64FromBytes(message.data) : undefined;
@@ -1141,10 +1253,10 @@ export const DynamicFeeTx = {
   toAmino(message: DynamicFeeTx): DynamicFeeTxAmino {
     const obj: any = {};
     obj.chain_id = message.chainId ?? "";
-    obj.nonce = !message.nonce.isZero() ? message.nonce.toString() : undefined;
+    obj.nonce = !message.nonce.isZero() ? message.nonce?.toString() : undefined;
     obj.gas_tip_cap = message.gasTipCap === "" ? undefined : message.gasTipCap;
     obj.gas_fee_cap = message.gasFeeCap === "" ? undefined : message.gasFeeCap;
-    obj.gas = !message.gas.isZero() ? message.gas.toString() : undefined;
+    obj.gas = !message.gas.isZero() ? message.gas?.toString() : undefined;
     obj.to = message.to === "" ? undefined : message.to;
     obj.value = message.value === "" ? undefined : message.value;
     obj.data = message.data ? base64FromBytes(message.data) : undefined;
@@ -1359,7 +1471,7 @@ export const MsgEthereumTxResponse = {
     }
     obj.ret = message.ret ? base64FromBytes(message.ret) : undefined;
     obj.vm_error = message.vmError === "" ? undefined : message.vmError;
-    obj.gas_used = !message.gasUsed.isZero() ? message.gasUsed.toString() : undefined;
+    obj.gas_used = !message.gasUsed.isZero() ? message.gasUsed?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: MsgEthereumTxResponseAminoMsg): MsgEthereumTxResponse {

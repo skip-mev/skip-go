@@ -28,6 +28,9 @@ export interface BurnMessageProtoMsg {
  * @param mint_recipient the mint recipient address as bytes32
  * @param amount the burn amount
  * @param message_sender the message sender
+ * @name BurnMessageAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.BurnMessage
  */
 export interface BurnMessageAmino {
   version?: number;

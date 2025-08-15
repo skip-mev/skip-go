@@ -16,6 +16,9 @@ export interface AttesterProtoMsg {
 /**
  * A public key used to verify message signatures
  * @param attester ECDSA uncompressed public key, hex encoded
+ * @name AttesterAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.Attester
  */
 export interface AttesterAmino {
   attester?: string;

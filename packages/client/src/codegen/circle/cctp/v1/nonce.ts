@@ -23,6 +23,9 @@ export interface NonceProtoMsg {
  * @param source_domain the domain id, used to mark used nonces for received
  * messages
  * @param nonce the nonce number
+ * @name NonceAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.Nonce
  */
 export interface NonceAmino {
   source_domain?: number;
@@ -111,7 +114,7 @@ export const Nonce = {
   toAmino(message: Nonce): NonceAmino {
     const obj: any = {};
     obj.source_domain = message.sourceDomain === 0 ? undefined : message.sourceDomain;
-    obj.nonce = !message.nonce.isZero() ? message.nonce.toString() : undefined;
+    obj.nonce = !message.nonce.isZero() ? message.nonce?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: NonceAminoMsg): Nonce {

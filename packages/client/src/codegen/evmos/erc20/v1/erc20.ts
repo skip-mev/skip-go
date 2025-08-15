@@ -66,15 +66,26 @@ export interface TokenPairProtoMsg {
 /**
  * TokenPair defines an instance that records a pairing consisting of a native
  * Cosmos Coin and an ERC20 token address.
+ * @name TokenPairAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.TokenPair
  */
 export interface TokenPairAmino {
-  /** erc20_address is the hex address of ERC20 contract token */
+  /**
+   * erc20_address is the hex address of ERC20 contract token
+   */
   erc20_address?: string;
-  /** denom defines the cosmos base denomination to be mapped to */
+  /**
+   * denom defines the cosmos base denomination to be mapped to
+   */
   denom?: string;
-  /** enabled defines the token mapping enable status */
+  /**
+   * enabled defines the token mapping enable status
+   */
   enabled?: boolean;
-  /** contract_owner is the an ENUM specifying the type of ERC20 owner (0 invalid, 1 ModuleAccount, 2 external address) */
+  /**
+   * contract_owner is the an ENUM specifying the type of ERC20 owner (0 invalid, 1 ModuleAccount, 2 external address)
+   */
   contract_owner?: Owner;
 }
 export interface TokenPairAminoMsg {
@@ -110,13 +121,22 @@ export interface RegisterCoinProposalProtoMsg {
 /**
  * RegisterCoinProposal is a gov Content type to register a token pair for a
  * native Cosmos coin.
+ * @name RegisterCoinProposalAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.RegisterCoinProposal
  */
 export interface RegisterCoinProposalAmino {
-  /** title of the proposal */
+  /**
+   * title of the proposal
+   */
   title?: string;
-  /** description of the proposal */
+  /**
+   * description of the proposal
+   */
   description?: string;
-  /** metadata slice of the native Cosmos coins */
+  /**
+   * metadata slice of the native Cosmos coins
+   */
   metadata?: MetadataAmino[];
 }
 export interface RegisterCoinProposalAminoMsg {
@@ -151,13 +171,22 @@ export interface RegisterERC20ProposalProtoMsg {
 /**
  * RegisterERC20Proposal is a gov Content type to register a token pair for an
  * ERC20 token
+ * @name RegisterERC20ProposalAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.RegisterERC20Proposal
  */
 export interface RegisterERC20ProposalAmino {
-  /** title of the proposal */
+  /**
+   * title of the proposal
+   */
   title?: string;
-  /** description of the proposal */
+  /**
+   * description of the proposal
+   */
   description?: string;
-  /** erc20addresses is a slice of  ERC20 token contract addresses */
+  /**
+   * erc20addresses is a slice of  ERC20 token contract addresses
+   */
   erc20addresses?: string[];
 }
 export interface RegisterERC20ProposalAminoMsg {
@@ -195,11 +224,18 @@ export interface ToggleTokenConversionProposalProtoMsg {
 /**
  * ToggleTokenConversionProposal is a gov Content type to toggle the conversion
  * of a token pair.
+ * @name ToggleTokenConversionProposalAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.ToggleTokenConversionProposal
  */
 export interface ToggleTokenConversionProposalAmino {
-  /** title of the proposal */
+  /**
+   * title of the proposal
+   */
   title?: string;
-  /** description of the proposal */
+  /**
+   * description of the proposal
+   */
   description?: string;
   /**
    * token identifier can be either the hex contract address of the ERC20 or the
@@ -235,9 +271,14 @@ export interface ProposalMetadataProtoMsg {
 /**
  * ProposalMetadata is used to parse a slice of denom metadata and generate
  * the RegisterCoinProposal content.
+ * @name ProposalMetadataAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.ProposalMetadata
  */
 export interface ProposalMetadataAmino {
-  /** metadata slice of the native Cosmos coins */
+  /**
+   * metadata slice of the native Cosmos coins
+   */
   metadata?: MetadataAmino[];
 }
 export interface ProposalMetadataAminoMsg {

@@ -31,9 +31,16 @@ export interface GenesisStateProtoMsg {
   typeUrl: "/cosmos.staking.v1beta1.GenesisState";
   value: Uint8Array;
 }
-/** GenesisState defines the staking module's genesis state. */
+/**
+ * GenesisState defines the staking module's genesis state.
+ * @name GenesisStateAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.GenesisState
+ */
 export interface GenesisStateAmino {
-  /** params defines all the parameters of related to deposit. */
+  /**
+   * params defines all the parameters of related to deposit.
+   */
   params: ParamsAmino;
   /**
    * last_total_power tracks the total amounts of bonded tokens recorded during
@@ -45,13 +52,21 @@ export interface GenesisStateAmino {
    * of the last-block's bonded validators.
    */
   last_validator_powers: LastValidatorPowerAmino[];
-  /** delegations defines the validator set at genesis. */
+  /**
+   * delegations defines the validator set at genesis.
+   */
   validators: ValidatorAmino[];
-  /** delegations defines the delegations active at genesis. */
+  /**
+   * delegations defines the delegations active at genesis.
+   */
   delegations: DelegationAmino[];
-  /** unbonding_delegations defines the unbonding delegations active at genesis. */
+  /**
+   * unbonding_delegations defines the unbonding delegations active at genesis.
+   */
   unbonding_delegations: UnbondingDelegationAmino[];
-  /** redelegations defines the redelegations active at genesis. */
+  /**
+   * redelegations defines the redelegations active at genesis.
+   */
   redelegations: RedelegationAmino[];
   exported?: boolean;
 }
@@ -81,11 +96,20 @@ export interface LastValidatorPowerProtoMsg {
   typeUrl: "/cosmos.staking.v1beta1.LastValidatorPower";
   value: Uint8Array;
 }
-/** LastValidatorPower required for validator set update logic. */
+/**
+ * LastValidatorPower required for validator set update logic.
+ * @name LastValidatorPowerAmino
+ * @package cosmos.staking.v1beta1
+ * @see proto type: cosmos.staking.v1beta1.LastValidatorPower
+ */
 export interface LastValidatorPowerAmino {
-  /** address is the address of the validator. */
+  /**
+   * address is the address of the validator.
+   */
   address?: string;
-  /** power defines the power of the validator. */
+  /**
+   * power defines the power of the validator.
+   */
   power?: string;
 }
 export interface LastValidatorPowerAminoMsg {
@@ -372,7 +396,7 @@ export const LastValidatorPower = {
   toAmino(message: LastValidatorPower): LastValidatorPowerAmino {
     const obj: any = {};
     obj.address = message.address === "" ? undefined : message.address;
-    obj.power = !message.power.isZero() ? message.power.toString() : undefined;
+    obj.power = !message.power.isZero() ? message.power?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: LastValidatorPowerAminoMsg): LastValidatorPower {

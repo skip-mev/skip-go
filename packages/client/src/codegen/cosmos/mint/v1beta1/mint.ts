@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { Long, isSet, padDecimal } from "../../../helpers";
+import { Long, isSet } from "../../../helpers";
 import _m0 from "protobufjs/minimal.js";
 import { Decimal } from "@cosmjs/math";
 import { JsonSafe } from "../../../json-safe";
@@ -14,11 +14,20 @@ export interface MinterProtoMsg {
   typeUrl: "/cosmos.mint.v1beta1.Minter";
   value: Uint8Array;
 }
-/** Minter represents the minting state. */
+/**
+ * Minter represents the minting state.
+ * @name MinterAmino
+ * @package cosmos.mint.v1beta1
+ * @see proto type: cosmos.mint.v1beta1.Minter
+ */
 export interface MinterAmino {
-  /** current annual inflation rate */
+  /**
+   * current annual inflation rate
+   */
   inflation?: string;
-  /** current annual expected provisions */
+  /**
+   * current annual expected provisions
+   */
   annual_provisions?: string;
 }
 export interface MinterAminoMsg {
@@ -49,19 +58,36 @@ export interface ParamsProtoMsg {
   typeUrl: "/cosmos.mint.v1beta1.Params";
   value: Uint8Array;
 }
-/** Params defines the parameters for the x/mint module. */
+/**
+ * Params defines the parameters for the x/mint module.
+ * @name ParamsAmino
+ * @package cosmos.mint.v1beta1
+ * @see proto type: cosmos.mint.v1beta1.Params
+ */
 export interface ParamsAmino {
-  /** type of coin to mint */
+  /**
+   * type of coin to mint
+   */
   mint_denom?: string;
-  /** maximum annual change in inflation rate */
+  /**
+   * maximum annual change in inflation rate
+   */
   inflation_rate_change?: string;
-  /** maximum inflation rate */
+  /**
+   * maximum inflation rate
+   */
   inflation_max?: string;
-  /** minimum inflation rate */
+  /**
+   * minimum inflation rate
+   */
   inflation_min?: string;
-  /** goal of percent bonded atoms */
+  /**
+   * goal of percent bonded atoms
+   */
   goal_bonded?: string;
-  /** expected blocks per year */
+  /**
+   * expected blocks per year
+   */
   blocks_per_year?: string;
 }
 export interface ParamsAminoMsg {
@@ -144,8 +170,8 @@ export const Minter = {
   },
   toAmino(message: Minter): MinterAmino {
     const obj: any = {};
-    obj.inflation = padDecimal(message.inflation) === "" ? undefined : padDecimal(message.inflation);
-    obj.annual_provisions = padDecimal(message.annualProvisions) === "" ? undefined : padDecimal(message.annualProvisions);
+    obj.inflation = message.inflation === "" ? undefined : Decimal.fromUserInput(message.inflation, 18).atomics;
+    obj.annual_provisions = message.annualProvisions === "" ? undefined : Decimal.fromUserInput(message.annualProvisions, 18).atomics;
     return obj;
   },
   fromAminoMsg(object: MinterAminoMsg): Minter {
@@ -290,11 +316,11 @@ export const Params = {
   toAmino(message: Params): ParamsAmino {
     const obj: any = {};
     obj.mint_denom = message.mintDenom === "" ? undefined : message.mintDenom;
-    obj.inflation_rate_change = padDecimal(message.inflationRateChange) === "" ? undefined : padDecimal(message.inflationRateChange);
-    obj.inflation_max = padDecimal(message.inflationMax) === "" ? undefined : padDecimal(message.inflationMax);
-    obj.inflation_min = padDecimal(message.inflationMin) === "" ? undefined : padDecimal(message.inflationMin);
-    obj.goal_bonded = padDecimal(message.goalBonded) === "" ? undefined : padDecimal(message.goalBonded);
-    obj.blocks_per_year = !message.blocksPerYear.isZero() ? message.blocksPerYear.toString() : undefined;
+    obj.inflation_rate_change = message.inflationRateChange === "" ? undefined : Decimal.fromUserInput(message.inflationRateChange, 18).atomics;
+    obj.inflation_max = message.inflationMax === "" ? undefined : Decimal.fromUserInput(message.inflationMax, 18).atomics;
+    obj.inflation_min = message.inflationMin === "" ? undefined : Decimal.fromUserInput(message.inflationMin, 18).atomics;
+    obj.goal_bonded = message.goalBonded === "" ? undefined : Decimal.fromUserInput(message.goalBonded, 18).atomics;
+    obj.blocks_per_year = !message.blocksPerYear.isZero() ? message.blocksPerYear?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: ParamsAminoMsg): Params {

@@ -9,7 +9,12 @@ export interface AppOptionsRequestProtoMsg {
   typeUrl: "/cosmos.autocli.v1.AppOptionsRequest";
   value: Uint8Array;
 }
-/** AppOptionsRequest is the RemoteInfoService/AppOptions request type. */
+/**
+ * AppOptionsRequest is the RemoteInfoService/AppOptions request type.
+ * @name AppOptionsRequestAmino
+ * @package cosmos.autocli.v1
+ * @see proto type: cosmos.autocli.v1.AppOptionsRequest
+ */
 export interface AppOptionsRequestAmino {}
 export interface AppOptionsRequestAminoMsg {
   type: "cosmos-sdk/AppOptionsRequest";
@@ -25,6 +30,11 @@ export interface AppOptionsResponse_ModuleOptionsEntryProtoMsg {
   typeUrl: string;
   value: Uint8Array;
 }
+/**
+ * @name AppOptionsResponse_ModuleOptionsEntryAmino
+ * @package cosmos.autocli.v1
+ * @see proto type: cosmos.autocli.v1.AppOptionsResponse_ModuleOptionsEntry
+ */
 export interface AppOptionsResponse_ModuleOptionsEntryAmino {
   key?: string;
   value?: ModuleOptionsAmino;
@@ -48,9 +58,16 @@ export interface AppOptionsResponseProtoMsg {
   typeUrl: "/cosmos.autocli.v1.AppOptionsResponse";
   value: Uint8Array;
 }
-/** AppOptionsResponse is the RemoteInfoService/AppOptions response type. */
+/**
+ * AppOptionsResponse is the RemoteInfoService/AppOptions response type.
+ * @name AppOptionsResponseAmino
+ * @package cosmos.autocli.v1
+ * @see proto type: cosmos.autocli.v1.AppOptionsResponse
+ */
 export interface AppOptionsResponseAmino {
-  /** module_options is a map of module name to autocli module options. */
+  /**
+   * module_options is a map of module name to autocli module options.
+   */
   module_options?: {
     [key: string]: ModuleOptionsAmino;
   };

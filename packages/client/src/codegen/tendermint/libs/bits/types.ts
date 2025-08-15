@@ -10,6 +10,11 @@ export interface BitArrayProtoMsg {
   typeUrl: "/tendermint.libs.bits.BitArray";
   value: Uint8Array;
 }
+/**
+ * @name BitArrayAmino
+ * @package tendermint.libs.bits
+ * @see proto type: tendermint.libs.bits.BitArray
+ */
 export interface BitArrayAmino {
   bits?: string;
   elems?: string[];
@@ -100,7 +105,7 @@ export const BitArray = {
   },
   toAmino(message: BitArray): BitArrayAmino {
     const obj: any = {};
-    obj.bits = !message.bits.isZero() ? message.bits.toString() : undefined;
+    obj.bits = !message.bits.isZero() ? message.bits?.toString() : undefined;
     if (message.elems) {
       obj.elems = message.elems.map(e => e);
     } else {

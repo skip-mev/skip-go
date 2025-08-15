@@ -17,9 +17,16 @@ export interface GenesisStateProtoMsg {
   typeUrl: "/ethermint.feemarket.v1.GenesisState";
   value: Uint8Array;
 }
-/** GenesisState defines the feemarket module's genesis state. */
+/**
+ * GenesisState defines the feemarket module's genesis state.
+ * @name GenesisStateAmino
+ * @package ethermint.feemarket.v1
+ * @see proto type: ethermint.feemarket.v1.GenesisState
+ */
 export interface GenesisStateAmino {
-  /** params defines all the parameters of the feemarket module. */
+  /**
+   * params defines all the parameters of the feemarket module.
+   */
   params?: ParamsAmino;
   /**
    * block_gas is the amount of gas wanted on the last block before the upgrade.
@@ -104,7 +111,7 @@ export const GenesisState = {
   toAmino(message: GenesisState): GenesisStateAmino {
     const obj: any = {};
     obj.params = message.params ? Params.toAmino(message.params) : undefined;
-    obj.block_gas = !message.blockGas.isZero() ? message.blockGas.toString() : undefined;
+    obj.block_gas = !message.blockGas.isZero() ? message.blockGas?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: GenesisStateAminoMsg): GenesisState {

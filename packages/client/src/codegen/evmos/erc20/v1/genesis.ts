@@ -14,11 +14,20 @@ export interface GenesisStateProtoMsg {
   typeUrl: "/evmos.erc20.v1.GenesisState";
   value: Uint8Array;
 }
-/** GenesisState defines the module's genesis state. */
+/**
+ * GenesisState defines the module's genesis state.
+ * @name GenesisStateAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.GenesisState
+ */
 export interface GenesisStateAmino {
-  /** params are the erc20 module parameters at genesis */
+  /**
+   * params are the erc20 module parameters at genesis
+   */
   params?: ParamsAmino;
-  /** token_pairs is a slice of the registered token pairs at genesis */
+  /**
+   * token_pairs is a slice of the registered token pairs at genesis
+   */
   token_pairs?: TokenPairAmino[];
 }
 export interface GenesisStateAminoMsg {
@@ -44,9 +53,16 @@ export interface ParamsProtoMsg {
   typeUrl: "/evmos.erc20.v1.Params";
   value: Uint8Array;
 }
-/** Params defines the erc20 module params */
+/**
+ * Params defines the erc20 module params
+ * @name ParamsAmino
+ * @package evmos.erc20.v1
+ * @see proto type: evmos.erc20.v1.Params
+ */
 export interface ParamsAmino {
-  /** enable_erc20 is the parameter to enable the conversion of Cosmos coins <--> ERC20 tokens. */
+  /**
+   * enable_erc20 is the parameter to enable the conversion of Cosmos coins <--> ERC20 tokens.
+   */
   enable_erc20?: boolean;
   /**
    * enable_evm_hook is the parameter to enable the EVM hook that converts an ERC20 token to a Cosmos

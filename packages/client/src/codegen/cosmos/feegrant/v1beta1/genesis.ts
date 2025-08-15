@@ -10,7 +10,12 @@ export interface GenesisStateProtoMsg {
   typeUrl: "/cosmos.feegrant.v1beta1.GenesisState";
   value: Uint8Array;
 }
-/** GenesisState contains a set of fee allowances, persisted from the store */
+/**
+ * GenesisState contains a set of fee allowances, persisted from the store
+ * @name GenesisStateAmino
+ * @package cosmos.feegrant.v1beta1
+ * @see proto type: cosmos.feegrant.v1beta1.GenesisState
+ */
 export interface GenesisStateAmino {
   allowances: GrantAmino[];
 }

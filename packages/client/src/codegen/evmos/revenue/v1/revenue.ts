@@ -27,9 +27,14 @@ export interface RevenueProtoMsg {
 /**
  * Revenue defines an instance that organizes fee distribution conditions for
  * the owner of a given smart contract
+ * @name RevenueAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.Revenue
  */
 export interface RevenueAmino {
-  /** contract_address is the hex address of a registered contract */
+  /**
+   * contract_address is the hex address of a registered contract
+   */
   contract_address?: string;
   /**
    * deployer_address is the bech32 address of message sender. It must be the same as the origin EOA

@@ -25,16 +25,25 @@ export interface MsgRegisterRevenueProtoMsg {
   typeUrl: "/evmos.revenue.v1.MsgRegisterRevenue";
   value: Uint8Array;
 }
-/** MsgRegisterRevenue defines a message that registers a Revenue */
+/**
+ * MsgRegisterRevenue defines a message that registers a Revenue
+ * @name MsgRegisterRevenueAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.MsgRegisterRevenue
+ */
 export interface MsgRegisterRevenueAmino {
-  /** contract_address in hex format */
+  /**
+   * contract_address in hex format
+   */
   contract_address?: string;
   /**
    * deployer_address is the bech32 address of message sender. It must be the same as the origin EOA
    * sending the transaction which deploys the contract
    */
   deployer_address?: string;
-  /** withdrawer_address is the bech32 address of account receiving the transaction fees */
+  /**
+   * withdrawer_address is the bech32 address of account receiving the transaction fees
+   */
   withdrawer_address?: string;
   /**
    * nonces is an array of nonces from the address path, where the last nonce is the nonce
@@ -60,7 +69,12 @@ export interface MsgRegisterRevenueResponseProtoMsg {
   typeUrl: "/evmos.revenue.v1.MsgRegisterRevenueResponse";
   value: Uint8Array;
 }
-/** MsgRegisterRevenueResponse defines the MsgRegisterRevenue response type */
+/**
+ * MsgRegisterRevenueResponse defines the MsgRegisterRevenue response type
+ * @name MsgRegisterRevenueResponseAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.MsgRegisterRevenueResponse
+ */
 export interface MsgRegisterRevenueResponseAmino {}
 export interface MsgRegisterRevenueResponseAminoMsg {
   type: "evmos/MsgRegisterRevenueResponse";
@@ -90,16 +104,23 @@ export interface MsgUpdateRevenueProtoMsg {
 /**
  * MsgUpdateRevenue defines a message that updates the withdrawer address for a
  * registered Revenue
+ * @name MsgUpdateRevenueAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.MsgUpdateRevenue
  */
 export interface MsgUpdateRevenueAmino {
-  /** contract_address in hex format */
+  /**
+   * contract_address in hex format
+   */
   contract_address?: string;
   /**
    * deployer_address is the bech32 address of message sender. It must be the same as the origin EOA
    * sending the transaction which deploys the contract
    */
   deployer_address?: string;
-  /** withdrawer_address is the bech32 address of account receiving the transaction fees */
+  /**
+   * withdrawer_address is the bech32 address of account receiving the transaction fees
+   */
   withdrawer_address?: string;
 }
 export interface MsgUpdateRevenueAminoMsg {
@@ -121,7 +142,12 @@ export interface MsgUpdateRevenueResponseProtoMsg {
   typeUrl: "/evmos.revenue.v1.MsgUpdateRevenueResponse";
   value: Uint8Array;
 }
-/** MsgUpdateRevenueResponse defines the MsgUpdateRevenue response type */
+/**
+ * MsgUpdateRevenueResponse defines the MsgUpdateRevenue response type
+ * @name MsgUpdateRevenueResponseAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.MsgUpdateRevenueResponse
+ */
 export interface MsgUpdateRevenueResponseAmino {}
 export interface MsgUpdateRevenueResponseAminoMsg {
   type: "evmos/MsgUpdateRevenueResponse";
@@ -143,9 +169,16 @@ export interface MsgCancelRevenueProtoMsg {
   typeUrl: "/evmos.revenue.v1.MsgCancelRevenue";
   value: Uint8Array;
 }
-/** MsgCancelRevenue defines a message that cancels a registered Revenue */
+/**
+ * MsgCancelRevenue defines a message that cancels a registered Revenue
+ * @name MsgCancelRevenueAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.MsgCancelRevenue
+ */
 export interface MsgCancelRevenueAmino {
-  /** contract_address in hex format */
+  /**
+   * contract_address in hex format
+   */
   contract_address?: string;
   /**
    * deployer_address is the bech32 address of message sender. It must be the same as the origin EOA
@@ -168,7 +201,12 @@ export interface MsgCancelRevenueResponseProtoMsg {
   typeUrl: "/evmos.revenue.v1.MsgCancelRevenueResponse";
   value: Uint8Array;
 }
-/** MsgCancelRevenueResponse defines the MsgCancelRevenue response type */
+/**
+ * MsgCancelRevenueResponse defines the MsgCancelRevenue response type
+ * @name MsgCancelRevenueResponseAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.MsgCancelRevenueResponse
+ */
 export interface MsgCancelRevenueResponseAmino {}
 export interface MsgCancelRevenueResponseAminoMsg {
   type: "evmos/MsgCancelRevenueResponse";
@@ -190,9 +228,16 @@ export interface MsgUpdateParamsProtoMsg {
   typeUrl: "/evmos.revenue.v1.MsgUpdateParams";
   value: Uint8Array;
 }
-/** MsgUpdateParams defines a Msg for updating the x/revenue module parameters. */
+/**
+ * MsgUpdateParams defines a Msg for updating the x/revenue module parameters.
+ * @name MsgUpdateParamsAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.MsgUpdateParams
+ */
 export interface MsgUpdateParamsAmino {
-  /** authority is the address of the governance account. */
+  /**
+   * authority is the address of the governance account.
+   */
   authority?: string;
   /**
    * params defines the x/revenue parameters to update.
@@ -221,6 +266,9 @@ export interface MsgUpdateParamsResponseProtoMsg {
 /**
  * MsgUpdateParamsResponse defines the response structure for executing a
  * MsgUpdateParams message.
+ * @name MsgUpdateParamsResponseAmino
+ * @package evmos.revenue.v1
+ * @see proto type: evmos.revenue.v1.MsgUpdateParamsResponse
  */
 export interface MsgUpdateParamsResponseAmino {}
 export interface MsgUpdateParamsResponseAminoMsg {

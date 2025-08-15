@@ -34,6 +34,9 @@ export interface ClawbackVestingAccountProtoMsg {
  * an account that can hold contributions subject to "lockup" (like a
  * PeriodicVestingAccount), or vesting which is subject to clawback
  * of unvested tokens, or a combination (tokens vest, but are still locked).
+ * @name ClawbackVestingAccountAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.ClawbackVestingAccount
  */
 export interface ClawbackVestingAccountAmino {
   /**
@@ -41,13 +44,21 @@ export interface ClawbackVestingAccountAmino {
    * all the necessary fields needed for any vesting account implementation
    */
   base_vesting_account?: BaseVestingAccountAmino;
-  /** funder_address specifies the account which can perform clawback */
+  /**
+   * funder_address specifies the account which can perform clawback
+   */
   funder_address?: string;
-  /** start_time defines the time at which the vesting period begins */
+  /**
+   * start_time defines the time at which the vesting period begins
+   */
   start_time?: string;
-  /** lockup_periods defines the unlocking schedule relative to the start_time */
+  /**
+   * lockup_periods defines the unlocking schedule relative to the start_time
+   */
   lockup_periods?: PeriodAmino[];
-  /** vesting_periods defines the vesting schedule relative to the start_time */
+  /**
+   * vesting_periods defines the vesting schedule relative to the start_time
+   */
   vesting_periods?: PeriodAmino[];
 }
 export interface ClawbackVestingAccountAminoMsg {
@@ -96,11 +107,18 @@ export interface ClawbackProposalProtoMsg {
 /**
  * ClawbackProposal is a gov Content type to clawback funds
  * from a vesting account that has this functionality enabled.
+ * @name ClawbackProposalAmino
+ * @package evmos.vesting.v2
+ * @see proto type: evmos.vesting.v2.ClawbackProposal
  */
 export interface ClawbackProposalAmino {
-  /** title of the proposal */
+  /**
+   * title of the proposal
+   */
   title?: string;
-  /** description of the proposal */
+  /**
+   * description of the proposal
+   */
   description?: string;
   /**
    * address is the vesting account address

@@ -18,7 +18,12 @@ export interface QueryRolesRequestProtoMsg {
   typeUrl: "/circle.cctp.v1.QueryRolesRequest";
   value: Uint8Array;
 }
-/** QueryRolesRequest is the request type for the Query/Roles RPC method. */
+/**
+ * QueryRolesRequest is the request type for the Query/Roles RPC method.
+ * @name QueryRolesRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryRolesRequest
+ */
 export interface QueryRolesRequestAmino {}
 export interface QueryRolesRequestAminoMsg {
   type: "/circle.cctp.v1.QueryRolesRequest";
@@ -37,7 +42,12 @@ export interface QueryRolesResponseProtoMsg {
   typeUrl: "/circle.cctp.v1.QueryRolesResponse";
   value: Uint8Array;
 }
-/** QueryRolesResponse is the response type for the Query/Roles RPC method. */
+/**
+ * QueryRolesResponse is the response type for the Query/Roles RPC method.
+ * @name QueryRolesResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryRolesResponse
+ */
 export interface QueryRolesResponseAmino {
   owner?: string;
   attester_manager?: string;
@@ -63,7 +73,12 @@ export interface QueryGetAttesterRequestProtoMsg {
   typeUrl: "/circle.cctp.v1.QueryGetAttesterRequest";
   value: Uint8Array;
 }
-/** QueryAttestersRequest is the request type for the Query/Attester RPC method. */
+/**
+ * QueryAttestersRequest is the request type for the Query/Attester RPC method.
+ * @name QueryGetAttesterRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetAttesterRequest
+ */
 export interface QueryGetAttesterRequestAmino {
   attester?: string;
 }
@@ -89,6 +104,9 @@ export interface QueryGetAttesterResponseProtoMsg {
 /**
  * QueryAttestersResponse is the response type for the Query/Attester RPC
  * method.
+ * @name QueryGetAttesterResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetAttesterResponse
  */
 export interface QueryGetAttesterResponseAmino {
   attester?: AttesterAmino;
@@ -118,6 +136,9 @@ export interface QueryAllAttestersRequestProtoMsg {
 /**
  * QueryAllAttestersRequest is the request type for the Query/Attesters RPC
  * method.
+ * @name QueryAllAttestersRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryAllAttestersRequest
  */
 export interface QueryAllAttestersRequestAmino {
   pagination?: PageRequestAmino;
@@ -148,6 +169,9 @@ export interface QueryAllAttestersResponseProtoMsg {
 /**
  * QueryAllAttestersResponse is the response type for the Query/Attesters RPC
  * method.
+ * @name QueryAllAttestersResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryAllAttestersResponse
  */
 export interface QueryAllAttestersResponseAmino {
   attesters?: AttesterAmino[];
@@ -179,6 +203,9 @@ export interface QueryGetPerMessageBurnLimitRequestProtoMsg {
 /**
  * QueryPerMessageBurnLimitRequest is the request type for the
  * Query/PerMessageBurnLimit RPC method.
+ * @name QueryGetPerMessageBurnLimitRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetPerMessageBurnLimitRequest
  */
 export interface QueryGetPerMessageBurnLimitRequestAmino {
   denom?: string;
@@ -208,6 +235,9 @@ export interface QueryGetPerMessageBurnLimitResponseProtoMsg {
 /**
  * QueryPerMessageBurnLimitResponse is the response type for the
  * Query/PerMessageBurnLimit RPC method.
+ * @name QueryGetPerMessageBurnLimitResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetPerMessageBurnLimitResponse
  */
 export interface QueryGetPerMessageBurnLimitResponseAmino {
   burn_limit?: PerMessageBurnLimitAmino;
@@ -237,6 +267,9 @@ export interface QueryAllPerMessageBurnLimitsRequestProtoMsg {
 /**
  * QueryAllPerMessageBurnLimitsRequest is the response type for the
  * Query/PerMessageBurnLimit RPC method.
+ * @name QueryAllPerMessageBurnLimitsRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryAllPerMessageBurnLimitsRequest
  */
 export interface QueryAllPerMessageBurnLimitsRequestAmino {
   pagination?: PageRequestAmino;
@@ -267,6 +300,9 @@ export interface QueryAllPerMessageBurnLimitsResponseProtoMsg {
 /**
  * QueryAllPerMessageBurnLimitsRequest is the response type for the
  * Query/PerMessageBurnLimit RPC method.
+ * @name QueryAllPerMessageBurnLimitsResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryAllPerMessageBurnLimitsResponse
  */
 export interface QueryAllPerMessageBurnLimitsResponseAmino {
   burn_limits?: PerMessageBurnLimitAmino[];
@@ -296,6 +332,9 @@ export interface QueryGetBurningAndMintingPausedRequestProtoMsg {
 /**
  * QueryBurningAndMintingPausedRequest is the request type for the
  * Query/BurningAndMintingPaused RPC method.
+ * @name QueryGetBurningAndMintingPausedRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetBurningAndMintingPausedRequest
  */
 export interface QueryGetBurningAndMintingPausedRequestAmino {}
 export interface QueryGetBurningAndMintingPausedRequestAminoMsg {
@@ -321,6 +360,9 @@ export interface QueryGetBurningAndMintingPausedResponseProtoMsg {
 /**
  * QueryBurningAndMintingPausedResponse is the response type for the
  * Query/BurningAndMintingPaused RPC method.
+ * @name QueryGetBurningAndMintingPausedResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetBurningAndMintingPausedResponse
  */
 export interface QueryGetBurningAndMintingPausedResponseAmino {
   paused?: BurningAndMintingPausedAmino;
@@ -348,6 +390,9 @@ export interface QueryGetSendingAndReceivingMessagesPausedRequestProtoMsg {
 /**
  * QuerySendingAndReceivingPausedRequest is the request type for the
  * Query/SendingAndReceivingPaused RPC method.
+ * @name QueryGetSendingAndReceivingMessagesPausedRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetSendingAndReceivingMessagesPausedRequest
  */
 export interface QueryGetSendingAndReceivingMessagesPausedRequestAmino {}
 export interface QueryGetSendingAndReceivingMessagesPausedRequestAminoMsg {
@@ -373,6 +418,9 @@ export interface QueryGetSendingAndReceivingMessagesPausedResponseProtoMsg {
 /**
  * QuerySendingAndReceivingPausedResponse is the response type for the
  * Query/SendingAndReceivingPaused RPC method.
+ * @name QueryGetSendingAndReceivingMessagesPausedResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetSendingAndReceivingMessagesPausedResponse
  */
 export interface QueryGetSendingAndReceivingMessagesPausedResponseAmino {
   paused?: SendingAndReceivingMessagesPausedAmino;
@@ -400,6 +448,9 @@ export interface QueryGetMaxMessageBodySizeRequestProtoMsg {
 /**
  * QueryMaxMessageBodySizeRequest is the request type for the
  * Query/MaxMessageBodySize RPC method.
+ * @name QueryGetMaxMessageBodySizeRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetMaxMessageBodySizeRequest
  */
 export interface QueryGetMaxMessageBodySizeRequestAmino {}
 export interface QueryGetMaxMessageBodySizeRequestAminoMsg {
@@ -425,6 +476,9 @@ export interface QueryGetMaxMessageBodySizeResponseProtoMsg {
 /**
  * QueryMaxMessageBodySizeResponse is the response type for the
  * Query/MaxMessageBodySize RPC method.
+ * @name QueryGetMaxMessageBodySizeResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetMaxMessageBodySizeResponse
  */
 export interface QueryGetMaxMessageBodySizeResponseAmino {
   amount?: MaxMessageBodySizeAmino;
@@ -452,6 +506,9 @@ export interface QueryGetNextAvailableNonceRequestProtoMsg {
 /**
  * QueryGetNextAvailableNonceRequest is the request type for the
  * Query/NextAvailableNonce RPC method.
+ * @name QueryGetNextAvailableNonceRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetNextAvailableNonceRequest
  */
 export interface QueryGetNextAvailableNonceRequestAmino {}
 export interface QueryGetNextAvailableNonceRequestAminoMsg {
@@ -477,6 +534,9 @@ export interface QueryGetNextAvailableNonceResponseProtoMsg {
 /**
  * Query QueryGetNextAvailableNonceResponse is the response type for the
  * Query/NextAvailableNonce RPC method.
+ * @name QueryGetNextAvailableNonceResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetNextAvailableNonceResponse
  */
 export interface QueryGetNextAvailableNonceResponseAmino {
   nonce?: NonceAmino;
@@ -504,6 +564,9 @@ export interface QueryGetSignatureThresholdRequestProtoMsg {
 /**
  * QuerySignatureThresholdRequest is the request type for the
  * Query/SignatureThreshold RPC method.
+ * @name QueryGetSignatureThresholdRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetSignatureThresholdRequest
  */
 export interface QueryGetSignatureThresholdRequestAmino {}
 export interface QueryGetSignatureThresholdRequestAminoMsg {
@@ -529,6 +592,9 @@ export interface QueryGetSignatureThresholdResponseProtoMsg {
 /**
  * QuerySignatureThresholdResponse is the response type for the
  * Query/SignatureThreshold RPC method.
+ * @name QueryGetSignatureThresholdResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetSignatureThresholdResponse
  */
 export interface QueryGetSignatureThresholdResponseAmino {
   amount?: SignatureThresholdAmino;
@@ -559,6 +625,9 @@ export interface QueryGetTokenPairRequestProtoMsg {
 /**
  * QueryGetTokenPairRequest is the request type for the Query/TokenPair RPC
  * method.
+ * @name QueryGetTokenPairRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetTokenPairRequest
  */
 export interface QueryGetTokenPairRequestAmino {
   remote_domain?: number;
@@ -590,6 +659,9 @@ export interface QueryGetTokenPairResponseProtoMsg {
 /**
  * QueryGetTokenPairResponse is the response type for the Query/TokenPair RPC
  * method.
+ * @name QueryGetTokenPairResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetTokenPairResponse
  */
 export interface QueryGetTokenPairResponseAmino {
   pair?: TokenPairAmino;
@@ -619,6 +691,9 @@ export interface QueryAllTokenPairsRequestProtoMsg {
 /**
  * QueryAllTokenPairsRequest is the request type for the Query/TokenPairs RPC
  * method.
+ * @name QueryAllTokenPairsRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryAllTokenPairsRequest
  */
 export interface QueryAllTokenPairsRequestAmino {
   pagination?: PageRequestAmino;
@@ -649,6 +724,9 @@ export interface QueryAllTokenPairsResponseProtoMsg {
 /**
  * QueryAllTokenPairsResponse is the response type for the Query/TokenPairs RPC
  * method.
+ * @name QueryAllTokenPairsResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryAllTokenPairsResponse
  */
 export interface QueryAllTokenPairsResponseAmino {
   token_pairs?: TokenPairAmino[];
@@ -681,6 +759,9 @@ export interface QueryGetUsedNonceRequestProtoMsg {
 /**
  * QueryGetUsedNonceRequest is the request type for the Query/UsedNonce RPC
  * method.
+ * @name QueryGetUsedNonceRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetUsedNonceRequest
  */
 export interface QueryGetUsedNonceRequestAmino {
   source_domain?: number;
@@ -712,6 +793,9 @@ export interface QueryGetUsedNonceResponseProtoMsg {
 /**
  * QueryGetUsedNonceResponse is the response type for the Query/UsedNonce RPC
  * method.
+ * @name QueryGetUsedNonceResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryGetUsedNonceResponse
  */
 export interface QueryGetUsedNonceResponseAmino {
   nonce?: NonceAmino;
@@ -741,6 +825,9 @@ export interface QueryAllUsedNoncesRequestProtoMsg {
 /**
  * QueryAllUsedNonceRequest is the request type for the Query/UsedNonces RPC
  * method.
+ * @name QueryAllUsedNoncesRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryAllUsedNoncesRequest
  */
 export interface QueryAllUsedNoncesRequestAmino {
   pagination?: PageRequestAmino;
@@ -771,6 +858,9 @@ export interface QueryAllUsedNoncesResponseProtoMsg {
 /**
  * QueryAllUsedNonceResponse is the response type for the Query/UsedNonces RPC
  * method.
+ * @name QueryAllUsedNoncesResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryAllUsedNoncesResponse
  */
 export interface QueryAllUsedNoncesResponseAmino {
   used_nonces?: NonceAmino[];
@@ -802,6 +892,9 @@ export interface QueryRemoteTokenMessengerRequestProtoMsg {
 /**
  * QueryRemoteTokenMessengerRequest is the request type for the
  * Query/RemoteTokenMessenger RPC method.
+ * @name QueryRemoteTokenMessengerRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryRemoteTokenMessengerRequest
  */
 export interface QueryRemoteTokenMessengerRequestAmino {
   domain_id?: number;
@@ -831,6 +924,9 @@ export interface QueryRemoteTokenMessengerResponseProtoMsg {
 /**
  * QueryRemoteTokenMessengerResponse is the response type for the
  * Query/RemoteTokenMessenger RPC method.
+ * @name QueryRemoteTokenMessengerResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryRemoteTokenMessengerResponse
  */
 export interface QueryRemoteTokenMessengerResponseAmino {
   remote_token_messenger?: RemoteTokenMessengerAmino;
@@ -860,6 +956,9 @@ export interface QueryRemoteTokenMessengersRequestProtoMsg {
 /**
  * QueryRemoteTokenMessengersRequest is the request type for the
  * Query/RemoteTokenMessengers RPC method.
+ * @name QueryRemoteTokenMessengersRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryRemoteTokenMessengersRequest
  */
 export interface QueryRemoteTokenMessengersRequestAmino {
   pagination?: PageRequestAmino;
@@ -890,6 +989,9 @@ export interface QueryRemoteTokenMessengersResponseProtoMsg {
 /**
  * QueryRemoteTokenMessengersResponse is the response type for the
  * Query/RemoteTokenMessengers RPC method.
+ * @name QueryRemoteTokenMessengersResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryRemoteTokenMessengersResponse
  */
 export interface QueryRemoteTokenMessengersResponseAmino {
   remote_token_messengers?: RemoteTokenMessengerAmino[];
@@ -919,6 +1021,9 @@ export interface QueryBurnMessageVersionRequestProtoMsg {
 /**
  * QueryBurnMessageVersionRequest is the request type for the
  * Query/BurnMessageVersion RPC method.
+ * @name QueryBurnMessageVersionRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryBurnMessageVersionRequest
  */
 export interface QueryBurnMessageVersionRequestAmino {}
 export interface QueryBurnMessageVersionRequestAminoMsg {
@@ -945,9 +1050,14 @@ export interface QueryBurnMessageVersionResponseProtoMsg {
 /**
  * QueryBurnMessageVersionResponse is the response type for the
  * Query/BurnMessageVersion RPC method.
+ * @name QueryBurnMessageVersionResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryBurnMessageVersionResponse
  */
 export interface QueryBurnMessageVersionResponseAmino {
-  /** version is the burn message version of the local domain. */
+  /**
+   * version is the burn message version of the local domain.
+   */
   version?: number;
 }
 export interface QueryBurnMessageVersionResponseAminoMsg {
@@ -973,6 +1083,9 @@ export interface QueryLocalMessageVersionRequestProtoMsg {
 /**
  * QueryLocalMessageVersionRequest is the request type for the
  * Query/LocalMessageVersion RPC method.
+ * @name QueryLocalMessageVersionRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryLocalMessageVersionRequest
  */
 export interface QueryLocalMessageVersionRequestAmino {}
 export interface QueryLocalMessageVersionRequestAminoMsg {
@@ -999,9 +1112,14 @@ export interface QueryLocalMessageVersionResponseProtoMsg {
 /**
  * QueryLocalMessageVersionResponse is the response type for the
  * Query/LocalMessageVersion RPC method.
+ * @name QueryLocalMessageVersionResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryLocalMessageVersionResponse
  */
 export interface QueryLocalMessageVersionResponseAmino {
-  /** version is the message version of the local domain. */
+  /**
+   * version is the message version of the local domain.
+   */
   version?: number;
 }
 export interface QueryLocalMessageVersionResponseAminoMsg {
@@ -1027,6 +1145,9 @@ export interface QueryLocalDomainRequestProtoMsg {
 /**
  * QueryLocalDomainRequest is the request type for the Query/LocalDomain RPC
  * method.
+ * @name QueryLocalDomainRequestAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryLocalDomainRequest
  */
 export interface QueryLocalDomainRequestAmino {}
 export interface QueryLocalDomainRequestAminoMsg {
@@ -1053,9 +1174,14 @@ export interface QueryLocalDomainResponseProtoMsg {
 /**
  * QueryLocalDomainResponse is the response type for the Query/LocalDomain RPC
  * method.
+ * @name QueryLocalDomainResponseAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.QueryLocalDomainResponse
  */
 export interface QueryLocalDomainResponseAmino {
-  /** domain_id is the id of the local domain. */
+  /**
+   * domain_id is the id of the local domain.
+   */
   domain_id?: number;
 }
 export interface QueryLocalDomainResponseAminoMsg {
@@ -2909,7 +3035,7 @@ export const QueryGetUsedNonceRequest = {
   toAmino(message: QueryGetUsedNonceRequest): QueryGetUsedNonceRequestAmino {
     const obj: any = {};
     obj.source_domain = message.sourceDomain === 0 ? undefined : message.sourceDomain;
-    obj.nonce = !message.nonce.isZero() ? message.nonce.toString() : undefined;
+    obj.nonce = !message.nonce.isZero() ? message.nonce?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: QueryGetUsedNonceRequestAminoMsg): QueryGetUsedNonceRequest {

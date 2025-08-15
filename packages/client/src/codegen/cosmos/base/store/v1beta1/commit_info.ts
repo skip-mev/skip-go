@@ -19,6 +19,9 @@ export interface CommitInfoProtoMsg {
 /**
  * CommitInfo defines commit information used by the multi-store when committing
  * a version/height.
+ * @name CommitInfoAmino
+ * @package cosmos.base.store.v1beta1
+ * @see proto type: cosmos.base.store.v1beta1.CommitInfo
  */
 export interface CommitInfoAmino {
   version?: string;
@@ -53,6 +56,9 @@ export interface StoreInfoProtoMsg {
 /**
  * StoreInfo defines store-specific commit information. It contains a reference
  * between a store name and the commit ID.
+ * @name StoreInfoAmino
+ * @package cosmos.base.store.v1beta1
+ * @see proto type: cosmos.base.store.v1beta1.StoreInfo
  */
 export interface StoreInfoAmino {
   name?: string;
@@ -85,6 +91,9 @@ export interface CommitIDProtoMsg {
 /**
  * CommitID defines the commitment information when a specific store is
  * committed.
+ * @name CommitIDAmino
+ * @package cosmos.base.store.v1beta1
+ * @see proto type: cosmos.base.store.v1beta1.CommitID
  */
 export interface CommitIDAmino {
   version?: string;
@@ -184,7 +193,7 @@ export const CommitInfo = {
   },
   toAmino(message: CommitInfo): CommitInfoAmino {
     const obj: any = {};
-    obj.version = !message.version.isZero() ? message.version.toString() : undefined;
+    obj.version = !message.version.isZero() ? message.version?.toString() : undefined;
     if (message.storeInfos) {
       obj.store_infos = message.storeInfos.map(e => e ? StoreInfo.toAmino(e) : undefined);
     } else {
@@ -375,7 +384,7 @@ export const CommitID = {
   },
   toAmino(message: CommitID): CommitIDAmino {
     const obj: any = {};
-    obj.version = !message.version.isZero() ? message.version.toString() : undefined;
+    obj.version = !message.version.isZero() ? message.version?.toString() : undefined;
     obj.hash = message.hash ? base64FromBytes(message.hash) : undefined;
     return obj;
   },

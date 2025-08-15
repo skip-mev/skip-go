@@ -110,7 +110,12 @@ export interface AccessTypeParamProtoMsg {
   typeUrl: "/cosmwasm.wasm.v1.AccessTypeParam";
   value: Uint8Array;
 }
-/** AccessTypeParam */
+/**
+ * AccessTypeParam
+ * @name AccessTypeParamAmino
+ * @package cosmwasm.wasm.v1
+ * @see proto type: cosmwasm.wasm.v1.AccessTypeParam
+ */
 export interface AccessTypeParamAmino {
   value?: AccessType;
 }
@@ -131,7 +136,12 @@ export interface AccessConfigProtoMsg {
   typeUrl: "/cosmwasm.wasm.v1.AccessConfig";
   value: Uint8Array;
 }
-/** AccessConfig access control type. */
+/**
+ * AccessConfig access control type.
+ * @name AccessConfigAmino
+ * @package cosmwasm.wasm.v1
+ * @see proto type: cosmwasm.wasm.v1.AccessConfig
+ */
 export interface AccessConfigAmino {
   permission?: AccessType;
   addresses?: string[];
@@ -154,7 +164,12 @@ export interface ParamsProtoMsg {
   typeUrl: "/cosmwasm.wasm.v1.Params";
   value: Uint8Array;
 }
-/** Params defines the set of wasm parameters. */
+/**
+ * Params defines the set of wasm parameters.
+ * @name ParamsAmino
+ * @package cosmwasm.wasm.v1
+ * @see proto type: cosmwasm.wasm.v1.Params
+ */
 export interface ParamsAmino {
   code_upload_access: AccessConfigAmino;
   instantiate_default_permission?: AccessType;
@@ -181,13 +196,24 @@ export interface CodeInfoProtoMsg {
   typeUrl: "/cosmwasm.wasm.v1.CodeInfo";
   value: Uint8Array;
 }
-/** CodeInfo is data for the uploaded contract WASM code */
+/**
+ * CodeInfo is data for the uploaded contract WASM code
+ * @name CodeInfoAmino
+ * @package cosmwasm.wasm.v1
+ * @see proto type: cosmwasm.wasm.v1.CodeInfo
+ */
 export interface CodeInfoAmino {
-  /** CodeHash is the unique identifier created by wasmvm */
+  /**
+   * CodeHash is the unique identifier created by wasmvm
+   */
   code_hash?: string;
-  /** Creator address who initially stored the code */
+  /**
+   * Creator address who initially stored the code
+   */
   creator?: string;
-  /** InstantiateConfig access control to apply on contract creation, optional */
+  /**
+   * InstantiateConfig access control to apply on contract creation, optional
+   */
   instantiate_config: AccessConfigAmino;
 }
 export interface CodeInfoAminoMsg {
@@ -224,17 +250,32 @@ export interface ContractInfoProtoMsg {
   typeUrl: "/cosmwasm.wasm.v1.ContractInfo";
   value: Uint8Array;
 }
-/** ContractInfo stores a WASM contract instance */
+/**
+ * ContractInfo stores a WASM contract instance
+ * @name ContractInfoAmino
+ * @package cosmwasm.wasm.v1
+ * @see proto type: cosmwasm.wasm.v1.ContractInfo
+ */
 export interface ContractInfoAmino {
-  /** CodeID is the reference to the stored Wasm code */
+  /**
+   * CodeID is the reference to the stored Wasm code
+   */
   code_id?: string;
-  /** Creator address who initially instantiated the contract */
+  /**
+   * Creator address who initially instantiated the contract
+   */
   creator?: string;
-  /** Admin is an optional address that can execute migrations */
+  /**
+   * Admin is an optional address that can execute migrations
+   */
   admin?: string;
-  /** Label is optional metadata to be stored with a contract instance. */
+  /**
+   * Label is optional metadata to be stored with a contract instance.
+   */
   label?: string;
-  /** Created Tx position when the contract was instantiated. */
+  /**
+   * Created Tx position when the contract was instantiated.
+   */
   created?: AbsoluteTxPositionAmino;
   ibc_port_id?: string;
   ibc2_port_id?: string;
@@ -272,12 +313,21 @@ export interface ContractCodeHistoryEntryProtoMsg {
   typeUrl: "/cosmwasm.wasm.v1.ContractCodeHistoryEntry";
   value: Uint8Array;
 }
-/** ContractCodeHistoryEntry metadata to a contract. */
+/**
+ * ContractCodeHistoryEntry metadata to a contract.
+ * @name ContractCodeHistoryEntryAmino
+ * @package cosmwasm.wasm.v1
+ * @see proto type: cosmwasm.wasm.v1.ContractCodeHistoryEntry
+ */
 export interface ContractCodeHistoryEntryAmino {
   operation?: ContractCodeHistoryOperationType;
-  /** CodeID is the reference to the stored WASM code */
+  /**
+   * CodeID is the reference to the stored WASM code
+   */
   code_id?: string;
-  /** Updated Tx position when the operation was executed. */
+  /**
+   * Updated Tx position when the operation was executed.
+   */
   updated?: AbsoluteTxPositionAmino;
   msg?: any;
 }
@@ -312,9 +362,14 @@ export interface AbsoluteTxPositionProtoMsg {
 /**
  * AbsoluteTxPosition is a unique transaction position that allows for global
  * ordering of transactions.
+ * @name AbsoluteTxPositionAmino
+ * @package cosmwasm.wasm.v1
+ * @see proto type: cosmwasm.wasm.v1.AbsoluteTxPosition
  */
 export interface AbsoluteTxPositionAmino {
-  /** BlockHeight is the block the contract was created at */
+  /**
+   * BlockHeight is the block the contract was created at
+   */
   block_height?: string;
   /**
    * TxIndex is a monotonic counter within the block (actual transaction index,
@@ -345,11 +400,20 @@ export interface ModelProtoMsg {
   typeUrl: "/cosmwasm.wasm.v1.Model";
   value: Uint8Array;
 }
-/** Model is a struct that holds a KV pair */
+/**
+ * Model is a struct that holds a KV pair
+ * @name ModelAmino
+ * @package cosmwasm.wasm.v1
+ * @see proto type: cosmwasm.wasm.v1.Model
+ */
 export interface ModelAmino {
-  /** hex-encode key to read it better (this is often ascii) */
+  /**
+   * hex-encode key to read it better (this is often ascii)
+   */
   key?: string;
-  /** base64-encode raw value */
+  /**
+   * base64-encode raw value
+   */
   value?: string;
 }
 export interface ModelAminoMsg {
@@ -884,7 +948,7 @@ export const ContractInfo = {
   },
   toAmino(message: ContractInfo): ContractInfoAmino {
     const obj: any = {};
-    obj.code_id = !message.codeId.isZero() ? message.codeId.toString() : undefined;
+    obj.code_id = !message.codeId.isZero() ? message.codeId?.toString() : undefined;
     obj.creator = message.creator === "" ? undefined : message.creator;
     obj.admin = message.admin === "" ? undefined : message.admin;
     obj.label = message.label === "" ? undefined : message.label;
@@ -1010,7 +1074,7 @@ export const ContractCodeHistoryEntry = {
   toAmino(message: ContractCodeHistoryEntry): ContractCodeHistoryEntryAmino {
     const obj: any = {};
     obj.operation = message.operation === 0 ? undefined : message.operation;
-    obj.code_id = !message.codeId.isZero() ? message.codeId.toString() : undefined;
+    obj.code_id = !message.codeId.isZero() ? message.codeId?.toString() : undefined;
     obj.updated = message.updated ? AbsoluteTxPosition.toAmino(message.updated) : undefined;
     obj.msg = message.msg ? JSON.parse(fromUtf8(message.msg)) : undefined;
     return obj;
@@ -1104,8 +1168,8 @@ export const AbsoluteTxPosition = {
   },
   toAmino(message: AbsoluteTxPosition): AbsoluteTxPositionAmino {
     const obj: any = {};
-    obj.block_height = !message.blockHeight.isZero() ? message.blockHeight.toString() : undefined;
-    obj.tx_index = !message.txIndex.isZero() ? message.txIndex.toString() : undefined;
+    obj.block_height = !message.blockHeight.isZero() ? message.blockHeight?.toString() : undefined;
+    obj.tx_index = !message.txIndex.isZero() ? message.txIndex?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: AbsoluteTxPositionAminoMsg): AbsoluteTxPosition {

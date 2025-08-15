@@ -116,9 +116,16 @@ export interface SignatureDescriptorsProtoMsg {
   typeUrl: "/cosmos.tx.signing.v1beta1.SignatureDescriptors";
   value: Uint8Array;
 }
-/** SignatureDescriptors wraps multiple SignatureDescriptor's. */
+/**
+ * SignatureDescriptors wraps multiple SignatureDescriptor's.
+ * @name SignatureDescriptorsAmino
+ * @package cosmos.tx.signing.v1beta1
+ * @see proto type: cosmos.tx.signing.v1beta1.SignatureDescriptors
+ */
 export interface SignatureDescriptorsAmino {
-  /** signatures are the signature descriptors */
+  /**
+   * signatures are the signature descriptors
+   */
   signatures?: SignatureDescriptorAmino[];
 }
 export interface SignatureDescriptorsAminoMsg {
@@ -155,9 +162,14 @@ export interface SignatureDescriptorProtoMsg {
  * a signature including the public key of the signer, signing modes and the
  * signature itself. It is primarily used for coordinating signatures between
  * clients.
+ * @name SignatureDescriptorAmino
+ * @package cosmos.tx.signing.v1beta1
+ * @see proto type: cosmos.tx.signing.v1beta1.SignatureDescriptor
  */
 export interface SignatureDescriptorAmino {
-  /** public_key is the public key of the signer */
+  /**
+   * public_key is the public key of the signer
+   */
   public_key?: AnyAmino;
   data?: SignatureDescriptor_DataAmino;
   /**
@@ -193,11 +205,20 @@ export interface SignatureDescriptor_DataProtoMsg {
   typeUrl: "/cosmos.tx.signing.v1beta1.Data";
   value: Uint8Array;
 }
-/** Data represents signature data */
+/**
+ * Data represents signature data
+ * @name SignatureDescriptor_DataAmino
+ * @package cosmos.tx.signing.v1beta1
+ * @see proto type: cosmos.tx.signing.v1beta1.SignatureDescriptor_Data
+ */
 export interface SignatureDescriptor_DataAmino {
-  /** single represents a single signer */
+  /**
+   * single represents a single signer
+   */
   single?: SignatureDescriptor_Data_SingleAmino;
-  /** multi represents a multisig signer */
+  /**
+   * multi represents a multisig signer
+   */
   multi?: SignatureDescriptor_Data_MultiAmino;
 }
 export interface SignatureDescriptor_DataAminoMsg {
@@ -220,11 +241,20 @@ export interface SignatureDescriptor_Data_SingleProtoMsg {
   typeUrl: "/cosmos.tx.signing.v1beta1.Single";
   value: Uint8Array;
 }
-/** Single is the signature data for a single signer */
+/**
+ * Single is the signature data for a single signer
+ * @name SignatureDescriptor_Data_SingleAmino
+ * @package cosmos.tx.signing.v1beta1
+ * @see proto type: cosmos.tx.signing.v1beta1.SignatureDescriptor_Data_Single
+ */
 export interface SignatureDescriptor_Data_SingleAmino {
-  /** mode is the signing mode of the single signer */
+  /**
+   * mode is the signing mode of the single signer
+   */
   mode?: SignMode;
-  /** signature is the raw signature bytes */
+  /**
+   * signature is the raw signature bytes
+   */
   signature?: string;
 }
 export interface SignatureDescriptor_Data_SingleAminoMsg {
@@ -247,11 +277,20 @@ export interface SignatureDescriptor_Data_MultiProtoMsg {
   typeUrl: "/cosmos.tx.signing.v1beta1.Multi";
   value: Uint8Array;
 }
-/** Multi is the signature data for a multisig public key */
+/**
+ * Multi is the signature data for a multisig public key
+ * @name SignatureDescriptor_Data_MultiAmino
+ * @package cosmos.tx.signing.v1beta1
+ * @see proto type: cosmos.tx.signing.v1beta1.SignatureDescriptor_Data_Multi
+ */
 export interface SignatureDescriptor_Data_MultiAmino {
-  /** bitarray specifies which keys within the multisig are signing */
+  /**
+   * bitarray specifies which keys within the multisig are signing
+   */
   bitarray?: CompactBitArrayAmino;
-  /** signatures is the signatures of the multi-signature */
+  /**
+   * signatures is the signatures of the multi-signature
+   */
   signatures?: SignatureDescriptor_DataAmino[];
 }
 export interface SignatureDescriptor_Data_MultiAminoMsg {
@@ -430,7 +469,7 @@ export const SignatureDescriptor = {
     const obj: any = {};
     obj.public_key = message.publicKey ? Any.toAmino(message.publicKey) : undefined;
     obj.data = message.data ? SignatureDescriptor_Data.toAmino(message.data) : undefined;
-    obj.sequence = !message.sequence.isZero() ? message.sequence.toString() : undefined;
+    obj.sequence = !message.sequence.isZero() ? message.sequence?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: SignatureDescriptorAminoMsg): SignatureDescriptor {

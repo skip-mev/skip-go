@@ -56,6 +56,11 @@ export interface ContractRegistrationRequestProposalProtoMsg {
   typeUrl: "/injective.wasmx.v1.ContractRegistrationRequestProposal";
   value: Uint8Array;
 }
+/**
+ * @name ContractRegistrationRequestProposalAmino
+ * @package injective.wasmx.v1
+ * @see proto type: injective.wasmx.v1.ContractRegistrationRequestProposal
+ */
 export interface ContractRegistrationRequestProposalAmino {
   title?: string;
   description?: string;
@@ -79,6 +84,11 @@ export interface BatchContractRegistrationRequestProposalProtoMsg {
   typeUrl: "/injective.wasmx.v1.BatchContractRegistrationRequestProposal";
   value: Uint8Array;
 }
+/**
+ * @name BatchContractRegistrationRequestProposalAmino
+ * @package injective.wasmx.v1
+ * @see proto type: injective.wasmx.v1.BatchContractRegistrationRequestProposal
+ */
 export interface BatchContractRegistrationRequestProposalAmino {
   title?: string;
   description?: string;
@@ -102,6 +112,11 @@ export interface BatchContractDeregistrationProposalProtoMsg {
   typeUrl: "/injective.wasmx.v1.BatchContractDeregistrationProposal";
   value: Uint8Array;
 }
+/**
+ * @name BatchContractDeregistrationProposalAmino
+ * @package injective.wasmx.v1
+ * @see proto type: injective.wasmx.v1.BatchContractDeregistrationProposal
+ */
 export interface BatchContractDeregistrationProposalAmino {
   title?: string;
   description?: string;
@@ -151,12 +166,23 @@ export interface ContractRegistrationRequestProtoMsg {
   typeUrl: "/injective.wasmx.v1.ContractRegistrationRequest";
   value: Uint8Array;
 }
+/**
+ * @name ContractRegistrationRequestAmino
+ * @package injective.wasmx.v1
+ * @see proto type: injective.wasmx.v1.ContractRegistrationRequest
+ */
 export interface ContractRegistrationRequestAmino {
-  /** Unique Identifier for contract instance to be registered. */
+  /**
+   * Unique Identifier for contract instance to be registered.
+   */
   contract_address?: string;
-  /** Maximum gas to be used for the smart contract execution. */
+  /**
+   * Maximum gas to be used for the smart contract execution.
+   */
   gas_limit?: string;
-  /** gas price to be used for the smart contract execution. */
+  /**
+   * gas price to be used for the smart contract execution.
+   */
   gas_price?: string;
   should_pin_contract?: boolean;
   /**
@@ -179,7 +205,9 @@ export interface ContractRegistrationRequestAmino {
    * funding_mode is other than SelfFunded
    */
   granter_address?: string;
-  /** Specifies how the contract will fund its execution */
+  /**
+   * Specifies how the contract will fund its execution
+   */
   funding_mode?: FundingMode;
 }
 export interface ContractRegistrationRequestAminoMsg {
@@ -206,6 +234,11 @@ export interface BatchStoreCodeProposalProtoMsg {
   typeUrl: "/injective.wasmx.v1.BatchStoreCodeProposal";
   value: Uint8Array;
 }
+/**
+ * @name BatchStoreCodeProposalAmino
+ * @package injective.wasmx.v1
+ * @see proto type: injective.wasmx.v1.BatchStoreCodeProposal
+ */
 export interface BatchStoreCodeProposalAmino {
   title?: string;
   description?: string;
@@ -712,11 +745,11 @@ export const ContractRegistrationRequest = {
   toAmino(message: ContractRegistrationRequest): ContractRegistrationRequestAmino {
     const obj: any = {};
     obj.contract_address = message.contractAddress === "" ? undefined : message.contractAddress;
-    obj.gas_limit = !message.gasLimit.isZero() ? message.gasLimit.toString() : undefined;
-    obj.gas_price = !message.gasPrice.isZero() ? message.gasPrice.toString() : undefined;
+    obj.gas_limit = !message.gasLimit.isZero() ? message.gasLimit?.toString() : undefined;
+    obj.gas_price = !message.gasPrice.isZero() ? message.gasPrice?.toString() : undefined;
     obj.should_pin_contract = message.shouldPinContract === false ? undefined : message.shouldPinContract;
     obj.is_migration_allowed = message.isMigrationAllowed === false ? undefined : message.isMigrationAllowed;
-    obj.code_id = !message.codeId.isZero() ? message.codeId.toString() : undefined;
+    obj.code_id = !message.codeId.isZero() ? message.codeId?.toString() : undefined;
     obj.admin_address = message.adminAddress === "" ? undefined : message.adminAddress;
     obj.granter_address = message.granterAddress === "" ? undefined : message.granterAddress;
     obj.funding_mode = message.fundingMode === 0 ? undefined : message.fundingMode;

@@ -23,6 +23,9 @@ export interface PerMessageBurnLimitProtoMsg {
  * @param denom the denom
  * @param amount the amount that can be burned (in microunits).  An amount of
  * 1000000 uusdc is equivalent to 1USDC
+ * @name PerMessageBurnLimitAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.PerMessageBurnLimit
  */
 export interface PerMessageBurnLimitAmino {
   denom?: string;

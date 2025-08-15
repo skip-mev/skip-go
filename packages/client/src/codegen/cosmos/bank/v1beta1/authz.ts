@@ -27,6 +27,9 @@ export interface SendAuthorizationProtoMsg {
  * the granter's account.
  * 
  * Since: cosmos-sdk 0.43
+ * @name SendAuthorizationAmino
+ * @package cosmos.bank.v1beta1
+ * @see proto type: cosmos.bank.v1beta1.SendAuthorization
  */
 export interface SendAuthorizationAmino {
   spend_limit: CoinAmino[];

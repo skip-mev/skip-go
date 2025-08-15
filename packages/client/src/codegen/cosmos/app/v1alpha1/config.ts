@@ -34,9 +34,14 @@ export interface ConfigProtoMsg {
  * allow a mixture of declarative and imperative app wiring, however, apps
  * that strive for the maximum ease of maintainability should be able to describe
  * their state machine with a config object alone.
+ * @name ConfigAmino
+ * @package cosmos.app.v1alpha1
+ * @see proto type: cosmos.app.v1alpha1.Config
  */
 export interface ConfigAmino {
-  /** modules are the module configurations for the app. */
+  /**
+   * modules are the module configurations for the app.
+   */
   modules?: ModuleConfigAmino[];
   /**
    * golang_bindings specifies explicit interface to implementation type bindings which
@@ -93,7 +98,12 @@ export interface ModuleConfigProtoMsg {
   typeUrl: "/cosmos.app.v1alpha1.ModuleConfig";
   value: Uint8Array;
 }
-/** ModuleConfig is a module configuration for an app. */
+/**
+ * ModuleConfig is a module configuration for an app.
+ * @name ModuleConfigAmino
+ * @package cosmos.app.v1alpha1
+ * @see proto type: cosmos.app.v1alpha1.ModuleConfig
+ */
 export interface ModuleConfigAmino {
   /**
    * name is the unique name of the module within the app. It should be a name
@@ -141,11 +151,20 @@ export interface GolangBindingProtoMsg {
   typeUrl: "/cosmos.app.v1alpha1.GolangBinding";
   value: Uint8Array;
 }
-/** GolangBinding is an explicit interface type to implementing type binding for dependency injection. */
+/**
+ * GolangBinding is an explicit interface type to implementing type binding for dependency injection.
+ * @name GolangBindingAmino
+ * @package cosmos.app.v1alpha1
+ * @see proto type: cosmos.app.v1alpha1.GolangBinding
+ */
 export interface GolangBindingAmino {
-  /** interface_type is the interface type which will be bound to a specific implementation type */
+  /**
+   * interface_type is the interface type which will be bound to a specific implementation type
+   */
   interface_type?: string;
-  /** implementation is the implementing type which will be supplied when an input of type interface is requested */
+  /**
+   * implementation is the implementing type which will be supplied when an input of type interface is requested
+   */
   implementation?: string;
 }
 export interface GolangBindingAminoMsg {

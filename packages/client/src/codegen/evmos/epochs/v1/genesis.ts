@@ -31,21 +31,38 @@ export interface EpochInfoProtoMsg {
 /**
  * EpochInfo defines the message interface containing the relevant informations about
  * an epoch.
+ * @name EpochInfoAmino
+ * @package evmos.epochs.v1
+ * @see proto type: evmos.epochs.v1.EpochInfo
  */
 export interface EpochInfoAmino {
-  /** identifier of the epoch */
+  /**
+   * identifier of the epoch
+   */
   identifier?: string;
-  /** start_time of the epoch */
+  /**
+   * start_time of the epoch
+   */
   start_time?: string;
-  /** duration of the epoch */
+  /**
+   * duration of the epoch
+   */
   duration?: DurationAmino;
-  /** current_epoch is the integer identifier of the epoch */
+  /**
+   * current_epoch is the integer identifier of the epoch
+   */
   current_epoch?: string;
-  /** current_epoch_start_time defines the timestamp of the start of the epoch */
+  /**
+   * current_epoch_start_time defines the timestamp of the start of the epoch
+   */
   current_epoch_start_time?: string;
-  /** epoch_counting_started reflects if the counting for the epoch has started */
+  /**
+   * epoch_counting_started reflects if the counting for the epoch has started
+   */
   epoch_counting_started?: boolean;
-  /** current_epoch_start_height of the epoch */
+  /**
+   * current_epoch_start_height of the epoch
+   */
   current_epoch_start_height?: string;
 }
 export interface EpochInfoAminoMsg {
@@ -74,9 +91,16 @@ export interface GenesisStateProtoMsg {
   typeUrl: "/evmos.epochs.v1.GenesisState";
   value: Uint8Array;
 }
-/** GenesisState defines the epochs module's genesis state. */
+/**
+ * GenesisState defines the epochs module's genesis state.
+ * @name GenesisStateAmino
+ * @package evmos.epochs.v1
+ * @see proto type: evmos.epochs.v1.GenesisState
+ */
 export interface GenesisStateAmino {
-  /** epochs is a slice of EpochInfo that defines the epochs in the genesis state */
+  /**
+   * epochs is a slice of EpochInfo that defines the epochs in the genesis state
+   */
   epochs?: EpochInfoAmino[];
 }
 export interface GenesisStateAminoMsg {
@@ -222,10 +246,10 @@ export const EpochInfo = {
     obj.identifier = message.identifier === "" ? undefined : message.identifier;
     obj.start_time = message.startTime ? Timestamp.toAmino(toTimestamp(message.startTime)) : undefined;
     obj.duration = message.duration ? Duration.toAmino(message.duration) : undefined;
-    obj.current_epoch = !message.currentEpoch.isZero() ? message.currentEpoch.toString() : undefined;
+    obj.current_epoch = !message.currentEpoch.isZero() ? message.currentEpoch?.toString() : undefined;
     obj.current_epoch_start_time = message.currentEpochStartTime ? Timestamp.toAmino(toTimestamp(message.currentEpochStartTime)) : undefined;
     obj.epoch_counting_started = message.epochCountingStarted === false ? undefined : message.epochCountingStarted;
-    obj.current_epoch_start_height = !message.currentEpochStartHeight.isZero() ? message.currentEpochStartHeight.toString() : undefined;
+    obj.current_epoch_start_height = !message.currentEpochStartHeight.isZero() ? message.currentEpochStartHeight?.toString() : undefined;
     return obj;
   },
   fromAminoMsg(object: EpochInfoAminoMsg): EpochInfo {

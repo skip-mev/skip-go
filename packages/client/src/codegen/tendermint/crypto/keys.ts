@@ -11,7 +11,12 @@ export interface PublicKeyProtoMsg {
   typeUrl: "/tendermint.crypto.PublicKey";
   value: Uint8Array;
 }
-/** PublicKey defines the keys available for use with Validators */
+/**
+ * PublicKey defines the keys available for use with Validators
+ * @name PublicKeyAmino
+ * @package tendermint.crypto
+ * @see proto type: tendermint.crypto.PublicKey
+ */
 export interface PublicKeyAmino {
   ed25519?: string;
   secp256k1?: string;

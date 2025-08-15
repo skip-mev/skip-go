@@ -32,7 +32,12 @@ export interface GenesisStateProtoMsg {
   typeUrl: "/circle.cctp.v1.GenesisState";
   value: Uint8Array;
 }
-/** GenesisState defines the cctp module's genesis state. */
+/**
+ * GenesisState defines the cctp module's genesis state.
+ * @name GenesisStateAmino
+ * @package circle.cctp.v1
+ * @see proto type: circle.cctp.v1.GenesisState
+ */
 export interface GenesisStateAmino {
   owner?: string;
   attester_manager?: string;
