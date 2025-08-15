@@ -5,7 +5,7 @@ import { ModalProps, createModal } from "@/components/Modal";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { styled, useTheme } from "@/styled-components";
 import { Text } from "@/components/Typography";
-import { useClipboard } from "@/hooks/useCopyAddress";
+import { useClipboard } from "@/hooks/useClipboard";
 
 export type ViewRawDataModalProps = ModalProps & {
   data: string;

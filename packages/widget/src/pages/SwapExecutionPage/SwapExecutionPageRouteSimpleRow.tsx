@@ -16,7 +16,7 @@ import { getTruncatedAddress } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
 import { formatDisplayAmount } from "@/utils/number";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
-import { useClipboard } from "@/hooks/useCopyAddress";
+import { useClipboard } from "@/hooks/useClipboard";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
