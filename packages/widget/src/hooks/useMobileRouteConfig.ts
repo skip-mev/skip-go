@@ -13,5 +13,5 @@ export const useMobileRouteConfig = () => {
       ...prev,
       allowMultiTx: !mobile,
     }));
-  }, [isMobile, setRouteConfig]);
+  }, [mobile, setRouteConfig]);
 };
