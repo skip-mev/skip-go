@@ -21,7 +21,12 @@ export const convertTokenAmountToHumanReadableAmount = (
 
 export const getTruncatedAddress = (address?: string, extraShort?: boolean): string => {
   if (!address) return "";
-  if (extraShort) return `${address.slice(0, 6)}…${address.slice(-3)}`;
+  const minLength = extraShort ? 10 : 15;
+  if (address.length <= minLength) return address;
+
+  if (extraShort) {
+    return `${address.slice(0, 6)}…${address.slice(-3)}`;
+  }
   return `${address.slice(0, 9)}…${address.slice(-5)}`;
 };
 

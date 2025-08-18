@@ -50,6 +50,21 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
       txHistoryItem,
     });
 
+    // const explorerData = useMemo(() => {
+    //   const jsonString = JSON.stringify({
+    //     route: historyItem?.route,
+    //     userAddresses: historyItem?.userAddresses,
+    //     transactionDetails: historyItem?.transactionDetails,
+    //     status: historyItem?.status,
+    //   });
+
+    //   const base64Encoded = Buffer.from(jsonString).toString("base64");
+
+    //   return base64Encoded;
+    // }, [historyItem]);
+
+    // console.log(historyItem?.transactionDetails, explorerData.length, explorerData);
+
     const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
 
     const {
