@@ -17,6 +17,7 @@ import { HamburgerIcon } from "@/icons/HamburgerIcon";
 import { transactionHistoryItemFromUrlParamsAtom } from "../state/transactionHistoryItemFromUrlParams";
 import { TokenDetails } from "../components/TokenDetails";
 import { ExplorerModals } from "../constants/modal";
+import { CoinsIcon } from "../icons/CoinsIcon";
 
 export default function Home() {
   const [txHash, setTxHash] = useState("BA47144AF79143EECEDA00BC758FA52D8B124934C7051A78B20DAC9DC42C1BCB");
@@ -134,8 +135,8 @@ export default function Home() {
           <>
             <Row gap={16}>
               <Column align="flex-end" width={355}>
-                <GhostButton onClick={() => setShowTokenDetails(!showTokenDetails)}>
-                  {showTokenDetails ? "Close" : "View token details"}
+                <GhostButton gap={5} align="center" justify="center" onClick={() => setShowTokenDetails(!showTokenDetails)}>
+                  {showTokenDetails ? "Close" : "View token details"} {!showTokenDetails && <CoinsIcon />}
                 </GhostButton>
               </Column>
               <Column align="flex-end" width={355}>

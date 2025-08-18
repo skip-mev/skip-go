@@ -1,16 +1,18 @@
 import { Container } from "@/components/Container";
 import { Column, Row } from "@/components/Layout";
 import { DetailsRow } from "./TransactionDetails";
-import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "@/jotai";
 import Image from "next/image";
 import { SmallText } from "@/components/Typography";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { formatDisplayAmount } from "@/utils/number";
 import { getTruncatedAddress } from "@/utils/crypto";
+import { useClipboard } from "@/hooks/useClipboard";
 
 export const TokenDetails = () => {
   const { destAsset, destAmount } = useTransactionHistoryItemFromUrlParams();
+  const { saveToClipboard, isCopied } = useClipboard();
 
   const skipChains = useAtomValue(skipChainsAtom);
   const chain = skipChains?.data?.find((chain) => chain.chainId === destAsset?.chainId);
@@ -46,7 +48,8 @@ export const TokenDetails = () => {
       />
       <DetailsRow
         label="Denom"
-        value={`${getTruncatedAddress(destAsset?.denom)}`}
+        onClick={() => saveToClipboard(destAsset?.denom)}
+        value={isCopied ? "Copied!" : getTruncatedAddress(destAsset?.denom)}
       />
       <DetailsRow
         label="Decimals"
