@@ -33,7 +33,7 @@ export enum ICONS {
 
 export type IconProps = {
   color?: string;
-  direction?: "right" | "down" | "left" | "up";
+  direction?: "right" | "down" | "left" | "up" | "top-right";
   backgroundColor?: string;
   className?: string;
   maskedVersion?: boolean;
