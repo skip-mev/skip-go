@@ -2,6 +2,7 @@ import { useAtomValue } from "@/jotai";
 import { transactionHistoryItemFromUrlParamsAtom } from "../state/transactionHistoryItemFromUrlParams";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
+import { getClientOperations } from "@/utils/clientType";
 
 export const useTransactionHistoryItemFromUrlParams = () => {
   const transactionHistoryItemFromUrlParams = useAtomValue(transactionHistoryItemFromUrlParamsAtom);
@@ -23,6 +24,7 @@ export const useTransactionHistoryItemFromUrlParams = () => {
     sourceAmount: convertTokenAmountToHumanReadableAmount(transactionHistoryItemFromUrlParams?.route?.amountIn, sourceAsset?.decimals),
     destAmount: convertTokenAmountToHumanReadableAmount(transactionHistoryItemFromUrlParams?.route?.amountOut, destAsset?.decimals),
     userAddresses: transactionHistoryItemFromUrlParams?.userAddresses as { chainId: string, address: string }[],
+    operations: getClientOperations(transactionHistoryItemFromUrlParams?.route?.operations),
   }
 
 }

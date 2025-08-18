@@ -52,6 +52,7 @@ type SimpleRoute = Partial<
     | "destAssetDenom"
     | "destAssetChainId"
     | "estimatedRouteDurationSeconds"
+    | "operations"
   >
 >;
 
@@ -470,6 +471,7 @@ const getSimpleRoute = (route?: Route | SimpleRoute): SimpleRoute => {
     destAssetDenom: route?.destAssetDenom,
     destAssetChainId: route?.destAssetChainId,
     estimatedRouteDurationSeconds: route?.estimatedRouteDurationSeconds,
+    operations: route?.operations,
   };
 };
 

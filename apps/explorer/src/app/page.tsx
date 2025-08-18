@@ -145,7 +145,7 @@ export default function Home() {
                 <TransactionDetails {...transactionDetails} />
               </Column>
               <Column width={355}>
-                {uniqueTransfers.map((transfer) => (
+                {uniqueTransfers.map((transfer, index) => (
                   <TransferEventCard
                     key={transfer.chainId}
                     chainId={transfer.chainId}
@@ -154,6 +154,7 @@ export default function Home() {
                     status={transfer.status}
                     step={transfer.step}
                     durationInMs={transfer.durationInMs}
+                    index={index}
                   />
                 ))}
               </Column>

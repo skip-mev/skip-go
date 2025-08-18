@@ -2,7 +2,7 @@ import { Badge } from "@/components/Badge";
 import { Container } from "@/components/Container";
 import { Column, Row } from "@/components/Layout";
 import { SmallTextButton } from '@/components/Typography';
-import { skipChainsAtom } from "@/state/skipClient";
+import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "@/jotai";
 import { Text, SmallText } from "@/components/Typography";
 import { TransferType } from "@skip-go/client";
@@ -12,7 +12,7 @@ import { ClockIcon } from "../icons/ClockIcon";
 import { convertSecondsToMinutesOrHours, formatDisplayAmount } from "@/utils/number";
 import { useTheme, styled } from "@/styled-components";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
-import { getTruncatedAddress } from "@/utils/crypto";
+import { convertTokenAmountToHumanReadableAmount, getTruncatedAddress } from "@/utils/crypto";
 import { useMemo } from "react";
 
 export type Step = "Origin" | "Routed" | "Destination";
@@ -25,6 +25,7 @@ export type TransferEventCardProps = {
   step: Step;
   txHash?: string;
   durationInMs?: number;
+  index: number;
   // transferEvent?: ClientTransferEvent;
 }
 
@@ -53,10 +54,11 @@ const getTransferTypeLabel = (transferType: TransferType | string) => {
   }
 }
 
-export const TransferEventCard = ({ chainId, explorerLink, transferType, status, step, durationInMs = 0 }: TransferEventCardProps) => {
+export const TransferEventCard = ({ chainId, explorerLink, transferType, status, step, index, durationInMs = 0 }: TransferEventCardProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
+  const skipAssets = useAtomValue(skipAssetsAtom);
   const theme = useTheme();
-  const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses } = useTransactionHistoryItemFromUrlParams();
+  const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations } = useTransactionHistoryItemFromUrlParams();
 
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
 
@@ -66,14 +68,26 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
 
   const renderTransferEventDetails = useMemo(() => {
     const getCurrentAsset = () => {
-      if (step === "Origin") return {
-        asset: sourceAsset,
-        amount: sourceAmount,
-      };
-      if (step === "Destination") return {
-        asset: destAsset,
-        amount: destAmount,
-      };
+      if (step === "Origin") {
+        return {
+          asset: sourceAsset,
+          amount: sourceAmount,
+        };
+      } else if (step === "Destination") {
+        return {
+          asset: destAsset,
+          amount: destAmount,
+        };
+      } else {
+        console.log("operations", operations);
+        const currentOperation = operations?.[index];
+        console.log("currentOperation", currentOperation);
+        const asset = skipAssets?.data?.find((asset) => asset.chainId === currentOperation?.chainId && asset.denom === currentOperation?.denomIn);
+        return {
+          asset: asset,
+          amount: convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals),
+        };
+      }
     }
 
     const currentAsset = getCurrentAsset();
