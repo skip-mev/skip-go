@@ -14,10 +14,10 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { NiceModal, Modals } from "@/nice-modal";
 import { GhostButton } from "@/components/Button";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
-import { transactionHistoryItemFromUrlParamsAtom } from "../state/transactionHistoryItemFromUrlParams";
 import { TokenDetails } from "../components/TokenDetails";
 import { ExplorerModals } from "../constants/modal";
 import { CoinsIcon } from "../icons/CoinsIcon";
+import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 
 export default function Home() {
   const [txHash, setTxHash] = useState("BA47144AF79143EECEDA00BC758FA52D8B124934C7051A78B20DAC9DC42C1BCB");
@@ -30,14 +30,14 @@ export default function Home() {
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const uniqueAssetsBySymbol = useAtomValue(uniqueAssetsBySymbolAtom);
-  const transactionHistoryItemFromUrlParams = useAtomValue(transactionHistoryItemFromUrlParamsAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
+  const { transactionDetails: transactionDetailsFromUrlParams } = useTransactionHistoryItemFromUrlParams();
 
   useEffect(() => {
-    if (transactionHistoryItemFromUrlParams) {
-      getTxStatus(transactionHistoryItemFromUrlParams?.transactionDetails);
+    if (transactionDetailsFromUrlParams) {
+      getTxStatus(transactionDetailsFromUrlParams);
     }
-  }, [transactionHistoryItemFromUrlParams]);
+  }, [transactionDetailsFromUrlParams]);
 
   const uniqueTransfers = useMemo(() => {
     const seen = new Set<string>();
