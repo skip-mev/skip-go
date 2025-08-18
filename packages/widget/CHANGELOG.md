@@ -1,5 +1,30 @@
 ## 0.0.15
 
+## 3.14.5
+
+### Patch Changes
+
+- 676a76b: update registries
+- 451aa75: don't show gas on receive if same chain and address
+- 048f144: prioritize chainIds filtering for gasOnReceive
+- d3ec136: rename feeRoute to gasRoute
+- 145f274: fix banksend tooltip
+- c1cab03: Stop using SVGProps<SVGSVGElement> for the sake of react 19 compatibility
+- 81d3a11: fix inconsistent main and original route
+- 55f7438: Add HIGH_LOSS_ERROR to Swagger API spec
+- 6682a4c: Check userAgent instead of screen size to determine whether to disable 2tx routes
+- 37241e9: get chains and assets fron client lib state
+- 693b1c2: Switch SolanaProvider to use React Query for wallet list.
+- 87b86a1: fix destinationFeeAssets not using the actual asset decimals
+- Updated dependencies [676a76b]
+- Updated dependencies [d3ec136]
+- Updated dependencies [4cc4b68]
+- Updated dependencies [55f7438]
+- Updated dependencies [37241e9]
+- Updated dependencies [b1660f8]
+- Updated dependencies [4920ae0]
+  - @skip-go/client@1.5.3
+
 ## 3.14.4
 
 ### Patch Changes

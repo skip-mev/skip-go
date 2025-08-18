@@ -16,6 +16,7 @@ import { GhostButton } from "@/components/Button";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
 import { transactionHistoryItemFromUrlParamsAtom } from "../state/transactionHistoryItemFromUrlParams";
 import { TokenDetails } from "../components/TokenDetails";
+import { ExplorerModals } from "../constants/modal";
 
 export default function Home() {
   const [txHash, setTxHash] = useState("BA47144AF79143EECEDA00BC758FA52D8B124934C7051A78B20DAC9DC42C1BCB");
@@ -23,7 +24,8 @@ export default function Home() {
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>([]);
   const [transactionStatusResponse, setTransactionStatusResponse] = useState<TxStatusResponse | null>(null);
   const [showTokenDetails, setShowTokenDetails] = useState(false);
-  
+  const [rawData, setRawData] = useState<string>("");
+
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const uniqueAssetsBySymbol = useAtomValue(uniqueAssetsBySymbolAtom);
@@ -85,6 +87,8 @@ export default function Home() {
         chainId: tx.chainId ?? "",
       }))
     );
+
+    setRawData(JSON.stringify(responses, null, 2));
     
     const allTransferEvents = getTransferEventsFromTxStatusResponse(responses);
 
@@ -94,7 +98,7 @@ export default function Home() {
 
   const transactionDetails = useMemo(() => {
     const chainIds = uniqueTransfers?.map((event) => event.chainId);
-    
+
     return {
       txHash: transferEvents?.[0]?.fromTxHash ?? "",
       state: transactionStatusResponse?.state,
@@ -120,7 +124,7 @@ export default function Home() {
             selectChain: true,
           });
         }}>open modal</button>
-        
+
         <input type="text" value={txHash} onChange={(e) => setTxHash(e.target.value)} placeholder="tx hash"/>
         <input type="text" value={chainId} onChange={(e) => setChainId(e.target.value)} placeholder="chain id"/>
         <SmallTextButton onClick={() => getTxStatus([{ txHash, chainId }])}>get tx info</SmallTextButton>
@@ -135,7 +139,14 @@ export default function Home() {
                 </GhostButton>
               </Column>
               <Column align="flex-end" width={355}>
-                <GhostButton gap={5} onClick={() => {}}>
+                <GhostButton gap={5} onClick={() => {
+                  NiceModal.show(ExplorerModals.ViewRawDataModal, {
+                    data: rawData,
+                    onClose: () => {
+                      console.log("ViewRawDataModal closed");
+                    },
+                  });
+                }}>
                   View raw data <HamburgerIcon />
                 </GhostButton>
               </Column>
@@ -168,7 +179,7 @@ export default function Home() {
           </>
         )
       }
-      
+
     </Column>
   );
 }

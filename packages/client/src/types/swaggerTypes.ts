@@ -10,6 +10,280 @@
  * ---------------------------------------------------------------
  */
 
+/**
+ * Indicates whether the fee is deducted from the transfer amount or charged additionally.
+ * - FEE_BEHAVIOR_DEDUCTED: Fee is subtracted from the transfer amount (default, typical for Cosmos chains)
+ * - FEE_BEHAVIOR_ADDITIONAL: Fee is charged on top of the transfer amount (typical for EVM chains with native tokens)
+ */
+export enum FeeBehavior {
+  FEE_BEHAVIOR_DEDUCTED = "FEE_BEHAVIOR_DEDUCTED",
+  FEE_BEHAVIOR_ADDITIONAL = "FEE_BEHAVIOR_ADDITIONAL",
+}
+
+/**
+ * Fee type:
+ * * SMART_RELAY - Fees for Smart relaying services.'
+ */
+export enum FeeType {
+  SMART_RELAY = "SMART_RELAY",
+}
+
+/**
+ * Transfer state:
+ * * `TRANSFER_UNKNOWN` - Transfer state is not known.
+ * * `TRANSFER_PENDING` - The send packet for the transfer has been committed and the transfer is pending.
+ * * `TRANSFER_RECEIVED` - The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer.
+ * * `TRANSFER_SUCCESS` - The transfer has been successfully completed and will not revert.
+ * * `TRANSFER_FAILURE`- The transfer has failed.
+ */
+export enum TransferState {
+  TRANSFER_UNKNOWN = "TRANSFER_UNKNOWN",
+  TRANSFER_PENDING = "TRANSFER_PENDING",
+  TRANSFER_RECEIVED = "TRANSFER_RECEIVED",
+  TRANSFER_SUCCESS = "TRANSFER_SUCCESS",
+  TRANSFER_FAILURE = "TRANSFER_FAILURE",
+}
+
+/**
+ * LayerZero transfer state:
+ * * `LAYER_ZERO_TRANSFER_UNKNOWN` - Unknown error
+ * * `LAYER_ZERO_TRANSFER_SENT` - The transaction on the source chain has executed
+ * * `LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE` - The transfer has been delivered to the destination chain but there is an additional lz_compose transaction that still needs to be delivered before marking this transfer as LAYER_ZERO_TRANSFER_RECEIVED
+ * * `LAYER_ZERO_TRANSFER_RECEIVED` - The transfer has been received at the destination chain
+ * * `LAYER_ZERO_TRANSFER_FAILED` - The transfer has failed
+ */
+export enum LayerZeroTransferState {
+  LAYER_ZERO_TRANSFER_UNKNOWN = "LAYER_ZERO_TRANSFER_UNKNOWN",
+  LAYER_ZERO_TRANSFER_SENT = "LAYER_ZERO_TRANSFER_SENT",
+  LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE = "LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE",
+  LAYER_ZERO_TRANSFER_RECEIVED = "LAYER_ZERO_TRANSFER_RECEIVED",
+  LAYER_ZERO_TRANSFER_FAILED = "LAYER_ZERO_TRANSFER_FAILED",
+}
+
+/**
+ * OPInit transfer state:
+ * * `OPINIT_TRANSFER_UNKNOWN` - Unknown error
+ * * `OPINIT_TRANSFER_SENT` - The deposit transaction on the source chain has executed
+ * * `OPINIT_TRANSFER_RECEIVED` - OPInit transfer has been received at the destination chain
+ */
+export enum OPInitTransferState {
+  OPINIT_TRANSFER_UNKNOWN = "OPINIT_TRANSFER_UNKNOWN",
+  OPINIT_TRANSFER_SENT = "OPINIT_TRANSFER_SENT",
+  OPINIT_TRANSFER_RECEIVED = "OPINIT_TRANSFER_RECEIVED",
+}
+
+/**
+ * Transaction state:
+ * * `STATE_SUBMITTED` - The initial transaction has been submitted to Skip Go API but not observed on chain yet
+ * * `STATE_PENDING` - The initial transaction has been observed on chain, and there are still pending actions
+ * * `STATE_COMPLETED_SUCCESS` - The route has completed successfully and the user has their tokens on the destination. (indicated by `transfer_asset_release`)
+ * * `STATE_COMPLETED_ERROR` - The route errored somewhere and the user has their tokens unlocked in one of their wallets. Their tokens are either on the source chain, an intermediate chain, or the destination chain but as the wrong asset.
+ * (Again, `transfer_asset_release` indicates where the tokens are)
+ * * `STATE_ABANDONED` - Tracking for the transaction has been abandoned. This happens if the cross-chain  sequence of actions stalls for more than 10 minutes or if the initial transaction does not get observed in a block for 5 minutes.
+ * * `STATE_PENDING_ERROR` - The overall transaction will fail, pending error propagation
+ */
+export enum TransactionState {
+  STATE_SUBMITTED = "STATE_SUBMITTED",
+  STATE_PENDING = "STATE_PENDING",
+  STATE_ABANDONED = "STATE_ABANDONED",
+  STATE_COMPLETED_SUCCESS = "STATE_COMPLETED_SUCCESS",
+  STATE_COMPLETED_ERROR = "STATE_COMPLETED_ERROR",
+  STATE_PENDING_ERROR = "STATE_PENDING_ERROR",
+}
+
+/**
+ * Packet error types:
+ * * `STATUS_ERROR_UNKNOWN` - Unknown error
+ * * `STATUS_ERROR_TRANSACTION_EXECUTION` - Error was encountered during transaction execution
+ * * `STATUS_ERROR_INDEXING` - Error was encountered while indexing the transaction and packet data
+ * * `STATUS_ERROR_TRANSFER` - The transfer failed to complete successfully
+ */
+export enum StatusErrorType {
+  STATUS_ERROR_UNKNOWN = "STATUS_ERROR_UNKNOWN",
+  STATUS_ERROR_TRANSACTION_EXECUTION = "STATUS_ERROR_TRANSACTION_EXECUTION",
+  STATUS_ERROR_INDEXING = "STATUS_ERROR_INDEXING",
+  STATUS_ERROR_TRANSFER = "STATUS_ERROR_TRANSFER",
+}
+
+/**
+ * SendToken error types:
+ * * `SEND_TOKEN_EXECUTION_ERROR` - Error occurred during the execute transaction
+ */
+export enum SendTokenErrorType {
+  SEND_TOKEN_EXECUTION_ERROR = "SEND_TOKEN_EXECUTION_ERROR",
+}
+
+/**
+ * Recommendation reason:
+ * * `LOW_INFO_WARNING` - Not enough asset pricing information to determine the price safety of the route.
+ * * `BAD_PRICE_WARNING` - The execution price of the route deviates significantly from the current market price.
+ */
+export enum RoutePriceWarningType {
+  LOW_INFO_WARNING = "LOW_INFO_WARNING",
+  BAD_PRICE_WARNING = "BAD_PRICE_WARNING",
+}
+
+/**
+ * Recommendation reason:
+ * * `UNKNOWN` - Unknown recommendation reason.
+ * * `MOST_LIQUID` - Highest liquidity form of the transferred token on the destination chain.
+ * * `BASE_TOKEN` - The base token if the destination chain is the origin chain of the source token.
+ * * `DIRECT` - The token resulting from the least amount of transfers to the destination chain.
+ */
+export enum Reason {
+  UNKNOWN = "UNKNOWN",
+  MOST_LIQUID = "MOST_LIQUID",
+  BASE_TOKEN = "BASE_TOKEN",
+  DIRECT = "DIRECT",
+}
+
+/**
+ * Packet error type:
+ * * `PACKET_ERROR_UNKNOWN` - Unknown error
+ * * `PACKET_ERROR_ACKNOWLEDGEMENT` - Packet acknowledgement error
+ * * `PACKET_ERROR_TIMEOUT` - Packet timed out
+ */
+export enum PacketErrorType {
+  PACKET_ERROR_UNKNOWN = "PACKET_ERROR_UNKNOWN",
+  PACKET_ERROR_ACKNOWLEDGEMENT = "PACKET_ERROR_ACKNOWLEDGEMENT",
+  PACKET_ERROR_TIMEOUT = "PACKET_ERROR_TIMEOUT",
+}
+
+/**
+ * Hyperlane transfer state:
+ * * `HYPERLANE_TRANSFER_UNKNOWN` - Unknown error
+ * * `HYPERLANE_TRANSFER_SENT` - The Hyperlane transfer transaction on the source chain has executed
+ * * `HYPERLANE_TRANSFER_FAILED` - The Hyperlane transfer failed
+ * * `HYPERLANE_TRANSFER_RECEIVED` - The Hyperlane transfer has been received at the destination chain
+ */
+export enum HyperlaneTransferState {
+  HYPERLANE_TRANSFER_UNKNOWN = "HYPERLANE_TRANSFER_UNKNOWN",
+  HYPERLANE_TRANSFER_SENT = "HYPERLANE_TRANSFER_SENT",
+  HYPERLANE_TRANSFER_FAILED = "HYPERLANE_TRANSFER_FAILED",
+  HYPERLANE_TRANSFER_RECEIVED = "HYPERLANE_TRANSFER_RECEIVED",
+}
+
+/**
+ * ContractCallWithToken errors:
+ * * `CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR` - Error occurred during the execute transaction
+ */
+export enum ContractCallWithTokenErrorType {
+  CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR = "CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR",
+}
+
+export enum ChainType {
+  Cosmos = "cosmos",
+  Evm = "evm",
+  Svm = "svm",
+}
+
+/**
+ * Bridge Type:
+ * * `IBC` - IBC Bridge
+ * * `AXELAR` - Axelar Bridge
+ * * `CCTP` - CCTP Bridge
+ * * `HYPERLANE` - Hyperlane Bridge
+ * * `OPINIT` - Opinit Bridge
+ * * `GO_FAST` - Go Fast Bridge
+ * * `STARGATE` - Stargate Bridge
+ * * `LAYER_ZERO` - Layerzero Bridge
+ * * `EUREKA` - IBC Eureka Bridge
+ */
+export enum BridgeType {
+  IBC = "IBC",
+  AXELAR = "AXELAR",
+  CCTP = "CCTP",
+  HYPERLANE = "HYPERLANE",
+  OPINIT = "OPINIT",
+  GO_FAST = "GO_FAST",
+  STARGATE = "STARGATE",
+  LAYER_ZERO = "LAYER_ZERO",
+  EUREKA = "EUREKA",
+}
+
+/**
+ * GoFast transfer state:
+ * * `GO_FAST_TRANSFER_UNKNOWN` - Unknown state
+ * * `GO_FAST_TRANSFER_SENT` - Order submitted on source chain
+ * * `GO_FAST_POST_ACTION_FAILED` - Order filled, but subsequent action (e.g., swap) failed
+ * * `GO_FAST_TRANSFER_TIMEOUT` - Order timed out
+ * * `GO_FAST_TRANSFER_FILLED` - Order filled on destination chain
+ * * `GO_FAST_TRANSFER_REFUNDED` - Order refunded
+ */
+export enum GoFastTransferState {
+  GO_FAST_TRANSFER_UNKNOWN = "GO_FAST_TRANSFER_UNKNOWN",
+  GO_FAST_TRANSFER_SENT = "GO_FAST_TRANSFER_SENT",
+  GO_FAST_POST_ACTION_FAILED = "GO_FAST_POST_ACTION_FAILED",
+  GO_FAST_TRANSFER_TIMEOUT = "GO_FAST_TRANSFER_TIMEOUT",
+  GO_FAST_TRANSFER_FILLED = "GO_FAST_TRANSFER_FILLED",
+  GO_FAST_TRANSFER_REFUNDED = "GO_FAST_TRANSFER_REFUNDED",
+}
+
+/**
+ * Stargate transfer state:
+ * * `STARGATE_TRANSFER_UNKNOWN` - Unknown error
+ * * `STARGATE_TRANSFER_SENT` - The Stargate transfer transaction on the source chain has executed
+ * * `STARGATE_TRANSFER_PENDING_CONFIRMATION` - Stargate transfer is pending confirmation
+ * * `STARGATE_TRANSFER_CONFIRMED` - Stargate transfer has been confirmed
+ * * `STARGATE_TRANSFER_RECEIVED` - Stargate transfer has been received at the destination chain
+ * * `STARGATE_TRANSFER_FAILED` - Stargate transfer failed
+ */
+export enum StargateTransferState {
+  STARGATE_TRANSFER_UNKNOWN = "STARGATE_TRANSFER_UNKNOWN",
+  STARGATE_TRANSFER_SENT = "STARGATE_TRANSFER_SENT",
+  STARGATE_TRANSFER_PENDING_CONFIRMATION = "STARGATE_TRANSFER_PENDING_CONFIRMATION",
+  STARGATE_TRANSFER_CONFIRMED = "STARGATE_TRANSFER_CONFIRMED",
+  STARGATE_TRANSFER_RECEIVED = "STARGATE_TRANSFER_RECEIVED",
+  STARGATE_TRANSFER_FAILED = "STARGATE_TRANSFER_FAILED",
+}
+
+/**
+ * CCTP transfer state:
+ * * `CCTP_TRANSFER_UNKNOWN` - Unknown error
+ * * `CCTP_TRANSFER_SENT` - The burn transaction on the source chain has executed
+ * * `CCTP_TRANSFER_PENDING_CONFIRMATION` - CCTP transfer is pending confirmation by the cctp attestation api
+ * * `CCTP_TRANSFER_CONFIRMED` - CCTP transfer has been confirmed by the cctp attestation api
+ * * `CCTP_TRANSFER_RECEIVED` - CCTP transfer has been received at the destination chain
+ */
+export enum CCTPTransferState {
+  CCTP_TRANSFER_UNKNOWN = "CCTP_TRANSFER_UNKNOWN",
+  CCTP_TRANSFER_SENT = "CCTP_TRANSFER_SENT",
+  CCTP_TRANSFER_PENDING_CONFIRMATION = "CCTP_TRANSFER_PENDING_CONFIRMATION",
+  CCTP_TRANSFER_CONFIRMED = "CCTP_TRANSFER_CONFIRMED",
+  CCTP_TRANSFER_RECEIVED = "CCTP_TRANSFER_RECEIVED",
+}
+
+/**
+ * Axelar transfer type:
+ * * `AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN` - GMP contract call with token transfer type
+ * * `AXELAR_TRANSFER_SEND_TOKEN` - Send token transfer type
+ */
+export enum AxelarTransferType {
+  AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN = "AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN",
+  AXELAR_TRANSFER_SEND_TOKEN = "AXELAR_TRANSFER_SEND_TOKEN",
+}
+
+/**
+ * Axelar transfer state:
+ * * `AXELAR_TRANSFER_UNKNOWN` - Unknown error
+ * * `AXELAR_TRANSFER_PENDING_CONFIRMATION` - Axelar transfer is pending confirmation
+ * * `AXELAR_TRANSFER_PENDING_RECEIPT` - Axelar transfer is pending receipt at destination
+ * * `AXELAR_TRANSFER_SUCCESS` - Axelar transfer succeeded and assets have been received
+ * * `AXELAR_TRANSFER_FAILURE` - Axelar transfer failed
+ */
+export enum AxelarTransferState {
+  AXELAR_TRANSFER_UNKNOWN = "AXELAR_TRANSFER_UNKNOWN",
+  AXELAR_TRANSFER_PENDING_CONFIRMATION = "AXELAR_TRANSFER_PENDING_CONFIRMATION",
+  AXELAR_TRANSFER_PENDING_RECEIPT = "AXELAR_TRANSFER_PENDING_RECEIPT",
+  AXELAR_TRANSFER_SUCCESS = "AXELAR_TRANSFER_SUCCESS",
+  AXELAR_TRANSFER_FAILURE = "AXELAR_TRANSFER_FAILURE",
+}
+
+export enum AutopilotAction {
+  LIQUID_STAKE = "LIQUID_STAKE",
+  CLAIM = "CLAIM",
+}
+
 export interface AcknowledgementErrorDetails {
   /** Error code */
   code?: number;
@@ -79,11 +353,6 @@ export interface AssetRecommendation {
   asset?: Asset;
   /** Reason for recommending the asset */
   reason?: Reason;
-}
-
-export enum AutopilotAction {
-  LIQUID_STAKE = "LIQUID_STAKE",
-  CLAIM = "CLAIM",
 }
 
 export interface AutopilotMsg {
@@ -170,32 +439,6 @@ export interface AxelarTransferInfo {
   type?: AxelarTransferType;
 }
 
-/**
- * Axelar transfer state:
- * * `AXELAR_TRANSFER_UNKNOWN` - Unknown error
- * * `AXELAR_TRANSFER_PENDING_CONFIRMATION` - Axelar transfer is pending confirmation
- * * `AXELAR_TRANSFER_PENDING_RECEIPT` - Axelar transfer is pending receipt at destination
- * * `AXELAR_TRANSFER_SUCCESS` - Axelar transfer succeeded and assets have been received
- * * `AXELAR_TRANSFER_FAILURE` - Axelar transfer failed
- */
-export enum AxelarTransferState {
-  AXELAR_TRANSFER_UNKNOWN = "AXELAR_TRANSFER_UNKNOWN",
-  AXELAR_TRANSFER_PENDING_CONFIRMATION = "AXELAR_TRANSFER_PENDING_CONFIRMATION",
-  AXELAR_TRANSFER_PENDING_RECEIPT = "AXELAR_TRANSFER_PENDING_RECEIPT",
-  AXELAR_TRANSFER_SUCCESS = "AXELAR_TRANSFER_SUCCESS",
-  AXELAR_TRANSFER_FAILURE = "AXELAR_TRANSFER_FAILURE",
-}
-
-/**
- * Axelar transfer type:
- * * `AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN` - GMP contract call with token transfer type
- * * `AXELAR_TRANSFER_SEND_TOKEN` - Send token transfer type
- */
-export enum AxelarTransferType {
-  AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN = "AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN",
-  AXELAR_TRANSFER_SEND_TOKEN = "AXELAR_TRANSFER_SEND_TOKEN",
-}
-
 export interface AxelarTransferWrapper {
   /** A transfer facilitated by the Axelar bridge */
   axelarTransfer?: AxelarTransfer;
@@ -267,22 +510,6 @@ export interface CCTPTransferTxs {
   receiveTx?: ChainTransaction;
 }
 
-/**
- * CCTP transfer state:
- * * `CCTP_TRANSFER_UNKNOWN` - Unknown error
- * * `CCTP_TRANSFER_SENT` - The burn transaction on the source chain has executed
- * * `CCTP_TRANSFER_PENDING_CONFIRMATION` - CCTP transfer is pending confirmation by the cctp attestation api
- * * `CCTP_TRANSFER_CONFIRMED` - CCTP transfer has been confirmed by the cctp attestation api
- * * `CCTP_TRANSFER_RECEIVED` - CCTP transfer has been received at the destination chain
- */
-export enum CCTPTransferState {
-  CCTP_TRANSFER_UNKNOWN = "CCTP_TRANSFER_UNKNOWN",
-  CCTP_TRANSFER_SENT = "CCTP_TRANSFER_SENT",
-  CCTP_TRANSFER_PENDING_CONFIRMATION = "CCTP_TRANSFER_PENDING_CONFIRMATION",
-  CCTP_TRANSFER_CONFIRMED = "CCTP_TRANSFER_CONFIRMED",
-  CCTP_TRANSFER_RECEIVED = "CCTP_TRANSFER_RECEIVED",
-}
-
 export interface CCTPTransferWrapper {
   /** A transfer facilitated by the CCTP bridge */
   cctpTransfer?: CCTPTransfer;
@@ -319,24 +546,6 @@ export interface StargateTransfer {
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
-}
-
-/**
- * Stargate transfer state:
- * * `STARGATE_TRANSFER_UNKNOWN` - Unknown error
- * * `STARGATE_TRANSFER_SENT` - The Stargate transfer transaction on the source chain has executed
- * * `STARGATE_TRANSFER_PENDING_CONFIRMATION` - Stargate transfer is pending confirmation
- * * `STARGATE_TRANSFER_CONFIRMED` - Stargate transfer has been confirmed
- * * `STARGATE_TRANSFER_RECEIVED` - Stargate transfer has been received at the destination chain
- * * `STARGATE_TRANSFER_FAILED` - Stargate transfer failed
- */
-export enum StargateTransferState {
-  STARGATE_TRANSFER_UNKNOWN = "STARGATE_TRANSFER_UNKNOWN",
-  STARGATE_TRANSFER_SENT = "STARGATE_TRANSFER_SENT",
-  STARGATE_TRANSFER_PENDING_CONFIRMATION = "STARGATE_TRANSFER_PENDING_CONFIRMATION",
-  STARGATE_TRANSFER_CONFIRMED = "STARGATE_TRANSFER_CONFIRMED",
-  STARGATE_TRANSFER_RECEIVED = "STARGATE_TRANSFER_RECEIVED",
-  STARGATE_TRANSFER_FAILED = "STARGATE_TRANSFER_FAILED",
 }
 
 export interface StargateTransferTxs {
@@ -397,24 +606,6 @@ export interface GoFastTransfer {
   sourceDomain?: string;
   /** Destination domain ID of the transfer */
   destinationDomain?: string;
-}
-
-/**
- * GoFast transfer state:
- * * `GO_FAST_TRANSFER_UNKNOWN` - Unknown state
- * * `GO_FAST_TRANSFER_SENT` - Order submitted on source chain
- * * `GO_FAST_POST_ACTION_FAILED` - Order filled, but subsequent action (e.g., swap) failed
- * * `GO_FAST_TRANSFER_TIMEOUT` - Order timed out
- * * `GO_FAST_TRANSFER_FILLED` - Order filled on destination chain
- * * `GO_FAST_TRANSFER_REFUNDED` - Order refunded
- */
-export enum GoFastTransferState {
-  GO_FAST_TRANSFER_UNKNOWN = "GO_FAST_TRANSFER_UNKNOWN",
-  GO_FAST_TRANSFER_SENT = "GO_FAST_TRANSFER_SENT",
-  GO_FAST_POST_ACTION_FAILED = "GO_FAST_POST_ACTION_FAILED",
-  GO_FAST_TRANSFER_TIMEOUT = "GO_FAST_TRANSFER_TIMEOUT",
-  GO_FAST_TRANSFER_FILLED = "GO_FAST_TRANSFER_FILLED",
-  GO_FAST_TRANSFER_REFUNDED = "GO_FAST_TRANSFER_REFUNDED",
 }
 
 export interface GoFastTransferTxs {
@@ -501,30 +692,6 @@ export interface Bridge {
   logoUri?: string;
 }
 
-/**
- * Bridge Type:
- * * `IBC` - IBC Bridge
- * * `AXELAR` - Axelar Bridge
- * * `CCTP` - CCTP Bridge
- * * `HYPERLANE` - Hyperlane Bridge
- * * `OPINIT` - Opinit Bridge
- * * `GO_FAST` - Go Fast Bridge
- * * `STARGATE` - Stargate Bridge
- * * `LAYER_ZERO` - Layerzero Bridge
- * * `EUREKA` - IBC Eureka Bridge
- */
-export enum BridgeType {
-  IBC = "IBC",
-  AXELAR = "AXELAR",
-  CCTP = "CCTP",
-  HYPERLANE = "HYPERLANE",
-  OPINIT = "OPINIT",
-  GO_FAST = "GO_FAST",
-  STARGATE = "STARGATE",
-  LAYER_ZERO = "LAYER_ZERO",
-  EUREKA = "EUREKA",
-}
-
 export interface Chain {
   /** Name of the chain */
   chainName: string;
@@ -552,12 +719,6 @@ export interface Chain {
   prettyName: string;
 }
 
-export enum ChainType {
-  Cosmos = "cosmos",
-  Evm = "evm",
-  Svm = "svm",
-}
-
 export interface ChainAffiliates {
   /** An array of affiliates that receives fees from a swap */
   affiliates?: Affiliate[];
@@ -571,14 +732,6 @@ export interface ContractCallWithTokenError {
    * * `CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR` - Error occurred during the execute transaction
    */
   type?: ContractCallWithTokenErrorType;
-}
-
-/**
- * ContractCallWithToken errors:
- * * `CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR` - Error occurred during the execute transaction
- */
-export enum ContractCallWithTokenErrorType {
-  CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR = "CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR",
 }
 
 export interface ContractCallWithTokenTxs {
@@ -616,8 +769,9 @@ export interface ErrorDetail {
    * Error detail:
    * * `LOW_INFO_ERROR` - Not enough asset pricing information to determine the price safety of the route.
    * * `BAD_PRICE_ERROR` - The execution price of the route deviates significantly from the current market price.
+   * * `HIGH_LOSS_ERROR` - The route would result in a USD loss exceeding the configured threshold and has been blocked.
    */
-  reason?: "LOW_INFO_ERROR" | "BAD_PRICE_ERROR";
+  reason?: "LOW_INFO_ERROR" | "BAD_PRICE_ERROR" | "HIGH_LOSS_ERROR";
 }
 
 export interface Error {
@@ -795,20 +949,6 @@ export interface HyperlaneTransferInfo {
   txs: HyperlaneTransferTransactions;
 }
 
-/**
- * Hyperlane transfer state:
- * * `HYPERLANE_TRANSFER_UNKNOWN` - Unknown error
- * * `HYPERLANE_TRANSFER_SENT` - The Hyperlane transfer transaction on the source chain has executed
- * * `HYPERLANE_TRANSFER_FAILED` - The Hyperlane transfer failed
- * * `HYPERLANE_TRANSFER_RECEIVED` - The Hyperlane transfer has been received at the destination chain
- */
-export enum HyperlaneTransferState {
-  HYPERLANE_TRANSFER_UNKNOWN = "HYPERLANE_TRANSFER_UNKNOWN",
-  HYPERLANE_TRANSFER_SENT = "HYPERLANE_TRANSFER_SENT",
-  HYPERLANE_TRANSFER_FAILED = "HYPERLANE_TRANSFER_FAILED",
-  HYPERLANE_TRANSFER_RECEIVED = "HYPERLANE_TRANSFER_RECEIVED",
-}
-
 export interface HyperlaneTransferTransactions {
   sendTx?: ChainTransaction;
   receiveTx?: ChainTransaction;
@@ -916,18 +1056,6 @@ export interface PacketError {
   type?: PacketErrorType;
 }
 
-/**
- * Packet error type:
- * * `PACKET_ERROR_UNKNOWN` - Unknown error
- * * `PACKET_ERROR_ACKNOWLEDGEMENT` - Packet acknowledgement error
- * * `PACKET_ERROR_TIMEOUT` - Packet timed out
- */
-export enum PacketErrorType {
-  PACKET_ERROR_UNKNOWN = "PACKET_ERROR_UNKNOWN",
-  PACKET_ERROR_ACKNOWLEDGEMENT = "PACKET_ERROR_ACKNOWLEDGEMENT",
-  PACKET_ERROR_TIMEOUT = "PACKET_ERROR_TIMEOUT",
-}
-
 export interface ChainTransaction {
   /** Chain ID the packet event occurs on */
   chainId?: string;
@@ -940,30 +1068,6 @@ export interface ChainTransaction {
 }
 
 export type PostHandler = CosmWasmContractMsgWrapper | AutopilotMsgWrapper;
-
-/**
- * Recommendation reason:
- * * `UNKNOWN` - Unknown recommendation reason.
- * * `MOST_LIQUID` - Highest liquidity form of the transferred token on the destination chain.
- * * `BASE_TOKEN` - The base token if the destination chain is the origin chain of the source token.
- * * `DIRECT` - The token resulting from the least amount of transfers to the destination chain.
- */
-export enum Reason {
-  UNKNOWN = "UNKNOWN",
-  MOST_LIQUID = "MOST_LIQUID",
-  BASE_TOKEN = "BASE_TOKEN",
-  DIRECT = "DIRECT",
-}
-
-/**
- * Recommendation reason:
- * * `LOW_INFO_WARNING` - Not enough asset pricing information to determine the price safety of the route.
- * * `BAD_PRICE_WARNING` - The execution price of the route deviates significantly from the current market price.
- */
-export enum RoutePriceWarningType {
-  LOW_INFO_WARNING = "LOW_INFO_WARNING",
-  BAD_PRICE_WARNING = "BAD_PRICE_WARNING",
-}
 
 export interface Route {
   /** Amount of source asset to be transferred or swapped */
@@ -1025,14 +1129,6 @@ export interface SendTokenError {
   type?: SendTokenErrorType;
 }
 
-/**
- * SendToken error types:
- * * `SEND_TOKEN_EXECUTION_ERROR` - Error occurred during the execute transaction
- */
-export enum SendTokenErrorType {
-  SEND_TOKEN_EXECUTION_ERROR = "SEND_TOKEN_EXECUTION_ERROR",
-}
-
 export interface SendTokenTxs {
   confirmTx?: ChainTransaction;
   error?: SendTokenError;
@@ -1052,20 +1148,6 @@ export interface StatusError {
    * * `STATUS_ERROR_TRANSFER` - The transfer failed to complete successfully
    */
   type?: StatusErrorType;
-}
-
-/**
- * Packet error types:
- * * `STATUS_ERROR_UNKNOWN` - Unknown error
- * * `STATUS_ERROR_TRANSACTION_EXECUTION` - Error was encountered during transaction execution
- * * `STATUS_ERROR_INDEXING` - Error was encountered while indexing the transaction and packet data
- * * `STATUS_ERROR_TRANSFER` - The transfer failed to complete successfully
- */
-export enum StatusErrorType {
-  STATUS_ERROR_UNKNOWN = "STATUS_ERROR_UNKNOWN",
-  STATUS_ERROR_TRANSACTION_EXECUTION = "STATUS_ERROR_TRANSACTION_EXECUTION",
-  STATUS_ERROR_INDEXING = "STATUS_ERROR_INDEXING",
-  STATUS_ERROR_TRANSFER = "STATUS_ERROR_TRANSFER",
 }
 
 export type Swap = (SwapInWrapper | SwapOutWrapper | SmartSwapInWrapper) & {
@@ -1183,25 +1265,6 @@ export interface TransactionExecutionErrorDetails {
   message?: string;
 }
 
-/**
- * Transaction state:
- * * `STATE_SUBMITTED` - The initial transaction has been submitted to Skip Go API but not observed on chain yet
- * * `STATE_PENDING` - The initial transaction has been observed on chain, and there are still pending actions
- * * `STATE_COMPLETED_SUCCESS` - The route has completed successfully and the user has their tokens on the destination. (indicated by `transfer_asset_release`)
- * * `STATE_COMPLETED_ERROR` - The route errored somewhere and the user has their tokens unlocked in one of their wallets. Their tokens are either on the source chain, an intermediate chain, or the destination chain but as the wrong asset.
- * (Again, `transfer_asset_release` indicates where the tokens are)
- * * `STATE_ABANDONED` - Tracking for the transaction has been abandoned. This happens if the cross-chain  sequence of actions stalls for more than 10 minutes or if the initial transaction does not get observed in a block for 5 minutes.
- * * `STATE_PENDING_ERROR` - The overall transaction will fail, pending error propagation
- */
-export enum TransactionState {
-  STATE_SUBMITTED = "STATE_SUBMITTED",
-  STATE_PENDING = "STATE_PENDING",
-  STATE_ABANDONED = "STATE_ABANDONED",
-  STATE_COMPLETED_SUCCESS = "STATE_COMPLETED_SUCCESS",
-  STATE_COMPLETED_ERROR = "STATE_COMPLETED_ERROR",
-  STATE_PENDING_ERROR = "STATE_PENDING_ERROR",
-}
-
 /** A transfer facilitated by the OP Init bridge */
 export interface OPInitTransfer {
   /** Canonical chain-id of the source chain of the bridge transaction */
@@ -1254,34 +1317,6 @@ export interface OPInitTransferInfo {
 export interface OPInitTransferTxs {
   sendTx?: ChainTransaction;
   receiveTx?: ChainTransaction;
-}
-
-/**
- * OPInit transfer state:
- * * `OPINIT_TRANSFER_UNKNOWN` - Unknown error
- * * `OPINIT_TRANSFER_SENT` - The deposit transaction on the source chain has executed
- * * `OPINIT_TRANSFER_RECEIVED` - OPInit transfer has been received at the destination chain
- */
-export enum OPInitTransferState {
-  OPINIT_TRANSFER_UNKNOWN = "OPINIT_TRANSFER_UNKNOWN",
-  OPINIT_TRANSFER_SENT = "OPINIT_TRANSFER_SENT",
-  OPINIT_TRANSFER_RECEIVED = "OPINIT_TRANSFER_RECEIVED",
-}
-
-/**
- * LayerZero transfer state:
- * * `LAYER_ZERO_TRANSFER_UNKNOWN` - Unknown error
- * * `LAYER_ZERO_TRANSFER_SENT` - The transaction on the source chain has executed
- * * `LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE` - The transfer has been delivered to the destination chain but there is an additional lz_compose transaction that still needs to be delivered before marking this transfer as LAYER_ZERO_TRANSFER_RECEIVED
- * * `LAYER_ZERO_TRANSFER_RECEIVED` - The transfer has been received at the destination chain
- * * `LAYER_ZERO_TRANSFER_FAILED` - The transfer has failed
- */
-export enum LayerZeroTransferState {
-  LAYER_ZERO_TRANSFER_UNKNOWN = "LAYER_ZERO_TRANSFER_UNKNOWN",
-  LAYER_ZERO_TRANSFER_SENT = "LAYER_ZERO_TRANSFER_SENT",
-  LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE = "LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE",
-  LAYER_ZERO_TRANSFER_RECEIVED = "LAYER_ZERO_TRANSFER_RECEIVED",
-  LAYER_ZERO_TRANSFER_FAILED = "LAYER_ZERO_TRANSFER_FAILED",
 }
 
 /** A cross-chain transfer */
@@ -1344,22 +1379,6 @@ export interface TransferEvent {
   goFastTransfer?: GoFastTransferInfo;
   eurekaTransfer?: EurekaTransferInfo;
   layerZeroTransfer?: LayerZeroTransferInfo;
-}
-
-/**
- * Transfer state:
- * * `TRANSFER_UNKNOWN` - Transfer state is not known.
- * * `TRANSFER_PENDING` - The send packet for the transfer has been committed and the transfer is pending.
- * * `TRANSFER_RECEIVED` - The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer.
- * * `TRANSFER_SUCCESS` - The transfer has been successfully completed and will not revert.
- * * `TRANSFER_FAILURE`- The transfer has failed.
- */
-export enum TransferState {
-  TRANSFER_UNKNOWN = "TRANSFER_UNKNOWN",
-  TRANSFER_PENDING = "TRANSFER_PENDING",
-  TRANSFER_RECEIVED = "TRANSFER_RECEIVED",
-  TRANSFER_SUCCESS = "TRANSFER_SUCCESS",
-  TRANSFER_FAILURE = "TRANSFER_FAILURE",
 }
 
 /** Indicates location and denom of transfer asset release. */
@@ -1548,24 +1567,6 @@ export interface IbcCapabilities {
   cosmosMemo?: boolean;
   /** Whether the autopilot module is supported */
   cosmosAutopilot?: boolean;
-}
-
-/**
- * Fee type:
- * * SMART_RELAY - Fees for Smart relaying services.'
- */
-export enum FeeType {
-  SMART_RELAY = "SMART_RELAY",
-}
-
-/**
- * Indicates whether the fee is deducted from the transfer amount or charged additionally.
- * - FEE_BEHAVIOR_DEDUCTED: Fee is subtracted from the transfer amount (default, typical for Cosmos chains)
- * - FEE_BEHAVIOR_ADDITIONAL: Fee is charged on top of the transfer amount (typical for EVM chains with native tokens)
- */
-export enum FeeBehavior {
-  FEE_BEHAVIOR_DEDUCTED = "FEE_BEHAVIOR_DEDUCTED",
-  FEE_BEHAVIOR_ADDITIONAL = "FEE_BEHAVIOR_ADDITIONAL",
 }
 
 export interface Fee {
@@ -2020,16 +2021,22 @@ export interface FullRequestParams extends Omit<RequestInit, "body"> {
   cancelToken?: CancelToken;
 }
 
-export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
+export type RequestParams = Omit<
+  FullRequestParams,
+  "body" | "method" | "query" | "path"
+>;
 
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
-  securityWorker?: (securityData: SecurityDataType | null) => Promise<RequestParams | void> | RequestParams | void;
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
 
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
+export interface HttpResponse<D extends unknown, E extends unknown = unknown>
+  extends Response {
   data: D;
   error: E;
 }
@@ -2038,6 +2045,7 @@ type CancelToken = Symbol | string | number;
 
 export enum ContentType {
   Json = "application/json",
+  JsonApi = "application/vnd.api+json",
   FormData = "multipart/form-data",
   UrlEncoded = "application/x-www-form-urlencoded",
   Text = "text/plain",
@@ -2048,7 +2056,8 @@ export class HttpClient<SecurityDataType = unknown> {
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private abortControllers = new Map<CancelToken, AbortController>();
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
+    fetch(...fetchParams);
 
   private baseApiParams: RequestParams = {
     credentials: "same-origin",
@@ -2081,9 +2090,15 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected toQueryString(rawQuery?: QueryParamsType): string {
     const query = rawQuery || {};
-    const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
+    const keys = Object.keys(query).filter(
+      (key) => "undefined" !== typeof query[key],
+    );
     return keys
-      .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
+      .map((key) =>
+        Array.isArray(query[key])
+          ? this.addArrayQueryParam(query, key)
+          : this.addQueryParam(query, key),
+      )
       .join("&");
   }
 
@@ -2094,10 +2109,23 @@ export class HttpClient<SecurityDataType = unknown> {
 
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
-    [ContentType.Text]: (input: any) => (input !== null && typeof input !== "string" ? JSON.stringify(input) : input),
-    [ContentType.FormData]: (input: any) =>
-      Object.keys(input || {}).reduce((formData, key) => {
+      input !== null && (typeof input === "object" || typeof input === "string")
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.JsonApi]: (input: any) =>
+      input !== null && (typeof input === "object" || typeof input === "string")
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.Text]: (input: any) =>
+      input !== null && typeof input !== "string"
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.FormData]: (input: any) => {
+      if (input instanceof FormData) {
+        return input;
+      }
+
+      return Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key];
         formData.append(
           key,
@@ -2108,11 +2136,15 @@ export class HttpClient<SecurityDataType = unknown> {
               : `${property}`,
         );
         return formData;
-      }, new FormData()),
+      }, new FormData());
+    },
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
-  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  protected mergeRequestParams(
+    params1: RequestParams,
+    params2?: RequestParams,
+  ): RequestParams {
     return {
       ...this.baseApiParams,
       ...params1,
@@ -2125,7 +2157,9 @@ export class HttpClient<SecurityDataType = unknown> {
     };
   }
 
-  protected createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
+  protected createAbortSignal = (
+    cancelToken: CancelToken,
+  ): AbortSignal | undefined => {
     if (this.abortControllers.has(cancelToken)) {
       const abortController = this.abortControllers.get(cancelToken);
       if (abortController) {
@@ -2169,15 +2203,26 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
 
-    return this.customFetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
-      ...requestParams,
-      headers: {
-        ...(requestParams.headers || {}),
-        ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
+    return this.customFetch(
+      `${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`,
+      {
+        ...requestParams,
+        headers: {
+          ...(requestParams.headers || {}),
+          ...(type && type !== ContentType.FormData
+            ? { "Content-Type": type }
+            : {}),
+        },
+        signal:
+          (cancelToken
+            ? this.createAbortSignal(cancelToken)
+            : requestParams.signal) || null,
+        body:
+          typeof body === "undefined" || body === null
+            ? null
+            : payloadFormatter(body),
       },
-      signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
-      body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
+    ).then(async (response) => {
       const r = response.clone() as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
@@ -2215,7 +2260,9 @@ export class HttpClient<SecurityDataType = unknown> {
  *
  * Simple APIs to build seamless cross-chain products that do more with fewer transactions. For devs with all levels of cross-chain experience.
  */
-export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+export class Api<
+  SecurityDataType extends unknown,
+> extends HttpClient<SecurityDataType> {
   /**
    * @description Get all supported chains along with additional data useful for building applications + frontends that interface with them (e.g. logo URI, IBC capabilities, fee assets, bech32 prefix, etc...)
    *
@@ -2313,7 +2360,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @response `400` `Error` The request was invalid, e.g. field is invalid
    * @response `500` `Error` Internal server error
    */
-  assetsFromSource = (data: AssetsFromSourceRequest, params: RequestParams = {}) =>
+  assetsFromSource = (
+    data: AssetsFromSourceRequest,
+    params: RequestParams = {},
+  ) =>
     this.request<AssetsFromSourceResponse, Error>({
       path: `/v2/fungible/assets_from_source`,
       method: "POST",
@@ -2394,7 +2444,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @response `404` `Error` A recommendation or the specified token was not found
    * @response `500` `Error` Internal server error
    */
-  assetRecommendations = (data: AssetRecommendationsRequest, params: RequestParams = {}) =>
+  assetRecommendations = (
+    data: AssetRecommendationsRequest,
+    params: RequestParams = {},
+  ) =>
     this.request<AssetRecommendationsResponse, Error>({
       path: `/v2/fungible/recommend_assets`,
       method: "POST",
@@ -2475,7 +2528,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @response `400` `Error` The request was invalid, i.e. required fields are missing
    * @response `500` `Error` Internal server error
    */
-  ibcOriginAssets = (data: IbcOriginAssetsRequest, params: RequestParams = {}) =>
+  ibcOriginAssets = (
+    data: IbcOriginAssetsRequest,
+    params: RequestParams = {},
+  ) =>
     this.request<IbcOriginAssetsResponse, Error>({
       path: `/v2/fungible/ibc_origin_assets`,
       method: "POST",
@@ -2495,7 +2551,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @response `404` `Error` One of the chain IDs was not found
    * @response `500` `Error` Internal server error
    */
-  fungibleAssetsBetweenChainsCreate = (data: AssetsBetweenChainsRequest, params: RequestParams = {}) =>
+  fungibleAssetsBetweenChainsCreate = (
+    data: AssetsBetweenChainsRequest,
+    params: RequestParams = {},
+  ) =>
     this.request<FungibleAssetsBetweenChainsCreateResponse, Error>({
       path: `/v2/fungible/assets_between_chains`,
       method: "POST",

@@ -7,7 +7,7 @@ import { useAtomValue } from "@/jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { Button } from "@/components/Button";
 import { getTruncatedAddress } from "@/utils/crypto";
-import { useCopyAddress } from "@/hooks/useCopyAddress";
+import { useClipboard } from "@/hooks/useClipboard";
 import Image from "next/image";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { formatDisplayAmount } from "@/utils/number";
@@ -21,7 +21,7 @@ export type TransactionDetailsProps = {
 
 export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetailsProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
-  const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
+  const { saveToClipboard, isCopied } = useClipboard();
   const { sourceAsset, destAsset, sourceAmount, destAmount, routeStatus } = useTransactionHistoryItemFromUrlParams();
 
   const statusLabelAndColor = useOverallStatusLabelAndColor({ status: routeStatus, state });
@@ -46,7 +46,7 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
           label="Status"
           value={<SmallText color={statusLabelAndColor?.color}>{statusLabelAndColor?.label}</SmallText>}
         />
-        <DetailsRow onClick={() => copyAddress(txHash)} label="Transaction Hash" value={isShowingCopyAddressFeedback ? "Copied!" : getTruncatedAddress(txHash)} />
+        <DetailsRow onClick={() => saveToClipboard(txHash)} label="Transaction Hash" value={isCopied ? "Copied!" : getTruncatedAddress(txHash)} />
         <DetailsRow
           label="Route"
           value={
