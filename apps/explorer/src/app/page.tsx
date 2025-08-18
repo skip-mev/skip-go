@@ -111,15 +111,6 @@ export default function Home() {
   }, [setSkipClientConfig, setOnlyTestnets]);
   
   const getTxStatus = useCallback(async (transactionDetails: TransactionDetailsType[] = []) => {
-    if (!txHashes || txHashes.length === 0) {
-      console.error("No transaction hashes provided");
-      return;
-    }
-    if (!chainIds || chainIds.length === 0) {
-      console.error("No chain IDs provided");
-      return;
-    }
-
     const txsToQuery = transactionDetails?.filter((tx) => tx.txHash !== undefined && tx.chainId !== undefined);
     
     const responses = await Promise.all(
@@ -135,7 +126,7 @@ export default function Home() {
 
     setTransactionStatusResponse(responses[0]);
     setTransferEvents(allTransferEvents);
-  }, [chainIds, txHashes]);
+  }, []);
 
   useEffect(() => {
     if (transactionDetailsFromUrlParams) {
