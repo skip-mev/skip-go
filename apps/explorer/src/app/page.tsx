@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useCallback } from "react";
 import { ToggleThemeButton } from "./template";
 import { Column, Row } from "@/components/Layout";
 import {
@@ -49,6 +49,7 @@ export default function Home() {
     "chain_id",
     parseAsArrayOf(parseAsString, ",")
   );
+  const [, setData] = useQueryState("data");
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
     []
   );
@@ -109,7 +110,7 @@ export default function Home() {
     setOnlyTestnets(false);
   }, [setSkipClientConfig, setOnlyTestnets]);
   
-  const getTxStatus = async (transactionDetails: TransactionDetailsType[] = []) => {
+  const getTxStatus = useCallback(async (transactionDetails: TransactionDetailsType[] = []) => {
     if (!txHashes || txHashes.length === 0) {
       console.error("No transaction hashes provided");
       return;
@@ -134,19 +135,19 @@ export default function Home() {
 
     setTransactionStatusResponse(responses[0]);
     setTransferEvents(allTransferEvents);
-  }
+  }, [chainIds, txHashes]);
 
   useEffect(() => {
-    if (txHashes && txHashes.length > 0 && chainIds && chainIds.length > 0) {
+    if (transactionDetailsFromUrlParams) {
+      setChainId(transactionDetailsFromUrlParams[0]?.chainId);
+      setTxHash(transactionDetailsFromUrlParams[0]?.txHash);
+      getTxStatus(transactionDetailsFromUrlParams);
+    } else if (txHashes && txHashes.length > 0 && chainIds && chainIds.length > 0) {
       setChainId(chainIds[0]);
       setTxHash(txHashes[0]);
-      getTxStatus();
+      getTxStatus(txHashes.map((txHash, index) => ({ txHash, chainId: chainIds[index] })));
     }
-    if (transactionDetailsFromUrlParams) {
-      getTxStatus(transactionDetailsFromUrlParams);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [txHashes, chainIds]);
+  }, [txHashes, chainIds, transactionDetailsFromUrlParams, getTxStatus]);
 
 
   const selectedChain = useMemo(() => {
@@ -197,6 +198,9 @@ export default function Home() {
             if (txHash && chainId) {
               setTxHashes([txHash]);
               setChainIds([chainId]);
+              if (txHash !== transactionDetailsFromUrlParams?.[0]?.txHash || chainId !== transactionDetailsFromUrlParams?.[0]?.chainId) {
+                setData(null);
+              }
             }
           }}
         />
