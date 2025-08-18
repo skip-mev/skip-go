@@ -1,12 +1,12 @@
 import { useAtomValue } from "@/jotai";
 import { transactionHistoryItemFromUrlParamsAtom } from "../state/transactionHistoryItemFromUrlParams";
-import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
+import { skipAssetsAtom } from "@/state/skipClient";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { getClientOperations } from "@/utils/clientType";
+import { RouteStatus } from "@skip-go/client";
 
 export const useTransactionHistoryItemFromUrlParams = () => {
   const transactionHistoryItemFromUrlParams = useAtomValue(transactionHistoryItemFromUrlParamsAtom);
-  const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
 
   const sourceAsset = skipAssets?.data?.find((asset) => {
@@ -16,8 +16,6 @@ export const useTransactionHistoryItemFromUrlParams = () => {
     return asset.chainId === transactionHistoryItemFromUrlParams?.route?.destAssetChainId && asset.denom === transactionHistoryItemFromUrlParams?.route?.destAssetDenom
   });
 
-  console.log(sourceAsset, destAsset);
-
   return {
     sourceAsset,
     destAsset,
@@ -25,6 +23,6 @@ export const useTransactionHistoryItemFromUrlParams = () => {
     destAmount: convertTokenAmountToHumanReadableAmount(transactionHistoryItemFromUrlParams?.route?.amountOut, destAsset?.decimals),
     userAddresses: transactionHistoryItemFromUrlParams?.userAddresses as { chainId: string, address: string }[],
     operations: getClientOperations(transactionHistoryItemFromUrlParams?.route?.operations),
+    routeStatus: transactionHistoryItemFromUrlParams?.status as RouteStatus,
   }
-
 }

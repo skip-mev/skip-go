@@ -1,11 +1,11 @@
-import { Badge } from "@/components/Badge";
+import { Badge } from "./Badge";
 import { Container } from "@/components/Container";
 import { Column, Row } from "@/components/Layout";
 import { SmallTextButton } from '@/components/Typography';
 import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "@/jotai";
 import { Text, SmallText } from "@/components/Typography";
-import { TransferType } from "@skip-go/client";
+import { TransferEventStatus, TransferType } from "@skip-go/client";
 import Image from "next/image";
 import { BridgeIcon } from "../icons/BridgeIcon";
 import { ClockIcon } from "../icons/ClockIcon";
@@ -14,6 +14,7 @@ import { useTheme, styled } from "@/styled-components";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { convertTokenAmountToHumanReadableAmount, getTruncatedAddress } from "@/utils/crypto";
 import { useMemo } from "react";
+import { useOverallStatusLabelAndColor } from "../hooks/useOverallStatusLabelAndColor";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -21,12 +22,11 @@ export type TransferEventCardProps = {
   chainId: string;
   explorerLink: string;
   transferType: TransferType | string;
-  status: string;
+  status?: TransferEventStatus;
   step: Step;
   txHash?: string;
   durationInMs?: number;
   index: number;
-  // transferEvent?: ClientTransferEvent;
 }
 
 const getTransferTypeLabel = (transferType: TransferType | string) => {
@@ -53,18 +53,47 @@ const getTransferTypeLabel = (transferType: TransferType | string) => {
       return transferType;
   }
 }
+const routedStatusMap: Record<TransferEventStatus, string> = {
+  unconfirmed: "Unconfirmed",
+  signing: "Signing",
+  pending: "Pending",
+  completed: "Complete",
+  failed: "Failed",
+  approving: "Approving",
+  incomplete: "Incomplete",
+}
 
 export const TransferEventCard = ({ chainId, explorerLink, transferType, status, step, index, durationInMs = 0 }: TransferEventCardProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
   const theme = useTheme();
-  const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations } = useTransactionHistoryItemFromUrlParams();
+  const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations, routeStatus } = useTransactionHistoryItemFromUrlParams();
+
+  const statusLabelAndColor = useOverallStatusLabelAndColor({ status: step === "Destination" ? routeStatus : status });
 
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
 
   const userAddress = userAddresses?.find((address) => address.chainId === chainId)?.address;
 
-  console.log("user address", userAddress, userAddresses);
+  const renderStatusBadge = useMemo(() => {
+    if (step === "Destination") {
+      return (
+        <Badge
+          color={statusLabelAndColor?.color}
+          background={statusLabelAndColor?.background}>
+          { statusLabelAndColor?.label }
+        </Badge>
+      )
+    }
+    if (status) {
+    return (
+        <Badge flexDirection="row" gap={5} align="center">
+          { routedStatusMap[status] }
+          { status === "completed" && <GreenDot /> }
+        </Badge>
+      )
+    }
+  }, [status, statusLabelAndColor?.background, statusLabelAndColor?.color, statusLabelAndColor?.label, step]);
 
   const renderTransferEventDetails = useMemo(() => {
     const getCurrentAsset = () => {
@@ -79,6 +108,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
           amount: destAmount,
         };
       } else {
+        console.log("operations", operations, index);
         const currentOperation = operations?.[index];
         const asset = skipAssets?.data?.find((asset) => asset.chainId === currentOperation?.chainId && asset.denom === currentOperation?.denomIn);
         return {
@@ -95,7 +125,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         <Column gap={10} justify="center">
           <Row gap={5} align="center">
             {currentAsset?.asset?.logoUri && <Image src={currentAsset?.asset?.logoUri} alt={currentAsset?.asset?.symbol ?? ''} width={20} height={20} />}
-            <Text>{formatDisplayAmount(currentAsset?.amount)} {currentAsset?.asset?.symbol}</Text>
+            <Text useWindowsTextHack>{formatDisplayAmount(currentAsset?.amount)} {currentAsset?.asset?.symbol}</Text>
           </Row>
           <Row gap={5} align="center">
             <SmallText normalTextColor>on {chain?.prettyName}</SmallText>
@@ -135,7 +165,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       <TransferEventContainer padding={15} width={355} borderRadius={16} status={step === "Destination" ? status : undefined}>
         <Row align="center" justify="space-between">
           <Badge> { step } </Badge>
-          <Badge variant={step === "Destination" ? status : undefined}> {status} </Badge>
+          { renderStatusBadge }
         </Row>
         <TransferEventDetailsCard>
           <Row justify="space-between">
@@ -150,6 +180,13 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     </Column>
 );
 };
+
+const GreenDot = styled.div`
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: ${({ theme }) => theme.success.text};
+`;
 
 const TransferEventDetailsCard = styled.div`
   padding: 16px 12px;

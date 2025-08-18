@@ -1,9 +1,8 @@
 import { Container } from "@/components/Container";
 import { Column, Row } from "@/components/Layout";
 import { SmallText } from '@/components/Typography';
-import { ReactNode } from "react";
-import { getSimpleOverallStatus, TransactionState } from "@skip-go/client";
-import { Badge } from "@/components/Badge";
+import { ReactNode, useMemo } from "react";
+import { TransactionState } from "@skip-go/client";
 import { useAtomValue } from "@/jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { Button } from "@/components/Button";
@@ -11,6 +10,8 @@ import { getTruncatedAddress } from "@/utils/crypto";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import Image from "next/image";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
+import { formatDisplayAmount } from "@/utils/number";
+import { useOverallStatusLabelAndColor } from "../hooks/useOverallStatusLabelAndColor";
 
 export type TransactionDetailsProps = {
   txHash: string;
@@ -21,30 +22,32 @@ export type TransactionDetailsProps = {
 export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetailsProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
   const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
-  const { sourceAsset, destAsset, sourceAmount, destAmount } = useTransactionHistoryItemFromUrlParams();
+  const { sourceAsset, destAsset, sourceAmount, destAmount, routeStatus } = useTransactionHistoryItemFromUrlParams();
 
-  console.log({ sourceAsset, destAsset, sourceAmount, destAmount });
+  const statusLabelAndColor = useOverallStatusLabelAndColor({ status: routeStatus, state });
 
   const chains = chainIds?.map((chainId) => skipChains?.data?.find((chain) => chain.chainId === chainId));
+
+  const transaction = useMemo(() => {
+    if (sourceAsset && destAsset) {
+      return `${formatDisplayAmount(sourceAmount, { decimals: 2, abbreviate: true })} ${sourceAsset?.symbol} → ${formatDisplayAmount(destAmount, { decimals: 2, abbreviate: true })} ${destAsset?.symbol}`
+    }
+    return `${chains?.at(0)?.prettyName} → ${chains?.at(-1)?.prettyName}`
+  }, [chains, destAmount, destAsset, sourceAmount, sourceAsset]);
   
-  console.log({ txHash, state, chainIds });
   return (
     <Column gap={5}>
       <Container gap={20} width={355} borderRadius={16}>
-        <TransactionDetailsRow
+        <DetailsRow
           label="Transaction"
-          value={`${chains?.at(0)?.prettyName} → ${chains?.at(-1)?.prettyName}`}
+          value={transaction}
         />
-        <TransactionDetailsRow
+        <DetailsRow
           label="Status"
-          value={
-            <Badge variant={state ? getSimpleOverallStatus(state) : ""}>
-              {state ? getSimpleOverallStatus(state) : ""}
-            </Badge>
-          }
+          value={<SmallText color={statusLabelAndColor?.color}>{statusLabelAndColor?.label}</SmallText>}
         />
-        <TransactionDetailsRow onClick={() => copyAddress(txHash)} label="Transaction Hash" value={isShowingCopyAddressFeedback ? "Copied!" : getTruncatedAddress(txHash)} />
-        <TransactionDetailsRow
+        <DetailsRow onClick={() => copyAddress(txHash)} label="Transaction Hash" value={isShowingCopyAddressFeedback ? "Copied!" : getTruncatedAddress(txHash)} />
+        <DetailsRow
           label="Route"
           value={
             <Row gap={5}>
@@ -62,7 +65,7 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
   );
 };
 
-const TransactionDetailsRow = ({ label, value, onClick }: { label: string, value: ReactNode, onClick?: () => void }) => {
+export const DetailsRow = ({ label, value, onClick }: { label: string, value: ReactNode, onClick?: () => void }) => {
   return (
     <Button as={onClick === undefined ? "div" : "button"} onClick={onClick} align="center" justify="space-between">
       <SmallText>{label}</SmallText>

@@ -55,6 +55,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
         route: historyItem?.route,
         userAddresses: historyItem?.userAddresses,
         transactionDetails: historyItem?.transactionDetails,
+        status: historyItem?.status,
       });
 
       const base64Encoded = Buffer.from(jsonString).toString("base64");
