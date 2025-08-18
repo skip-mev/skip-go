@@ -15,6 +15,7 @@ import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionH
 import { convertTokenAmountToHumanReadableAmount, getTruncatedAddress } from "@/utils/crypto";
 import { useMemo } from "react";
 import { useOverallStatusLabelAndColor } from "../hooks/useOverallStatusLabelAndColor";
+import { Link } from "@/components/Button";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -175,7 +176,11 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
             <Badge> { getTransferTypeLabel(transferType) } </Badge>
           </Row>
         </TransferEventDetailsCard>
-        <SmallTextButton textAlign="center" onClick={() => window.open(explorerLink, "_blank")}> View on Mintscan → </SmallTextButton>
+        <SmallText>
+          <Link href={explorerLink} target="_blank" justify="center">
+            View on Mintscan →
+          </Link>
+        </SmallText>
       </TransferEventContainer>
     </Column>
 );
