@@ -22,7 +22,9 @@ export const ArrowIcon = ({
           ? "rotate(180)"
           : direction === "up"
             ? "rotate(-90)"
-            : ""
+            : direction === "top-right"
+              ? "rotate(-45)"
+              : undefined
     }
   >
     {maskedVersion ? (
