@@ -3,7 +3,7 @@ import React from "react";
 import { ToggleThemeButton } from "./template";
 import { SmallTextButton } from '@/components/Typography';
 import { Column, Row } from "@/components/Layout";
-import { transactionStatus, getTransferEventsFromTxStatusResponse, ClientTransferEvent, TxStatusResponse } from "@skip-go/client";
+import { transactionStatus, getTransferEventsFromTxStatusResponse, ClientTransferEvent, TxStatusResponse, TransactionDetails as TransactionDetailsType } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
 import { TransferEventCard, TransferEventCardProps } from "../components/TransferEventCard";
 import { defaultSkipClientConfig, skipClientConfigAtom, onlyTestnetsAtom, ClientAsset } from "@/state/skipClient";
@@ -31,6 +31,7 @@ export default function Home() {
   useEffect(() => {
     if (transactionHistoryItemFromUrlParams) {
       console.log("transactionHistoryItemFromUrlParams", transactionHistoryItemFromUrlParams);
+      getTxStatus(transactionHistoryItemFromUrlParams?.transactionDetails);
     }
   }, [transactionHistoryItemFromUrlParams]);
 
@@ -73,17 +74,22 @@ export default function Home() {
     setOnlyTestnets(false);
   }, [setSkipClientConfig, setOnlyTestnets]);
   
-  const getTxStatus = async () => {
-    const response = await transactionStatus({
-      txHash,
-      chainId,
-    })
-    const transferEvents = getTransferEventsFromTxStatusResponse([response]);
+  const getTxStatus = async (transactionDetails: TransactionDetailsType[] = []) => {
+    const txsToQuery = transactionDetails?.filter((tx) => tx.txHash !== undefined && tx.chainId !== undefined);
+    
+    const responses = await Promise.all(
+      txsToQuery?.map(tx => transactionStatus({
+        txHash: tx.txHash ?? "",
+        chainId: tx.chainId ?? "",
+      }))
+    );
+    
+    const allTransferEvents = getTransferEventsFromTxStatusResponse(responses);
 
-    setTransactionStatusResponse(response);
-    setTransferEvents(transferEvents);
-    console.log(response);
-    console.log(transferEvents);
+    setTransactionStatusResponse(responses[0]);
+    setTransferEvents(allTransferEvents);
+    console.log(responses);
+    console.log(allTransferEvents);
   }
 
   const transactionDetails = useMemo(() => {
@@ -117,7 +123,7 @@ export default function Home() {
         
         <input type="text" value={txHash} onChange={(e) => setTxHash(e.target.value)} placeholder="tx hash"/>
         <input type="text" value={chainId} onChange={(e) => setChainId(e.target.value)} placeholder="chain id"/>
-        <SmallTextButton onClick={getTxStatus}>get tx info</SmallTextButton>
+        <SmallTextButton onClick={() => getTxStatus([{ txHash, chainId }])}>get tx info</SmallTextButton>
       </Row>
       {
         uniqueTransfers.length > 0 && (

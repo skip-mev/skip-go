@@ -9,8 +9,11 @@ import { TransferType } from "@skip-go/client";
 import Image from "next/image";
 import { BridgeIcon } from "../icons/BridgeIcon";
 import { ClockIcon } from "../icons/ClockIcon";
-import { convertSecondsToMinutesOrHours } from "@/utils/number";
+import { convertSecondsToMinutesOrHours, formatDisplayAmount } from "@/utils/number";
 import { useTheme, styled } from "@/styled-components";
+import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
+import { getTruncatedAddress } from "@/utils/crypto";
+import { useMemo } from "react";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -53,8 +56,53 @@ const getTransferTypeLabel = (transferType: TransferType | string) => {
 export const TransferEventCard = ({ chainId, explorerLink, transferType, status, step, durationInMs = 0 }: TransferEventCardProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
   const theme = useTheme();
+  const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses } = useTransactionHistoryItemFromUrlParams();
 
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
+
+  const userAddress = userAddresses?.find((address) => address.chainId === chainId)?.address;
+
+  console.log("user address", userAddress, userAddresses);
+
+  const renderTransferEventDetails = useMemo(() => {
+    const getCurrentAsset = () => {
+      if (step === "Origin") return {
+        asset: sourceAsset,
+        amount: sourceAmount,
+      };
+      if (step === "Destination") return {
+        asset: destAsset,
+        amount: destAmount,
+      };
+    }
+
+    const currentAsset = getCurrentAsset();
+
+    if (userAddress) {
+      return (
+        <Column gap={10} justify="center">
+          <Row gap={5} align="center">
+            {currentAsset?.asset?.logoUri && <Image src={currentAsset?.asset?.logoUri} alt={currentAsset?.asset?.symbol ?? ''} width={20} height={20} />}
+            <Text>{formatDisplayAmount(currentAsset?.amount)} {currentAsset?.asset?.symbol}</Text>
+          </Row>
+          <Row gap={5} align="center">
+            <SmallText normalTextColor>on {chain?.prettyName}</SmallText>
+            <SmallText>{getTruncatedAddress(userAddress)}</SmallText>
+          </Row>
+        </Column>
+      )
+    }
+
+    return (
+      <>
+        {chain?.logoUri && <Image src={chain?.logoUri} alt={chain?.chainName} width={40} height={40} />}
+        <Column justify="center">
+          <Text>{chain?.prettyName}</Text>
+          <SmallText>{chainId}</SmallText>
+        </Column>
+      </>
+    )
+  }, [userAddress, chain, chainId, sourceAsset]);
   
   return (
     <Column align="center" justify="center">
@@ -80,11 +128,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         <TransferEventDetailsCard>
           <Row justify="space-between">
             <Row gap={15}>
-              {chain?.logoUri && <Image src={chain?.logoUri} alt={chain?.chainName} width={40} height={40} />}
-              <Column justify="center">
-                <Text>{chain?.prettyName}</Text>
-                <SmallText>{chainId}</SmallText>
-              </Column>
+              { renderTransferEventDetails }
             </Row>
             <Badge> { getTransferTypeLabel(transferType) } </Badge>
           </Row>

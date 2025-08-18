@@ -10,6 +10,7 @@ import { Button } from "@/components/Button";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import Image from "next/image";
+import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 
 export type TransactionDetailsProps = {
   txHash: string;
@@ -20,6 +21,9 @@ export type TransactionDetailsProps = {
 export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetailsProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
   const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
+  const { sourceAsset, destAsset, sourceAmount, destAmount } = useTransactionHistoryItemFromUrlParams();
+
+  console.log({ sourceAsset, destAsset, sourceAmount, destAmount });
 
   const chains = chainIds?.map((chainId) => skipChains?.data?.find((chain) => chain.chainId === chainId));
   
