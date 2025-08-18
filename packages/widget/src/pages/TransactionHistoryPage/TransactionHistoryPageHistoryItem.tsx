@@ -62,9 +62,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
       return base64Encoded;
     }, [historyItem]);
 
-    console.log("explorerData", explorerData, "length", explorerData.length);
-
-    console.log("decoded", Buffer.from(explorerData, "base64").toString("utf-8"));
+    console.log(historyItem?.transactionDetails, explorerData.length, explorerData);
 
     const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
 

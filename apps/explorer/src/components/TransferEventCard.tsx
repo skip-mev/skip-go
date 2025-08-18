@@ -79,9 +79,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
           amount: destAmount,
         };
       } else {
-        console.log("operations", operations);
         const currentOperation = operations?.[index];
-        console.log("currentOperation", currentOperation);
         const asset = skipAssets?.data?.find((asset) => asset.chainId === currentOperation?.chainId && asset.denom === currentOperation?.denomIn);
         return {
           asset: asset,
@@ -116,7 +114,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         </Column>
       </>
     )
-  }, [userAddress, chain, chainId, sourceAsset]);
+  }, [userAddress, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId, step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
   
   return (
     <Column align="center" justify="center">

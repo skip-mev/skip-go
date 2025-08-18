@@ -88,8 +88,6 @@ export default function Home() {
 
     setTransactionStatusResponse(responses[0]);
     setTransferEvents(allTransferEvents);
-    console.log(responses);
-    console.log(allTransferEvents);
   }
 
   const transactionDetails = useMemo(() => {
