@@ -86,7 +86,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       )
     }
     if (status) {
-    return (
+      return (
         <Badge flexDirection="row" gap={5} align="center">
           { routedStatusMap[status] }
           { status === "completed" && <GreenDot /> }
