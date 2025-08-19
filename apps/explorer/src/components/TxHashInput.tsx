@@ -8,14 +8,24 @@ export const TxHashInput = ({
   size = "normal",
   value,
   onChange,
+  openModal,
 }: {
   size: "small" | "normal";
   value?: string;
   onChange?: (value: string) => void;
+  openModal?: () => void;
 }) => {
   const theme = useTheme();
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Tab") {
+      event.preventDefault();
+      openModal?.();
+    }
+  };
+
   return (
-    <InputWrapper size={size} >
+    <InputWrapper size={size}>
       <SearchIcon color={theme.primary.text.lowContrast} />
       <StyledInput
         type="text"
@@ -23,13 +33,16 @@ export const TxHashInput = ({
         size={size}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
+        onKeyDown={onKeyDown}
       />
     </InputWrapper>
   );
 };
 
-
-export const StyledWrapper = styled(Row) <{ size: "normal" | "small", isClickable?: boolean; }>`
+export const StyledWrapper = styled(Row)<{
+  size: "normal" | "small";
+  isClickable?: boolean;
+}>`
   cursor: ${(props) => (props.isClickable ? "pointer" : "default")};
   align-items: center;
   background-color: ${(props) => props.theme.primary.background.normal};
@@ -48,10 +61,9 @@ const InputWrapper = styled(StyledWrapper)`
   flex: 1.8;
 
   @media (max-width: 1023px) {
-    flex: none
+    flex: none;
   }
-`
-
+`;
 
 const StyledInput = styled.input<{
   isLoading?: boolean;

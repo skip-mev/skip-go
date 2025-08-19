@@ -172,20 +172,22 @@ export default function Home() {
     []
   );
 
-  const onSearch = useCallback(() => {
+  const onSearch = useCallback((_txhash?: string, _chainId?:string) => {
     setTransactionStatuses([]);
     setTransferEvents([]);
     setErrorDetails(undefined);
     setTransactionStatusResponse(null);
+    const hash = _txhash ?? txHash;
+    const id = _chainId ?? chainId;
 
-    if (txHash && chainId) {
-      setTxHashes([txHash]);
-      setChainIds([chainId]);
+    if (hash && id) {
+      setTxHashes([hash]);
+      setChainIds([id]);
     }
 
     if (
-      txHash !== transactionDetailsFromUrlParams?.[0]?.txHash ||
-      chainId !== transactionDetailsFromUrlParams?.[0]?.chainId
+      hash !== transactionDetailsFromUrlParams?.[0]?.txHash ||
+      id !== transactionDetailsFromUrlParams?.[0]?.chainId
     ) {
       setData(null);
     }
@@ -215,11 +217,12 @@ export default function Home() {
         txHashes.map((txHash, index) => ({ txHash, chainId: chainIds[index] }))
       );
     } else {
-      setChainId("");
-      setTxHash("");
+      setChainId(undefined);
+      setTxHash(undefined);
       setTransferEvents([]);
       setTransactionStatusResponse(null);
       setTransactionStatuses([]);
+      setErrorDetails(undefined);
     }
   }, [txHashes, chainIds, transactionDetailsFromUrlParams, getTxStatus]);
 
@@ -280,6 +283,20 @@ export default function Home() {
             size={isTop ? "small" : "normal"}
             value={txHash || ""}
             onChange={(v) => setTxHash(v)}
+            openModal={() => {
+              NiceModal.show(Modals.AssetAndChainSelectorModal, {
+                context: "source",
+                onSelect: (asset: ClientAsset | null) => {
+                  setChainId(asset?.chainId || "");
+                   onSearch(txHash, asset?.chainId);
+                  NiceModal.hide(Modals.AssetAndChainSelectorModal);
+                },
+                overrideSelectedGroup: {
+                  assets: uniqueAssetsBySymbol,
+                },
+                selectChain: true,
+              });
+            }}
           />
           <ChainSelector
             size={isTop ? "small" : "normal"}
@@ -288,6 +305,9 @@ export default function Home() {
                 context: "source",
                 onSelect: (asset: ClientAsset | null) => {
                   setChainId(asset?.chainId || "");
+                  if (txHash) {
+                    onSearch(txHash, asset?.chainId);
+                  }
                   NiceModal.hide(Modals.AssetAndChainSelectorModal);
                 },
                 overrideSelectedGroup: {
