@@ -139,14 +139,18 @@ export const TransactionHistoryPageHistoryItemDetails = ({
       {senderAddress && (
         <StyledHistoryItemDetailRow align="center">
           <StyledDetailsLabel>Sender</StyledDetailsLabel>
-          <SmallText normalTextColor>{senderAddress}</SmallText>
+          <SmallText normalTextColor>
+            {getTruncatedAddress(senderAddress)}
+          </SmallText>
         </StyledHistoryItemDetailRow>
       )}
 
       {receiverAddress && (
         <StyledHistoryItemDetailRow align="center">
           <StyledDetailsLabel>Receiver</StyledDetailsLabel>
-          <SmallText normalTextColor>{receiverAddress}</SmallText>
+          <SmallText normalTextColor>
+            {getTruncatedAddress(receiverAddress)}
+          </SmallText>
         </StyledHistoryItemDetailRow>
       )}
 
