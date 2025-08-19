@@ -58,14 +58,12 @@ export default function Home() {
     useState<TxStatusResponse | null>(null);
   const chains = useAtomValue(skipChainsAtom);
 
-  const [rawData, setRawData] = useState<string>("");
-
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const uniqueAssetsBySymbol = useAtomValue(uniqueAssetsBySymbolAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
   const { transactionDetails: transactionDetailsFromUrlParams } = useTransactionHistoryItemFromUrlParams();
-  const [transactionStatuses, setTransactionStatuses] = useState<Map<string, TxStatusResponse>>(new Map());
+  const [transactionStatuses, setTransactionStatuses] = useState<TxStatusResponse[]>([]);
 
   const uniqueTransfers = useMemo(() => {
     const seen = new Set<string>();
@@ -115,25 +113,21 @@ export default function Home() {
   const getTxStatus = useCallback(async (transactionDetails: TransactionDetailsType[] = []) => {
     const txsToQuery = transactionDetails?.filter((tx) => tx.txHash !== undefined && tx.chainId !== undefined);
     
-    txsToQuery?.forEach(tx => waitForTransaction({
+    txsToQuery?.forEach((tx, index) => waitForTransaction({
       txHash: tx.txHash ?? "",
       chainId: tx.chainId ?? "",
       doNotTrack: true,
       onStatusUpdated: (status) => {
-        console.log(status);
         setTransactionStatuses(prev => {
-          const newMap = new Map(prev);
-          newMap.set(tx.txHash!, status);
+          const newStatuses = [...prev];
+          newStatuses[index] = status;
           
-          const allStatuses = Array.from(newMap.values());
-          setRawData(JSON.stringify(allStatuses, null, 2));
-          
-          const allTransferEvents = getTransferEventsFromTxStatusResponse(allStatuses);
+          const allTransferEvents = getTransferEventsFromTxStatusResponse(newStatuses);
           setTransferEvents(allTransferEvents);
           
-          setTransactionStatusResponse(allStatuses[0]);
+          setTransactionStatusResponse(newStatuses[0]);
           
-          return newMap;
+          return newStatuses;
         });
       }
     }))
@@ -220,7 +214,7 @@ export default function Home() {
                 gap={5}
                 onClick={() => {
                   NiceModal.show(ExplorerModals.ViewRawDataModal, {
-                    data: rawData,
+                    data: JSON.stringify(Array.from(transactionStatuses.values()), null, 2),
                     onClose: () => {
                       console.log("ViewRawDataModal closed");
                     },
