@@ -16,6 +16,7 @@ import { convertTokenAmountToHumanReadableAmount, getTruncatedAddress } from "@/
 import { useMemo } from "react";
 import { useOverallStatusLabelAndColor } from "../hooks/useOverallStatusLabelAndColor";
 import { Link } from "@/components/Button";
+import { loadingPulseAnimation } from "@/components/Container";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -71,6 +72,8 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations, routeStatus } = useTransactionHistoryItemFromUrlParams();
 
   const statusLabelAndColor = useOverallStatusLabelAndColor({ status: step === "Destination" ? routeStatus : status });
+
+  console.log(statusLabelAndColor)
 
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
 
@@ -163,7 +166,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         )
       }
      
-      <TransferEventContainer padding={15} width={355} borderRadius={16} status={step === "Destination" ? status : undefined}>
+      <TransferEventContainer loading={status === "pending"} padding={15} width={355} borderRadius={16} status={step === "Destination" ? status : undefined}>
         <Row align="center" justify="space-between">
           <Badge> { step } </Badge>
           { renderStatusBadge }
@@ -199,8 +202,14 @@ const TransferEventDetailsCard = styled.div`
   border: ${({ theme }) => `1px solid ${theme.secondary.background.normal}`};
 `;
 
-const TransferEventContainer = styled(Container)<{ status?: string}>`
-    ${({ theme, status }) => {
+const TransferEventContainer = styled(Container)<{ status?: string, loading?: boolean }>`
+  ${({ status, theme, loading}) => {
+    if (loading) {
+      return loadingPulseAnimation({
+        active: true,
+      })
+    }
+
     switch (status) {
       case "completed":
         return `border: 2px solid ${theme.success.text}`;
@@ -211,5 +220,5 @@ const TransferEventContainer = styled(Container)<{ status?: string}>`
       default:
         return '';
     }
-  }};
+  }}
 `;

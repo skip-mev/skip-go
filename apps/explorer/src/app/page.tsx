@@ -8,6 +8,7 @@ import {
   ClientTransferEvent,
   TxStatusResponse,
   TransactionDetails as TransactionDetailsType,
+  waitForTransaction,
 } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
 import {
@@ -114,9 +115,10 @@ export default function Home() {
     const txsToQuery = transactionDetails?.filter((tx) => tx.txHash !== undefined && tx.chainId !== undefined);
     
     const responses = await Promise.all(
-      txsToQuery?.map(tx => transactionStatus({
+      txsToQuery?.map(tx => waitForTransaction({
         txHash: tx.txHash ?? "",
         chainId: tx.chainId ?? "",
+        doNotTrack: true,
       }))
     );
 

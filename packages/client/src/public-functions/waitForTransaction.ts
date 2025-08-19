@@ -6,12 +6,14 @@ import type { TxResult } from "src/types/client-types";
 
 export type WaitForTransactionProps = TxResult & {
   onTransactionTracked?: TransactionCallbacks["onTransactionTracked"];
+  doNotTrack?: boolean;
 };
 
 export const waitForTransaction = async ({
   chainId,
   txHash,
   explorerLink,
+  doNotTrack = false,
   onTransactionTracked,
   ...trackTxPollingOptions
 }: WaitForTransactionProps) => {
