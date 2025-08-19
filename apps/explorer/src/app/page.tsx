@@ -142,6 +142,20 @@ export default function Home() {
     }))
   }, []);
 
+  const onSearch = useCallback(() => {
+    if (txHash && chainId) {
+      setTxHashes([txHash]);
+      setChainIds([chainId]);
+    }
+
+    if (
+      txHash !== transactionDetailsFromUrlParams?.[0]?.txHash ||
+      chainId !== transactionDetailsFromUrlParams?.[0]?.chainId
+    ) {
+      setData(null);
+    }
+  }, [txHash, chainId, transactionDetailsFromUrlParams, setTxHashes, setChainIds, setData]);
+
   useEffect(() => {
     if (transactionDetailsFromUrlParams) {
       setChainId(transactionDetailsFromUrlParams[0]?.chainId);
@@ -206,24 +220,26 @@ export default function Home() {
         />
         <SearchButton
           size="small"
-          onClick={() => {
-            if (txHash && chainId) {
-              setTxHashes([txHash]);
-              setChainIds([chainId]);
-              if (
-                txHash !== transactionDetailsFromUrlParams?.[0]?.txHash ||
-                chainId !== transactionDetailsFromUrlParams?.[0]?.chainId
-              ) {
-                setData(null);
-              }
-            }
-          }}
+          onClick={onSearch}
         />
       </Row>
       {
         error ? (
-          <Column width={355}>
-            <ErrorCard errorMessage={error} />
+          <Column width={355} align="flex-end">
+            <GhostButton
+              gap={5}
+              onClick={() => {
+                NiceModal.show(ExplorerModals.ViewRawDataModal, {
+                  data: JSON.stringify(Array.from(transactionStatuses.values()), null, 2),
+                  onClose: () => {
+                    console.log("ViewRawDataModal closed");
+                  },
+                });
+              }}
+            >
+              View raw data <HamburgerIcon />
+            </GhostButton>
+            <ErrorCard errorMessage={error} onRetry={onSearch} />
           </Column>
         ) : (
           <>

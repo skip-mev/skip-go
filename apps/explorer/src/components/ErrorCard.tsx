@@ -11,8 +11,10 @@ export enum ErrorMessages {
 
 export const ErrorCard = ({
   errorMessage,
+  onRetry,
 }: {
   errorMessage: string;
+  onRetry?: () => void;
 }) => {
   return (
     <Container padding={45}>
@@ -21,7 +23,7 @@ export const ErrorCard = ({
         <Text textAlign="center" lineHeight="24px">
           {errorMessage}
         </Text>
-        <SmallTextButton>
+        <SmallTextButton onClick={onRetry}>
           Retry
         </SmallTextButton>
       </Column>
