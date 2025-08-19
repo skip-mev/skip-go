@@ -36,6 +36,7 @@ import { SearchButton } from "../components/SearchButton";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { CoinsIcon } from "../icons/CoinsIcon";
 import { Logo, TopRightComponent } from "../components/TopNav";
+import { ErrorCard, ErrorMessages } from "../components/ErrorCard";
 
 export default function Home() {
   // const theme = useTheme();
@@ -64,6 +65,7 @@ export default function Home() {
   const isMobileScreenSize = useIsMobileScreenSize();
   const { transactionDetails: transactionDetailsFromUrlParams } = useTransactionHistoryItemFromUrlParams();
   const [transactionStatuses, setTransactionStatuses] = useState<TxStatusResponse[]>([]);
+  const [error, setError] = useState<ErrorMessages | undefined>();
 
   const uniqueTransfers = useMemo(() => {
     const seen = new Set<string>();
@@ -131,8 +133,11 @@ export default function Home() {
         });
       },
       onError: (error) => {
-        console.log("onError");
-        console.error(error);
+        if (error.message === "tx not found") {
+          setError(ErrorMessages.TRANSACTION_NOT_FOUND);
+        } else {
+          setError(ErrorMessages.TRANSACTION_ERROR);
+        }
       }
     }))
   }, []);
@@ -172,7 +177,7 @@ export default function Home() {
   }, [uniqueTransfers, transferEvents, transactionStatusResponse?.state]);
 
   return (
-    <Column gap={10}>
+    <Column gap={10} align="center">
       <Logo />
       <TopRightComponent />
 
@@ -215,65 +220,71 @@ export default function Home() {
           }}
         />
       </Row>
-      {uniqueTransfers.length > 0 && (
-        <>
-          <Row gap={16}>
-            <Column align="flex-end" width={355}>
-              <GhostButton
-                gap={5}
-                align="center"
-                justify="center"
-                onClick={() => setShowTokenDetails(!showTokenDetails)}
-              >
-                {showTokenDetails ? "Close" : "View token details"}{" "}
-                {!showTokenDetails && <CoinsIcon />}
-              </GhostButton>
-            </Column>
-            <Column align="flex-end" width={355}>
-              <GhostButton
-                gap={5}
-                onClick={() => {
-                  NiceModal.show(ExplorerModals.ViewRawDataModal, {
-                    data: JSON.stringify(Array.from(transactionStatuses.values()), null, 2),
-                    onClose: () => {
-                      console.log("ViewRawDataModal closed");
-                    },
-                  });
-                }}
-              >
-                View raw data <HamburgerIcon />
-              </GhostButton>
-            </Column>
-          </Row>
-          <Row
-            gap={16}
-            flexDirection={isMobileScreenSize ? "column" : "row"}
-            align={isMobileScreenSize ? "center" : "flex-start"}
-          >
-            <Column width={355}>
-              {showTokenDetails ? (
-                <TokenDetails />
-              ) : (
-                <TransactionDetails {...transactionDetails} />
-              )}
-            </Column>
-            <Column width={355}>
-              {uniqueTransfers.map((transfer) => (
-                <TransferEventCard
-                  key={transfer.chainId}
-                  chainId={transfer.chainId}
-                  explorerLink={transfer.explorerLink}
-                  transferType={transfer.transferType}
-                  status={transfer.status}
-                  step={transfer.step}
-                  durationInMs={transfer.durationInMs}
-                  index={transfer.index}
-                />
-              ))}
-            </Column>
-          </Row>
-        </>
-      )}
+      {
+        error ? (
+          <Column width={355}>
+            <ErrorCard errorMessage={error} />
+          </Column>
+        ) : (
+          <>
+            <Row gap={16}>
+              <Column align="flex-end" width={355}>
+                <GhostButton
+                  gap={5}
+                  align="center"
+                  justify="center"
+                  onClick={() => setShowTokenDetails(!showTokenDetails)}
+                >
+                  {showTokenDetails ? "Close" : "View token details"}{" "}
+                  {!showTokenDetails && <CoinsIcon />}
+                </GhostButton>
+              </Column>
+              <Column align="flex-end" width={355}>
+                <GhostButton
+                  gap={5}
+                  onClick={() => {
+                    NiceModal.show(ExplorerModals.ViewRawDataModal, {
+                      data: JSON.stringify(Array.from(transactionStatuses.values()), null, 2),
+                      onClose: () => {
+                        console.log("ViewRawDataModal closed");
+                      },
+                    });
+                  }}
+                >
+                  View raw data <HamburgerIcon />
+                </GhostButton>
+              </Column>
+            </Row>
+            <Row
+              gap={16}
+              flexDirection={isMobileScreenSize ? "column" : "row"}
+              align={isMobileScreenSize ? "center" : "flex-start"}
+            >
+              <Column width={355}>
+                {showTokenDetails ? (
+                  <TokenDetails />
+                ) : (
+                  <TransactionDetails {...transactionDetails} />
+                )}
+              </Column>
+              <Column width={355}>
+                {uniqueTransfers.map((transfer) => (
+                  <TransferEventCard
+                    key={transfer.chainId}
+                    chainId={transfer.chainId}
+                    explorerLink={transfer.explorerLink}
+                    transferType={transfer.transferType}
+                    status={transfer.status}
+                    step={transfer.step}
+                    durationInMs={transfer.durationInMs}
+                    index={transfer.index}
+                  />
+                ))}
+              </Column>
+            </Row>
+          </>
+        )
+      }
     </Column>
   );
 }
