@@ -47,7 +47,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
 
   const statusLabelAndColor = useOverallStatusLabelAndColor({ status: routeStatus ?? status });
   const stateLabelAndColor = useOverallStatusLabelAndColor({ state });
-  const stateAbandoned = true || state === "STATE_ABANDONED" && step === "Destination";
+  const stateAbandoned = state === "STATE_ABANDONED" && step === "Destination";
 
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
 
