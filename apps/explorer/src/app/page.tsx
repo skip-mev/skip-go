@@ -129,6 +129,10 @@ export default function Home() {
           
           return newStatuses;
         });
+      },
+      onError: (error) => {
+        console.log("onError");
+        console.error(error);
       }
     }))
   }, []);

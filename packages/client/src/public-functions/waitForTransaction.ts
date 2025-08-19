@@ -8,6 +8,7 @@ export type WaitForTransactionProps = TxResult & {
   onTransactionTracked?: TransactionCallbacks["onTransactionTracked"];
   doNotTrack?: boolean;
   onStatusUpdated?: (status: TxStatusResponse) => void;
+  onError?: (error: Error) => void;
 };
 
 export const waitForTransaction = async ({
@@ -16,6 +17,7 @@ export const waitForTransaction = async ({
   explorerLink,
   doNotTrack = false,
   onStatusUpdated,
+  onError,
   onTransactionTracked,
   ...trackTxPollingOptions
 }: WaitForTransactionProps) => {
@@ -35,24 +37,29 @@ export const waitForTransaction = async ({
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    const txStatusResponse = await transactionStatus({
-      chainId,
-      txHash,
-    });
-    onStatusUpdated?.(txStatusResponse);
-
-    if (txStatusResponse.state === "STATE_COMPLETED_SUCCESS") {
-      return txStatusResponse;
+    try {
+      const txStatusResponse = await transactionStatus({
+        chainId,
+        txHash,
+      });
+      onStatusUpdated?.(txStatusResponse);
+  
+      if (txStatusResponse.state === "STATE_COMPLETED_SUCCESS") {
+        return txStatusResponse;
+      }
+  
+      if (txStatusResponse.state === "STATE_COMPLETED_ERROR") {
+        throw new Error(`${txStatusResponse.error?.type}: ${txStatusResponse.error?.message}`);
+      }
+      if (txStatusResponse.state === "STATE_ABANDONED") {
+        throw new Error("Tracking for the transaction has been abandoned");
+      }
+  
+      await wait(1000);
+    } catch (error) {
+      onError?.(error as Error);
+      throw error;
     }
-
-    if (txStatusResponse.state === "STATE_COMPLETED_ERROR") {
-      throw new Error(`${txStatusResponse.error?.type}: ${txStatusResponse.error?.message}`);
-    }
-    if (txStatusResponse.state === "STATE_ABANDONED") {
-      throw new Error("Tracking for the transaction has been abandoned");
-    }
-
-    await wait(1000);
   }
 
 };
