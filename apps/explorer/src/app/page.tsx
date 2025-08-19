@@ -1,9 +1,7 @@
 "use client";
 import React, { useCallback } from "react";
-import { ToggleThemeButton } from "./template";
 import { Column, Row } from "@/components/Layout";
 import {
-  transactionStatus,
   getTransferEventsFromTxStatusResponse,
   ClientTransferEvent,
   TxStatusResponse,
@@ -37,8 +35,10 @@ import { ChainSelector } from "../components/ChainSelector";
 import { SearchButton } from "../components/SearchButton";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { CoinsIcon } from "../icons/CoinsIcon";
+import { Logo, TopRightComponent } from "../components/TopNav";
 
 export default function Home() {
+  // const theme = useTheme();
   const [txHash, setTxHash] = useState<string>();
   const [chainId, setChainId] = useState<string>();
   const [showTokenDetails, setShowTokenDetails] = useState(false);
@@ -142,13 +142,19 @@ export default function Home() {
       setChainId(transactionDetailsFromUrlParams[0]?.chainId);
       setTxHash(transactionDetailsFromUrlParams[0]?.txHash);
       getTxStatus(transactionDetailsFromUrlParams);
-    } else if (txHashes && txHashes.length > 0 && chainIds && chainIds.length > 0) {
+    } else if (
+      txHashes &&
+      txHashes.length > 0 &&
+      chainIds &&
+      chainIds.length > 0
+    ) {
       setChainId(chainIds[0]);
       setTxHash(txHashes[0]);
-      getTxStatus(txHashes.map((txHash, index) => ({ txHash, chainId: chainIds[index] })));
+      getTxStatus(
+        txHashes.map((txHash, index) => ({ txHash, chainId: chainIds[index] }))
+      );
     }
   }, [txHashes, chainIds, transactionDetailsFromUrlParams, getTxStatus]);
-
 
   const selectedChain = useMemo(() => {
     if (!chainId) return null;
@@ -167,7 +173,8 @@ export default function Home() {
 
   return (
     <Column gap={10}>
-      <ToggleThemeButton />
+      <Logo />
+      <TopRightComponent />
 
       <Row justify="center" gap={10}>
         <TxHashInput
@@ -198,7 +205,10 @@ export default function Home() {
             if (txHash && chainId) {
               setTxHashes([txHash]);
               setChainIds([chainId]);
-              if (txHash !== transactionDetailsFromUrlParams?.[0]?.txHash || chainId !== transactionDetailsFromUrlParams?.[0]?.chainId) {
+              if (
+                txHash !== transactionDetailsFromUrlParams?.[0]?.txHash ||
+                chainId !== transactionDetailsFromUrlParams?.[0]?.chainId
+              ) {
                 setData(null);
               }
             }
@@ -209,8 +219,14 @@ export default function Home() {
         <>
           <Row gap={16}>
             <Column align="flex-end" width={355}>
-              <GhostButton gap={5} align="center" justify="center" onClick={() => setShowTokenDetails(!showTokenDetails)}>
-                {showTokenDetails ? "Close" : "View token details"} {!showTokenDetails && <CoinsIcon />}
+              <GhostButton
+                gap={5}
+                align="center"
+                justify="center"
+                onClick={() => setShowTokenDetails(!showTokenDetails)}
+              >
+                {showTokenDetails ? "Close" : "View token details"}{" "}
+                {!showTokenDetails && <CoinsIcon />}
               </GhostButton>
             </Column>
             <Column align="flex-end" width={355}>
@@ -235,7 +251,11 @@ export default function Home() {
             align={isMobileScreenSize ? "center" : "flex-start"}
           >
             <Column width={355}>
-              {showTokenDetails ? <TokenDetails /> : <TransactionDetails {...transactionDetails} />}
+              {showTokenDetails ? (
+                <TokenDetails />
+              ) : (
+                <TransactionDetails {...transactionDetails} />
+              )}
             </Column>
             <Column width={355}>
               {uniqueTransfers.map((transfer) => (
