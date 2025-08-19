@@ -45,6 +45,7 @@ type ErrorWithCodeAndDetails = Error & {
   details: string;
 };
 import { styled } from "@/styled-components";
+import Link from "next/link";
 
 export default function Home() {
   // const theme = useTheme();
@@ -301,7 +302,9 @@ export default function Home() {
         </SearchWrapper>
       ) : (
         <SearchTopRight>
-          <SearchButton size="small" onClick={onSearch} iconOnly />
+          <Link href="/">
+            <SearchButton size="small" iconOnly />
+          </Link>
         </SearchTopRight>
       )}
 
