@@ -233,6 +233,7 @@ export default function Home() {
           chain_id: chainId,
         }),
       });
+      onSearch();
     } catch (error) {
       console.error(error);
     }
