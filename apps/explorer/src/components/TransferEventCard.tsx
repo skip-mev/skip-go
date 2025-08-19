@@ -1,22 +1,20 @@
 import { Badge } from "./Badge";
 import { Container } from "@/components/Container";
 import { Column, Row } from "@/components/Layout";
-import { SmallTextButton } from '@/components/Typography';
 import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "@/jotai";
 import { Text, SmallText } from "@/components/Typography";
 import { TransferEventStatus, TransferType } from "@skip-go/client";
 import Image from "next/image";
-import { BridgeIcon } from "../icons/BridgeIcon";
-import { ClockIcon } from "../icons/ClockIcon";
-import { convertSecondsToMinutesOrHours, formatDisplayAmount } from "@/utils/number";
-import { useTheme, styled } from "@/styled-components";
+import { formatDisplayAmount } from "@/utils/number";
+import { styled } from "@/styled-components";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { convertTokenAmountToHumanReadableAmount, getTruncatedAddress } from "@/utils/crypto";
 import { useMemo } from "react";
 import { useOverallStatusLabelAndColor } from "../hooks/useOverallStatusLabelAndColor";
 import { Link } from "@/components/Button";
 import { loadingPulseAnimation } from "@/components/Container";
+import { getTransferTypeLabel } from "./Bridge";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -31,30 +29,6 @@ export type TransferEventCardProps = {
   index: number;
 }
 
-const getTransferTypeLabel = (transferType: TransferType | string) => {
-  switch (transferType) {
-    case TransferType.ibcTransfer:
-      return "IBC";
-    case TransferType.axelarTransfer:
-      return "Axelar";
-    case TransferType.cctpTransfer:
-      return "CCTP";
-    case TransferType.hyperlaneTransfer:
-      return "Hyperlane";
-    case TransferType.opInitTransfer:
-      return "OP INIT";
-    case TransferType.goFastTransfer:
-      return "GO FAST";
-    case TransferType.stargateTransfer:
-      return "Stargate";
-    case TransferType.eurekaTransfer:
-      return "Eureka";
-    case TransferType.layerZeroTransfer:
-      return "Layer Zero";
-    default:
-      return transferType;
-  }
-}
 const routedStatusMap: Record<TransferEventStatus, string> = {
   unconfirmed: "Unconfirmed",
   signing: "Signing",
@@ -65,10 +39,9 @@ const routedStatusMap: Record<TransferEventStatus, string> = {
   incomplete: "Incomplete",
 }
 
-export const TransferEventCard = ({ chainId, explorerLink, transferType, status, step, index, durationInMs = 0 }: TransferEventCardProps) => {
+export const TransferEventCard = ({ chainId, explorerLink, transferType, status, step, index }: TransferEventCardProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
-  const theme = useTheme();
   const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations, routeStatus } = useTransactionHistoryItemFromUrlParams();
 
   const statusLabelAndColor = useOverallStatusLabelAndColor({ status: routeStatus ?? status });
@@ -149,48 +122,26 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   }, [userAddress, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId, step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
   
   return (
-    <Column align="center" justify="center">
-      {
-        step !== "Origin" && (
-          <>
-            <BridgeIcon color={theme.primary.background.normal}/>
-            <Container padding={12} width="auto" borderRadius={12} gap={5} flexDirection="row">
-              <SmallText normalTextColor>{ getTransferTypeLabel(transferType) }</SmallText>
-              {
-                durationInMs ? (
-                  <>
-                    <SmallText> <ClockIcon /> </SmallText>
-                    <SmallText> {convertSecondsToMinutesOrHours(durationInMs / 1000)}</SmallText>
-                  </>
-                ) : null
-              }
-            </Container>
-            <BridgeIcon color={theme.primary.background.normal} />
-          </>
-        )
-      }
-     
-      <TransferEventContainer loading={status === "pending"} padding={15} width={355} borderRadius={16} status={step === "Destination" ? status : undefined}>
-        <Row align="center" justify="space-between">
-          <Badge> { step } </Badge>
-          { renderStatusBadge }
-        </Row>
-        <TransferEventDetailsCard>
-          <Row justify="space-between">
-            <Row gap={15}>
-              { renderTransferEventDetails }
-            </Row>
-            <Badge> { getTransferTypeLabel(transferType) } </Badge>
+    <TransferEventContainer loading={status === "pending"} padding={15} width={355} borderRadius={16} status={step === "Destination" ? status : undefined}>
+      <Row align="center" justify="space-between">
+        <Badge> { step } </Badge>
+        { renderStatusBadge }
+      </Row>
+      <TransferEventDetailsCard>
+        <Row justify="space-between">
+          <Row gap={15}>
+            { renderTransferEventDetails }
           </Row>
-        </TransferEventDetailsCard>
-        <SmallText>
-          <Link href={explorerLink} target="_blank" justify="center">
-            View on Mintscan →
-          </Link>
-        </SmallText>
-      </TransferEventContainer>
-    </Column>
-);
+          <Badge> { getTransferTypeLabel(transferType) } </Badge>
+        </Row>
+      </TransferEventDetailsCard>
+      <SmallText>
+        <Link href={explorerLink} target="_blank" justify="center">
+          View on Mintscan →
+        </Link>
+      </SmallText>
+    </TransferEventContainer>
+  );
 };
 
 const GreenDot = styled.div`

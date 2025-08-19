@@ -17,7 +17,8 @@
     "next": "15.4.5",
     "nuqs": "^2.4.3",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "react-error-boundary": "^6.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

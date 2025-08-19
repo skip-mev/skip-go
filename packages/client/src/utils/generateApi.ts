@@ -38,6 +38,9 @@ export const createRequestClient = ({ apiUrl, apiKey, apiHeaders }: SkipApiOptio
       if (body?.code) {
         (error as any).code = body.code;
       }
+      if (body?.details) {
+        (error as any).details = body.details;
+      }
       throw error;
     }
 
