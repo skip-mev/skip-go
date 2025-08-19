@@ -38,6 +38,11 @@ import { CoinsIcon } from "../icons/CoinsIcon";
 import { Logo, TopRightComponent } from "../components/TopNav";
 import { ErrorCard, ErrorMessages } from "../components/ErrorCard";
 
+type ErrorWithCodeAndDetails = Error & {
+  code: number;
+  details: string;
+}
+
 export default function Home() {
   // const theme = useTheme();
   const [txHash, setTxHash] = useState<string>();
@@ -65,7 +70,10 @@ export default function Home() {
   const isMobileScreenSize = useIsMobileScreenSize();
   const { transactionDetails: transactionDetailsFromUrlParams } = useTransactionHistoryItemFromUrlParams();
   const [transactionStatuses, setTransactionStatuses] = useState<TxStatusResponse[]>([]);
-  const [error, setError] = useState<ErrorMessages | undefined>();
+  const [errorDetails, setErrorDetails] = useState<{
+    errorMessage: ErrorMessages;
+    error: ErrorWithCodeAndDetails;
+  }>();
 
   const uniqueTransfers = useMemo(() => {
     const seen = new Set<string>();
@@ -133,10 +141,11 @@ export default function Home() {
         });
       },
       onError: (error) => {
+        const errorWithCodeAndDetails = error as ErrorWithCodeAndDetails;
         if (error.message === "tx not found") {
-          setError(ErrorMessages.TRANSACTION_NOT_FOUND);
+          setErrorDetails({ errorMessage: ErrorMessages.TRANSACTION_NOT_FOUND, error: errorWithCodeAndDetails });
         } else {
-          setError(ErrorMessages.TRANSACTION_ERROR);
+          setErrorDetails({ errorMessage: ErrorMessages.TRANSACTION_ERROR, error: errorWithCodeAndDetails });
         }
       }
     }))
@@ -190,6 +199,22 @@ export default function Home() {
     };
   }, [uniqueTransfers, transferEvents, transactionStatusResponse?.state]);
 
+  const showRawDataModal = useCallback(() => {
+    if (transactionStatuses.length > 0) {
+      NiceModal.show(ExplorerModals.ViewRawDataModal, {
+        data: JSON.stringify(Array.from(transactionStatuses.values()), null, 2),
+      });
+    } else {
+      NiceModal.show(ExplorerModals.ViewRawDataModal, {
+        data: JSON.stringify({
+          ...errorDetails?.error,
+          message: errorDetails?.error?.message,
+        }, null, 2),
+      });
+    }
+    
+  }, [errorDetails, transactionStatuses]);
+
   return (
     <Column gap={10} align="center">
       <Logo />
@@ -224,22 +249,15 @@ export default function Home() {
         />
       </Row>
       {
-        error ? (
+        errorDetails ? (
           <Column width={355} align="flex-end">
             <GhostButton
               gap={5}
-              onClick={() => {
-                NiceModal.show(ExplorerModals.ViewRawDataModal, {
-                  data: JSON.stringify(Array.from(transactionStatuses.values()), null, 2),
-                  onClose: () => {
-                    console.log("ViewRawDataModal closed");
-                  },
-                });
-              }}
+              onClick={showRawDataModal}
             >
               View raw data <HamburgerIcon />
             </GhostButton>
-            <ErrorCard errorMessage={error} onRetry={onSearch} />
+            <ErrorCard errorMessage={errorDetails.errorMessage} onRetry={onSearch} />
           </Column>
         ) : (
           <>
@@ -258,14 +276,7 @@ export default function Home() {
               <Column align="flex-end" width={355}>
                 <GhostButton
                   gap={5}
-                  onClick={() => {
-                    NiceModal.show(ExplorerModals.ViewRawDataModal, {
-                      data: JSON.stringify(Array.from(transactionStatuses.values()), null, 2),
-                      onClose: () => {
-                        console.log("ViewRawDataModal closed");
-                      },
-                    });
-                  }}
+                  onClick={showRawDataModal}
                 >
                   View raw data <HamburgerIcon />
                 </GhostButton>
