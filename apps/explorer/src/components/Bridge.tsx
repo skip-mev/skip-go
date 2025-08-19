@@ -42,7 +42,7 @@ export const Bridge = ({ transferType, durationInMs }: { transferType: string, d
           durationInMs ? (
             <>
               <SmallText> <ClockIcon /> </SmallText>
-              <SmallText> {durationInMs ? convertSecondsToMinutesOrHours(durationInMs / 1000) : "Instant"}</SmallText>
+              <SmallText> {convertSecondsToMinutesOrHours(durationInMs / 1000)}</SmallText>
             </>
           ) : null
         }
