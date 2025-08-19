@@ -152,6 +152,11 @@ export default function Home() {
   }, []);
 
   const onSearch = useCallback(() => {
+    setTransactionStatuses([]);
+    setTransferEvents([]);
+    setErrorDetails(undefined);
+    setTransactionStatusResponse(null);
+
     if (txHash && chainId) {
       setTxHashes([txHash]);
       setChainIds([chainId]);
@@ -259,7 +264,7 @@ export default function Home() {
             </GhostButton>
             <ErrorCard errorMessage={errorDetails.errorMessage} onRetry={onSearch} />
           </Column>
-        ) : (
+        ) : uniqueTransfers.length > 0 ? (
           <>
             <Row gap={16}>
               <Column align="flex-end" width={355}>
@@ -310,7 +315,7 @@ export default function Home() {
               </Column>
             </Row>
           </>
-        )
+        ) : null
       }
     </Column>
   );
