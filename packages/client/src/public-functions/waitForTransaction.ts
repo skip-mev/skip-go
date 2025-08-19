@@ -20,15 +20,15 @@ export const waitForTransaction = async ({
   ...trackTxPollingOptions
 }: WaitForTransactionProps) => {
   try {
-    if (!explorerLink) {
+    if (!explorerLink && !doNotTrack) {
       const response = await trackTransaction({
         chainId: chainId,
         txHash: txHash,
         ...trackTxPollingOptions,
       });
       explorerLink = response.explorerLink;
+      await onTransactionTracked?.({ txHash, chainId, explorerLink });
     }
-    await onTransactionTracked?.({ txHash, chainId, explorerLink });
   } catch (error) {
     console.warn(`track failed for txHash:${txHash}, chainId: ${chainId}`);
   }
