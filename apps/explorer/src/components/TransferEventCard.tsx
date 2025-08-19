@@ -71,9 +71,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const theme = useTheme();
   const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations, routeStatus } = useTransactionHistoryItemFromUrlParams();
 
-  const statusLabelAndColor = useOverallStatusLabelAndColor({ status: step === "Destination" ? routeStatus : status });
-
-  console.log(statusLabelAndColor)
+  const statusLabelAndColor = useOverallStatusLabelAndColor({ status: routeStatus ?? status });
 
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
 
@@ -83,8 +81,8 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     if (step === "Destination") {
       return (
         <Badge
-          color={statusLabelAndColor?.color}
-          background={statusLabelAndColor?.background}>
+          color={ status !== "pending" ? statusLabelAndColor?.color : undefined}
+          background={status !== "pending" ? statusLabelAndColor?.background : undefined}>
           { statusLabelAndColor?.label }
         </Badge>
       )
@@ -158,8 +156,14 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
             <BridgeIcon color={theme.primary.background.normal}/>
             <Container padding={12} width="auto" borderRadius={12} gap={5} flexDirection="row">
               <SmallText normalTextColor>{ getTransferTypeLabel(transferType) }</SmallText>
-              <SmallText> <ClockIcon /> </SmallText>
-              <SmallText> {durationInMs ? convertSecondsToMinutesOrHours(durationInMs / 1000) : "Instant"}</SmallText>
+              {
+                durationInMs ? (
+                  <>
+                    <SmallText> <ClockIcon /> </SmallText>
+                    <SmallText> {durationInMs ? convertSecondsToMinutesOrHours(durationInMs / 1000) : "Instant"}</SmallText>
+                  </>
+                ) : null
+              }
             </Container>
             <BridgeIcon color={theme.primary.background.normal} />
           </>

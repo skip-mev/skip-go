@@ -65,6 +65,7 @@ export default function Home() {
   const uniqueAssetsBySymbol = useAtomValue(uniqueAssetsBySymbolAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
   const { transactionDetails: transactionDetailsFromUrlParams } = useTransactionHistoryItemFromUrlParams();
+  const [transactionStatuses, setTransactionStatuses] = useState<Map<string, TxStatusResponse>>(new Map());
 
   const uniqueTransfers = useMemo(() => {
     const seen = new Set<string>();
@@ -114,20 +115,28 @@ export default function Home() {
   const getTxStatus = useCallback(async (transactionDetails: TransactionDetailsType[] = []) => {
     const txsToQuery = transactionDetails?.filter((tx) => tx.txHash !== undefined && tx.chainId !== undefined);
     
-    const responses = await Promise.all(
-      txsToQuery?.map(tx => waitForTransaction({
-        txHash: tx.txHash ?? "",
-        chainId: tx.chainId ?? "",
-        doNotTrack: true,
-      }))
-    );
-
-    setRawData(JSON.stringify(responses, null, 2));
-    
-    const allTransferEvents = getTransferEventsFromTxStatusResponse(responses);
-
-    setTransactionStatusResponse(responses[0]);
-    setTransferEvents(allTransferEvents);
+    txsToQuery?.forEach(tx => waitForTransaction({
+      txHash: tx.txHash ?? "",
+      chainId: tx.chainId ?? "",
+      doNotTrack: true,
+      onStatusUpdated: (status) => {
+        console.log(status);
+        setTransactionStatuses(prev => {
+          const newMap = new Map(prev);
+          newMap.set(tx.txHash!, status);
+          
+          const allStatuses = Array.from(newMap.values());
+          setRawData(JSON.stringify(allStatuses, null, 2));
+          
+          const allTransferEvents = getTransferEventsFromTxStatusResponse(allStatuses);
+          setTransferEvents(allTransferEvents);
+          
+          setTransactionStatusResponse(allStatuses[0]);
+          
+          return newMap;
+        });
+      }
+    }))
   }, []);
 
   useEffect(() => {

@@ -362,25 +362,48 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
 
   const getDuration = () => {
     switch (transferType) {
-      case TransferType.ibcTransfer:
-        return new Date(ibcTransfer.packetTxs.receiveTx?.onChainAt ?? 0).getTime() - new Date(ibcTransfer.packetTxs.sendTx?.onChainAt ?? 0).getTime();
-      case TransferType.eurekaTransfer:
-        return new Date(eurekaTransfer.packetTxs.receiveTx?.onChainAt ?? 0).getTime() - new Date(eurekaTransfer.packetTxs.sendTx?.onChainAt ?? 0).getTime();
-      case TransferType.goFastTransfer:
-        return new Date(goFastTransfer.txs.orderFilledTx?.onChainAt ?? 0).getTime() - new Date(goFastTransfer.txs.orderSubmittedTx?.onChainAt ?? 0).getTime();
-      case TransferType.axelarTransfer:
-        return new Date(axelarTransfer?.txs?.confirmTx?.onChainAt ?? 0).getTime() - new Date(axelarTransfer?.txs?.sendTx?.onChainAt ?? 0).getTime();
-      default:
+      case TransferType.ibcTransfer: {
+        const sendTime = ibcTransfer.packetTxs.sendTx?.onChainAt;
+        const receiveTime = ibcTransfer.packetTxs.receiveTx?.onChainAt;
+        if (!sendTime || !receiveTime) return;
+        return new Date(receiveTime).getTime() - new Date(sendTime).getTime();
+      }
+      
+      case TransferType.eurekaTransfer: {
+        const sendTime = eurekaTransfer.packetTxs.sendTx?.onChainAt;
+        const receiveTime = eurekaTransfer.packetTxs.receiveTx?.onChainAt;
+        if (!sendTime || !receiveTime) return;
+        return new Date(receiveTime).getTime() - new Date(sendTime).getTime();
+      }
+      
+      case TransferType.goFastTransfer: {
+        const submitTime = goFastTransfer.txs.orderSubmittedTx?.onChainAt;
+        const filledTime = goFastTransfer.txs.orderFilledTx?.onChainAt;
+        if (!submitTime || !filledTime) return;
+        return new Date(filledTime).getTime() - new Date(submitTime).getTime();
+      }
+      
+      case TransferType.axelarTransfer: {
+        const sendTime = axelarTransfer?.txs?.sendTx?.onChainAt;
+        const confirmTime = axelarTransfer?.txs?.confirmTx?.onChainAt;
+        if (!sendTime || !confirmTime) return;
+        return new Date(confirmTime).getTime() - new Date(sendTime).getTime();
+      }
+      
+      default: {
         type RemainingTransferTypes =
           | CCTPTransferInfo
           | HyperlaneTransferInfo
           | OPInitTransferInfo
           | StargateTransferInfo
           | LayerZeroTransferInfo;
-
-        return new Date((combinedTransferEvent[transferType] as RemainingTransferTypes)
-          ?.txs?.receiveTx?.onChainAt ?? 0).getTime() - new Date((combinedTransferEvent[transferType] as RemainingTransferTypes)
-          ?.txs?.sendTx?.onChainAt ?? 0).getTime();
+  
+        const remainingTransfer = combinedTransferEvent[transferType] as RemainingTransferTypes;
+        const sendTime = remainingTransfer?.txs?.sendTx?.onChainAt;
+        const receiveTime = remainingTransfer?.txs?.receiveTx?.onChainAt;
+        if (!sendTime || !receiveTime) return;
+        return new Date(receiveTime).getTime() - new Date(sendTime).getTime();
+      }
     }
   }
 
