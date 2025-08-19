@@ -37,6 +37,9 @@ import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionH
 import { CoinsIcon } from "../icons/CoinsIcon";
 import { Logo, TopRightComponent } from "../components/TopNav";
 import { ErrorCard, ErrorMessages } from "../components/ErrorCard";
+import { ErrorWarningType } from "@/state/errorWarning";
+import { ErrorBoundary } from "react-error-boundary";
+import { Bridge } from "../components/Bridge";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
@@ -299,18 +302,28 @@ export default function Home() {
                   <TransactionDetails {...transactionDetails} />
                 )}
               </Column>
-              <Column width={355}>
+              <Column width={355} align="center" justify="center">
                 {uniqueTransfers.map((transfer) => (
-                  <TransferEventCard
-                    key={transfer.chainId}
-                    chainId={transfer.chainId}
-                    explorerLink={transfer.explorerLink}
-                    transferType={transfer.transferType}
-                    status={transfer.status}
-                    step={transfer.step}
-                    durationInMs={transfer.durationInMs}
-                    index={transfer.index}
-                  />
+                  <>
+                    {
+                      transfer.step !== "Origin" && (
+                        <Bridge transferType={transfer.transferType} durationInMs={transfer.durationInMs} />
+                      )
+                    }
+                    <ErrorBoundary
+                      key={transfer.chainId}
+                      fallback={<ErrorCard errorMessage={ErrorMessages.TRANSFER_EVENT_ERROR} padding="20px 45px" onRetry={onSearch} />}
+                    >
+                      <TransferEventCard
+                        chainId={transfer.chainId}
+                        explorerLink={transfer.explorerLink}
+                        transferType={transfer.transferType}
+                        status={transfer.status}
+                        step={transfer.step}
+                        index={transfer.index}
+                      />
+                    </ErrorBoundary>
+                  </>
                 ))}
               </Column>
             </Row>

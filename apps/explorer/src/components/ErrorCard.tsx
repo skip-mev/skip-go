@@ -12,12 +12,14 @@ export enum ErrorMessages {
 export const ErrorCard = ({
   errorMessage,
   onRetry,
+  padding = "45px",
 }: {
   errorMessage: string;
   onRetry?: () => void;
+  padding?: string;
 }) => {
   return (
-    <Container padding={45}>
+    <Container padding={padding}>
       <Column align="center" justify="center" gap={12}>
         <TriangleWarningIcon backgroundColor="white" width={18} height={16} />
         <Text textAlign="center" lineHeight="24px">

@@ -18715,6 +18715,7 @@ __metadata:
     nuqs: ^2.4.3
     react: 19.1.0
     react-dom: 19.1.0
+    react-error-boundary: ^6.0.0
     typescript: ^5
   languageName: unknown
   linkType: soft
@@ -27525,6 +27526,17 @@ __metadata:
   peerDependencies:
     react: ">=16.13.1"
   checksum: afe692f1bbbfb5998b49e1001d7682a3cbfdc623dca1318b408e738606f3450d925c28fbbfa5dc84d2cf285d17c2e7f079d59386a27da354dea9c902a935149b
+  languageName: node
+  linkType: hard
+
+"react-error-boundary@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "react-error-boundary@npm:6.0.0"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+  peerDependencies:
+    react: ">=16.13.1"
+  checksum: d6807004d2b5c0a971b433b8698d3c95ebb43d407b304d87d59d57ba2a08d10113e481031ca778a1b8529bbddb421c96e508dbd9a5b5d6f084f1d1f653b05941
   languageName: node
   linkType: hard
 
