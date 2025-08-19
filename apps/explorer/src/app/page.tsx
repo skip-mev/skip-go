@@ -39,13 +39,14 @@ import { Logo, TopRightComponent } from "../components/TopNav";
 import { ErrorCard, ErrorMessages } from "../components/ErrorCard";
 import { ErrorBoundary } from "react-error-boundary";
 import { Bridge } from "../components/Bridge";
+import { styled } from "@/styled-components";
+import Link from "next/link";
+import { useScrollDirection } from "../hooks/useScrollDirection";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
   details: string;
 };
-import { styled } from "@/styled-components";
-import Link from "next/link";
 
 export default function Home() {
   // const theme = useTheme();
@@ -172,33 +173,36 @@ export default function Home() {
     []
   );
 
-  const onSearch = useCallback((_txhash?: string, _chainId?:string) => {
-    setTransactionStatuses([]);
-    setTransferEvents([]);
-    setErrorDetails(undefined);
-    setTransactionStatusResponse(null);
-    const hash = _txhash ?? txHash;
-    const id = _chainId ?? chainId;
+  const onSearch = useCallback(
+    (_txhash?: string, _chainId?: string) => {
+      setTransactionStatuses([]);
+      setTransferEvents([]);
+      setErrorDetails(undefined);
+      setTransactionStatusResponse(null);
+      const hash = _txhash ?? txHash;
+      const id = _chainId ?? chainId;
 
-    if (hash && id) {
-      setTxHashes([hash]);
-      setChainIds([id]);
-    }
+      if (hash && id) {
+        setTxHashes([hash]);
+        setChainIds([id]);
+      }
 
-    if (
-      hash !== transactionDetailsFromUrlParams?.[0]?.txHash ||
-      id !== transactionDetailsFromUrlParams?.[0]?.chainId
-    ) {
-      setData(null);
-    }
-  }, [
-    txHash,
-    chainId,
-    transactionDetailsFromUrlParams,
-    setTxHashes,
-    setChainIds,
-    setData,
-  ]);
+      if (
+        hash !== transactionDetailsFromUrlParams?.[0]?.txHash ||
+        id !== transactionDetailsFromUrlParams?.[0]?.chainId
+      ) {
+        setData(null);
+      }
+    },
+    [
+      txHash,
+      chainId,
+      transactionDetailsFromUrlParams,
+      setTxHashes,
+      setChainIds,
+      setData,
+    ]
+  );
 
   useEffect(() => {
     if (transactionDetailsFromUrlParams) {
@@ -273,12 +277,14 @@ export default function Home() {
     return Boolean(isTop && isLessThan1024);
   }, [isTop, isLessThan1024]);
 
+  const scrollDir = useScrollDirection({ threshold: 10 });
+
   return (
     <>
       <Logo />
       <TopRightComponent />
       {!isSearchAModal ? (
-        <SearchWrapper isTop={isTop}>
+        <SearchWrapper isTop={isTop} hide={scrollDir === "down"}>
           <TxHashInput
             size={isTop ? "small" : "normal"}
             value={txHash || ""}
@@ -288,7 +294,7 @@ export default function Home() {
                 context: "source",
                 onSelect: (asset: ClientAsset | null) => {
                   setChainId(asset?.chainId || "");
-                   onSearch(txHash, asset?.chainId);
+                  onSearch(txHash, asset?.chainId);
                   NiceModal.hide(Modals.AssetAndChainSelectorModal);
                 },
                 overrideSelectedGroup: {
@@ -428,7 +434,8 @@ const StyledColumn = styled(Column)`
   gap: 10px;
 `;
 
-const SearchWrapper = styled.div<{ isTop: boolean }>`
+const SearchWrapper = styled.div<{ isTop: boolean; hide?: boolean }>`
+  z-index: 4;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -454,7 +461,7 @@ const SearchWrapper = styled.div<{ isTop: boolean }>`
   }
 
   position: fixed;
-  top: ${(props) => (props.isTop ? "48px" : "50%")};
+  top: ${(props) => (props.isTop ? (props.hide ? "-48px" : "48px") : "50%")};
   transform: translate(-50%, -50%);
 
   transition: all 0.2s ease-in-out;

@@ -44,14 +44,14 @@ export const Wrapper = ({ children }: { children: ReactNode }) => {
           display: "flex",
           flexDirection: "row",
           width: "100vw",
-          height: "100vh",
-          alignItems: "center",
+          minHeight: "100vh",
           justifyContent: "center",
           backgroundImage: `url('${
             theme === "dark" ? "/gobg-dark.svg" : "/gobg-light.svg"
-          }')`,
-          backgroundSize: "cover",
-          backgroundPosition: "bottom",
+            }')`,
+          backgroundRepeat: "repeat",
+          backgroundPosition: "top left",
+          paddingBottom: "100px",
         }}
       >
         <RegisterModals>
