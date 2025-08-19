@@ -19,6 +19,6 @@ export const useIsMobileScreenSize = (size = 767) => {
     return () => {
       window?.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [size]);
   return isMobileScreenSize;
 };

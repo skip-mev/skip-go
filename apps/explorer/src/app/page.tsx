@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useCallback } from "react";
+import React, { useCallback } from "react";
 import { Column, Row } from "@/components/Layout";
 import {
   getTransferEventsFromTxStatusResponse,
