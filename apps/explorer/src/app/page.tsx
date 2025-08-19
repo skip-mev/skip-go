@@ -37,7 +37,6 @@ import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionH
 import { CoinsIcon } from "../icons/CoinsIcon";
 import { Logo, TopRightComponent } from "../components/TopNav";
 import { ErrorCard, ErrorMessages } from "../components/ErrorCard";
-import { ErrorWarningType } from "@/state/errorWarning";
 import { ErrorBoundary } from "react-error-boundary";
 import { Bridge } from "../components/Bridge";
 
