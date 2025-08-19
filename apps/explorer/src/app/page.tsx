@@ -276,8 +276,9 @@ export default function Home() {
                   align="center"
                   justify="center"
                   onClick={() => setShowTokenDetails(!showTokenDetails)}
+                  style={{ visibility: transactionDetailsFromUrlParams ? "visible" : "hidden" }}
                 >
-                  {showTokenDetails ? "Close" : "View token details"}{" "}
+                  {showTokenDetails ? "Close" : "View token details"}
                   {!showTokenDetails && <CoinsIcon />}
                 </GhostButton>
               </Column>
