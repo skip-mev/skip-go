@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
 
-export const MAX_MOBILE_SCREEN_WIDTH = 767;
-
-export const useIsMobileScreenSize = () => {
+export const useIsMobileScreenSize = (size = 767) => {
   const [isMobileScreenSize, setIsMobileScreenSize] = useState(
-    typeof window !== "undefined" && window.innerWidth <= MAX_MOBILE_SCREEN_WIDTH,
+    typeof window !== "undefined" && window.innerWidth <= size,
   );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const handleResize = () => {
-      const isMobileScreenSize = window?.innerWidth <= MAX_MOBILE_SCREEN_WIDTH;
+      const isMobileScreenSize = window?.innerWidth <= size;
       setIsMobileScreenSize(isMobileScreenSize);
     };
 
@@ -21,6 +19,6 @@ export const useIsMobileScreenSize = () => {
     return () => {
       window?.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [size]);
   return isMobileScreenSize;
 };
