@@ -2,11 +2,11 @@
 import React, { useCallback } from "react";
 import { Column, Row } from "@/components/Layout";
 import {
-  transactionStatus,
   getTransferEventsFromTxStatusResponse,
   ClientTransferEvent,
   TxStatusResponse,
   TransactionDetails as TransactionDetailsType,
+  waitForTransaction,
 } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
 import {
@@ -58,14 +58,12 @@ export default function Home() {
     useState<TxStatusResponse | null>(null);
   const chains = useAtomValue(skipChainsAtom);
 
-  const [rawData, setRawData] = useState<string>("");
-
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const uniqueAssetsBySymbol = useAtomValue(uniqueAssetsBySymbolAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
-  const { transactionDetails: transactionDetailsFromUrlParams } =
-    useTransactionHistoryItemFromUrlParams();
+  const { transactionDetails: transactionDetailsFromUrlParams } = useTransactionHistoryItemFromUrlParams();
+  const [transactionStatuses, setTransactionStatuses] = useState<TxStatusResponse[]>([]);
 
   const uniqueTransfers = useMemo(() => {
     const seen = new Set<string>();
@@ -111,32 +109,29 @@ export default function Home() {
     setSkipClientConfig(defaultSkipClientConfig);
     setOnlyTestnets(false);
   }, [setSkipClientConfig, setOnlyTestnets]);
-
-  const getTxStatus = useCallback(
-    async (transactionDetails: TransactionDetailsType[] = []) => {
-      const txsToQuery = transactionDetails?.filter(
-        (tx) => tx.txHash !== undefined && tx.chainId !== undefined
-      );
-
-      const responses = await Promise.all(
-        txsToQuery?.map((tx) =>
-          transactionStatus({
-            txHash: tx.txHash ?? "",
-            chainId: tx.chainId ?? "",
-          })
-        )
-      );
-
-      setRawData(JSON.stringify(responses, null, 2));
-
-      const allTransferEvents =
-        getTransferEventsFromTxStatusResponse(responses);
-
-      setTransactionStatusResponse(responses[0]);
-      setTransferEvents(allTransferEvents);
-    },
-    []
-  );
+  
+  const getTxStatus = useCallback(async (transactionDetails: TransactionDetailsType[] = []) => {
+    const txsToQuery = transactionDetails?.filter((tx) => tx.txHash !== undefined && tx.chainId !== undefined);
+    
+    txsToQuery?.forEach((tx, index) => waitForTransaction({
+      txHash: tx.txHash ?? "",
+      chainId: tx.chainId ?? "",
+      doNotTrack: true,
+      onStatusUpdated: (status) => {
+        setTransactionStatuses(prev => {
+          const newStatuses = [...prev];
+          newStatuses[index] = status;
+          
+          const allTransferEvents = getTransferEventsFromTxStatusResponse(newStatuses);
+          setTransferEvents(allTransferEvents);
+          
+          setTransactionStatusResponse(newStatuses[0]);
+          
+          return newStatuses;
+        });
+      }
+    }))
+  }, []);
 
   useEffect(() => {
     if (transactionDetailsFromUrlParams) {
@@ -235,7 +230,7 @@ export default function Home() {
                 gap={5}
                 onClick={() => {
                   NiceModal.show(ExplorerModals.ViewRawDataModal, {
-                    data: rawData,
+                    data: JSON.stringify(Array.from(transactionStatuses.values()), null, 2),
                     onClose: () => {
                       console.log("ViewRawDataModal closed");
                     },

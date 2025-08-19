@@ -16,6 +16,7 @@ import { convertTokenAmountToHumanReadableAmount, getTruncatedAddress } from "@/
 import { useMemo } from "react";
 import { useOverallStatusLabelAndColor } from "../hooks/useOverallStatusLabelAndColor";
 import { Link } from "@/components/Button";
+import { loadingPulseAnimation } from "@/components/Container";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -70,7 +71,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const theme = useTheme();
   const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations, routeStatus } = useTransactionHistoryItemFromUrlParams();
 
-  const statusLabelAndColor = useOverallStatusLabelAndColor({ status: step === "Destination" ? routeStatus : status });
+  const statusLabelAndColor = useOverallStatusLabelAndColor({ status: routeStatus ?? status });
 
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
 
@@ -80,8 +81,8 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     if (step === "Destination") {
       return (
         <Badge
-          color={statusLabelAndColor?.color}
-          background={statusLabelAndColor?.background}>
+          color={ status !== "pending" ? statusLabelAndColor?.color : undefined}
+          background={status !== "pending" ? statusLabelAndColor?.background : undefined}>
           { statusLabelAndColor?.label }
         </Badge>
       )
@@ -155,15 +156,21 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
             <BridgeIcon color={theme.primary.background.normal}/>
             <Container padding={12} width="auto" borderRadius={12} gap={5} flexDirection="row">
               <SmallText normalTextColor>{ getTransferTypeLabel(transferType) }</SmallText>
-              <SmallText> <ClockIcon /> </SmallText>
-              <SmallText> {durationInMs ? convertSecondsToMinutesOrHours(durationInMs / 1000) : "Instant"}</SmallText>
+              {
+                durationInMs ? (
+                  <>
+                    <SmallText> <ClockIcon /> </SmallText>
+                    <SmallText> {convertSecondsToMinutesOrHours(durationInMs / 1000)}</SmallText>
+                  </>
+                ) : null
+              }
             </Container>
             <BridgeIcon color={theme.primary.background.normal} />
           </>
         )
       }
      
-      <TransferEventContainer padding={15} width={355} borderRadius={16} status={step === "Destination" ? status : undefined}>
+      <TransferEventContainer loading={status === "pending"} padding={15} width={355} borderRadius={16} status={step === "Destination" ? status : undefined}>
         <Row align="center" justify="space-between">
           <Badge> { step } </Badge>
           { renderStatusBadge }
@@ -199,8 +206,14 @@ const TransferEventDetailsCard = styled.div`
   border: ${({ theme }) => `1px solid ${theme.secondary.background.normal}`};
 `;
 
-const TransferEventContainer = styled(Container)<{ status?: string}>`
-    ${({ theme, status }) => {
+const TransferEventContainer = styled(Container)<{ status?: string, loading?: boolean }>`
+  ${({ status, theme, loading}) => {
+    if (loading) {
+      return loadingPulseAnimation({
+        active: true,
+      })
+    }
+
     switch (status) {
       case "completed":
         return `border: 2px solid ${theme.success.text}`;
@@ -211,5 +224,5 @@ const TransferEventContainer = styled(Container)<{ status?: string}>`
       default:
         return '';
     }
-  }};
+  }}
 `;

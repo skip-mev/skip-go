@@ -1,30 +1,34 @@
 import type { TransactionCallbacks } from "src/types/callbacks";
-import { transactionStatus } from "../api/postTransactionStatus";
+import { transactionStatus, type TxStatusResponse } from "../api/postTransactionStatus";
 import { wait } from "../utils/timer";
 import { trackTransaction } from "src/api/postTrackTransaction";
 import type { TxResult } from "src/types/client-types";
 
 export type WaitForTransactionProps = TxResult & {
   onTransactionTracked?: TransactionCallbacks["onTransactionTracked"];
+  doNotTrack?: boolean;
+  onStatusUpdated?: (status: TxStatusResponse) => void;
 };
 
 export const waitForTransaction = async ({
   chainId,
   txHash,
   explorerLink,
+  doNotTrack = false,
+  onStatusUpdated,
   onTransactionTracked,
   ...trackTxPollingOptions
 }: WaitForTransactionProps) => {
   try {
-    if (!explorerLink) {
+    if (!explorerLink && !doNotTrack) {
       const response = await trackTransaction({
         chainId: chainId,
         txHash: txHash,
         ...trackTxPollingOptions,
       });
       explorerLink = response.explorerLink;
+      await onTransactionTracked?.({ txHash, chainId, explorerLink });
     }
-    await onTransactionTracked?.({ txHash, chainId, explorerLink });
   } catch (error) {
     console.warn(`track failed for txHash:${txHash}, chainId: ${chainId}`);
   }
@@ -35,6 +39,7 @@ export const waitForTransaction = async ({
       chainId,
       txHash,
     });
+    onStatusUpdated?.(txStatusResponse);
 
     if (txStatusResponse.state === "STATE_COMPLETED_SUCCESS") {
       return txStatusResponse;
