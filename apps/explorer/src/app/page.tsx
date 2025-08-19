@@ -137,7 +137,7 @@ export default function Home() {
           const allTransferEvents = getTransferEventsFromTxStatusResponse(newStatuses);
           setTransferEvents(allTransferEvents);
           
-          setTransactionStatusResponse(newStatuses[0]);
+          setTransactionStatusResponse(newStatuses[newStatuses.length - 1]);
           
           return newStatuses;
         });
@@ -256,17 +256,7 @@ export default function Home() {
         />
       </Row>
       {
-        errorDetails ? (
-          <Column width={355} align="flex-end">
-            <GhostButton
-              gap={5}
-              onClick={showRawDataModal}
-            >
-              View raw data <HamburgerIcon />
-            </GhostButton>
-            <ErrorCard errorMessage={errorDetails.errorMessage} onRetry={onSearch} />
-          </Column>
-        ) : uniqueTransfers.length > 0 ? (
+        uniqueTransfers.length > 0 ? (
           <>
             <Row gap={16}>
               <Column align="flex-end" width={355}>
@@ -319,6 +309,8 @@ export default function Home() {
                         explorerLink={transfer.explorerLink}
                         transferType={transfer.transferType}
                         status={transfer.status}
+                        txHash={transfer.txHash}
+                        state={transactionStatusResponse?.state}
                         step={transfer.step}
                         index={transfer.index}
                       />
@@ -328,6 +320,16 @@ export default function Home() {
               </Column>
             </Row>
           </>
+        ) : errorDetails ? (
+          <Column width={355} align="flex-end">
+            <GhostButton
+              gap={5}
+              onClick={showRawDataModal}
+            >
+              View raw data <HamburgerIcon />
+            </GhostButton>
+            <ErrorCard errorMessage={errorDetails.errorMessage} onRetry={onSearch} />
+          </Column>
         ) : null
       }
     </Column>
