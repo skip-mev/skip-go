@@ -102,7 +102,6 @@ export default function Home() {
             transferType: event.transferType ?? "",
             status: event.status,
             step: getStep(index, fromOrTo),
-            txHash: event[`${fromOrTo}TxHash`] ?? "",
             durationInMs: event.durationInMs ?? 0,
             index,
           });
@@ -222,6 +221,23 @@ export default function Home() {
     
   }, [errorDetails, transactionStatuses]);
 
+  const onReindex = async () => {
+    try {
+      await fetch('https://api.skip.build/api/tx/retry_track', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tx_hash: txHash,
+          chain_id: chainId,
+        }),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <Column gap={10} align="center">
       <Logo />
@@ -309,10 +325,10 @@ export default function Home() {
                         explorerLink={transfer.explorerLink}
                         transferType={transfer.transferType}
                         status={transfer.status}
-                        txHash={transfer.txHash}
                         state={transactionStatusResponse?.state}
                         step={transfer.step}
                         index={transfer.index}
+                        onReindex={onReindex}
                       />
                     </ErrorBoundary>
                   </>

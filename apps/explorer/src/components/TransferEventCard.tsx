@@ -25,9 +25,9 @@ export type TransferEventCardProps = {
   status?: TransferEventStatus;
   state?: TransactionState;
   step: Step;
-  txHash?: string;
   durationInMs?: number;
   index: number;
+  onReindex?: () => void;
 }
 
 const routedStatusMap: Record<TransferEventStatus, string> = {
@@ -40,14 +40,14 @@ const routedStatusMap: Record<TransferEventStatus, string> = {
   incomplete: "Incomplete",
 }
 
-export const TransferEventCard = ({ chainId, explorerLink, transferType, status, state, step, txHash, index }: TransferEventCardProps) => {
+export const TransferEventCard = ({ chainId, explorerLink, transferType, status, state, step, index, onReindex }: TransferEventCardProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
   const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations, routeStatus } = useTransactionHistoryItemFromUrlParams();
 
   const statusLabelAndColor = useOverallStatusLabelAndColor({ status: routeStatus ?? status });
   const stateLabelAndColor = useOverallStatusLabelAndColor({ state });
-  const stateAbandoned = state === "STATE_ABANDONED" && step === "Destination";
+  const stateAbandoned = true || state === "STATE_ABANDONED" && step === "Destination";
 
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
 
@@ -89,23 +89,6 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     }
 
   }, [stateAbandoned, status, step]);
-
-  const onReindex = async () => {
-    try {
-      await fetch('https://api.skip.build/api/tx/retry_track', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          tx_hash: txHash,
-          chain_id: chainId,
-        }),
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   const renderTransferEventDetails = useMemo(() => {
     const getCurrentAsset = () => {
