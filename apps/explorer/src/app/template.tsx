@@ -20,7 +20,7 @@ export default function Template({ children }: { children: ReactNode }) {
           <NiceModal.Provider>
             <Wrapper>
               {children}
-              <ToggleThemeButton />
+              {/* <ToggleThemeButton /> */}
             </Wrapper>
           </NiceModal.Provider>
         </Provider>
