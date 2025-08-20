@@ -8,14 +8,24 @@ export const TxHashInput = ({
   size = "normal",
   value,
   onChange,
+  openModal,
 }: {
   size: "small" | "normal";
   value?: string;
   onChange?: (value: string) => void;
+  openModal?: () => void;
 }) => {
   const theme = useTheme();
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Tab") {
+      event.preventDefault();
+      openModal?.();
+    }
+  };
+
   return (
-    <StyledWrapper size={size}>
+    <InputWrapper size={size}>
       <SearchIcon color={theme.primary.text.lowContrast} />
       <StyledInput
         type="text"
@@ -23,12 +33,16 @@ export const TxHashInput = ({
         size={size}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
+        onKeyDown={onKeyDown}
       />
-    </StyledWrapper>
+    </InputWrapper>
   );
 };
 
-export const StyledWrapper = styled(Row) <{ size: "normal" | "small", isClickable?: boolean; }>`
+export const StyledWrapper = styled(Row)<{
+  size: "normal" | "small";
+  isClickable?: boolean;
+}>`
   cursor: ${(props) => (props.isClickable ? "pointer" : "default")};
   align-items: center;
   background-color: ${(props) => props.theme.primary.background.normal};
@@ -36,12 +50,19 @@ export const StyledWrapper = styled(Row) <{ size: "normal" | "small", isClickabl
   height: ${(props) => (props.size === "normal" ? "64px" : "48px")};
   padding: ${(props) => (props.size === "normal" ? "0px 20px" : "0px 16px")};
   border-radius: ${(props) => (props.size === "normal" ? "20px" : "12px")};
-  @media (max-width: 767px) {
-    gap: 12px;
-    height: 48px;
-    border-radius: 16px;
-  }
   transition: all 0.2s ease-in-out;
+  flex: 1;
+  @media (max-width: 1023px) {
+    flex: none;
+  }
+`;
+
+const InputWrapper = styled(StyledWrapper)`
+  flex: 1.8;
+
+  @media (max-width: 1023px) {
+    flex: none;
+  }
 `;
 
 const StyledInput = styled.input<{
@@ -54,11 +75,14 @@ const StyledInput = styled.input<{
 
   /* Default font sizes */
   font-size: ${(props) => (props.size === "normal" ? "24px" : "16px")};
-  @media (max-width: 767px) {
-    font-size: 16px;
-  }
 
-  font-weight: 400;
+  font-family: "ABCDiatype", sans-serif;
+  font-weight: 500;
+  ::placeholder {
+    color: ${(props) => props.theme.primary.text.normal};
+    font-weight: 500;
+    font-size: ${(props) => (props.size === "normal" ? "24px" : "16px")};
+  }
   letter-spacing: -0.01em;
   width: 100%;
   ${({ disabled }) => disabled && "cursor: not-allowed"};
