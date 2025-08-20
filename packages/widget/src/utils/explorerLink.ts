@@ -63,8 +63,8 @@ export const createSkipExplorerLink = (
   const initialTxChainId = transactionDetails?.[0]?.chainId;
 
   if (base64ExplorerData) {
-    return `https://explorer.skip.build/?data=${base64ExplorerData}`;
+    return `https://skip-go-explorer-ddru.vercel.app/?data=${base64ExplorerData}`;
   }
 
-  return `https://explorer.skip.build/?tx_hash=${txHashCommaSeperatedList}&chain_id=${initialTxChainId}${isTestnet ? "&is_testnet=true" : ""}`;
+  return `https://skip-go-explorer-ddru.vercel.app/?tx_hash=${txHashCommaSeperatedList}&chain_id=${initialTxChainId}${isTestnet ? "&is_testnet=true" : ""}`;
 };
