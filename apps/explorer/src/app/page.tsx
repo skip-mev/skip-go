@@ -107,7 +107,6 @@ export default function Home() {
             transferType: event.transferType ?? "",
             status: event.status,
             step: getStep(index, fromOrTo),
-            txHash: event[`${fromOrTo}TxHash`] ?? "",
             durationInMs: event.durationInMs ?? 0,
             index,
           });
@@ -260,6 +259,24 @@ export default function Home() {
     }
   }, [errorDetails, transactionStatuses]);
 
+  const onReindex = async () => {
+    try {
+      await fetch('https://api.skip.build/v2/tx/retry_track', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tx_hash: txHash,
+          chain_id: chainId,
+        }),
+      });
+      onSearch();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const isTop = useMemo(() => {
     return (
       Boolean(
@@ -328,17 +345,7 @@ export default function Home() {
         </SearchTopRight>
       )}
 
-      {errorDetails ? (
-        <Column width={355} align="flex-end">
-          <GhostButton gap={5} onClick={showRawDataModal}>
-            View raw data <HamburgerIcon />
-          </GhostButton>
-          <ErrorCard
-            errorMessage={errorDetails.errorMessage}
-            onRetry={onSearch}
-          />
-        </Column>
-      ) : uniqueTransfers.length > 0 ? (
+      { uniqueTransfers.length > 0 ? (
         <StyledColumn>
           <Row gap={16}>
             <Column align="flex-end" width={355}>
@@ -408,6 +415,16 @@ export default function Home() {
             </Column>
           </Row>
         </StyledColumn>
+      ) : errorDetails ? (
+        <Column width={355} align="flex-end">
+          <GhostButton gap={5} onClick={showRawDataModal}>
+            View raw data <HamburgerIcon />
+          </GhostButton>
+          <ErrorCard
+            errorMessage={errorDetails.errorMessage}
+            onRetry={onSearch}
+          />
+        </Column>
       ) : null}
     </>
   );

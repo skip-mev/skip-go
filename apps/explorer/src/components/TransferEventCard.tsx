@@ -3,8 +3,8 @@ import { Container } from "@/components/Container";
 import { Column, Row } from "@/components/Layout";
 import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "@/jotai";
-import { Text, SmallText } from "@/components/Typography";
-import { TransferEventStatus, TransferType } from "@skip-go/client";
+import { Text, SmallText, SmallTextButton } from "@/components/Typography";
+import { TransactionState, TransferEventStatus, TransferType } from "@skip-go/client";
 import Image from "next/image";
 import { formatDisplayAmount } from "@/utils/number";
 import { styled } from "@/styled-components";
@@ -23,10 +23,11 @@ export type TransferEventCardProps = {
   explorerLink: string;
   transferType: TransferType | string;
   status?: TransferEventStatus;
+  state?: TransactionState;
   step: Step;
-  txHash?: string;
   durationInMs?: number;
   index: number;
+  onReindex?: () => void;
 }
 
 const routedStatusMap: Record<TransferEventStatus, string> = {
@@ -39,36 +40,55 @@ const routedStatusMap: Record<TransferEventStatus, string> = {
   incomplete: "Incomplete",
 }
 
-export const TransferEventCard = ({ chainId, explorerLink, transferType, status, step, index }: TransferEventCardProps) => {
+export const TransferEventCard = ({ chainId, explorerLink, transferType, status, state, step, index, onReindex }: TransferEventCardProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
   const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations, routeStatus } = useTransactionHistoryItemFromUrlParams();
 
   const statusLabelAndColor = useOverallStatusLabelAndColor({ status: routeStatus ?? status });
+  const stateLabelAndColor = useOverallStatusLabelAndColor({ state });
+  const stateAbandoned = state === "STATE_ABANDONED" && step === "Destination";
 
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
 
   const userAddress = userAddresses?.find((address) => address.chainId === chainId)?.address;
 
+
   const renderStatusBadge = useMemo(() => {
+    if (stateAbandoned) {
+      return (
+        <Badge color={stateLabelAndColor?.color} background={stateLabelAndColor?.background}>{stateLabelAndColor?.label}</Badge>
+      )
+    }
     if (step === "Destination") {
       return (
         <Badge
-          color={ status !== "pending" ? statusLabelAndColor?.color : undefined}
+          color={status !== "pending" ? statusLabelAndColor?.color : undefined}
           background={status !== "pending" ? statusLabelAndColor?.background : undefined}>
-          { statusLabelAndColor?.label }
+          {statusLabelAndColor?.label}
         </Badge>
       )
     }
     if (status) {
       return (
         <Badge flexDirection="row" gap={5} align="center">
-          { routedStatusMap[status] }
-          { status === "completed" && <GreenDot /> }
+          {routedStatusMap[status]}
+          {status === "completed" && <GreenDot />}
         </Badge>
       )
     }
-  }, [status, statusLabelAndColor?.background, statusLabelAndColor?.color, statusLabelAndColor?.label, step]);
+  }, [stateAbandoned, stateLabelAndColor?.background, stateLabelAndColor?.color, stateLabelAndColor?.label, status, statusLabelAndColor?.background, statusLabelAndColor?.color, statusLabelAndColor?.label, step]);
+
+  const containerStatus = useMemo(() => {
+    if (stateAbandoned) {
+      return "warning";
+    }
+
+    if (step === "Destination") {
+      return status;
+    }
+
+  }, [stateAbandoned, status, step]);
 
   const renderTransferEventDetails = useMemo(() => {
     const getCurrentAsset = () => {
@@ -120,26 +140,37 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       </>
     )
   }, [userAddress, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId, step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
-  
+
   return (
-    <TransferEventContainer loading={status === "pending"} padding={15} width={355} borderRadius={16} status={step === "Destination" ? status : undefined}>
+    <TransferEventContainer loading={status === "pending" && !stateAbandoned} padding={15} width={355} borderRadius={16} status={containerStatus}>
       <Row align="center" justify="space-between">
-        <Badge> { step } </Badge>
-        { renderStatusBadge }
+        <Badge> {step} </Badge>
+        {renderStatusBadge}
       </Row>
       <TransferEventDetailsCard>
         <Row justify="space-between">
           <Row gap={15}>
-            { renderTransferEventDetails }
+            {renderTransferEventDetails}
           </Row>
-          <Badge> { getTransferTypeLabel(transferType) } </Badge>
+          <Badge> {getTransferTypeLabel(transferType)} </Badge>
         </Row>
       </TransferEventDetailsCard>
-      <SmallText>
-        <Link href={explorerLink} target="_blank" justify="center">
-          View on Mintscan →
-        </Link>
-      </SmallText>
+      {
+        stateAbandoned ? (
+          <SmallTextButton
+            textAlign="center"
+            onClick={onReindex}
+            color={stateLabelAndColor?.color}>
+            Reindex →
+          </SmallTextButton>
+        ) : (
+          <SmallText>
+            <Link href={explorerLink} target="_blank" justify="center">
+              View on Mintscan →
+            </Link>
+          </SmallText>
+        )
+      }
     </TransferEventContainer>
   );
 };
@@ -157,8 +188,8 @@ const TransferEventDetailsCard = styled.div`
   border: ${({ theme }) => `1px solid ${theme.secondary.background.normal}`};
 `;
 
-const TransferEventContainer = styled(Container)<{ status?: string, loading?: boolean }>`
-  ${({ status, theme, loading}) => {
+const TransferEventContainer = styled(Container) <{ status?: string, loading?: boolean }>`
+  ${({ status, theme, loading }) => {
     if (loading) {
       return loadingPulseAnimation({
         active: true,
