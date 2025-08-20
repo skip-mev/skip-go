@@ -128,13 +128,9 @@ export default function Home() {
 
   const getTxStatus = useCallback(
     async (transactionDetails: TransactionDetailsType[] = []) => {
-      console.log("getTxStatus");
-
-      // Cancel any currently running transactions BEFORE creating new ones
       if (cancelStatusPolling.length > 0) {
-        console.log("Cancelling", cancelStatusPolling.length, "previous transactions");
         cancelStatusPolling.forEach(response => response.cancel());
-        setCancelStatusPolling([]); // Clear the old ones immediately
+        setCancelStatusPolling([]);
       }
 
       const txsToQuery = transactionDetails?.filter(
@@ -180,7 +176,6 @@ export default function Home() {
         })
       ) || [];
 
-      // Store the new transactions
       setCancelStatusPolling(responses);
     },
     [cancelStatusPolling]
@@ -300,10 +295,6 @@ export default function Home() {
   return (
     <>
       <Logo />
-      <Button onClick={() => {
-        console.log(cancelStatusPolling);
-        cancelStatusPolling.forEach(response => response.cancel());
-      }}>Abort</Button>
       <TopRightComponent />
       {!isSearchAModal ? (
         <SearchWrapper isTop={isTop}>
