@@ -31,49 +31,61 @@ import {
   getRouteWithGasOnReceive, 
   executeMultipleRoutes,
   executeRoute,
+  type RouteRequest,
   type RouteResponse,
   type UserAddress
 } from "@skip-go/client";
 
 async function swapWithGasOnReceive() {
   try {
-    // Step 1: Get your initial route
-    const originalRoute = await route({
-    amountIn: "1000000", // 1 OSMO
-    sourceAssetChainId: "osmosis-1",
-    sourceAssetDenom: "uosmo",
-    destAssetChainId: "42161", // Arbitrum
-    destAssetDenom: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1", // WETH
-    smartRelay: true
-  });
-
-  // Step 2: Automatically split into main and gas routes
-  const { mainRoute, gasRoute } = await getRouteWithGasOnReceive({
-    routeResponse: originalRoute,
-    routeRequest: {
-      amountIn: "1000000",
+    // Step 1: Define your route request
+    const routeRequest = {
+      amountIn: "1000000", // 1 OSMO
       sourceAssetChainId: "osmosis-1",
       sourceAssetDenom: "uosmo",
-      destAssetChainId: "42161",
-      destAssetDenom: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+      destAssetChainId: "42161", // Arbitrum
+      destAssetDenom: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1", // WETH
       smartRelay: true
-    }
-  });
+    };
 
-  // Step 3: Get user addresses for required chains
-  const userAddresses = [
-    { chainId: "osmosis-1", address: "osmo1..." },
-    { chainId: "42161", address: "0x..." }
-  ];
+    // Step 2: Get your initial route
+    const originalRoute = await route(routeRequest);
 
-  // Step 4: Execute routes
-  if (gasRoute) {
+    // Step 3: Automatically split into main and gas routes
+    const { mainRoute, gasRoute } = await getRouteWithGasOnReceive({
+      routeResponse: originalRoute,
+      routeRequest
+    });
+
+    // Step 4: Get user addresses based on required chains
+    // Note: mainRoute and gasRoute may require different chains
+    const mainRouteAddresses = mainRoute.requiredChainAddresses.map(chainId => ({
+      chainId,
+      address: getUserAddressForChain(chainId) // Your function to get user's address
+    }));
+    
+    const gasRouteAddresses = gasRoute?.requiredChainAddresses.map(chainId => ({
+      chainId, 
+      address: getUserAddressForChain(chainId)
+    }));
+    
+    // Example helper function:
+    // function getUserAddressForChain(chainId: string): string {
+    //   const addresses = {
+    //     "osmosis-1": "osmo1...",
+    //     "42161": "0x..."
+    //   };
+    //   return addresses[chainId] || throw new Error(`No address for chain ${chainId}`);
+    // }
+
+  // Step 5: Execute routes
+  if (gasRoute && gasRouteAddresses) {
     // Execute both routes together
     await executeMultipleRoutes({
       route: { mainRoute, feeRoute: gasRoute },
       userAddresses: {
-        mainRoute: userAddresses,
-        feeRoute: userAddresses // Same addresses for both routes
+        mainRoute: mainRouteAddresses,
+        feeRoute: gasRouteAddresses // May be different chains than mainRoute
       },
       slippageTolerancePercent: {
         mainRoute: "1",
@@ -102,7 +114,7 @@ async function swapWithGasOnReceive() {
     // No gas route needed, execute original route
     await executeRoute({
       route: originalRoute,
-      userAddresses,
+      userAddresses: mainRouteAddresses,
       slippageTolerancePercent: "1",
       getCosmosSigningClient: async (chainId) => {
         return yourCosmosWallet.getSigningClient(chainId);
@@ -125,7 +137,7 @@ The function automatically:
 2. Checks source chain support (excludes Ethereum mainnet and Sepolia testnet)
 3. Verifies the destination asset isn't already a fee asset
 4. Calculates appropriate gas amounts:
-   - **Cosmos chains**: $0.10 USD worth of native tokens
+   - **Cosmos chains**: Average gas price × 3 (or $0.10 USD fallback if gas price unavailable)
    - **EVM L2 chains**: $2.00 USD worth of native tokens
 5. Creates a gas route to obtain native tokens
 6. Adjusts the main route amount accordingly
