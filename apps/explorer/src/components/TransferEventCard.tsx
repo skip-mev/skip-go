@@ -169,7 +169,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       </SmallText>
     )
 
-  }, [stateAbandoned, transferAssetRelease, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
+  }, [currentAsset?.asset?.denom, currentAsset?.asset?.chainId, currentAsset?.amount, stateAbandoned, transferAssetRelease, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
 
   return (
     <TransferEventContainer loading={status === "pending" && !stateAbandoned} padding={15} width={355} borderRadius={16} status={containerStatus}>

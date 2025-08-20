@@ -25,7 +25,7 @@ import { useSetAtom, useAtomValue } from "@/jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { NiceModal, Modals } from "@/nice-modal";
-import { Button, GhostButton } from "@/components/Button";
+import { GhostButton } from "@/components/Button";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
 import { TokenDetails } from "../components/TokenDetails";
 import { ExplorerModals } from "../constants/modal";
@@ -40,7 +40,6 @@ import { ErrorCard, ErrorMessages } from "../components/ErrorCard";
 import { ErrorBoundary } from "react-error-boundary";
 import { Bridge } from "../components/Bridge";
 import { styled } from "@/styled-components";
-import Link from "next/link";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
