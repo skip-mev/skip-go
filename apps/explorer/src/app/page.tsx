@@ -178,6 +178,22 @@ export default function Home() {
     [cancelStatusPolling]
   );
 
+  const resetState = useCallback(() => {
+    cancelStatusPolling.forEach(response => response.cancel());
+    setCancelStatusPolling([]);
+    
+    setTxHashes(null);
+    setChainIds(null);
+    setTxHash("");
+    setChainId("");
+    
+    setTransactionStatuses([]);
+    setTransferEvents([]);
+    setErrorDetails(undefined);
+    setTransactionStatusResponse(null);
+
+  }, [cancelStatusPolling, setTxHashes, setChainIds]);
+
   const onSearch = useCallback((_txhash?: string, _chainId?:string) => {
     setTransactionStatuses([]);
     setTransferEvents([]);
@@ -202,7 +218,7 @@ export default function Home() {
       getTxStatus([{ txHash: hash, chainId: id }]);
     }
 
-  }, [txHash, chainId, transactionDetailsFromUrlParams, getTxStatus, setTxHashes, setChainIds, setData]);
+  }, [txHash, chainId, transactionDetailsFromUrlParams, setTxHashes, setChainIds, setData, getTxStatus]);
 
   useEffect(() => {
     if (transactionDetailsFromUrlParams) {
@@ -344,15 +360,13 @@ export default function Home() {
         </SearchWrapper>
       ) : (
         <SearchTopRight>
-          <Link href="/">
-            <SearchButton size="small" iconOnly />
-          </Link>
+           <SearchButton size="small" iconOnly onClick={() => resetState()} />
         </SearchTopRight>
       )}
 
       { uniqueTransfers.length > 0 ? (
         <StyledColumn>
-          <Row gap={16}>
+          <Row gap={16} flexDirection={isMobileScreenSize ? "column" : "row"}>
             <Column align="flex-end" width={355}>
               <GhostButton
                 gap={5}
