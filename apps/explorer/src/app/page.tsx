@@ -117,7 +117,7 @@ export default function Home() {
             step: getStep(index, fromOrTo),
             durationInMs: event.durationInMs ?? 0,
             index,
-            transferAssetRelease: transferAssetReleaseChainCount === 1 ? transactionStatusResponse?.transferAssetRelease : undefined,
+            transferAssetRelease: transferAssetReleaseChainCount === 1 && transactionStatusResponse?.transferAssetRelease?.chainId === chainId ? transactionStatusResponse?.transferAssetRelease : undefined,
           });
         }
       };
