@@ -57,6 +57,8 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
 
   const userAddress = userAddresses?.find((address) => address.chainId === chainId)?.address;
 
+  const showTransferAssetRelease = transferAssetRelease && step !== "Destination";
+
   const renderStatusBadge = useMemo(() => {
     if (stateAbandoned) {
       return (
@@ -155,7 +157,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       )
     }
 
-    if (transferAssetRelease) {
+    if (showTransferAssetRelease) {
       return (
         <SmallText>
           <Link href={skipGoLink} color={theme.brandColor} target="_blank" justify="center">
@@ -173,14 +175,14 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       </SmallText>
     )
 
-  }, [skipAssets?.data, transferAssetRelease, stateAbandoned, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
+  }, [skipAssets?.data, transferAssetRelease?.denom, transferAssetRelease?.chainId, transferAssetRelease?.amount, stateAbandoned, showTransferAssetRelease, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
 
   return (
     <TransferEventContainer loading={status === "pending" && !stateAbandoned} padding={15} width={355} borderRadius={16} status={containerStatus}>
       <Row align="center" justify="space-between">
         <Row gap={8} align="center" justify="center">
           <Badge> {step} </Badge>
-          {transferAssetRelease && (
+          {showTransferAssetRelease && (
             <Tooltip content={`Your assets were released as ${transferAssetReleaseAsset?.symbol} on ${transferAssetReleaseAsset?.chainName}`}>
               <Badge color={theme.brandColor} gap={5} align="center" justify="center">
                 Your tokens
