@@ -7,10 +7,9 @@ This guide explains how to implement Gas on Receive functionality when building 
 
 ## Overview
 
-Gas on Receive prevents users from getting "stuck" with assets they can't use by automatically providing a small amount of native gas tokens on the destination chain. The client library provides two approaches:
+Gas on Receive prevents users from getting "stuck" with assets they can't use by automatically providing a small amount of native gas tokens on the destination chain. 
 
-1. **Automatic** - Use `getRouteWithGasOnReceive` to automatically split routes
-2. **Manual** - Full control over gas balance detection and route creation
+The client library provides the `getRouteWithGasOnReceive` function that handles all the complexity for you, or you can implement custom logic if you need specific behavior.
 
 ## Prerequisites
 
@@ -125,16 +124,18 @@ The function automatically:
 1. Checks if the destination chain is supported (excludes Solana chains)
 2. Checks source chain support (excludes Ethereum mainnet and Sepolia testnet)
 3. Verifies the destination asset isn't already a fee asset
-4. Calculates appropriate gas amounts ($0.10 for Cosmos, $2.00 for EVM L2s)
+4. Calculates appropriate gas amounts:
+   - **Cosmos chains**: $0.10 USD worth of native tokens
+   - **EVM L2 chains**: $2.00 USD worth of native tokens
 5. Creates a gas route to obtain native tokens
 6. Adjusts the main route amount accordingly
 7. Returns both routes, or the original route as mainRoute if gas route creation fails
 
 **Note**: If gas route creation fails for any reason, the function returns the original route as `mainRoute` with `gasRoute` as undefined, allowing your swap to proceed without gas-on-receive.
 
-## Manual Implementation Guide
+## Custom Implementation Guide
 
-For full control over the Gas on Receive logic:
+If you need to customize the Gas on Receive behavior beyond what `getRouteWithGasOnReceive` provides:
 
 ### Step 1: Check Destination Gas Balance
 
@@ -223,7 +224,7 @@ async function calculateGasAmount(
 }
 ```
 
-### Step 3: Create Routes Manually
+### Step 3: Create Routes with Custom Logic
 
 ```typescript
 import { route } from "@skip-go/client";
