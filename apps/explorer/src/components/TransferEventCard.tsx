@@ -16,6 +16,7 @@ import { Link } from "@/components/Button";
 import { loadingPulseAnimation } from "@/components/Container";
 import { getTransferTypeLabel } from "./Bridge";
 import { CoinsIcon } from "../icons/CoinsIcon";
+import { Tooltip } from "@/components/Tooltip";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -141,15 +142,20 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     )
   }, [currentAsset, userAddress, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId]);
 
+  const transferAssetReleaseAsset = useMemo(() => {
+    return skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId);
+  }, [skipAssets?.data, transferAssetRelease]);
+
   const renderBottomButton = useMemo(() => {
-    const skipGoLink = `https://go.skip.build/?src_asset=${currentAsset?.asset?.denom}&src_chain=${currentAsset?.asset?.chainId}&amount_in=${currentAsset?.amount}`;
+    const decimals = skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId)?.decimals;
+    const skipGoLink = `https://go.skip.build/?src_asset=${transferAssetRelease?.denom}&src_chain=${transferAssetRelease?.chainId}&amount_in=${transferAssetRelease?.amount ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount, decimals) : undefined}`;
     if (stateAbandoned) {
       return (
         <SmallTextButton onClick={onReindex} textAlign="center" color={stateLabelAndColor?.color}>Reindex →</SmallTextButton>
       )
     }
 
-    if (transferAssetRelease && currentAsset?.asset?.denom === transferAssetRelease?.denom && currentAsset?.asset?.chainId === transferAssetRelease?.chainId) {
+    if (transferAssetRelease) {
       return (
         <SmallText>
           <Link href={skipGoLink} color={theme.brandColor} target="_blank" justify="center">
@@ -167,14 +173,21 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       </SmallText>
     )
 
-  }, [currentAsset?.asset?.denom, currentAsset?.asset?.chainId, currentAsset?.amount, stateAbandoned, transferAssetRelease, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
+  }, [skipAssets?.data, transferAssetRelease, stateAbandoned, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
 
   return (
     <TransferEventContainer loading={status === "pending" && !stateAbandoned} padding={15} width={355} borderRadius={16} status={containerStatus}>
       <Row align="center" justify="space-between">
         <Row gap={8} align="center" justify="center">
           <Badge> {step} </Badge>
-          {transferAssetRelease && <Badge color={theme.brandColor} gap={5} align="center" justify="center"> Your tokens <CoinsIcon /></Badge>}
+          {transferAssetRelease && (
+            <Tooltip content={`Your assets were released as ${transferAssetReleaseAsset?.symbol} on ${transferAssetReleaseAsset?.chainName}`}>
+              <Badge color={theme.brandColor} gap={5} align="center" justify="center">
+                Your tokens
+                <CoinsIcon />
+              </Badge>
+            </Tooltip>
+          )}
         </Row>
         {renderStatusBadge}
       </Row>

@@ -63,6 +63,8 @@ export default function Home() {
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
     []
   );
+
+  const { operations } = useTransactionHistoryItemFromUrlParams();
   const [transactionStatusResponse, setTransactionStatusResponse] =
     useState<TxStatusResponse | null>(null);
   const chains = useAtomValue(skipChainsAtom);
@@ -107,6 +109,18 @@ export default function Home() {
         fromOrTo: "from" | "to"
       ) => {
 
+        const assetMatches = operations[index]?.denom === transactionStatusResponse?.transferAssetRelease?.denom && operations[index]?.chainId === transactionStatusResponse?.transferAssetRelease?.chainId;
+
+        const getTransferAssetRelease = () => {
+          if (!transactionStatusResponse?.transferAssetRelease?.released) return;
+          if (assetMatches) {
+            return transactionStatusResponse?.transferAssetRelease;
+          }
+          if (transferAssetReleaseIndex === index && transferAssetReleaseChainId === chainId) {
+            return transactionStatusResponse?.transferAssetRelease;
+          }
+        }
+
         if (chainId && !seen.has(chainId)) {
           seen.add(chainId);
           transfers.push({
@@ -117,7 +131,7 @@ export default function Home() {
             step: getStep(index, fromOrTo),
             durationInMs: event.durationInMs ?? 0,
             index,
-            transferAssetRelease: transferAssetReleaseIndex === index && transactionStatusResponse?.transferAssetRelease?.chainId === chainId ? transactionStatusResponse?.transferAssetRelease : undefined,
+            transferAssetRelease: getTransferAssetRelease(),
           });
         }
       };
@@ -127,7 +141,7 @@ export default function Home() {
     });
 
     return transfers;
-  }, [transactionStatusResponse?.transferAssetRelease, transferEvents]);
+  }, [operations, transactionStatusResponse?.transferAssetRelease, transferEvents]);
 
   useEffect(() => {
     setSkipClientConfig(defaultSkipClientConfig);
