@@ -299,6 +299,11 @@ export default function Home() {
             size={isTop ? "small" : "normal"}
             value={txHash || ""}
             onChange={(v) => setTxHash(v)}
+            onSearch={() => {
+              if (txHash && chainId) {
+                onSearch();
+              }
+            }}
             openModal={() => {
               NiceModal.show(Modals.AssetAndChainSelectorModal, {
                 context: "source",
