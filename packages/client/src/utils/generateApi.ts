@@ -305,6 +305,7 @@ export function pollingApi<K extends ValidApiMethodKeys>({
 
     while (attempt < maxRetries) {
       if (isCancelled?.()) {
+        console.log("Polling was cancelled");
         throw new Error("Polling was cancelled");
       }
       try {

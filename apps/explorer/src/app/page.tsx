@@ -130,8 +130,11 @@ export default function Home() {
     async (transactionDetails: TransactionDetailsType[] = []) => {
       console.log("getTxStatus");
 
+      // Cancel any currently running transactions BEFORE creating new ones
       if (cancelStatusPolling.length > 0) {
+        console.log("Cancelling", cancelStatusPolling.length, "previous transactions");
         cancelStatusPolling.forEach(response => response.cancel());
+        setCancelStatusPolling([]); // Clear the old ones immediately
       }
 
       const txsToQuery = transactionDetails?.filter(
@@ -177,8 +180,7 @@ export default function Home() {
         })
       ) || [];
 
-      cancelStatusPolling.forEach(response => response.cancel());
-
+      // Store the new transactions
       setCancelStatusPolling(responses);
     },
     [cancelStatusPolling]
@@ -417,6 +419,7 @@ export default function Home() {
                       explorerLink={transfer.explorerLink}
                       transferType={transfer.transferType}
                       status={transfer.status}
+                      state={transactionStatusResponse?.state}
                       step={transfer.step}
                       index={transfer.index}
                       onReindex={onReindex}
