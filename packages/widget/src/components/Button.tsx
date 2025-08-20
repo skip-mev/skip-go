@@ -88,7 +88,7 @@ export const PillButton = styled(Button)`
 export const Link = styled(Button).attrs({
   as: "a",
 })`
-  color: ${({ theme }) => theme.primary.text.lowContrast};
+  color: ${({ color, theme }) => color ?? theme.primary.text.lowContrast};
   text-decoration: none;
 `;
 

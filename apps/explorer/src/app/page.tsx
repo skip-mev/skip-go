@@ -100,6 +100,7 @@ export default function Home() {
         explorerLink: string | undefined,
         fromOrTo: "from" | "to"
       ) => {
+
         if (chainId && !seen.has(chainId)) {
           seen.add(chainId);
           transfers.push({
@@ -110,6 +111,7 @@ export default function Home() {
             step: getStep(index, fromOrTo),
             durationInMs: event.durationInMs ?? 0,
             index,
+            transferAssetRelease: transactionStatusResponse?.transferAssetRelease?.chainId === chainId ? transactionStatusResponse?.transferAssetRelease : undefined,
           });
         }
       };
@@ -119,7 +121,7 @@ export default function Home() {
     });
 
     return transfers;
-  }, [transferEvents]);
+  }, [transactionStatusResponse?.transferAssetRelease, transferEvents]);
 
   useEffect(() => {
     setSkipClientConfig(defaultSkipClientConfig);
@@ -421,13 +423,8 @@ export default function Home() {
                     }
                   >
                     <TransferEventCard
-                      chainId={transfer.chainId}
-                      explorerLink={transfer.explorerLink}
-                      transferType={transfer.transferType}
-                      status={transfer.status}
+                      {...transfer}
                       state={transactionStatusResponse?.state}
-                      step={transfer.step}
-                      index={transfer.index}
                       onReindex={onReindex}
                     />
                   </ErrorBoundary>
