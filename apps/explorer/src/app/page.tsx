@@ -86,6 +86,13 @@ export default function Home() {
     const seen = new Set<string>();
     const transfers: TransferEventCardProps[] = [];
 
+    const transferAssetReleaseChainId = transactionStatusResponse?.transferAssetRelease?.chainId;
+    const transferAssetReleaseChainCount = transferAssetReleaseChainId && 
+      transferEvents.filter(event => 
+        event.fromChainId === transferAssetReleaseChainId || 
+        event.toChainId === transferAssetReleaseChainId
+      ).length;
+
     const getStep = (index: number, fromOrTo: "from" | "to") => {
       if (index === 0 && fromOrTo === "from") return "Origin";
       if (index === transferEvents.length - 1 && fromOrTo === "to")
@@ -110,7 +117,7 @@ export default function Home() {
             step: getStep(index, fromOrTo),
             durationInMs: event.durationInMs ?? 0,
             index,
-            transferAssetRelease: transactionStatusResponse?.transferAssetRelease?.chainId === chainId ? transactionStatusResponse?.transferAssetRelease : undefined,
+            transferAssetRelease: transferAssetReleaseChainCount === 1 ? transactionStatusResponse?.transferAssetRelease : undefined,
           });
         }
       };
