@@ -181,28 +181,26 @@ export default function Home() {
     [cancelStatusPolling]
   );
 
-  const onSearch = useCallback((_txhash?: string, _chainId?:string) => {
+  const onSearch = useCallback(() => {
     setTransactionStatuses([]);
     setTransferEvents([]);
     setErrorDetails(undefined);
     setTransactionStatusResponse(null);
-    const hash = _txhash ?? txHash;
-    const id = _chainId ?? chainId;
 
-    if (hash && id) {
-      setTxHashes([hash]);
-      setChainIds([id]);
+    if (txHash && chainId) {
+      setTxHashes([txHash]);
+      setChainIds([chainId]);
     }
 
     if (
-      hash !== transactionDetailsFromUrlParams?.[0]?.txHash ||
-      id !== transactionDetailsFromUrlParams?.[0]?.chainId
+      txHash !== transactionDetailsFromUrlParams?.[0]?.txHash ||
+      chainId !== transactionDetailsFromUrlParams?.[0]?.chainId
     ) {
       setData(null);
     }
 
-    if (hash && id) {
-      getTxStatus([{ txHash: hash, chainId: id }]);
+    if (txHash && chainId) {
+      getTxStatus([{ txHash, chainId }]);
     }
 
   }, [txHash, chainId, transactionDetailsFromUrlParams, getTxStatus, setTxHashes, setChainIds, setData]);
@@ -307,7 +305,8 @@ export default function Home() {
                 context: "source",
                 onSelect: (asset: ClientAsset | null) => {
                   setChainId(asset?.chainId || "");
-                   onSearch(txHash, asset?.chainId);
+
+                  onSearch();
                   NiceModal.hide(Modals.AssetAndChainSelectorModal);
                 },
                 overrideSelectedGroup: {
@@ -325,7 +324,7 @@ export default function Home() {
                 onSelect: (asset: ClientAsset | null) => {
                   setChainId(asset?.chainId || "");
                   if (txHash) {
-                    onSearch(txHash, asset?.chainId);
+                    onSearch();
                   }
                   NiceModal.hide(Modals.AssetAndChainSelectorModal);
                 },
@@ -337,7 +336,7 @@ export default function Home() {
             }}
             selectedChain={selectedChain}
           />
-          <SearchButton size={isTop ? "small" : "normal"} onClick={() => onSearch()} />
+          <SearchButton size={isTop ? "small" : "normal"} onClick={onSearch} />
         </SearchWrapper>
       ) : (
         <SearchTopRight>
@@ -399,7 +398,7 @@ export default function Home() {
                       <ErrorCard
                         errorMessage={ErrorMessages.TRANSFER_EVENT_ERROR}
                         padding="20px 45px"
-                        onRetry={() => onSearch()}
+                        onRetry={onSearch}
                       />
                     }
                   >
