@@ -271,12 +271,9 @@ export type PollingProps<K extends ValidApiMethodKeys> = {
   onError?: (error: unknown, attempt: number) => void;
   onSuccess?: (result: ApiResponse<K>, attempt: number) => void;
   throwOnError?: boolean;
-  isCancelled?: () => boolean;
 }
 
-export type PollingApiProps<K extends ValidApiMethodKeys> = Omit<ApiProps<K>, "options"> & PollingProps<K> & {
-  isCancelled?: () => boolean;
-};
+export type PollingApiProps<K extends ValidApiMethodKeys> = Omit<ApiProps<K>, "options"> & PollingProps<K>;
 
 export function pollingApi<K extends ValidApiMethodKeys>({
   methodName,
@@ -289,7 +286,6 @@ export function pollingApi<K extends ValidApiMethodKeys>({
   retryInterval = 1000,
   backoffMultiplier = 2,
   throwOnError = false,
-  isCancelled,
 }: PollingApiProps<K>) {
   type Request = ApiRequest<K>;
   type Response = ApiResponse<K>;
@@ -304,10 +300,6 @@ export function pollingApi<K extends ValidApiMethodKeys>({
     let lastError: unknown;
 
     while (attempt < maxRetries) {
-      if (isCancelled?.()) {
-        console.log("Polling was cancelled");
-        throw new Error("Polling was cancelled");
-      }
       try {
         const result = await api<K>({ methodName, path, method })(requestParams);
         if (result && isSuccess(result)) {

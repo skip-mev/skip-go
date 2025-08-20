@@ -41,17 +41,13 @@ export const waitForTransaction = async ({
   // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
-      const txStatusResponse = await transactionStatus({
-        isCancelled,
-      })({
-        chainId,
-        txHash,
-      });
-
       if (isCancelled?.()) {
         throw new Error("waitForTransaction was aborted");
       }
-      
+      const txStatusResponse = await transactionStatus({
+        chainId,
+        txHash,
+      });
       onStatusUpdated?.(txStatusResponse);
   
       if (txStatusResponse.state === "STATE_COMPLETED_SUCCESS") {
