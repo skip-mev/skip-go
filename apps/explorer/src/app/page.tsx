@@ -223,7 +223,7 @@ export default function Home() {
 
   const onReindex = async () => {
     try {
-      await fetch('https://api.skip.build/api/tx/retry_track', {
+      await fetch('https://api.skip.build/v2/tx/retry_track', {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
