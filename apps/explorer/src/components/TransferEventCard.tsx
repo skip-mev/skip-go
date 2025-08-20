@@ -56,8 +56,6 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
 
   const userAddress = userAddresses?.find((address) => address.chainId === chainId)?.address;
 
-  console.log(transferAssetRelease);
-
   const renderStatusBadge = useMemo(() => {
     if (stateAbandoned) {
       return (
