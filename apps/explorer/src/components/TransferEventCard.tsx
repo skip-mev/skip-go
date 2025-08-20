@@ -103,7 +103,6 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
           amount: destAmount,
         };
       } else {
-        console.log("operations", operations, index);
         const currentOperation = operations?.[index];
         const asset = skipAssets?.data?.find((asset) => asset.chainId === currentOperation?.chainId && asset.denom === currentOperation?.denomIn);
         return {

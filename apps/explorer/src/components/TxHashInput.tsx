@@ -9,11 +9,13 @@ export const TxHashInput = ({
   value,
   onChange,
   openModal,
+  onSearch,
 }: {
   size: "small" | "normal";
   value?: string;
   onChange?: (value: string) => void;
   openModal?: () => void;
+  onSearch?: () => void;
 }) => {
   const theme = useTheme();
 
@@ -21,6 +23,8 @@ export const TxHashInput = ({
     if (event.key === "Tab") {
       event.preventDefault();
       openModal?.();
+    } else if (event.key === "Enter") {
+      onSearch?.();
     }
   };
 

@@ -6,7 +6,7 @@ import {
   ClientTransferEvent,
   TxStatusResponse,
   TransactionDetails as TransactionDetailsType,
-  waitForTransaction,
+  waitForTransactionWithCancel,
 } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
 import {
@@ -25,7 +25,7 @@ import { useSetAtom, useAtomValue } from "@/jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { NiceModal, Modals } from "@/nice-modal";
-import { GhostButton } from "@/components/Button";
+import { Button, GhostButton } from "@/components/Button";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
 import { TokenDetails } from "../components/TokenDetails";
 import { ExplorerModals } from "../constants/modal";
@@ -39,13 +39,13 @@ import { Logo, TopRightComponent } from "../components/TopNav";
 import { ErrorCard, ErrorMessages } from "../components/ErrorCard";
 import { ErrorBoundary } from "react-error-boundary";
 import { Bridge } from "../components/Bridge";
+import { styled } from "@/styled-components";
+import Link from "next/link";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
   details: string;
 };
-import { styled } from "@/styled-components";
-import Link from "next/link";
 
 export default function Home() {
   // const theme = useTheme();
@@ -81,6 +81,7 @@ export default function Home() {
     errorMessage: ErrorMessages;
     error: ErrorWithCodeAndDetails;
   }>();
+  const [cancelStatusPolling, setCancelStatusPolling] = useState<{promise: Promise<TxStatusResponse>, cancel: () => void}[]>([]);
 
   const uniqueTransfers = useMemo(() => {
     const seen = new Set<string>();
@@ -117,7 +118,6 @@ export default function Home() {
       addChainIfUnique(event.toChainId, event.toExplorerLink, "to");
     });
 
-    console.log(transfers);
     return transfers;
   }, [transferEvents]);
 
@@ -128,12 +128,17 @@ export default function Home() {
 
   const getTxStatus = useCallback(
     async (transactionDetails: TransactionDetailsType[] = []) => {
+      if (cancelStatusPolling.length > 0) {
+        cancelStatusPolling.forEach(response => response.cancel());
+        setCancelStatusPolling([]);
+      }
+
       const txsToQuery = transactionDetails?.filter(
         (tx) => tx.txHash !== undefined && tx.chainId !== undefined
       );
 
-      txsToQuery?.forEach((tx, index) =>
-        waitForTransaction({
+      const responses = txsToQuery?.map((tx, index) =>
+        waitForTransactionWithCancel({
           txHash: tx.txHash ?? "",
           chainId: tx.chainId ?? "",
           doNotTrack: true,
@@ -166,10 +171,28 @@ export default function Home() {
             }
           },
         })
-      );
+      ) || [];
+
+      setCancelStatusPolling(responses);
     },
-    []
+    [cancelStatusPolling]
   );
+
+  const resetState = useCallback(() => {
+    cancelStatusPolling.forEach(response => response.cancel());
+    setCancelStatusPolling([]);
+    
+    setTxHashes(null);
+    setChainIds(null);
+    setTxHash("");
+    setChainId("");
+    
+    setTransactionStatuses([]);
+    setTransferEvents([]);
+    setErrorDetails(undefined);
+    setTransactionStatusResponse(null);
+
+  }, [cancelStatusPolling, setTxHashes, setChainIds]);
 
   const onSearch = useCallback((_txhash?: string, _chainId?:string) => {
     setTransactionStatuses([]);
@@ -190,14 +213,12 @@ export default function Home() {
     ) {
       setData(null);
     }
-  }, [
-    txHash,
-    chainId,
-    transactionDetailsFromUrlParams,
-    setTxHashes,
-    setChainIds,
-    setData,
-  ]);
+
+    if (hash && id) {
+      getTxStatus([{ txHash: hash, chainId: id }]);
+    }
+
+  }, [txHash, chainId, transactionDetailsFromUrlParams, setTxHashes, setChainIds, setData, getTxStatus]);
 
   useEffect(() => {
     if (transactionDetailsFromUrlParams) {
@@ -215,15 +236,9 @@ export default function Home() {
       getTxStatus(
         txHashes.map((txHash, index) => ({ txHash, chainId: chainIds[index] }))
       );
-    } else {
-      setChainId(undefined);
-      setTxHash(undefined);
-      setTransferEvents([]);
-      setTransactionStatusResponse(null);
-      setTransactionStatuses([]);
-      setErrorDetails(undefined);
     }
-  }, [txHashes, chainIds, transactionDetailsFromUrlParams, getTxStatus]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const selectedChain = useMemo(() => {
     if (!chainId) return null;
@@ -300,12 +315,18 @@ export default function Home() {
             size={isTop ? "small" : "normal"}
             value={txHash || ""}
             onChange={(v) => setTxHash(v)}
+            onSearch={() => {
+              if (txHash && chainId) {
+                onSearch();
+              }
+            }}
             openModal={() => {
               NiceModal.show(Modals.AssetAndChainSelectorModal, {
                 context: "source",
                 onSelect: (asset: ClientAsset | null) => {
                   setChainId(asset?.chainId || "");
-                   onSearch(txHash, asset?.chainId);
+
+                  onSearch(txHash, asset?.chainId);
                   NiceModal.hide(Modals.AssetAndChainSelectorModal);
                 },
                 overrideSelectedGroup: {
@@ -335,19 +356,17 @@ export default function Home() {
             }}
             selectedChain={selectedChain}
           />
-          <SearchButton size={isTop ? "small" : "normal"} onClick={onSearch} />
+          <SearchButton size={isTop ? "small" : "normal"} onClick={() => onSearch()} />
         </SearchWrapper>
       ) : (
         <SearchTopRight>
-          <Link href="/">
-            <SearchButton size="small" iconOnly />
-          </Link>
+           <SearchButton size="small" iconOnly onClick={() => resetState()} />
         </SearchTopRight>
       )}
 
       { uniqueTransfers.length > 0 ? (
         <StyledColumn>
-          <Row gap={16}>
+          <Row gap={16} flexDirection={isMobileScreenSize ? "column" : "row"}>
             <Column align="flex-end" width={355}>
               <GhostButton
                 gap={5}
@@ -397,7 +416,7 @@ export default function Home() {
                       <ErrorCard
                         errorMessage={ErrorMessages.TRANSFER_EVENT_ERROR}
                         padding="20px 45px"
-                        onRetry={onSearch}
+                        onRetry={() => onSearch()}
                       />
                     }
                   >
@@ -406,8 +425,10 @@ export default function Home() {
                       explorerLink={transfer.explorerLink}
                       transferType={transfer.transferType}
                       status={transfer.status}
+                      state={transactionStatusResponse?.state}
                       step={transfer.step}
                       index={transfer.index}
+                      onReindex={onReindex}
                     />
                   </ErrorBoundary>
                 </>
@@ -422,7 +443,7 @@ export default function Home() {
           </GhostButton>
           <ErrorCard
             errorMessage={errorDetails.errorMessage}
-            onRetry={onSearch}
+            onRetry={() => onSearch()}
           />
         </Column>
       ) : null}
