@@ -7,6 +7,7 @@ import {
   TxStatusResponse,
   TransactionDetails as TransactionDetailsType,
   waitForTransactionWithCancel,
+  transactionStatus,
 } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
 import {
@@ -255,9 +256,30 @@ export default function Home() {
     ) {
       setChainId(chainIds[0]);
       setTxHash(txHashes[0]);
-      getTxStatus(
-        txHashes.map((txHash, index) => ({ txHash, chainId: chainIds[index] }))
-      );
+
+      const transactionDetails: TransactionDetailsType[] = [];
+
+      const calculateMissingChainIds = async () => {
+        let nextChainId = chainIds[0];
+        for (const txHash of txHashes) {
+          const response = await transactionStatus({
+            txHash,
+            chainId: nextChainId,
+          });
+          
+          transactionDetails.push({ txHash, chainId: nextChainId });
+          nextChainId = response?.transferAssetRelease?.chainId || "";
+        }
+      }
+
+      if (txHashes.length > 1) {
+        calculateMissingChainIds().then(() => {
+          getTxStatus(transactionDetails);
+        });
+      } else {
+        getTxStatus(transactionDetails);
+      }
+
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
