@@ -149,7 +149,6 @@ export default function Home() {
 
               const allTransferEvents =
                 getTransferEventsFromTxStatusResponse(newStatuses);
-              console.log(allTransferEvents);
               setTransferEvents(allTransferEvents);
 
               setTransactionStatusResponse(newStatuses[0]);
@@ -159,8 +158,6 @@ export default function Home() {
           },
           onError: (error) => {
             const errorWithCodeAndDetails = error as ErrorWithCodeAndDetails;
-            console.log("onError", error.message);
-            setTransferEvents([]);
             if (error.message === "tx not found") {
               setErrorDetails({
                 errorMessage: ErrorMessages.TRANSACTION_NOT_FOUND,
