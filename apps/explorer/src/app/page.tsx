@@ -178,26 +178,28 @@ export default function Home() {
     [cancelStatusPolling]
   );
 
-  const onSearch = useCallback(() => {
+  const onSearch = useCallback((_txhash?: string, _chainId?:string) => {
     setTransactionStatuses([]);
     setTransferEvents([]);
     setErrorDetails(undefined);
     setTransactionStatusResponse(null);
+    const hash = _txhash ?? txHash;
+    const id = _chainId ?? chainId;
 
-    if (txHash && chainId) {
-      setTxHashes([txHash]);
-      setChainIds([chainId]);
+    if (hash && id) {
+      setTxHashes([hash]);
+      setChainIds([id]);
     }
 
     if (
-      txHash !== transactionDetailsFromUrlParams?.[0]?.txHash ||
-      chainId !== transactionDetailsFromUrlParams?.[0]?.chainId
+      hash !== transactionDetailsFromUrlParams?.[0]?.txHash ||
+      id !== transactionDetailsFromUrlParams?.[0]?.chainId
     ) {
       setData(null);
     }
 
-    if (txHash && chainId) {
-      getTxStatus([{ txHash, chainId }]);
+    if (hash && id) {
+      getTxStatus([{ txHash: hash, chainId: id }]);
     }
 
   }, [txHash, chainId, transactionDetailsFromUrlParams, getTxStatus, setTxHashes, setChainIds, setData]);
@@ -297,18 +299,13 @@ export default function Home() {
             size={isTop ? "small" : "normal"}
             value={txHash || ""}
             onChange={(v) => setTxHash(v)}
-            onSearch={() => {
-              if (txHash && chainId) {
-                onSearch();
-              }
-            }}
             openModal={() => {
               NiceModal.show(Modals.AssetAndChainSelectorModal, {
                 context: "source",
                 onSelect: (asset: ClientAsset | null) => {
                   setChainId(asset?.chainId || "");
 
-                  onSearch();
+                  onSearch(txHash, asset?.chainId);
                   NiceModal.hide(Modals.AssetAndChainSelectorModal);
                 },
                 overrideSelectedGroup: {
@@ -326,7 +323,7 @@ export default function Home() {
                 onSelect: (asset: ClientAsset | null) => {
                   setChainId(asset?.chainId || "");
                   if (txHash) {
-                    onSearch();
+                    onSearch(txHash, asset?.chainId);
                   }
                   NiceModal.hide(Modals.AssetAndChainSelectorModal);
                 },
@@ -338,7 +335,7 @@ export default function Home() {
             }}
             selectedChain={selectedChain}
           />
-          <SearchButton size={isTop ? "small" : "normal"} onClick={onSearch} />
+          <SearchButton size={isTop ? "small" : "normal"} onClick={() => onSearch()} />
         </SearchWrapper>
       ) : (
         <SearchTopRight>
@@ -400,7 +397,7 @@ export default function Home() {
                       <ErrorCard
                         errorMessage={ErrorMessages.TRANSFER_EVENT_ERROR}
                         padding="20px 45px"
-                        onRetry={onSearch}
+                        onRetry={() => onSearch()}
                       />
                     }
                   >
@@ -427,7 +424,7 @@ export default function Home() {
           </GhostButton>
           <ErrorCard
             errorMessage={errorDetails.errorMessage}
-            onRetry={onSearch}
+            onRetry={() => onSearch()}
           />
         </Column>
       ) : null}
