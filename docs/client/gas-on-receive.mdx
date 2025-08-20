@@ -197,21 +197,13 @@ async function executeSwapWithGasOnReceive(
     userAddresses: addresses,
     slippageTolerancePercent: slippage,
     getCosmosSigningClient: signers.getCosmosSigner,
-    getEVMSigningClient: signers.getEvmSigner,
-    onRouteStatusUpdated: (status) => {
-      // Handle route status updates
-      console.log("Route status:", status);
-      
-      // Check if gas route failed
-      const gasRouteFailed = status.relatedRoutes?.find(
-        r => r.routeKey === "feeRoute" && r.status === "failed"
-      );
-      
-      if (gasRouteFailed) {
-        console.warn("Gas route failed, but main swap continues");
-      }
-    }
+    getEVMSigningClient: signers.getEvmSigner
   });
+  
+  // For status tracking in custom implementations:
+  // The widget handles status automatically, but custom implementations
+  // need to poll for transaction status using the Skip API's status endpoints
+  // or track transaction hashes and use waitForTransaction
 }
 ```
 
@@ -339,9 +331,12 @@ class GasOnReceiveManager {
           mainRoute: "1",
           feeRoute: "10"  // Higher tolerance for gas route
         },
-        ...signers,
-        onRouteStatusUpdated: this.handleRouteStatus
+        ...signers
       });
+      
+      // Poll for status using Skip API endpoints
+      // Custom implementations need to track and poll transaction status
+      console.log("Routes executed, poll for status using transaction tracking");
     } else {
       // Execute single route without gas
       mainRoute = await route({
@@ -358,20 +353,6 @@ class GasOnReceiveManager {
         slippageTolerancePercent: "1",
         ...signers
       });
-    }
-  }
-  
-  private handleRouteStatus(status: RouteStatus) {
-    if (status.status === "completed") {
-      console.log("Swap completed successfully");
-    }
-    
-    // Check gas route status
-    const gasRoute = status.relatedRoutes?.find(r => r.routeKey === "feeRoute");
-    if (gasRoute?.status === "failed") {
-      console.warn("Gas provision failed, but main swap continues");
-    } else if (gasRoute?.status === "completed") {
-      console.log("Gas tokens received successfully");
     }
   }
 }
@@ -420,27 +401,61 @@ function GasStatus({ status, amount, symbol }: GasStatusProps) {
 }
 ```
 
+## Transaction Status Tracking
+
+Unlike the widget which handles status automatically, custom implementations need to poll for transaction status:
+
+```typescript
+import { waitForTransaction } from "@skip-go/client";
+
+async function pollTransactionStatus(
+  txHash: string,
+  chainId: string,
+  onStatusUpdate?: (status: string) => void
+) {
+  const maxAttempts = 60; // 2 minutes with 2 second intervals
+  let attempts = 0;
+  
+  while (attempts < maxAttempts) {
+    try {
+      const result = await waitForTransaction({
+        txHash,
+        chainId
+      });
+      
+      onStatusUpdate?.(result.status);
+      
+      if (result.status === "completed" || result.status === "failed") {
+        return result;
+      }
+      
+      // Wait before next poll
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      attempts++;
+    } catch (error) {
+      console.error("Error polling transaction:", error);
+      // Continue polling unless max attempts reached
+    }
+  }
+  
+  throw new Error("Transaction polling timeout");
+}
+```
+
 ## Error Handling
 
 Handle various failure scenarios gracefully:
 
 ```typescript
-async function handleGasRouteErrors(error: Error, mainRouteStatus: string) {
-  // Gas route failures don't affect main swap
-  if (mainRouteStatus === 'completed') {
-    console.log("Main swap succeeded despite gas route failure");
-    // Show warning to user about missing gas
-    showWarning("Swap completed but gas tokens were not received");
-  }
+async function handleGasRouteErrors(error: Error) {
+  // Since routes execute together, monitor both outcomes
+  // Gas route failures don't stop the main swap
+  console.warn("Gas route may have failed:", error);
   
-  // Log for debugging
-  console.error("Gas route error:", error);
+  // Show warning to user
+  showWarning("Swap may complete without gas tokens");
   
-  // Track in analytics
-  trackEvent("gas_route_failed", {
-    error: error.message,
-    mainRouteStatus
-  });
+  // Continue monitoring main route status
 }
 ```
 
@@ -494,7 +509,7 @@ async function calculateDynamicGasAmount(chainId: string) {
 | Amount calculation | Built-in defaults | Custom logic needed |
 | UI components | Provided | Build your own |
 | Error handling | Automatic | Manual implementation |
-| Status tracking | Built-in | Via callbacks |
+| Status tracking | Built-in, real-time | Poll using API endpoints |
 
 ## Summary
 
