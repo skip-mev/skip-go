@@ -25,7 +25,7 @@ import { useSetAtom, useAtomValue } from "@/jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { NiceModal, Modals } from "@/nice-modal";
-import { Button, GhostButton } from "@/components/Button";
+import { GhostButton } from "@/components/Button";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
 import { TokenDetails } from "../components/TokenDetails";
 import { ExplorerModals } from "../constants/modal";
@@ -40,7 +40,6 @@ import { ErrorCard, ErrorMessages } from "../components/ErrorCard";
 import { ErrorBoundary } from "react-error-boundary";
 import { Bridge } from "../components/Bridge";
 import { styled } from "@/styled-components";
-import Link from "next/link";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
@@ -64,6 +63,8 @@ export default function Home() {
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
     []
   );
+
+  const { operations } = useTransactionHistoryItemFromUrlParams();
   const [transactionStatusResponse, setTransactionStatusResponse] =
     useState<TxStatusResponse | null>(null);
   const chains = useAtomValue(skipChainsAtom);
@@ -87,6 +88,13 @@ export default function Home() {
     const seen = new Set<string>();
     const transfers: TransferEventCardProps[] = [];
 
+    const transferAssetReleaseChainId = transactionStatusResponse?.transferAssetRelease?.chainId;
+    const transferAssetReleaseIndex = 
+      transferEvents.findLastIndex(event => 
+        event.fromChainId === transferAssetReleaseChainId || 
+        event.toChainId === transferAssetReleaseChainId
+      );
+
     const getStep = (index: number, fromOrTo: "from" | "to") => {
       if (index === 0 && fromOrTo === "from") return "Origin";
       if (index === transferEvents.length - 1 && fromOrTo === "to")
@@ -100,6 +108,19 @@ export default function Home() {
         explorerLink: string | undefined,
         fromOrTo: "from" | "to"
       ) => {
+
+        const assetMatches = operations[index]?.denom === transactionStatusResponse?.transferAssetRelease?.denom && operations[index]?.chainId === transactionStatusResponse?.transferAssetRelease?.chainId;
+
+        const getTransferAssetRelease = () => {
+          if (!transactionStatusResponse?.transferAssetRelease?.released) return;
+          if (assetMatches) {
+            return transactionStatusResponse?.transferAssetRelease;
+          }
+          if (transferAssetReleaseIndex === index && transferAssetReleaseChainId === chainId) {
+            return transactionStatusResponse?.transferAssetRelease;
+          }
+        }
+
         if (chainId && !seen.has(chainId)) {
           seen.add(chainId);
           transfers.push({
@@ -110,6 +131,7 @@ export default function Home() {
             step: getStep(index, fromOrTo),
             durationInMs: event.durationInMs ?? 0,
             index,
+            transferAssetRelease: getTransferAssetRelease(),
           });
         }
       };
@@ -119,7 +141,7 @@ export default function Home() {
     });
 
     return transfers;
-  }, [transferEvents]);
+  }, [operations, transactionStatusResponse?.transferAssetRelease, transferEvents]);
 
   useEffect(() => {
     setSkipClientConfig(defaultSkipClientConfig);
@@ -421,13 +443,8 @@ export default function Home() {
                     }
                   >
                     <TransferEventCard
-                      chainId={transfer.chainId}
-                      explorerLink={transfer.explorerLink}
-                      transferType={transfer.transferType}
-                      status={transfer.status}
+                      {...transfer}
                       state={transactionStatusResponse?.state}
-                      step={transfer.step}
-                      index={transfer.index}
                       onReindex={onReindex}
                     />
                   </ErrorBoundary>

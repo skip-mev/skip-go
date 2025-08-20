@@ -19,10 +19,10 @@ const getSimpleOverallStatus = (state: TransactionState) => {
       return "pending";
     case "STATE_COMPLETED_SUCCESS":
       return "success";
-    case "STATE_COMPLETED_ERROR":
-    case "STATE_PENDING_ERROR":
     case "STATE_ABANDONED":
       return "abandoned";
+    case "STATE_COMPLETED_ERROR":
+    case "STATE_PENDING_ERROR":
     default:
       return "failed";
   }

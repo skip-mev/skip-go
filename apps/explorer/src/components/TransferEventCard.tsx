@@ -4,10 +4,10 @@ import { Column, Row } from "@/components/Layout";
 import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "@/jotai";
 import { Text, SmallText, SmallTextButton } from "@/components/Typography";
-import { TransactionState, TransferEventStatus, TransferType } from "@skip-go/client";
+import { TransactionState, TransferAssetRelease, TransferEventStatus, TransferType } from "@skip-go/client";
 import Image from "next/image";
 import { formatDisplayAmount } from "@/utils/number";
-import { styled } from "@/styled-components";
+import { styled, useTheme } from "@/styled-components";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { convertTokenAmountToHumanReadableAmount, getTruncatedAddress } from "@/utils/crypto";
 import { useMemo } from "react";
@@ -15,6 +15,8 @@ import { useOverallStatusLabelAndColor } from "../hooks/useOverallStatusLabelAnd
 import { Link } from "@/components/Button";
 import { loadingPulseAnimation } from "@/components/Container";
 import { getTransferTypeLabel } from "./Bridge";
+import { CoinsIcon } from "../icons/CoinsIcon";
+import { Tooltip } from "@/components/Tooltip";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -28,6 +30,7 @@ export type TransferEventCardProps = {
   durationInMs?: number;
   index: number;
   onReindex?: () => void;
+  transferAssetRelease?: TransferAssetRelease;
 }
 
 const routedStatusMap: Record<TransferEventStatus, string> = {
@@ -40,7 +43,8 @@ const routedStatusMap: Record<TransferEventStatus, string> = {
   incomplete: "Incomplete",
 }
 
-export const TransferEventCard = ({ chainId, explorerLink, transferType, status, state, step, index, onReindex }: TransferEventCardProps) => {
+export const TransferEventCard = ({ chainId, explorerLink, transferType, status, state, step, index, onReindex, transferAssetRelease }: TransferEventCardProps) => {
+  const theme = useTheme();
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
   const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations, routeStatus } = useTransactionHistoryItemFromUrlParams();
@@ -52,7 +56,6 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
 
   const userAddress = userAddresses?.find((address) => address.chainId === chainId)?.address;
-
 
   const renderStatusBadge = useMemo(() => {
     if (stateAbandoned) {
@@ -90,29 +93,28 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
 
   }, [stateAbandoned, status, step]);
 
-  const renderTransferEventDetails = useMemo(() => {
-    const getCurrentAsset = () => {
-      if (step === "Origin") {
-        return {
-          asset: sourceAsset,
-          amount: sourceAmount,
-        };
-      } else if (step === "Destination") {
-        return {
-          asset: destAsset,
-          amount: destAmount,
-        };
-      } else {
-        const currentOperation = operations?.[index];
-        const asset = skipAssets?.data?.find((asset) => asset.chainId === currentOperation?.chainId && asset.denom === currentOperation?.denomIn);
-        return {
-          asset: asset,
-          amount: convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals),
-        };
-      }
+  const currentAsset = useMemo(() => {
+    if (step === "Origin") {
+      return {
+        asset: sourceAsset,
+        amount: sourceAmount,
+      };
+    } else if (step === "Destination") {
+      return {
+        asset: destAsset,
+        amount: destAmount,
+      };
+    } else {
+      const currentOperation = operations?.[index];
+      const asset = skipAssets?.data?.find((asset) => asset.chainId === currentOperation?.chainId && asset.denom === currentOperation?.denomIn);
+      return {
+        asset: asset,
+        amount: convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals),
+      };
     }
+  }, [step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
 
-    const currentAsset = getCurrentAsset();
+  const renderTransferEventDetails = useMemo(() => {
 
     if (userAddress) {
       return (
@@ -138,12 +140,55 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         </Column>
       </>
     )
-  }, [userAddress, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId, step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
+  }, [currentAsset, userAddress, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId]);
+
+  const transferAssetReleaseAsset = useMemo(() => {
+    return skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId);
+  }, [skipAssets?.data, transferAssetRelease]);
+
+  const renderBottomButton = useMemo(() => {
+    const decimals = skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId)?.decimals;
+    const skipGoLink = `https://go.skip.build/?src_asset=${transferAssetRelease?.denom}&src_chain=${transferAssetRelease?.chainId}&amount_in=${transferAssetRelease?.amount ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount, decimals) : undefined}`;
+    if (stateAbandoned) {
+      return (
+        <SmallTextButton onClick={onReindex} textAlign="center" color={stateLabelAndColor?.color}>Reindex →</SmallTextButton>
+      )
+    }
+
+    if (transferAssetRelease) {
+      return (
+        <SmallText>
+          <Link href={skipGoLink} color={theme.brandColor} target="_blank" justify="center">
+            Reattempt on Skip.go →
+          </Link>
+        </SmallText>
+      )
+    }
+    
+    return (
+      <SmallText>
+        <Link href={explorerLink} target="_blank" justify="center">
+          View on block explorer →
+        </Link>
+      </SmallText>
+    )
+
+  }, [skipAssets?.data, transferAssetRelease, stateAbandoned, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
 
   return (
     <TransferEventContainer loading={status === "pending" && !stateAbandoned} padding={15} width={355} borderRadius={16} status={containerStatus}>
       <Row align="center" justify="space-between">
-        <Badge> {step} </Badge>
+        <Row gap={8} align="center" justify="center">
+          <Badge> {step} </Badge>
+          {transferAssetRelease && (
+            <Tooltip content={`Your assets were released as ${transferAssetReleaseAsset?.symbol} on ${transferAssetReleaseAsset?.chainName}`}>
+              <Badge color={theme.brandColor} gap={5} align="center" justify="center">
+                Your tokens
+                <CoinsIcon />
+              </Badge>
+            </Tooltip>
+          )}
+        </Row>
         {renderStatusBadge}
       </Row>
       <TransferEventDetailsCard>
@@ -154,22 +199,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
           <Badge> {getTransferTypeLabel(transferType)} </Badge>
         </Row>
       </TransferEventDetailsCard>
-      {
-        stateAbandoned ? (
-          <SmallTextButton
-            textAlign="center"
-            onClick={onReindex}
-            color={stateLabelAndColor?.color}>
-            Reindex →
-          </SmallTextButton>
-        ) : (
-          <SmallText>
-            <Link href={explorerLink} target="_blank" justify="center">
-              View on Mintscan →
-            </Link>
-          </SmallText>
-        )
-      }
+      {renderBottomButton}
     </TransferEventContainer>
   );
 };
