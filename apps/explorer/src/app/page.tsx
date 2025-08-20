@@ -206,13 +206,11 @@ export default function Home() {
       setData(null);
     }
 
-    if (txHashes && chainIds) {
-      getTxStatus(
-        txHashes.map((txHash, index) => ({ txHash, chainId: chainIds[index] }))
-      );
+    if (hash && id) {
+      getTxStatus([{ txHash: hash, chainId: id }]);
     }
 
-  }, [txHash, chainId, transactionDetailsFromUrlParams, getTxStatus, txHashes, setTxHashes, setChainIds, setData, chainIds]);
+  }, [txHash, chainId, transactionDetailsFromUrlParams, getTxStatus, setTxHashes, setChainIds, setData]);
 
   useEffect(() => {
     if (transactionDetailsFromUrlParams) {
