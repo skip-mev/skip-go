@@ -166,7 +166,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         ) : (
           <SmallText>
             <Link href={explorerLink} target="_blank" justify="center">
-              View on Mintscan →
+              View on block explorer →
             </Link>
           </SmallText>
         )
