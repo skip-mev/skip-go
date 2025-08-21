@@ -2,6 +2,7 @@ import styled, { keyframes } from "styled-components";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ANIMATION_TIMINGS, EASINGS } from "@/utils/transitions";
 import { SmallText } from "./Typography";
+import { isMobile } from "@/utils/os";
 
 const fadeIn = keyframes`
   from {
@@ -46,6 +47,10 @@ export const Tooltip = ({
     }
     return content;
   }, [content]);
+
+  if (isMobile()) {
+    return children;
+  }
 
   return (
     <StyledTooltipTriggerContainer
