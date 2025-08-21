@@ -169,9 +169,13 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     
     return (
       <SmallText>
-        <Link href={explorerLink} target="_blank" justify="center">
-          View on block explorer →
-        </Link>
+        {
+          explorerLink && (
+            <Link href={explorerLink} target="_blank" justify="center">
+              View on block explorer →
+            </Link>
+          )
+        }
       </SmallText>
     )
 
