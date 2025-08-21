@@ -8,11 +8,12 @@ import Image from "next/image";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { RightArrowIcon } from "../icons/RightArrowIcon";
 
-export const Logo = () => {
+export const Logo = ({ onClick }: { onClick?: () => void }) => {
   const [theme] = useLocalStorage<"dark" | "light">("explorer-theme");
 
   return (
     <Link
+      onClick={onClick}
       href="/"
       style={{
         textDecoration: "none",
