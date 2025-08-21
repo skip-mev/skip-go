@@ -161,7 +161,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       return (
         <SmallText>
           <Link href={skipGoLink} color={theme.brandColor} target="_blank" justify="center">
-            Reattempt on Skip.go →
+            Try again on Skip.go →
           </Link>
         </SmallText>
       )
