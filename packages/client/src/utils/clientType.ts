@@ -316,7 +316,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           }
         }
         return {
-          explorerLink: eurekaTransfer.packetTxs.receiveTx?.explorerLink,
+          explorerLink: eurekaTransfer.packetTxs.receiveTx?.explorerLink ?? eurekaTransfer.packetTxs.timeoutTx?.explorerLink,
           txHash: eurekaTransfer.packetTxs.receiveTx?.txHash,
         }
       case TransferType.goFastTransfer:
@@ -327,7 +327,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           }
         }
         return {
-          explorerLink: goFastTransfer.txs.orderFilledTx?.explorerLink,
+          explorerLink: goFastTransfer.txs.orderFilledTx?.explorerLink ?? goFastTransfer.txs.orderTimeoutTx?.explorerLink ?? goFastTransfer.txs.orderRefundedTx?.explorerLink,
           txHash: goFastTransfer.txs.orderFilledTx?.txHash,
         }
       case TransferType.axelarTransfer:
