@@ -62,7 +62,13 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const renderStatusBadge = useMemo(() => {
     if (stateAbandoned) {
       return (
-        <Badge color={stateLabelAndColor?.color} background={stateLabelAndColor?.background}>{stateLabelAndColor?.label}</Badge>
+        <Tooltip content="Transaction got stuck. Retry indexing">
+          <Badge
+            color={stateLabelAndColor?.color}
+            background={stateLabelAndColor?.background}>
+            {stateLabelAndColor?.label}
+          </Badge>
+        </Tooltip>
       )
     }
     if (step === "Destination") {
