@@ -22,9 +22,9 @@ export type TransactionDetailsProps = {
 export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetailsProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
   const { saveToClipboard, isCopied } = useClipboard();
-  const { sourceAsset, destAsset, sourceAmount, destAmount, routeStatus } = useTransactionHistoryItemFromUrlParams();
+  const { sourceAsset, destAsset, sourceAmount, destAmount } = useTransactionHistoryItemFromUrlParams();
 
-  const statusLabelAndColor = useOverallStatusLabelAndColor({ status: routeStatus, state });
+  const statusLabelAndColor = useOverallStatusLabelAndColor({ state });
 
   const chains = chainIds?.map((chainId) => skipChains?.data?.find((chain) => chain.chainId === chainId));
 
