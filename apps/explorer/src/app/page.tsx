@@ -351,7 +351,7 @@ export default function Home() {
 
   return (
     <>
-      <Logo />
+      <Logo onClick={() => resetState()} />
       <TopRightComponent />
       {!isSearchAModal ? (
         <SearchWrapper isTop={isTop}>
