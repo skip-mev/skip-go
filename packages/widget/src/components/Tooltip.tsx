@@ -49,7 +49,7 @@ export const Tooltip = ({
   }, [content]);
 
   if (isMobile()) {
-    return content;
+    return children;
   }
 
   return (
