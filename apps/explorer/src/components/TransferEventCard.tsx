@@ -73,7 +73,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     }
     if (step === "Origin") {
       return (
-        <Badge>
+        <Badge flexDirection="row" gap={5} align="center">
           Complete
           <GreenDot />
         </Badge>
