@@ -331,9 +331,15 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           txHash: goFastTransfer.txs.orderFilledTx?.txHash,
         }
       case TransferType.axelarTransfer:
+        if (type === "send") {
+          return {
+            explorerLink: axelarTransfer.txs.sendTx?.explorerLink,
+            txHash: axelarTransfer?.txs?.sendTx?.txHash,
+          }
+        }
         return {
-          explorerLink: axelarTransfer?.axelarScanLink,
-          txHash: axelarTransfer?.txs?.sendTx?.txHash,
+          explorerLink: axelarTransfer.txs.executeTx?.explorerLink,
+          txHash: axelarTransfer?.txs?.executeTx?.txHash,
         }
       default:
         type RemainingTransferTypes =
