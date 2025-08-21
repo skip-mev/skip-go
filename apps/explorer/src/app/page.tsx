@@ -277,6 +277,7 @@ export default function Home() {
           getTxStatus(transactionDetails);
         });
       } else {
+        transactionDetails.push({ txHash: txHashes[0], chainId: chainIds[0] });
         getTxStatus(transactionDetails);
       }
 
