@@ -71,6 +71,14 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         </Tooltip>
       )
     }
+    if (step === "Origin") {
+      return (
+        <Badge>
+          Complete
+          <GreenDot />
+        </Badge>
+      )
+    }
     if (step === "Destination") {
       return (
         <Badge
@@ -154,6 +162,10 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     return skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId);
   }, [skipAssets?.data, transferAssetRelease]);
 
+  const isLoading = useMemo(() => {
+    return status === "pending" && !stateAbandoned && step !== "Origin";
+  }, [status, stateAbandoned, step]);
+
   const renderBottomButton = useMemo(() => {
     const decimals = skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId)?.decimals;
     const skipGoLink = `https://go.skip.build/?src_asset=${transferAssetRelease?.denom}&src_chain=${transferAssetRelease?.chainId}&amount_in=${transferAssetRelease?.amount ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount, decimals) : undefined}`;
@@ -188,7 +200,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   }, [skipAssets?.data, transferAssetRelease?.denom, transferAssetRelease?.chainId, transferAssetRelease?.amount, stateAbandoned, showTransferAssetRelease, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
 
   return (
-    <TransferEventContainer loading={status === "pending" && !stateAbandoned} padding={15} width={355} borderRadius={16} status={containerStatus}>
+    <TransferEventContainer loading={isLoading} padding={15} width={355} borderRadius={16} status={containerStatus}>
       <Row align="center" justify="space-between">
         <Row gap={8} align="center" justify="center">
           <Badge> {step} </Badge>
