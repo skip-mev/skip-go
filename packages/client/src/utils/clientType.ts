@@ -305,7 +305,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           }
         }
         return {
-          explorerLink: ibcTransfer.packetTxs.receiveTx?.explorerLink,
+          explorerLink: ibcTransfer.packetTxs.receiveTx?.explorerLink ?? ibcTransfer.packetTxs.timeoutTx?.explorerLink,
           txHash: ibcTransfer.packetTxs.receiveTx?.txHash,
         }
       case TransferType.eurekaTransfer:
