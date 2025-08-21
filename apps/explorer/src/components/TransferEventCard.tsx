@@ -47,9 +47,9 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const theme = useTheme();
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
-  const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations, routeStatus } = useTransactionHistoryItemFromUrlParams();
+  const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations } = useTransactionHistoryItemFromUrlParams();
 
-  const statusLabelAndColor = useOverallStatusLabelAndColor({ status: routeStatus ?? status });
+  const statusLabelAndColor = useOverallStatusLabelAndColor({ status });
   const stateLabelAndColor = useOverallStatusLabelAndColor({ state });
   const stateAbandoned = state === "STATE_ABANDONED" && step === "Destination";
 
@@ -167,7 +167,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       return (
         <SmallText>
           <Link href={skipGoLink} color={theme.brandColor} target="_blank" justify="center">
-            Reattempt on Skip.go →
+            Try again on Skip.go →
           </Link>
         </SmallText>
       )
@@ -175,9 +175,13 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     
     return (
       <SmallText>
-        <Link href={explorerLink} target="_blank" justify="center">
-          View on block explorer →
-        </Link>
+        {
+          explorerLink && (
+            <Link href={explorerLink} target="_blank" justify="center">
+              View on block explorer →
+            </Link>
+          )
+        }
       </SmallText>
     )
 
@@ -236,8 +240,10 @@ const TransferEventContainer = styled(Container) <{ status?: string, loading?: b
     switch (status) {
       case "completed":
         return `border: 2px solid ${theme.success.text}`;
+      case "abandoned":
       case "warning":
         return `border: 2px solid ${theme.warning.text}`;
+      case "failed":
       case "error":
         return `border: 2px solid ${theme.error.text}`;
       default:
