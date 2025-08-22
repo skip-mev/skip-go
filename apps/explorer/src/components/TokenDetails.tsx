@@ -19,10 +19,8 @@ export const TokenDetails = () => {
 
   const isNativeToken = destAsset?.originChainId === destAsset?.chainId && destAsset?.originDenom === destAsset?.denom;
 
-  console.log(destAsset);
-
   return (
-    <Container gap={20} width={355} borderRadius={16}>
+    <Container gap={20} width="100%" borderRadius={16}>
       {
         destAsset && (
           <Column gap={10}>
