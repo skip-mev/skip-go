@@ -373,7 +373,8 @@ export default function Home() {
               {showTokenDetails ? "Close" : "View token details"}
               {!showTokenDetails && <CoinsIcon />}
             </GhostButton>
-            
+            <Spacer height={10} />
+
             {showTokenDetails ? (
               <TokenDetails />
             ) : (
