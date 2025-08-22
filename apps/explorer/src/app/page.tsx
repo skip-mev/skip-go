@@ -36,6 +36,7 @@ import { ErrorCard, ErrorMessages } from "../components/ErrorCard";
 import { ErrorBoundary } from "react-error-boundary";
 import { Bridge } from "../components/Bridge";
 import { styled } from "@/styled-components";
+import { styledScrollbar } from "@/mixins/styledScrollbar";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
@@ -353,35 +354,37 @@ export default function Home() {
       />
 
       { uniqueTransfers.length > 0 ? (
-        <Row
+        <StyledContentContainer
           gap={16}
           flexDirection={isMobileScreenSize ? "column" : "row"}
           align={isMobileScreenSize ? "center" : "flex-start"}
         >
-          <StyledContentContainers>
-            <GhostButton
-              gap={5}
-              align="center"
-              justify="center"
-              onClick={() => setShowTokenDetails(!showTokenDetails)}
-              style={{
-                visibility: transactionDetailsFromUrlParams
-                  ? "visible"
-                  : "hidden",
-              }}
-            >
-              {showTokenDetails ? "Close" : "View token details"}
-              {!showTokenDetails && <CoinsIcon />}
-            </GhostButton>
-            <Spacer height={10} />
+          <StyledColumns>
+            <StyledColumns style={{ position: !isMobileScreenSize ? "absolute" : "relative" }}>
+              <GhostButton
+                gap={5}
+                align="center"
+                justify="center"
+                onClick={() => setShowTokenDetails(!showTokenDetails)}
+                style={{
+                  visibility: transactionDetailsFromUrlParams
+                    ? "visible"
+                    : "hidden",
+                }}
+              >
+                {showTokenDetails ? "Close" : "View token details"}
+                {!showTokenDetails && <CoinsIcon />}
+              </GhostButton>
+              <Spacer height={10} />
 
-            {showTokenDetails ? (
-              <TokenDetails />
-            ) : (
-              <TransactionDetails {...transactionDetails} />
-            )}
-          </StyledContentContainers>
-          <StyledContentContainers align="center" justify="center">
+              {showTokenDetails ? (
+                <TokenDetails />
+              ) : (
+                <TransactionDetails {...transactionDetails} />
+              )}
+            </StyledColumns>
+          </StyledColumns>
+          <StyledColumns align="center" justify="center">
             <Row width="100%" justify="flex-end">
               <GhostButton gap={5} onClick={showRawDataModal}>
                 View raw data <HamburgerIcon />
@@ -414,8 +417,8 @@ export default function Home() {
                 </ErrorBoundary>
               </>
             ))}
-          </StyledContentContainers>
-        </Row>
+          </StyledColumns>
+        </StyledContentContainer>
       ) : errorDetails ? (
         <Column width={355} align="flex-end">
           <GhostButton gap={5} onClick={showRawDataModal}>
@@ -431,13 +434,18 @@ export default function Home() {
   );
 }
 
-const StyledContentContainers = styled(Column)`
+const StyledContentContainer = styled(Row)`
+  height: calc(100vh - 100px);
+  @media (min-width: 1023px) {
+    height: calc(100vh - 200px);
+  }
+  overflow: auto;
+  ${styledScrollbar};
+`;
+
+const StyledColumns = styled(Column)`
   width: calc(100vw - 16px);
   @media (min-width: 767px) {
     width: 355px;
   }
-`;
-
-const StyledColumn = styled(Column)`
-  gap: 10px;
 `;

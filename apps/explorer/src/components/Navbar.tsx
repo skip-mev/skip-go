@@ -93,8 +93,6 @@ export const Navbar = ({ isSearchAModal, isTop, txHash, chainId, onSearch, reset
 }
 
 const StyledNavbarContainer = styled(Row)`
-  position: sticky;
-  top: 0;
   padding: 20px;
   @media (min-width: 1023px) {
     padding: 30px 24px 110px 24px;
