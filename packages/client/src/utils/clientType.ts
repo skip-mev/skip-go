@@ -445,7 +445,7 @@ export function getTransferEventsFromTxStatusResponse(
 ) {
   if (!txStatusResponse) return [];
   return txStatusResponse?.flatMap((txStatus) => {
-    return (txStatus.transferSequence ?? []).map((transferEvent) => {
+    return (txStatus?.transferSequence ?? []).map((transferEvent) => {
       return getClientTransferEvent(transferEvent);
     });
   });
