@@ -360,7 +360,7 @@ export default function Home() {
           align={isMobileScreenSize ? "center" : "flex-start"}
         >
           <StyledColumns>
-            <StyledColumns style={{ position: !isMobileScreenSize ? "absolute" : "relative" }}>
+            <StyledColumns align="flex-end" style={{ position: !isMobileScreenSize ? "absolute" : "relative" }}>
               <GhostButton
                 gap={5}
                 align="center"
