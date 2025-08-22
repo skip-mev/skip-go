@@ -18,25 +18,20 @@ import {
   defaultSkipClientConfig,
   skipClientConfigAtom,
   onlyTestnetsAtom,
-  ClientAsset,
   skipChainsAtom,
 } from "@/state/skipClient";
-import { uniqueAssetsBySymbolAtom } from "../state/uniqueAssetsBySymbol";
 import { useSetAtom, useAtomValue } from "@/jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
-import { NiceModal, Modals } from "@/nice-modal";
+import { NiceModal } from "@/nice-modal";
 import { GhostButton } from "@/components/Button";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
 import { TokenDetails } from "../components/TokenDetails";
 import { ExplorerModals } from "../constants/modal";
 import { useQueryState, parseAsString, parseAsArrayOf } from "nuqs";
-import { TxHashInput } from "../components/TxHashInput";
-import { ChainSelector } from "../components/ChainSelector";
-import { SearchButton } from "../components/SearchButton";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { CoinsIcon } from "../icons/CoinsIcon";
-import { Logo, TopRightComponent } from "../components/TopNav";
+import { Navbar } from "../components/Navbar";
 import { ErrorCard, ErrorMessages } from "../components/ErrorCard";
 import { ErrorBoundary } from "react-error-boundary";
 import { Bridge } from "../components/Bridge";
@@ -72,7 +67,6 @@ export default function Home() {
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
-  const uniqueAssetsBySymbol = useAtomValue(uniqueAssetsBySymbolAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
   const { transactionDetails: transactionDetailsFromUrlParams } =
     useTransactionHistoryItemFromUrlParams();
@@ -351,63 +345,17 @@ export default function Home() {
   }, [isTop, isLessThan1024]);
 
   return (
-    <>
-      <Logo onClick={() => resetState()} />
-      <TopRightComponent />
-      {!isSearchAModal ? (
-        <SearchWrapper isTop={isTop}>
-          <TxHashInput
-            size={isTop ? "small" : "normal"}
-            value={txHash || ""}
-            onChange={(v) => setTxHash(v)}
-            onSearch={() => {
-              if (txHash && chainId) {
-                onSearch();
-              }
-            }}
-            openModal={() => {
-              NiceModal.show(Modals.AssetAndChainSelectorModal, {
-                context: "source",
-                onSelect: (asset: ClientAsset | null) => {
-                  setChainId(asset?.chainId || "");
-
-                  onSearch(txHash, asset?.chainId);
-                  NiceModal.hide(Modals.AssetAndChainSelectorModal);
-                },
-                overrideSelectedGroup: {
-                  assets: uniqueAssetsBySymbol,
-                },
-                selectChain: true,
-              });
-            }}
-          />
-          <ChainSelector
-            size={isTop ? "small" : "normal"}
-            onClick={() => {
-              NiceModal.show(Modals.AssetAndChainSelectorModal, {
-                context: "source",
-                onSelect: (asset: ClientAsset | null) => {
-                  setChainId(asset?.chainId || "");
-                  if (txHash) {
-                    onSearch(txHash, asset?.chainId);
-                  }
-                  NiceModal.hide(Modals.AssetAndChainSelectorModal);
-                },
-                overrideSelectedGroup: {
-                  assets: uniqueAssetsBySymbol,
-                },
-                selectChain: true,
-              });
-            }}
-            selectedChain={selectedChain}
-          />
-          <SearchButton size={isTop ? "small" : "normal"} onClick={() => onSearch()} />
-        </SearchWrapper>
-      ) : (
-        <SearchTopRight>
-           <SearchButton size="small" iconOnly onClick={() => resetState()} />
-        </SearchTopRight>
-      )}
+    <Column width="100%" align="center">
+      <Navbar
+        isSearchAModal={isSearchAModal}
+        isTop={isTop}
+        txHash={txHash}
+        chainId={chainId}
+        onSearch={onSearch}
+        resetState={resetState}
+        setTxHash={setTxHash}
+        setChainId={setChainId}
+      />
 
       { uniqueTransfers.length > 0 ? (
         <StyledColumn>
@@ -487,53 +435,10 @@ export default function Home() {
           />
         </Column>
       ) : null}
-    </>
+    </Column>
   );
 }
 
-const SearchTopRight = styled.div`
-  position: fixed;
-  top: 24px;
-  right: 24px;
-  z-index: 1000;
-  @media (min-width: 1023px) {
-    display: none;
-  }
-`;
-
 const StyledColumn = styled(Column)`
-  margin-top: 180px;
   gap: 10px;
-`;
-
-const SearchWrapper = styled.div<{ isTop: boolean }>`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 10px;
-  position: fixed;
-  max-width: 970px;
-  flex-direction: column;
-  padding: 0px 8px;
-  width: ${(props) => (props.isTop ? "600px" : "100%")};
-  left: 50%;
-  @media (min-width: 1024px) {
-    flex-direction: row;
-    width: ${(props) => (props.isTop ? "600px" : "100%")};
-    left: ${(props) => (props.isTop ? "54%" : "50%")};
-  }
-  @media (min-width: 1440px) {
-    width: 100%;
-    left: ${(props) => (props.isTop ? "54%" : "50%")};
-  }
-  @media (min-width: 1500px) {
-    width: 100%;
-    left: 50%;
-  }
-
-  position: fixed;
-  top: ${(props) => (props.isTop ? "48px" : "50%")};
-  transform: translate(-50%, -50%);
-
-  transition: all 0.2s ease-in-out;
 `;

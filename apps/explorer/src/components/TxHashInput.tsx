@@ -111,5 +111,7 @@ const StyledInput = styled.input<{
     }
   }
 
+  text-overflow: ellipsis;
+
   transition: all 0.2s ease-in-out;
 `;

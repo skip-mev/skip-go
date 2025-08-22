@@ -20,14 +20,12 @@ export const Logo = ({ onClick }: { onClick?: () => void }) => {
         color: "inherit",
       }}
     >
-      <LogoContainer>
-        <Image
-          src={theme === "dark" ? "/logo.svg" : "/logo-light.svg"}
-          alt="Skip go explorer Logo"
-          width={256}
-          height={32}
-        />
-      </LogoContainer>
+      <Image
+        src={theme === "dark" ? "/logo.svg" : "/logo-light.svg"}
+        alt="Skip go explorer Logo"
+        width={256}
+        height={32}
+      />
     </Link>
   );
 };
@@ -56,19 +54,7 @@ export const TopRightComponent = () => {
   );
 };
 
-const LogoContainer = styled.div`
-  position: fixed;
-  top: 32px;
-  left: 24px;
-  @media (max-width: 1023px) {
-    left: 16px;
-  }
-`;
-
 const TopRightContainer = styled.div`
-  position: fixed;
-  top: 24px;
-  right: 24px;
   @media (max-width: 1023px) {
     display: none;
   }
