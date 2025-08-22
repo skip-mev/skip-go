@@ -43,7 +43,7 @@ export const Wrapper = ({ children }: { children: ReactNode }) => {
         style={{
           display: "flex",
           flexDirection: "row",
-          height: "100vh",
+          minHeight: "100vh",
           width: "100vw",
           justifyContent: "center",
           backgroundImage: `url('${

@@ -1,6 +1,6 @@
 "use client";
 import React, { useCallback } from "react";
-import { Column, Row } from "@/components/Layout";
+import { Column, Row, Spacer } from "@/components/Layout";
 import {
   getTransferEventsFromTxStatusResponse,
   ClientTransferEvent,
@@ -279,11 +279,6 @@ export default function Home() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const selectedChain = useMemo(() => {
-    if (!chainId) return null;
-    return chains.data?.find((chain) => chain.chainId === chainId) || null;
-  }, [chains.data, chainId]);
-
   const transactionDetails = useMemo(() => {
     const chainIds = uniqueTransfers?.map((event) => event.chainId);
 
@@ -358,72 +353,68 @@ export default function Home() {
       />
 
       { uniqueTransfers.length > 0 ? (
-        <StyledColumn>
-          <Row gap={16} flexDirection={isMobileScreenSize ? "column" : "row"}>
-            <Column align="flex-end" width={355}>
-              <GhostButton
-                gap={5}
-                align="center"
-                justify="center"
-                onClick={() => setShowTokenDetails(!showTokenDetails)}
-                style={{
-                  visibility: transactionDetailsFromUrlParams
-                    ? "visible"
-                    : "hidden",
-                }}
-              >
-                {showTokenDetails ? "Close" : "View token details"}
-                {!showTokenDetails && <CoinsIcon />}
-              </GhostButton>
-            </Column>
-            <Column align="flex-end" width={355}>
+        <Row
+          gap={16}
+          flexDirection={isMobileScreenSize ? "column" : "row"}
+          align={isMobileScreenSize ? "center" : "flex-start"}
+        >
+          <StyledContentContainers>
+            <GhostButton
+              gap={5}
+              align="center"
+              justify="center"
+              onClick={() => setShowTokenDetails(!showTokenDetails)}
+              style={{
+                visibility: transactionDetailsFromUrlParams
+                  ? "visible"
+                  : "hidden",
+              }}
+            >
+              {showTokenDetails ? "Close" : "View token details"}
+              {!showTokenDetails && <CoinsIcon />}
+            </GhostButton>
+            
+            {showTokenDetails ? (
+              <TokenDetails />
+            ) : (
+              <TransactionDetails {...transactionDetails} />
+            )}
+          </StyledContentContainers>
+          <StyledContentContainers align="center" justify="center">
+            <Row width="100%" justify="flex-end">
               <GhostButton gap={5} onClick={showRawDataModal}>
                 View raw data <HamburgerIcon />
               </GhostButton>
-            </Column>
-          </Row>
-          <Row
-            gap={16}
-            flexDirection={isMobileScreenSize ? "column" : "row"}
-            align={isMobileScreenSize ? "center" : "flex-start"}
-          >
-            <Column width={355}>
-              {showTokenDetails ? (
-                <TokenDetails />
-              ) : (
-                <TransactionDetails {...transactionDetails} />
-              )}
-            </Column>
-            <Column width={355} align="center" justify="center">
-              {uniqueTransfers.map((transfer) => (
-                <>
-                  {transfer.step !== "Origin" && (
-                    <Bridge
-                      transferType={transfer.transferType}
-                      durationInMs={transfer.durationInMs}
+            </Row>
+            <Spacer height={10} />
+            {uniqueTransfers.map((transfer) => (
+              <>
+                {transfer.step !== "Origin" && (
+                  <Bridge
+                    transferType={transfer.transferType}
+                    durationInMs={transfer.durationInMs}
+                  />
+                )}
+                <ErrorBoundary
+                  key={transfer.chainId}
+                  fallback={
+                    <ErrorCard
+                      errorMessage={ErrorMessages.TRANSFER_EVENT_ERROR}
+                      padding="20px 45px"
+                      onRetry={() => onSearch()}
                     />
-                  )}
-                  <ErrorBoundary
-                    key={transfer.chainId}
-                    fallback={
-                      <ErrorCard
-                        errorMessage={ErrorMessages.TRANSFER_EVENT_ERROR}
-                        padding="20px 45px"
-                        onRetry={() => onSearch()}
-                      />
-                    }
-                  >
-                    <TransferEventCard
-                      {...transfer}
-                      state={transactionStatusResponse?.state}
-                      onReindex={onReindex}
-                    />
-                  </ErrorBoundary>
-                </>
-              ))}
-            </Column>
-          </Row>
-        </StyledColumn>
+                  }
+                >
+                  <TransferEventCard
+                    {...transfer}
+                    state={transactionStatusResponse?.state}
+                    onReindex={onReindex}
+                  />
+                </ErrorBoundary>
+              </>
+            ))}
+          </StyledContentContainers>
+        </Row>
       ) : errorDetails ? (
         <Column width={355} align="flex-end">
           <GhostButton gap={5} onClick={showRawDataModal}>
@@ -438,6 +429,13 @@ export default function Home() {
     </Column>
   );
 }
+
+const StyledContentContainers = styled(Column)`
+  width: calc(100vw - 16px);
+  @media (min-width: 767px) {
+    width: 355px;
+  }
+`;
 
 const StyledColumn = styled(Column)`
   gap: 10px;

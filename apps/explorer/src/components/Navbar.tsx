@@ -9,7 +9,6 @@ import { SearchButton } from "./SearchButton";
 import { Logo, TopRightComponent } from "./TopNav";
 import { TxHashInput } from "./TxHashInput";
 import { css, styled } from "@/styled-components";
-import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 
 export type NavbarProps = {
   isSearchAModal: boolean;
@@ -94,6 +93,8 @@ export const Navbar = ({ isSearchAModal, isTop, txHash, chainId, onSearch, reset
 }
 
 const StyledNavbarContainer = styled(Row)`
+  position: sticky;
+  top: 0;
   padding: 20px;
   @media (min-width: 1023px) {
     padding: 30px 24px 110px 24px;

@@ -7,9 +7,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { RightArrowIcon } from "../icons/RightArrowIcon";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+
 
 export const Logo = ({ onClick }: { onClick?: () => void }) => {
   const [theme] = useLocalStorage<"dark" | "light">("explorer-theme");
+  const isMobileScreenSize = useIsMobileScreenSize();
 
   return (
     <Link
@@ -23,8 +26,8 @@ export const Logo = ({ onClick }: { onClick?: () => void }) => {
       <Image
         src={theme === "dark" ? "/logo.svg" : "/logo-light.svg"}
         alt="Skip go explorer Logo"
-        width={256}
-        height={32}
+        width={isMobileScreenSize ? 194 : 256}
+        height={isMobileScreenSize ? 24 : 32}
       />
     </Link>
   );
