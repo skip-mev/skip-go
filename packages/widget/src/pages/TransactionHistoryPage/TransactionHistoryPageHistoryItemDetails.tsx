@@ -29,6 +29,7 @@ type TransactionHistoryPageHistoryItemDetailsProps = {
   feeAssetRouteDetails?: RouteDetails;
   senderAddress?: string;
   receiverAddress?: string;
+  base64ExplorerData?: string;
 };
 
 const statusMap = {
@@ -55,6 +56,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   feeAssetRouteDetails,
   senderAddress,
   receiverAddress,
+  base64ExplorerData,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
 
@@ -83,7 +85,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
     chainId: transferAssetRelease?.chainId,
   });
 
-  const skipExplorerLink = createSkipExplorerLink(transactionDetails);
+  const skipExplorerLink = createSkipExplorerLink(transactionDetails, base64ExplorerData);
 
   return (
     <Column padding={10} gap={10} style={{ paddingTop: showTransferAssetRelease ? 0 : 10 }}>
@@ -139,18 +141,14 @@ export const TransactionHistoryPageHistoryItemDetails = ({
       {senderAddress && (
         <StyledHistoryItemDetailRow align="center">
           <StyledDetailsLabel>Sender</StyledDetailsLabel>
-          <SmallText normalTextColor>
-            {getTruncatedAddress(senderAddress)}
-          </SmallText>
+          <SmallText normalTextColor>{getTruncatedAddress(senderAddress)}</SmallText>
         </StyledHistoryItemDetailRow>
       )}
 
       {receiverAddress && (
         <StyledHistoryItemDetailRow align="center">
           <StyledDetailsLabel>Receiver</StyledDetailsLabel>
-          <SmallText normalTextColor>
-            {getTruncatedAddress(receiverAddress)}
-          </SmallText>
+          <SmallText normalTextColor>{getTruncatedAddress(receiverAddress)}</SmallText>
         </StyledHistoryItemDetailRow>
       )}
 

@@ -21,6 +21,7 @@ import { CircleSkeletonElement } from "@/components/Skeleton";
 import { convertToPxValue } from "@/utils/style";
 import { RouteDetails } from "@skip-go/client";
 import { BigNumber } from "bignumber.js";
+import { getBase64ExplorerData } from "@/utils/explorerLink";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -49,21 +50,6 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
     const historyItem = useTxHistory({
       txHistoryItem,
     });
-
-    // const explorerData = useMemo(() => {
-    //   const jsonString = JSON.stringify({
-    //     route: historyItem?.route,
-    //     userAddresses: historyItem?.userAddresses,
-    //     transactionDetails: historyItem?.transactionDetails,
-    //     status: historyItem?.status,
-    //   });
-
-    //   const base64Encoded = Buffer.from(jsonString).toString("base64");
-
-    //   return base64Encoded;
-    // }, [historyItem]);
-
-    // console.log(historyItem?.transactionDetails, explorerData.length, explorerData);
 
     const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
 
@@ -234,6 +220,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
             feeAssetRouteDetails={feeAssetRouteDetails}
             senderAddress={senderAddress}
             receiverAddress={receiverAddress}
+            base64ExplorerData={getBase64ExplorerData(txHistoryItem)}
           />
         )}
       </StyledHistoryContainer>

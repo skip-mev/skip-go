@@ -22,7 +22,7 @@ import { useSwapExecutionState } from "./useSwapExecutionState";
 import { SwapExecutionButton } from "./SwapExecutionButton";
 import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
 import { track } from "@amplitude/analytics-browser";
-import { createSkipExplorerLink } from "@/utils/explorerLink";
+import { createSkipExplorerLink, getBase64ExplorerData } from "@/utils/explorerLink";
 import { usePreventPageUnload } from "@/hooks/usePreventPageUnload";
 import { currentTransactionAtom } from "@/state/history";
 import {
@@ -212,8 +212,12 @@ export const SwapExecutionPage = () => {
             ? {
                 label: "Track progress",
                 onClick: () => {
+                  const base64ExplorerData = getBase64ExplorerData(currentTransaction);
                   window.open(
-                    createSkipExplorerLink(currentTransaction?.transactionDetails),
+                    createSkipExplorerLink(
+                      currentTransaction?.transactionDetails,
+                      base64ExplorerData,
+                    ),
                     "_blank",
                   );
                   track("swap execution page: track progress button - clicked", {
