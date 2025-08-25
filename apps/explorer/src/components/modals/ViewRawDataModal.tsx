@@ -6,6 +6,7 @@ import { CopyIcon } from "@/icons/CopyIcon";
 import { styled, useTheme } from "@/styled-components";
 import { Text } from "@/components/Typography";
 import { useClipboard } from "@/hooks/useClipboard";
+import { styledScrollbar } from "../../mixins/styledScrollbar";
 
 export type ViewRawDataModalProps = ModalProps & {
   data: string;
@@ -80,21 +81,6 @@ const StyledContent = styled(Column)`
   padding: 16px;
   background-color: ${({ theme }) => theme.secondary.background.normal};
   border-radius: ${({ theme }) => theme.borderRadius?.modalContainer};
-  &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  &::-webkit-scrollbar-track {
-    background: none;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.brandColor};
-    border-radius: 16px;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: ${({ theme }) => theme.primary.text.lowContrast};
-  }
-  &::-webkit-scrollbar-corner {
-    background: transparent;
-  }
+  
+  ${styledScrollbar};
 `;

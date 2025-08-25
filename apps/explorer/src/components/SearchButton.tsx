@@ -36,7 +36,7 @@ const SearchWrapper = styled(StyledWrapper)<{
   height: ${(props) => (props.size === "normal" ? "64px" : "48px")};
   justify-content: center;
   flex: none;
-  @media (max-width: 1023px) {
+  @media (max-width: 1300px) {
     width: ${(props) =>
       props.iconOnly ? (props.size === "normal" ? "64px" : "48px") : "100%"};
     justify-content: ${(props) =>
@@ -51,7 +51,7 @@ const StyledText = styled(Text)<{
   font-size: ${(props) => (props.size === "normal" ? "24px" : "16px")};
   color: ${(props) => props.theme.primary.text.lowContrast};
   display: ${(props) => (props.iconOnly ? "none" : "")};
-  @media (min-width: 1023px) {
+  @media (min-width: 1300px) {
     display: none;
   }
 `;

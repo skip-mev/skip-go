@@ -200,7 +200,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   }, [skipAssets?.data, transferAssetRelease?.denom, transferAssetRelease?.chainId, transferAssetRelease?.amount, stateAbandoned, showTransferAssetRelease, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
 
   return (
-    <TransferEventContainer loading={isLoading} padding={15} width={355} borderRadius={16} status={containerStatus}>
+    <TransferEventContainer loading={isLoading} padding={15} width="100%" borderRadius={16} status={containerStatus}>
       <Row align="center" justify="space-between">
         <Row gap={8} align="center" justify="center">
           <Badge> {step} </Badge>
@@ -242,6 +242,7 @@ const TransferEventDetailsCard = styled.div`
 `;
 
 const TransferEventContainer = styled(Container) <{ status?: string, loading?: boolean }>`
+  max-width: 100%;
   ${({ status, theme, loading }) => {
     if (loading) {
       return loadingPulseAnimation({

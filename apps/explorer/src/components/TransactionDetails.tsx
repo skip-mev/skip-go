@@ -36,32 +36,30 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
   }, [chains, destAmount, destAsset, sourceAmount, sourceAsset]);
   
   return (
-    <Column gap={5}>
-      <Container gap={20} width={355} borderRadius={16}>
-        <DetailsRow
-          label="Transaction"
-          value={transaction}
-        />
-        <DetailsRow
-          label="Status"
-          value={<SmallText color={statusLabelAndColor?.color}>{statusLabelAndColor?.label}</SmallText>}
-        />
-        <DetailsRow onClick={() => saveToClipboard(txHash)} label="Transaction Hash" value={isCopied ? "Copied!" : getTruncatedAddress(txHash)} />
-        <DetailsRow
-          label="Route"
-          value={
-            <Row gap={5}>
-              {chains?.map((chain, index) => (
-                <Row key={`${chain?.chainId}-${index}`} gap={8} align="center">
-                  {chain?.logoUri && <Image src={chain?.logoUri} alt={chain?.chainName} width={20} height={20} />}
-                  <SmallText>{index < chains.length - 1 && "→"}</SmallText>
-                </Row>
-              ))}
-            </Row>
-          }
-        />
-      </Container>
-    </Column>
+    <Container gap={20} width="100%" borderRadius={16}>
+      <DetailsRow
+        label="Transaction"
+        value={transaction}
+      />
+      <DetailsRow
+        label="Status"
+        value={<SmallText color={statusLabelAndColor?.color}>{statusLabelAndColor?.label}</SmallText>}
+      />
+      <DetailsRow onClick={() => saveToClipboard(txHash)} label="Transaction Hash" value={isCopied ? "Copied!" : getTruncatedAddress(txHash)} />
+      <DetailsRow
+        label="Route"
+        value={
+          <Row gap={5}>
+            {chains?.map((chain, index) => (
+              <Row key={`${chain?.chainId}-${index}`} gap={8} align="center">
+                {chain?.logoUri && <Image src={chain?.logoUri} alt={chain?.chainName} width={20} height={20} />}
+                <SmallText>{index < chains.length - 1 && "→"}</SmallText>
+              </Row>
+            ))}
+          </Row>
+        }
+      />
+    </Container>
   );
 };
 
