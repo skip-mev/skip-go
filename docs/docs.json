@@ -48,6 +48,7 @@
               "client/getting-started",
               "client/balance-gas-and-fee-tooling",
               "client/executing-a-route",
+              "client/gas-on-receive",
               "client/advanced-features",
               "client/migration-guide"
             ]
