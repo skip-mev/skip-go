@@ -58,7 +58,7 @@ export const TopRightComponent = () => {
 };
 
 const TopRightContainer = styled.div`
-  @media (max-width: 1023px) {
+  @media (max-width: 1300px) {
     display: none;
   }
 `;

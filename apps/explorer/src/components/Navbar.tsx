@@ -94,13 +94,13 @@ export const Navbar = ({ isSearchAModal, isTop, txHash, chainId, onSearch, reset
 
 const StyledNavbarContainer = styled(Row)`
   padding: 20px;
-  @media (min-width: 1023px) {
+  @media (min-width: 1300px) {
     padding: 30px 24px 110px 24px;
   }
 `;
 
 const SearchTopRight = styled.div`
-  @media (min-width: 1023px) {
+  @media (min-width: 1300px) {
     display: none;
   }
 `;
@@ -117,11 +117,11 @@ const SearchWrapper = styled.div<{ isTop: boolean }>`
   transform: translate(-50%);
   left: 50%;
 
-  @media (max-width: 1022px) {
+  @media (max-width: 1299px) {
     top: 120px;
   }
 
-  @media (min-width: 1023px) {
+  @media (min-width: 1300px) {
     flex-direction: row;
     width: calc(355px * 2 + 16px);
     padding: 0;

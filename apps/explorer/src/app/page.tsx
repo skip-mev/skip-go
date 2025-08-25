@@ -335,10 +335,10 @@ export default function Home() {
     );
   }, [chainIds, data, txHashes]);
 
-  const isLessThan1024 = useIsMobileScreenSize(1024);
+  const isLessThan1300 = useIsMobileScreenSize(1300);
   const isSearchAModal = useMemo(() => {
-    return Boolean(isTop && isLessThan1024);
-  }, [isTop, isLessThan1024]);
+    return Boolean(isTop && isLessThan1300);
+  }, [isTop, isLessThan1300]);
 
   return (
     <Column width="100%" align="center">
