@@ -6,6 +6,7 @@ import { formatDisplayAmount } from "./number";
 export type FeeDetail = {
   assetAmount: number;
   formattedAssetAmount: string;
+  usdAmount: number;
   formattedUsdAmount?: string;
 };
 export type LabeledFee = {
@@ -23,6 +24,7 @@ const getFeeDetail = (estimatedFee: Fee): FeeDetail => {
   return {
     assetAmount: Number(humanReadableAmount),
     formattedAssetAmount: `${formatDisplayAmount(humanReadableAmount)} ${estimatedFee.originAsset.symbol}`,
+    usdAmount: totalUsd,
     formattedUsdAmount: formatUSD(totalUsd.toString()),
   };
 };
@@ -68,16 +70,14 @@ export function getTotalFees(fees: LabeledFee[]): FeeDetail | undefined {
   if (!fees.length) return;
 
   const totalAsset = fees.reduce((s, { fee }) => s + fee.assetAmount, 0);
-  const totalUsd = fees.reduce(
-    (s, { fee }) =>
-      s + (fee.formattedUsdAmount ? Number(fee.formattedUsdAmount.replace(/[^0-9.-]/g, "")) : 0),
-    0,
-  );
+  const totalUsd = fees.reduce((s, { fee }) => s + fee.usdAmount, 0);
+  if (totalUsd === 0) return;
   const symbol = fees[0].fee.formattedAssetAmount.split(" ")[1];
 
   return {
     assetAmount: totalAsset,
     formattedAssetAmount: `${totalAsset.toFixed(6)} ${symbol}`,
-    formattedUsdAmount: totalUsd > 0 ? formatUSD(totalUsd.toString()) : "< $0.01",
+    usdAmount: totalUsd,
+    formattedUsdAmount: formatUSD(totalUsd.toString()),
   };
 }
