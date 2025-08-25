@@ -230,8 +230,6 @@ function filterNeutronSwapFee(operations: Operation[]) {
     const clientOperation = getClientOperation(op);
     if (
       clientOperation.type === OperationType.swap &&
-      clientOperation.swapOut?.swapVenue?.name === "neutron-astroport" &&
-      clientOperation.swapOut?.swapVenue.chainId === "neutron-1" &&
       clientOperation.chainId === "neutron-1" &&
       clientOperation.denomOut === "untrn" &&
       clientOperation.fromChainId === "neutron-1" &&
@@ -242,8 +240,6 @@ function filterNeutronSwapFee(operations: Operation[]) {
         const nextClientOperation = getClientOperation(nextOperation);
         if (
           nextClientOperation.type === OperationType.swap &&
-          nextClientOperation.swapIn?.swapVenue?.name === "neutron-astroport" &&
-          nextClientOperation.swapIn?.swapVenue?.chainId === "neutron-1" &&
           nextClientOperation.chainId === "neutron-1"
         ) {
           return false;
