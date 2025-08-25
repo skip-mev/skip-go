@@ -18,9 +18,8 @@ import {
   defaultSkipClientConfig,
   skipClientConfigAtom,
   onlyTestnetsAtom,
-  skipChainsAtom,
 } from "@/state/skipClient";
-import { useSetAtom, useAtomValue } from "@/jotai";
+import { useSetAtom } from "@/jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { NiceModal } from "@/nice-modal";
@@ -37,6 +36,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Bridge } from "../components/Bridge";
 import { styled } from "@/styled-components";
 import { styledScrollbar } from "@/mixins/styledScrollbar";
+import { SuccessfulTransactionCard } from "../components/SuccessfulTransactionCard";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
@@ -64,7 +64,6 @@ export default function Home() {
   const { operations } = useTransactionHistoryItemFromUrlParams();
   const [transactionStatusResponse, setTransactionStatusResponse] =
     useState<TxStatusResponse | null>(null);
-  const chains = useAtomValue(skipChainsAtom);
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
@@ -309,7 +308,7 @@ export default function Home() {
     }
   }, [errorDetails, transactionStatuses]);
 
-  const onReindex = async () => {
+  const onReindex = useCallback(async () => {
     try {
       await fetch('https://api.skip.build/v2/tx/retry_track', {
         method: "POST",
@@ -325,7 +324,7 @@ export default function Home() {
     } catch (error) {
       console.error(error);
     }
-  }
+  }, [txHash, chainId, onSearch]);
 
   const isTop = useMemo(() => {
     return (
@@ -340,20 +339,9 @@ export default function Home() {
     return Boolean(isTop && isLessThan1300);
   }, [isTop, isLessThan1300]);
 
-  return (
-    <Column width="100%" align="center">
-      <Navbar
-        isSearchAModal={isSearchAModal}
-        isTop={isTop}
-        txHash={txHash}
-        chainId={chainId}
-        onSearch={onSearch}
-        resetState={resetState}
-        setTxHash={setTxHash}
-        setChainId={setChainId}
-      />
-
-      { uniqueTransfers.length > 0 ? (
+  const renderPageContent = useMemo(() => {
+    if (uniqueTransfers.length > 0) {
+      return (
         <StyledContentContainer
           gap={16}
           flexDirection={isMobileScreenSize ? "column" : "row"}
@@ -419,8 +407,11 @@ export default function Home() {
             ))}
           </StyledColumns>
         </StyledContentContainer>
-      ) : errorDetails ? (
-        <Column width={355} align="flex-end">
+      )
+    }
+    if (errorDetails) {
+      return (
+        <Column width={355} align="flex-end" gap={10}>
           <GhostButton gap={5} onClick={showRawDataModal}>
             View raw data <HamburgerIcon />
           </GhostButton>
@@ -429,7 +420,28 @@ export default function Home() {
             onRetry={() => onSearch()}
           />
         </Column>
-      ) : null}
+      )
+    }
+    if (transactionStatusResponse?.state === "STATE_COMPLETED_SUCCESS") {
+      return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />
+    }
+    return 
+  }, [uniqueTransfers, errorDetails, transactionStatusResponse?.state, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch]);
+
+  return (
+    <Column width="100%" align="center">
+      <Navbar
+        isSearchAModal={isSearchAModal}
+        isTop={isTop}
+        txHash={txHash}
+        chainId={chainId}
+        onSearch={onSearch}
+        resetState={resetState}
+        setTxHash={setTxHash}
+        setChainId={setChainId}
+      />
+      
+      { renderPageContent }
     </Column>
   );
 }
