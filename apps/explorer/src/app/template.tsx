@@ -10,8 +10,8 @@ import { Modals, NiceModal } from "@/nice-modal";
 import { AssetAndChainSelectorModal } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 import { themeAtom } from "@/state/skipClient";
 import { ViewRawDataModal } from "../components/modals/ViewRawDataModal";
+import { SearchModal } from "../components/modals/SearchModal";
 import { ExplorerModals } from "../constants/modal";
-import { SearchModal } from "@/components/modals/SearchModal";
 
 export default function Template({ children }: { children: ReactNode }) {
   return (
