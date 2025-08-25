@@ -2,7 +2,6 @@ import { useAtomValue } from "@/jotai";
 import { skipAssetsAtom } from "@/state/skipClient";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { getClientOperations } from "@/utils/clientType";
-import { RouteStatus } from "@skip-go/client";
 import { useQueryState } from "nuqs";
 import { useMemo } from "react";
 
@@ -49,12 +48,11 @@ export const useTransactionHistoryItemFromUrlParams = () => {
       sourceAsset?.decimals
     ),
     destAmount: convertTokenAmountToHumanReadableAmount(
-      transactionHistoryItemFromUrlParams?.route?.amountOut, 
+      transactionHistoryItemFromUrlParams?.route?.amountOut,
       destAsset?.decimals
     ),
     userAddresses: transactionHistoryItemFromUrlParams?.userAddresses as { chainId: string, address: string }[],
     operations: getClientOperations(transactionHistoryItemFromUrlParams?.route?.operations),
-    routeStatus: transactionHistoryItemFromUrlParams?.status as RouteStatus,
     transactionDetails: transactionHistoryItemFromUrlParams?.transactionDetails,
   };
 };

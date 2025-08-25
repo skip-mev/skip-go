@@ -9,6 +9,7 @@ export type WaitForTransactionProps = TxResult & {
   doNotTrack?: boolean;
   onStatusUpdated?: (status: TxStatusResponse) => void;
   onError?: (error: Error) => void;
+  isCancelled?: () => boolean;
 };
 
 export const waitForTransaction = async ({
@@ -19,8 +20,10 @@ export const waitForTransaction = async ({
   onStatusUpdated,
   onError,
   onTransactionTracked,
+  isCancelled,
   ...trackTxPollingOptions
 }: WaitForTransactionProps) => {
+
   try {
     if (!explorerLink && !doNotTrack) {
       const response = await trackTransaction({
@@ -37,6 +40,9 @@ export const waitForTransaction = async ({
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
+    if (isCancelled?.()) {
+      throw new Error("waitForTransaction was aborted");
+    }
     try {
       const txStatusResponse = await transactionStatus({
         chainId,
@@ -61,5 +67,16 @@ export const waitForTransaction = async ({
       throw error;
     }
   }
+};
 
+export const waitForTransactionWithCancel = (props: WaitForTransactionProps) => {
+  let isCancelled = false;
+  
+  const cancel = () => {
+    isCancelled = true;
+  };
+
+  const wrappedPromise = waitForTransaction({...props, isCancelled: () => isCancelled});
+  
+  return { promise: wrappedPromise, cancel };
 };

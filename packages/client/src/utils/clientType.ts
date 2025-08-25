@@ -305,7 +305,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           }
         }
         return {
-          explorerLink: ibcTransfer.packetTxs.receiveTx?.explorerLink,
+          explorerLink: ibcTransfer.packetTxs.receiveTx?.explorerLink ?? ibcTransfer.packetTxs.timeoutTx?.explorerLink,
           txHash: ibcTransfer.packetTxs.receiveTx?.txHash,
         }
       case TransferType.eurekaTransfer:
@@ -316,7 +316,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           }
         }
         return {
-          explorerLink: eurekaTransfer.packetTxs.receiveTx?.explorerLink,
+          explorerLink: eurekaTransfer.packetTxs.receiveTx?.explorerLink ?? eurekaTransfer.packetTxs.timeoutTx?.explorerLink,
           txHash: eurekaTransfer.packetTxs.receiveTx?.txHash,
         }
       case TransferType.goFastTransfer:
@@ -327,13 +327,19 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           }
         }
         return {
-          explorerLink: goFastTransfer.txs.orderFilledTx?.explorerLink,
+          explorerLink: goFastTransfer.txs.orderFilledTx?.explorerLink ?? goFastTransfer.txs.orderTimeoutTx?.explorerLink ?? goFastTransfer.txs.orderRefundedTx?.explorerLink,
           txHash: goFastTransfer.txs.orderFilledTx?.txHash,
         }
       case TransferType.axelarTransfer:
+        if (type === "send") {
+          return {
+            explorerLink: axelarTransfer.txs.sendTx?.explorerLink,
+            txHash: axelarTransfer?.txs?.sendTx?.txHash,
+          }
+        }
         return {
-          explorerLink: axelarTransfer?.axelarScanLink,
-          txHash: axelarTransfer?.txs?.sendTx?.txHash,
+          explorerLink: axelarTransfer.txs.executeTx?.explorerLink,
+          txHash: axelarTransfer?.txs?.executeTx?.txHash,
         }
       default:
         type RemainingTransferTypes =
@@ -439,7 +445,7 @@ export function getTransferEventsFromTxStatusResponse(
 ) {
   if (!txStatusResponse) return [];
   return txStatusResponse?.flatMap((txStatus) => {
-    return (txStatus.transferSequence ?? []).map((transferEvent) => {
+    return (txStatus?.transferSequence ?? []).map((transferEvent) => {
       return getClientTransferEvent(transferEvent);
     });
   });

@@ -1,5 +1,5 @@
 import { useTheme } from "@/styled-components";
-import { RouteStatus, OverallStatus, TransactionState, TransferEventStatus } from "@skip-go/client";
+import { OverallStatus, TransactionState, TransferEventStatus } from "@skip-go/client";
 import { useMemo } from "react";
 
 type StatusLabelAndColor = {
@@ -10,7 +10,7 @@ type StatusLabelAndColor = {
 
 type OverallStatusWithAbandoned = OverallStatus | "abandoned";
 
-type CombinedStatus = RouteStatus | TransferEventStatus | OverallStatusWithAbandoned;
+type CombinedStatus = TransferEventStatus | OverallStatusWithAbandoned;
 
 const getSimpleOverallStatus = (state: TransactionState) => {
   switch (state) {
@@ -19,22 +19,20 @@ const getSimpleOverallStatus = (state: TransactionState) => {
       return "pending";
     case "STATE_COMPLETED_SUCCESS":
       return "success";
-    case "STATE_COMPLETED_ERROR":
-    case "STATE_PENDING_ERROR":
     case "STATE_ABANDONED":
       return "abandoned";
+    case "STATE_COMPLETED_ERROR":
+    case "STATE_PENDING_ERROR":
     default:
       return "failed";
   }
 }
 
-export const useOverallStatusLabelAndColor = ({ status, state }: { status?: RouteStatus | TransferEventStatus , state?: TransactionState }) => {
+export const useOverallStatusLabelAndColor = ({ status, state }: { status?: TransferEventStatus , state?: TransactionState }) => {
   const theme = useTheme();
   const statusLabelAndColor = useMemo(() => {
     const statusMap: Record<CombinedStatus, StatusLabelAndColor> = {
       unconfirmed: { label: "Unconfirmed", color: theme.error.text, background: theme.error.background },
-      allowance: { label: "In Progress", color: theme.warning.text, background: theme.warning.background },
-      validating: { label: "In Progress", color: theme.warning.text, background: theme.warning.background },
       signing: { label: "In Progress", color: theme.warning.text, background: theme.warning.background },
       approving: { label: "In Progress", color: theme.warning.text, background: theme.warning.background },
       pending: { label: "Pending", color: theme.warning.text, background: theme.warning.background },

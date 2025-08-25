@@ -6,7 +6,8 @@ import {
   ClientTransferEvent,
   TxStatusResponse,
   TransactionDetails as TransactionDetailsType,
-  waitForTransaction,
+  waitForTransactionWithCancel,
+  transactionStatus,
 } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
 import {
@@ -39,13 +40,12 @@ import { Logo, TopRightComponent } from "../components/TopNav";
 import { ErrorCard, ErrorMessages } from "../components/ErrorCard";
 import { ErrorBoundary } from "react-error-boundary";
 import { Bridge } from "../components/Bridge";
+import { styled } from "@/styled-components";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
   details: string;
 };
-import { styled } from "@/styled-components";
-import Link from "next/link";
 
 export default function Home() {
   // const theme = useTheme();
@@ -64,6 +64,8 @@ export default function Home() {
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
     []
   );
+
+  const { operations } = useTransactionHistoryItemFromUrlParams();
   const [transactionStatusResponse, setTransactionStatusResponse] =
     useState<TxStatusResponse | null>(null);
   const chains = useAtomValue(skipChainsAtom);
@@ -81,10 +83,18 @@ export default function Home() {
     errorMessage: ErrorMessages;
     error: ErrorWithCodeAndDetails;
   }>();
+  const [cancelStatusPolling, setCancelStatusPolling] = useState<{promise: Promise<TxStatusResponse>, cancel: () => void}[]>([]);
 
   const uniqueTransfers = useMemo(() => {
     const seen = new Set<string>();
     const transfers: TransferEventCardProps[] = [];
+
+    const transferAssetReleaseChainId = transactionStatusResponse?.transferAssetRelease?.chainId;
+    const transferAssetReleaseIndex = 
+      transferEvents.findLastIndex(event => 
+        event.fromChainId === transferAssetReleaseChainId || 
+        event.toChainId === transferAssetReleaseChainId
+      );
 
     const getStep = (index: number, fromOrTo: "from" | "to") => {
       if (index === 0 && fromOrTo === "from") return "Origin";
@@ -99,6 +109,19 @@ export default function Home() {
         explorerLink: string | undefined,
         fromOrTo: "from" | "to"
       ) => {
+
+        const assetMatches = operations[index]?.denom === transactionStatusResponse?.transferAssetRelease?.denom && operations[index]?.chainId === transactionStatusResponse?.transferAssetRelease?.chainId;
+
+        const getTransferAssetRelease = () => {
+          if (!transactionStatusResponse?.transferAssetRelease?.released) return;
+          if (assetMatches) {
+            return transactionStatusResponse?.transferAssetRelease;
+          }
+          if (transferAssetReleaseIndex === index && transferAssetReleaseChainId === chainId) {
+            return transactionStatusResponse?.transferAssetRelease;
+          }
+        }
+
         if (chainId && !seen.has(chainId)) {
           seen.add(chainId);
           transfers.push({
@@ -107,9 +130,9 @@ export default function Home() {
             transferType: event.transferType ?? "",
             status: event.status,
             step: getStep(index, fromOrTo),
-            txHash: event[`${fromOrTo}TxHash`] ?? "",
             durationInMs: event.durationInMs ?? 0,
             index,
+            transferAssetRelease: getTransferAssetRelease(),
           });
         }
       };
@@ -118,9 +141,8 @@ export default function Home() {
       addChainIfUnique(event.toChainId, event.toExplorerLink, "to");
     });
 
-    console.log(transfers);
     return transfers;
-  }, [transferEvents]);
+  }, [operations, transactionStatusResponse?.transferAssetRelease, transferEvents]);
 
   useEffect(() => {
     setSkipClientConfig(defaultSkipClientConfig);
@@ -129,12 +151,17 @@ export default function Home() {
 
   const getTxStatus = useCallback(
     async (transactionDetails: TransactionDetailsType[] = []) => {
+      if (cancelStatusPolling.length > 0) {
+        cancelStatusPolling.forEach(response => response.cancel());
+        setCancelStatusPolling([]);
+      }
+
       const txsToQuery = transactionDetails?.filter(
         (tx) => tx.txHash !== undefined && tx.chainId !== undefined
       );
 
-      txsToQuery?.forEach((tx, index) =>
-        waitForTransaction({
+      const responses = txsToQuery?.map((tx, index) =>
+        waitForTransactionWithCancel({
           txHash: tx.txHash ?? "",
           chainId: tx.chainId ?? "",
           doNotTrack: true,
@@ -167,10 +194,28 @@ export default function Home() {
             }
           },
         })
-      );
+      ) || [];
+
+      setCancelStatusPolling(responses);
     },
-    []
+    [cancelStatusPolling]
   );
+
+  const resetState = useCallback(() => {
+    cancelStatusPolling.forEach(response => response.cancel());
+    setCancelStatusPolling([]);
+    
+    setTxHashes(null);
+    setChainIds(null);
+    setTxHash("");
+    setChainId("");
+    
+    setTransactionStatuses([]);
+    setTransferEvents([]);
+    setErrorDetails(undefined);
+    setTransactionStatusResponse(null);
+
+  }, [cancelStatusPolling, setTxHashes, setChainIds]);
 
   const onSearch = useCallback((_txhash?: string, _chainId?:string) => {
     setTransactionStatuses([]);
@@ -191,14 +236,12 @@ export default function Home() {
     ) {
       setData(null);
     }
-  }, [
-    txHash,
-    chainId,
-    transactionDetailsFromUrlParams,
-    setTxHashes,
-    setChainIds,
-    setData,
-  ]);
+
+    if (hash && id) {
+      getTxStatus([{ txHash: hash, chainId: id }]);
+    }
+
+  }, [txHash, chainId, transactionDetailsFromUrlParams, setTxHashes, setChainIds, setData, getTxStatus]);
 
   useEffect(() => {
     if (transactionDetailsFromUrlParams) {
@@ -213,18 +256,34 @@ export default function Home() {
     ) {
       setChainId(chainIds[0]);
       setTxHash(txHashes[0]);
-      getTxStatus(
-        txHashes.map((txHash, index) => ({ txHash, chainId: chainIds[index] }))
-      );
-    } else {
-      setChainId(undefined);
-      setTxHash(undefined);
-      setTransferEvents([]);
-      setTransactionStatusResponse(null);
-      setTransactionStatuses([]);
-      setErrorDetails(undefined);
+
+      const transactionDetails: TransactionDetailsType[] = [];
+
+      const calculateMissingChainIds = async () => {
+        let nextChainId = chainIds[0];
+        for (const txHash of txHashes) {
+          const response = await transactionStatus({
+            txHash,
+            chainId: nextChainId,
+          });
+          
+          transactionDetails.push({ txHash, chainId: nextChainId });
+          nextChainId = response?.transferAssetRelease?.chainId || "";
+        }
+      }
+
+      if (txHashes.length > 1) {
+        calculateMissingChainIds().then(() => {
+          getTxStatus(transactionDetails);
+        });
+      } else {
+        transactionDetails.push({ txHash: txHashes[0], chainId: chainIds[0] });
+        getTxStatus(transactionDetails);
+      }
+
     }
-  }, [txHashes, chainIds, transactionDetailsFromUrlParams, getTxStatus]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const selectedChain = useMemo(() => {
     if (!chainId) return null;
@@ -260,6 +319,24 @@ export default function Home() {
     }
   }, [errorDetails, transactionStatuses]);
 
+  const onReindex = async () => {
+    try {
+      await fetch('https://api.skip.build/v2/tx/retry_track', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tx_hash: txHash,
+          chain_id: chainId,
+        }),
+      });
+      onSearch();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const isTop = useMemo(() => {
     return (
       Boolean(
@@ -275,7 +352,7 @@ export default function Home() {
 
   return (
     <>
-      <Logo />
+      <Logo onClick={() => resetState()} />
       <TopRightComponent />
       {!isSearchAModal ? (
         <SearchWrapper isTop={isTop}>
@@ -283,12 +360,18 @@ export default function Home() {
             size={isTop ? "small" : "normal"}
             value={txHash || ""}
             onChange={(v) => setTxHash(v)}
+            onSearch={() => {
+              if (txHash && chainId) {
+                onSearch();
+              }
+            }}
             openModal={() => {
               NiceModal.show(Modals.AssetAndChainSelectorModal, {
                 context: "source",
                 onSelect: (asset: ClientAsset | null) => {
                   setChainId(asset?.chainId || "");
-                   onSearch(txHash, asset?.chainId);
+
+                  onSearch(txHash, asset?.chainId);
                   NiceModal.hide(Modals.AssetAndChainSelectorModal);
                 },
                 overrideSelectedGroup: {
@@ -318,29 +401,17 @@ export default function Home() {
             }}
             selectedChain={selectedChain}
           />
-          <SearchButton size={isTop ? "small" : "normal"} onClick={onSearch} />
+          <SearchButton size={isTop ? "small" : "normal"} onClick={() => onSearch()} />
         </SearchWrapper>
       ) : (
         <SearchTopRight>
-          <Link href="/">
-            <SearchButton size="small" iconOnly />
-          </Link>
+           <SearchButton size="small" iconOnly onClick={() => resetState()} />
         </SearchTopRight>
       )}
 
-      {errorDetails ? (
-        <Column width={355} align="flex-end">
-          <GhostButton gap={5} onClick={showRawDataModal}>
-            View raw data <HamburgerIcon />
-          </GhostButton>
-          <ErrorCard
-            errorMessage={errorDetails.errorMessage}
-            onRetry={onSearch}
-          />
-        </Column>
-      ) : uniqueTransfers.length > 0 ? (
+      { uniqueTransfers.length > 0 ? (
         <StyledColumn>
-          <Row gap={16}>
+          <Row gap={16} flexDirection={isMobileScreenSize ? "column" : "row"}>
             <Column align="flex-end" width={355}>
               <GhostButton
                 gap={5}
@@ -390,17 +461,14 @@ export default function Home() {
                       <ErrorCard
                         errorMessage={ErrorMessages.TRANSFER_EVENT_ERROR}
                         padding="20px 45px"
-                        onRetry={onSearch}
+                        onRetry={() => onSearch()}
                       />
                     }
                   >
                     <TransferEventCard
-                      chainId={transfer.chainId}
-                      explorerLink={transfer.explorerLink}
-                      transferType={transfer.transferType}
-                      status={transfer.status}
-                      step={transfer.step}
-                      index={transfer.index}
+                      {...transfer}
+                      state={transactionStatusResponse?.state}
+                      onReindex={onReindex}
                     />
                   </ErrorBoundary>
                 </>
@@ -408,6 +476,16 @@ export default function Home() {
             </Column>
           </Row>
         </StyledColumn>
+      ) : errorDetails ? (
+        <Column width={355} align="flex-end">
+          <GhostButton gap={5} onClick={showRawDataModal}>
+            View raw data <HamburgerIcon />
+          </GhostButton>
+          <ErrorCard
+            errorMessage={errorDetails.errorMessage}
+            onRetry={() => onSearch()}
+          />
+        </Column>
       ) : null}
     </>
   );
