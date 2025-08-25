@@ -7,10 +7,12 @@ export const SearchButton = ({
   size = "normal",
   onClick,
   iconOnly = false,
+  isSearchable = false,
 }: {
   size?: "normal" | "small";
   onClick?: () => void;
   iconOnly?: boolean;
+  isSearchable?: boolean;
 }) => {
   const theme = useTheme();
   return (
@@ -19,26 +21,28 @@ export const SearchButton = ({
       isClickable
       onClick={onClick}
       iconOnly={iconOnly}
+      isSearchable={isSearchable}
     >
-      <StyledText size={size} iconOnly={iconOnly}>
+      <StyledText size={size} iconOnly={iconOnly} isSearchable={isSearchable}>
         Search transaction
       </StyledText>
-      <SearchIcon color={theme.primary.text.lowContrast} />
+      <SearchIcon color={isSearchable ? theme.primary.background.normal : theme.primary.text.lowContrast} />
     </SearchWrapper>
   );
 };
 
 const SearchWrapper = styled(StyledWrapper)<{
   iconOnly?: boolean;
+  isSearchable?: boolean;
 }>`
-  background-color: ${(props) => props.theme.secondary.background.normal};
+  background-color: ${(props) => props.isSearchable ? props.theme.brandColor : props.theme.primary.background.normal};
   width: ${(props) => (props.size === "normal" ? "64px" : "48px")};
   height: ${(props) => (props.size === "normal" ? "64px" : "48px")};
   justify-content: center;
   flex: none;
   @media (max-width: 1300px) {
     width: ${(props) =>
-      props.iconOnly ? (props.size === "normal" ? "64px" : "48px") : "100%"};
+      props.iconOnly ? (props.size === "normal" ? "64px" : "48px") : "auto"};
     justify-content: ${(props) =>
       props.iconOnly ? "center" : "space-between"};
   }
@@ -47,9 +51,10 @@ const SearchWrapper = styled(StyledWrapper)<{
 const StyledText = styled(Text)<{
   size: "normal" | "small";
   iconOnly?: boolean;
+  isSearchable?: boolean;
 }>`
   font-size: ${(props) => (props.size === "normal" ? "24px" : "16px")};
-  color: ${(props) => props.theme.primary.text.lowContrast};
+  color: ${(props) => props.isSearchable ? props.theme.primary.background.normal : props.theme.primary.text.lowContrast};
   display: ${(props) => (props.iconOnly ? "none" : "")};
   @media (min-width: 1300px) {
     display: none;

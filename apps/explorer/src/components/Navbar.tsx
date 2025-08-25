@@ -6,9 +6,15 @@ import { useAtomValue } from "@/jotai";
 import { useMemo } from "react";
 import { ChainSelector } from "./ChainSelector";
 import { SearchButton } from "./SearchButton";
-import { Logo, TopRightComponent } from "./TopNav";
+import { RightArrowIcon } from "../icons/RightArrowIcon";
 import { TxHashInput } from "./TxHashInput";
 import { css, styled } from "@/styled-components";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { useLocalStorage } from "@uidotdev/usehooks";
+import { Button } from "@/components/Button";
+import Link from "next/link";
+import Image from "next/image";
+import { ExplorerModals } from "../constants/modal";
 
 export type NavbarProps = {
   isSearchAModal: boolean;
@@ -80,17 +86,96 @@ export const Navbar = ({ isSearchAModal, isTop, txHash, chainId, onSearch, reset
             }}
             selectedChain={selectedChain}
           />
-          <SearchButton size={isTop ? "small" : "normal"} onClick={() => onSearch()} />
+          <SearchButton size={isTop ? "small" : "normal"} onClick={() => onSearch()} isSearchable={!!txHash && !!chainId} />
         </SearchWrapper>
       ) : (
         <SearchTopRight>
-          <SearchButton size="small" iconOnly onClick={() => resetState()} />
+          <SearchButton size="small" iconOnly onClick={() => NiceModal.show(ExplorerModals.SearchModal, {
+            txHash,
+            chainId,
+            onSearch,
+            setTxHash,
+            setChainId,
+            blurBackground: true,
+            disableCloseOnClickOutside: true,
+          })} />
         </SearchTopRight>
       )}
       <TopRightComponent />
     </StyledNavbarContainer>
   )
 }
+
+export const Logo = ({ onClick }: { onClick?: () => void }) => {
+  const [theme] = useLocalStorage<"dark" | "light">("explorer-theme");
+  const isMobileScreenSize = useIsMobileScreenSize();
+
+  return (
+    <Link
+      onClick={onClick}
+      href="/"
+      style={{
+        textDecoration: "none",
+        color: "inherit",
+      }}
+    >
+      <Image
+        src={theme === "dark" ? "/logo.svg" : "/logo-light.svg"}
+        alt="Skip go explorer Logo"
+        width={isMobileScreenSize ? 194 : 256}
+        height={isMobileScreenSize ? 24 : 32}
+      />
+    </Link>
+  );
+};
+
+export const TopRightComponent = () => {
+  const [theme] = useLocalStorage<"dark" | "light">("explorer-theme");
+
+  return (
+    <TopRightContainer>
+      <Row>
+        <Link
+          href="https://discord.gg/interchain"
+          target="_blank"
+          style={{
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
+          <StyledPillButton onClick={() => {}} isDarkMode={theme === "dark"}>
+            Need Help?
+            <RightArrowIcon color={theme === "dark" ? "#000" : "#fff"} />
+          </StyledPillButton>
+        </Link>
+      </Row>
+    </TopRightContainer>
+  );
+};
+
+const TopRightContainer = styled.div`
+  @media (max-width: 1300px) {
+    display: none;
+  }
+`;
+
+const StyledPillButton = styled(Button)<{ isDarkMode?: boolean }>`
+  background: ${({ isDarkMode }) => (isDarkMode ? "#fff" : "#000")};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#000" : "#fff")};
+  font-family: "ABCDiatype", sans-serif;
+  box-shadow: none;
+  border: none;
+  font-weight: 500;
+  font-size: 16px;
+  padding: 12px;
+  align-items: center;
+  gap: 8px;
+  border-radius: 100px;
+
+  &:hover {
+    background: ${({ isDarkMode }) => (isDarkMode ? "#f0f0f0" : "#e0e0e0")};
+  }
+`;
 
 const StyledNavbarContainer = styled(Row)`
   padding: 20px;
