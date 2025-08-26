@@ -10,6 +10,7 @@ import { Modals, NiceModal } from "@/nice-modal";
 import { AssetAndChainSelectorModal } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 import { themeAtom } from "@/state/skipClient";
 import { ViewRawDataModal } from "../components/modals/ViewRawDataModal";
+import { SearchModal } from "../components/modals/SearchModal";
 import { ExplorerModals } from "../constants/modal";
 
 export default function Template({ children }: { children: ReactNode }) {
@@ -100,6 +101,7 @@ export const RegisterModals = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     NiceModal.register(Modals.AssetAndChainSelectorModal, AssetAndChainSelectorModal);
     NiceModal.register(ExplorerModals.ViewRawDataModal, ViewRawDataModal);
+    NiceModal.register(ExplorerModals.SearchModal, SearchModal);
   }, []);
 
   return children
