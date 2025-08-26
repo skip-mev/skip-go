@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.14.7
+
+### Patch Changes
+
+- 0ca46bb: Fix tooltips to be wrapped by ShadowDomAndProviders now that they use react portal
+
 ## 3.14.6
 
 ### Patch Changes
