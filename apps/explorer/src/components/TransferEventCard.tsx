@@ -17,6 +17,7 @@ import { loadingPulseAnimation } from "@/components/Container";
 import { getTransferTypeLabel } from "./Bridge";
 import { CoinsIcon } from "../icons/CoinsIcon";
 import { Tooltip } from "@/components/Tooltip";
+import { useClipboard } from "@/hooks/useClipboard";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -47,6 +48,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const theme = useTheme();
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
+  const { saveToClipboard, isCopied } = useClipboard();
   const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations } = useTransactionHistoryItemFromUrlParams();
 
   const statusLabelAndColor = useOverallStatusLabelAndColor({ status });
@@ -143,15 +145,17 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
               </>
             ): (
               <>
-              <Image src={chain?.logoUri ?? ''} alt={chain?.chainName ?? ''} width={40} height={40} />
-              <Text>{chain?.prettyName}</Text>
+                <Image src={chain?.logoUri ?? ''} alt={chain?.chainName ?? ''} width={40} height={40} />
+                <Text>{chain?.prettyName}</Text>
               </>
             )}
             
           </Row>
           <Row gap={5} align="center">
             <SmallText normalTextColor>on {chain?.prettyName}</SmallText>
-            <SmallText>{getTruncatedAddress(userAddress)}</SmallText>
+            <SmallTextButton onClick={() => saveToClipboard(userAddress)}>
+              { isCopied ? "Copied!" : getTruncatedAddress(userAddress)}
+            </SmallTextButton>
           </Row>
         </Column>
       )
@@ -166,7 +170,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         </Column>
       </>
     )
-  }, [currentAsset, userAddress, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId]);
+  }, [userAddress, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId, currentAsset?.asset?.logoUri, currentAsset?.asset?.symbol, currentAsset?.amount, isCopied, saveToClipboard]);
 
   const transferAssetReleaseAsset = useMemo(() => {
     return skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId);
