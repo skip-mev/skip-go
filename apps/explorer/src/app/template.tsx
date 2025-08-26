@@ -48,7 +48,7 @@ export const Wrapper = ({ children }: { children: ReactNode }) => {
           width: "100vw",
           justifyContent: "center",
           backgroundImage: `url('${
-            theme === "dark" ? "/gobg-dark.svg" : "/gobg-light.svg"
+            theme === "dark" ? "/dark-bg.svg" : "/light-bg.svg"
           }')`,
           backgroundSize: "cover",
           backgroundPosition: "bottom",
