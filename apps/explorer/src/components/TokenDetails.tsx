@@ -15,7 +15,7 @@ import { TxStatusResponse } from "@skip-go/client";
 export const TokenDetails = ({
   transactionStatusResponse,
 }: {
-  transactionStatusResponse: TxStatusResponse;
+  transactionStatusResponse?: TxStatusResponse;
 }) => {
   const { destAsset, destAmount } = useTransactionHistoryItemFromUrlParams();
   const { saveToClipboard, isCopied } = useClipboard();

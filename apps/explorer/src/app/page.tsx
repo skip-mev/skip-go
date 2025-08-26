@@ -63,8 +63,7 @@ export default function Home() {
 
   const { operations } = useTransactionHistoryItemFromUrlParams();
   const [transactionStatusResponse, setTransactionStatusResponse] =
-    useState<TxStatusResponse | null>(null);
-  const chains = useAtomValue(skipChainsAtom);
+    useState<TxStatusResponse | undefined>(undefined);
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
@@ -208,7 +207,7 @@ export default function Home() {
     setTransactionStatuses([]);
     setTransferEvents([]);
     setErrorDetails(undefined);
-    setTransactionStatusResponse(null);
+    setTransactionStatusResponse(undefined);
 
   }, [cancelStatusPolling, setTxHashes, setChainIds]);
 
@@ -216,7 +215,7 @@ export default function Home() {
     setTransactionStatuses([]);
     setTransferEvents([]);
     setErrorDetails(undefined);
-    setTransactionStatusResponse(null);
+    setTransactionStatusResponse(undefined);
     const hash = _txhash ?? txHash;
     const id = _chainId ?? chainId;
 
@@ -366,6 +365,11 @@ export default function Home() {
                 align="center"
                 justify="center"
                 onClick={() => setShowTokenDetails(!showTokenDetails)}
+                style={{
+                  visibility: transactionDetailsFromUrlParams || transactionStatusResponse?.transferAssetRelease?.released
+                    ? "visible"
+                    : "hidden",
+                }}
               >
                 {showTokenDetails ? "Close" : "View token details"}
                 {!showTokenDetails && <CoinsIcon />}
