@@ -366,7 +366,7 @@ export default function Home() {
                 justify="center"
                 onClick={() => setShowTokenDetails(!showTokenDetails)}
                 style={{
-                  visibility: transactionDetailsFromUrlParams || transactionStatusResponse?.transferAssetRelease?.released
+                  visibility: transactionStatusResponse?.transferAssetRelease?.released || transactionDetailsFromUrlParams 
                     ? "visible"
                     : "hidden",
                 }}
