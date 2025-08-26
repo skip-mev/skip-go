@@ -23,7 +23,7 @@ const getFeeDetail = (estimatedFee: Fee): FeeDetail => {
   return {
     assetAmount: Number(humanReadableAmount),
     formattedAssetAmount: `${formatDisplayAmount(humanReadableAmount)} ${estimatedFee.originAsset.symbol}`,
-    formattedUsdAmount: formatUSD(totalUsd.toString()),
+    formattedUsdAmount: totalUsd > 0 ? formatUSD(totalUsd.toString()) : undefined,
   };
 };
 
@@ -78,6 +78,6 @@ export function getTotalFees(fees: LabeledFee[]): FeeDetail | undefined {
   return {
     assetAmount: totalAsset,
     formattedAssetAmount: `${totalAsset.toFixed(6)} ${symbol}`,
-    formattedUsdAmount: totalUsd > 0 ? formatUSD(totalUsd.toString()) : "< $0.01",
+    formattedUsdAmount: totalUsd > 0 ? formatUSD(totalUsd.toString()) : undefined,
   };
 }
