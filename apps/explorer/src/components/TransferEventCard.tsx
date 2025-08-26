@@ -47,9 +47,9 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const theme = useTheme();
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
-  const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations, routeStatus } = useTransactionHistoryItemFromUrlParams();
+  const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations } = useTransactionHistoryItemFromUrlParams();
 
-  const statusLabelAndColor = useOverallStatusLabelAndColor({ status: routeStatus ?? status });
+  const statusLabelAndColor = useOverallStatusLabelAndColor({ status });
   const stateLabelAndColor = useOverallStatusLabelAndColor({ state });
   const stateAbandoned = state === "STATE_ABANDONED" && step === "Destination";
 
@@ -57,10 +57,26 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
 
   const userAddress = userAddresses?.find((address) => address.chainId === chainId)?.address;
 
+  const showTransferAssetRelease = transferAssetRelease && step !== "Destination";
+
   const renderStatusBadge = useMemo(() => {
     if (stateAbandoned) {
       return (
-        <Badge color={stateLabelAndColor?.color} background={stateLabelAndColor?.background}>{stateLabelAndColor?.label}</Badge>
+        <Tooltip content="Transaction got stuck. Retry indexing">
+          <Badge
+            color={stateLabelAndColor?.color}
+            background={stateLabelAndColor?.background}>
+            {stateLabelAndColor?.label}
+          </Badge>
+        </Tooltip>
+      )
+    }
+    if (step === "Origin") {
+      return (
+        <Badge flexDirection="row" gap={5} align="center">
+          Complete
+          <GreenDot />
+        </Badge>
       )
     }
     if (step === "Destination") {
@@ -146,6 +162,10 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     return skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId);
   }, [skipAssets?.data, transferAssetRelease]);
 
+  const isLoading = useMemo(() => {
+    return status === "pending" && !stateAbandoned && step !== "Origin";
+  }, [status, stateAbandoned, step]);
+
   const renderBottomButton = useMemo(() => {
     const decimals = skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId)?.decimals;
     const skipGoLink = `https://go.skip.build/?src_asset=${transferAssetRelease?.denom}&src_chain=${transferAssetRelease?.chainId}&amount_in=${transferAssetRelease?.amount ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount, decimals) : undefined}`;
@@ -155,11 +175,11 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       )
     }
 
-    if (transferAssetRelease) {
+    if (showTransferAssetRelease) {
       return (
         <SmallText>
           <Link href={skipGoLink} color={theme.brandColor} target="_blank" justify="center">
-            Reattempt on Skip.go →
+            Try again on Skip.go →
           </Link>
         </SmallText>
       )
@@ -167,20 +187,24 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     
     return (
       <SmallText>
-        <Link href={explorerLink} target="_blank" justify="center">
-          View on block explorer →
-        </Link>
+        {
+          explorerLink && (
+            <Link href={explorerLink} target="_blank" justify="center">
+              View on block explorer →
+            </Link>
+          )
+        }
       </SmallText>
     )
 
-  }, [skipAssets?.data, transferAssetRelease, stateAbandoned, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
+  }, [skipAssets?.data, transferAssetRelease?.denom, transferAssetRelease?.chainId, transferAssetRelease?.amount, stateAbandoned, showTransferAssetRelease, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
 
   return (
-    <TransferEventContainer loading={status === "pending" && !stateAbandoned} padding={15} width={355} borderRadius={16} status={containerStatus}>
+    <TransferEventContainer loading={isLoading} padding={15} width="100%" borderRadius={16} status={containerStatus}>
       <Row align="center" justify="space-between">
         <Row gap={8} align="center" justify="center">
           <Badge> {step} </Badge>
-          {transferAssetRelease && (
+          {showTransferAssetRelease && (
             <Tooltip content={`Your assets were released as ${transferAssetReleaseAsset?.symbol} on ${transferAssetReleaseAsset?.chainName}`}>
               <Badge color={theme.brandColor} gap={5} align="center" justify="center">
                 Your tokens
@@ -217,7 +241,8 @@ const TransferEventDetailsCard = styled.div`
   border: ${({ theme }) => `1px solid ${theme.secondary.background.normal}`};
 `;
 
-const TransferEventContainer = styled(Container) <{ status?: string, loading?: boolean }>`
+export const TransferEventContainer = styled(Container) <{ status?: string, loading?: boolean }>`
+  max-width: 100%;
   ${({ status, theme, loading }) => {
     if (loading) {
       return loadingPulseAnimation({
@@ -228,8 +253,10 @@ const TransferEventContainer = styled(Container) <{ status?: string, loading?: b
     switch (status) {
       case "completed":
         return `border: 2px solid ${theme.success.text}`;
+      case "abandoned":
       case "warning":
         return `border: 2px solid ${theme.warning.text}`;
+      case "failed":
       case "error":
         return `border: 2px solid ${theme.error.text}`;
       default:

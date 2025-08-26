@@ -1,0 +1,627 @@
+---
+title: "Gas on Receive with Custom Frontends"
+description: "Implement Gas on Receive functionality in your custom frontend using the Skip Go Client Library"
+---
+
+This guide explains how to implement Gas on Receive functionality when building custom frontends with the Skip Go Client Library. Gas on Receive helps users automatically obtain native gas tokens on destination chains during cross-chain swaps.
+
+## Overview
+
+Gas on Receive prevents users from getting "stuck" with assets they can't use by automatically providing a small amount of native gas tokens on the destination chain. 
+
+The client library provides the `getRouteWithGasOnReceive` function that handles all the complexity for you, or you can implement custom logic if you need specific behavior.
+
+## Prerequisites
+
+- Skip Go Client Library v1.5.0 or higher
+- Understanding of the basic `route` and `executeRoute` functions
+- Access to user wallet signers for multiple chains
+
+### Supported Chains
+- **Destination**: Cosmos chains and EVM L2s (Solana not supported)
+- **Source**: Most chains except Ethereum mainnet and Sepolia testnet
+
+## Quick Start: Using getRouteWithGasOnReceive
+
+The simplest way to implement Gas on Receive is using the built-in `getRouteWithGasOnReceive` function:
+
+```typescript
+import { 
+  route, 
+  getRouteWithGasOnReceive, 
+  executeMultipleRoutes,
+  executeRoute,
+  type RouteRequest,
+  type RouteResponse,
+  type UserAddress
+} from "@skip-go/client";
+
+async function swapWithGasOnReceive() {
+  try {
+    // Step 1: Define your route request
+    const routeRequest = {
+      amountIn: "1000000", // 1 OSMO
+      sourceAssetChainId: "osmosis-1",
+      sourceAssetDenom: "uosmo",
+      destAssetChainId: "42161", // Arbitrum
+      destAssetDenom: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1", // WETH
+      smartRelay: true
+    };
+
+    // Step 2: Get your initial route
+    const originalRoute = await route(routeRequest);
+
+    // Step 3: Automatically split into main and gas routes
+    const { mainRoute, gasRoute } = await getRouteWithGasOnReceive({
+      routeResponse: originalRoute,
+      routeRequest
+    });
+
+    // Step 4: Get user addresses based on required chains
+    // Note: mainRoute and gasRoute may require different chains
+    const mainRouteAddresses = mainRoute.requiredChainAddresses.map(chainId => ({
+      chainId,
+      address: getUserAddressForChain(chainId) // Your function to get user's address
+    }));
+    
+    const gasRouteAddresses = gasRoute?.requiredChainAddresses.map(chainId => ({
+      chainId, 
+      address: getUserAddressForChain(chainId)
+    }));
+    
+    // Example helper function:
+    // function getUserAddressForChain(chainId: string): string {
+    //   const addresses = {
+    //     "osmosis-1": "osmo1...",
+    //     "42161": "0x..."
+    //   };
+    //   return addresses[chainId] || throw new Error(`No address for chain ${chainId}`);
+    // }
+
+  // Step 5: Execute routes
+  if (gasRoute && gasRouteAddresses) {
+    // Execute both routes together
+    await executeMultipleRoutes({
+      route: { mainRoute, feeRoute: gasRoute },
+      userAddresses: {
+        mainRoute: mainRouteAddresses,
+        feeRoute: gasRouteAddresses // May be different chains than mainRoute
+      },
+      slippageTolerancePercent: {
+        mainRoute: "1",
+        feeRoute: "10" // Higher tolerance for gas route
+      },
+      getCosmosSigningClient: async (chainId) => {
+        return yourCosmosWallet.getSigningClient(chainId);
+      },
+      getEVMSigningClient: async (chainId) => {
+        return yourEvmWallet.getSigningClient(chainId);
+      },
+      onRouteStatusUpdated: (status) => {
+        console.log("Route status:", status);
+        
+        // Check if gas route failed
+        const gasRouteFailed = status.relatedRoutes?.find(
+          r => r.routeKey === "feeRoute" && r.status === "failed"
+        );
+        
+        if (gasRouteFailed) {
+          console.warn("Gas route failed, but main swap continues");
+        }
+      }
+    });
+  } else {
+    // No gas route needed, execute original route
+    await executeRoute({
+      route: originalRoute,
+      userAddresses: mainRouteAddresses,
+      slippageTolerancePercent: "1",
+      getCosmosSigningClient: async (chainId) => {
+        return yourCosmosWallet.getSigningClient(chainId);
+      },
+      getEVMSigningClient: async (chainId) => {
+        return yourEvmWallet.getSigningClient(chainId);
+      }
+    });
+  } catch (error) {
+    console.error("Failed to execute swap:", error);
+    // Handle error appropriately
+  }
+}
+```
+
+### How getRouteWithGasOnReceive Works
+
+The function automatically:
+1. Checks if the destination chain is supported (excludes Solana chains)
+2. Checks source chain support (excludes Ethereum mainnet and Sepolia testnet)
+3. Verifies the destination asset isn't already a fee asset
+4. Calculates appropriate gas amounts:
+   - **Cosmos chains**: Average gas price × 3 (or $0.10 USD fallback if gas price unavailable)
+   - **EVM L2 chains**: $2.00 USD worth of native tokens
+5. Creates a gas route to obtain native tokens
+6. Adjusts the main route amount accordingly
+7. Returns both routes, or the original route as mainRoute if gas route creation fails
+
+**Note**: If gas route creation fails for any reason, the function returns the original route as `mainRoute` with `gasRoute` as undefined, allowing your swap to proceed without gas-on-receive.
+
+## Custom Implementation Guide
+
+If you need to customize the Gas on Receive behavior beyond what `getRouteWithGasOnReceive` provides:
+
+### Step 1: Check Destination Gas Balance
+
+Before initiating a swap, check if the user has sufficient gas on the destination chain:
+
+```typescript
+import { balances } from "@skip-go/client";
+
+async function checkDestinationGasBalance(
+  destinationChainId: string,
+  userAddress: string,
+  requiredGasAmount?: string
+) {
+  // Fetch user's balance on destination chain
+  const userBalances = await balances({
+    chains: {
+      [destinationChainId]: { address: userAddress }
+    }
+  });
+
+  const chainBalances = userBalances.chains?.[destinationChainId]?.denoms;
+  
+  // For EVM chains, check native token (address 0x0000...)
+  const nativeTokenDenom = getNativeTokenDenom(destinationChainId);
+  const nativeBalance = chainBalances?.[nativeTokenDenom];
+
+  // Simple check: does user have any native token?
+  if (!nativeBalance?.amount || nativeBalance.amount === "0") {
+    return false;
+  }
+
+  // Optional: Check against a minimum threshold
+  if (requiredGasAmount) {
+    return Number(nativeBalance.amount) >= Number(requiredGasAmount);
+  }
+
+  return true;
+}
+
+function getNativeTokenDenom(chainId: string): string {
+  // For EVM chains
+  if (isEvmChain(chainId)) {
+    return "0x0000000000000000000000000000000000000000";
+  }
+  
+  // For Cosmos chains, you'll need to fetch the fee assets
+  // This varies by chain (e.g., "uosmo" for Osmosis, "uatom" for Cosmos Hub)
+  return getCosmosNativeDenom(chainId);
+}
+```
+
+### Step 2: Calculate Gas Amount Needed
+
+```typescript
+const GAS_AMOUNTS_USD = {
+  cosmos: 0.10,    // $0.10 for Cosmos chains
+  evm_l2: 2.00,    // $2.00 for EVM L2 chains
+  evm_mainnet: 0   // Disabled for Ethereum mainnet
+};
+
+async function calculateGasAmount(
+  sourceAsset: { chainId: string; denom: string },
+  destinationChainId: string,
+  sourceAssetPriceUsd: number
+): Promise<string> {
+  const chainType = await getChainType(destinationChainId);
+  
+  // Determine USD amount based on chain type
+  let usdAmount = 0;
+  if (chainType === 'cosmos') {
+    usdAmount = GAS_AMOUNTS_USD.cosmos;
+  } else if (chainType === 'evm' && destinationChainId !== "1") {
+    usdAmount = GAS_AMOUNTS_USD.evm_l2;
+  }
+  
+  if (usdAmount === 0) {
+    throw new Error("Gas on Receive not supported for this chain");
+  }
+  
+  // Convert USD amount to source asset amount
+  const sourceAmount = usdAmount / sourceAssetPriceUsd;
+  
+  // Convert to crypto amount (considering decimals)
+  const sourceAssetDecimals = await getAssetDecimals(sourceAsset);
+  return convertToCryptoAmount(sourceAmount, sourceAssetDecimals);
+}
+```
+
+### Step 3: Create Routes with Custom Logic
+
+```typescript
+import { route } from "@skip-go/client";
+
+async function createRoutesManually(
+  amountIn: string,
+  sourceAsset: { chainId: string; denom: string },
+  destAsset: { chainId: string; denom: string },
+  gasAmount: string,
+  enableGasOnReceive: boolean
+) {
+  // Calculate adjusted amounts
+  const gasRouteAmount = enableGasOnReceive ? gasAmount : "0";
+  const mainRouteAmount = (Number(amountIn) - Number(gasRouteAmount)).toString();
+  
+  // Create main route with reduced amount
+  const mainRoute = await route({
+    amountIn: mainRouteAmount,
+    sourceAssetChainId: sourceAsset.chainId,
+    sourceAssetDenom: sourceAsset.denom,
+    destAssetChainId: destAsset.chainId,
+    destAssetDenom: destAsset.denom,
+    smartRelay: true
+  });
+  
+  // Create gas route only if enabled
+  let gasRoute = null;
+  if (enableGasOnReceive) {
+    const nativeTokenDenom = getNativeTokenDenom(destAsset.chainId);
+    
+    gasRoute = await route({
+      amountIn: gasRouteAmount,
+      sourceAssetChainId: sourceAsset.chainId,
+      sourceAssetDenom: sourceAsset.denom,
+      destAssetChainId: destAsset.chainId,
+      destAssetDenom: nativeTokenDenom,
+      smartRelay: true
+    });
+  }
+  
+  return { mainRoute, gasRoute };
+}
+```
+
+### Step 4: Execute Routes
+
+```typescript
+import { executeMultipleRoutes, type RouteResponse, type UserAddress } from "@skip-go/client";
+
+async function executeSwapWithGasOnReceive(
+  mainRoute: RouteResponse,
+  gasRoute: RouteResponse | null,
+  userAddresses: UserAddress[],
+  signers: {
+    getCosmosSigningClient: (chainId: string) => Promise<any>;
+    getEVMSigningClient: (chainId: string) => Promise<any>;
+  }
+) {
+  // Build routes object with consistent naming
+  const routes = gasRoute 
+    ? { mainRoute, feeRoute: gasRoute }
+    : { mainRoute };
+  
+  // Build user addresses object
+  const addresses = gasRoute
+    ? { mainRoute: userAddresses, feeRoute: userAddresses }
+    : { mainRoute: userAddresses };
+  
+  // Build slippage settings
+  const slippage = gasRoute
+    ? { mainRoute: "1", feeRoute: "10" } // Higher tolerance for gas route
+    : { mainRoute: "1" };
+  
+  // Execute both routes
+  await executeMultipleRoutes({
+    route: routes,
+    userAddresses: addresses,
+    slippageTolerancePercent: slippage,
+    getCosmosSigningClient: signers.getCosmosSigningClient,
+    getEVMSigningClient: signers.getEVMSigningClient,
+    onRouteStatusUpdated: (status) => {
+      // Handle route status updates
+      console.log("Route status:", status);
+      
+      // Check if gas route failed
+      const gasRouteFailed = status.relatedRoutes?.find(
+        r => r.routeKey === "feeRoute" && r.status === "failed"
+      );
+      
+      if (gasRouteFailed) {
+        console.warn("Gas route failed, but main swap continues");
+      }
+    }
+  });
+}
+```
+
+## Complete Implementation Example
+
+Here's a full example combining all the concepts:
+
+```typescript
+import { 
+  route, 
+  executeMultipleRoutes, 
+  balances,
+  assets,
+  getRouteWithGasOnReceive
+} from "@skip-go/client";
+
+class GasOnReceiveManager {
+  private readonly GAS_AMOUNTS_USD = {
+    cosmos: 0.10,
+    evm_l2: 2.00
+  };
+
+  async shouldEnableGasOnReceive(
+    destinationChainId: string,
+    destinationAddress: string,
+    destinationAssetDenom: string
+  ): Promise<boolean> {
+    // Check if chain is supported
+    if (!this.isChainSupported(destinationChainId)) {
+      return false;
+    }
+    
+    // Don't enable if destination asset is already a gas token
+    if (await this.isGasToken(destinationChainId, destinationAssetDenom)) {
+      return false;
+    }
+    
+    // Check user's gas balance
+    const hasGas = await this.checkGasBalance(destinationChainId, destinationAddress);
+    return !hasGas;
+  }
+  
+  private isChainSupported(chainId: string): boolean {
+    // Solana chains not supported for destination
+    const unsupportedDestChains = ["solana", "solana-devnet"];
+    // Ethereum mainnet and Sepolia not supported as source
+    const unsupportedSourceChains = ["1", "11155111"];
+    // For this example, checking destination support
+    return !unsupportedDestChains.includes(chainId);
+  }
+  
+  private async isGasToken(chainId: string, denom: string): boolean {
+    const chainAssets = await assets({ chainId });
+    const gasTokens = chainAssets.chain?.feeAssets || [];
+    return gasTokens.some(token => token.denom === denom);
+  }
+  
+  private async checkGasBalance(
+    chainId: string, 
+    address: string
+  ): Promise<boolean> {
+    const balanceResponse = await balances({
+      chains: { [chainId]: { address } }
+    });
+    
+    const nativeDenom = await this.getNativeDenom(chainId);
+    const balance = balanceResponse?.chains?.[chainId]?.denoms?.[nativeDenom];
+    
+    // Check if user has any balance
+    return balance?.amount && balance.amount !== "0";
+  }
+  
+  async executeSwapWithGasOnReceive(
+    params: {
+      amountIn: string;
+      sourceAsset: { chainId: string; denom: string };
+      destAsset: { chainId: string; denom: string };
+      userAddresses: Array<{ chainId: string; address: string }>;
+      enableGasOnReceive: boolean;
+      signers: any;
+    }
+  ) {
+    const { 
+      amountIn, 
+      sourceAsset, 
+      destAsset, 
+      userAddresses, 
+      enableGasOnReceive,
+      signers 
+    } = params;
+    
+    // Get initial route
+    const originalRoute = await route({
+      amountIn,
+      sourceAssetChainId: sourceAsset.chainId,
+      sourceAssetDenom: sourceAsset.denom,
+      destAssetChainId: destAsset.chainId,
+      destAssetDenom: destAsset.denom
+    });
+    
+    if (enableGasOnReceive) {
+      // Use automatic splitting
+      const { mainRoute, gasRoute } = await getRouteWithGasOnReceive({
+        routeResponse: originalRoute,
+        routeRequest: {
+          amountIn,
+          sourceAssetChainId: sourceAsset.chainId,
+          sourceAssetDenom: sourceAsset.denom,
+          destAssetChainId: destAsset.chainId,
+          destAssetDenom: destAsset.denom
+        }
+      });
+      
+      if (gasRoute) {
+        // Execute both routes
+        await executeMultipleRoutes({
+          route: { mainRoute, feeRoute: gasRoute },
+          userAddresses: { 
+            mainRoute: userAddresses,
+            feeRoute: userAddresses 
+          },
+          slippageTolerancePercent: {
+            mainRoute: "1",
+            feeRoute: "10"  // Higher tolerance for gas route
+          },
+          ...signers,
+          onRouteStatusUpdated: this.handleRouteStatus
+        });
+      } else {
+        // Execute just the main route
+        await executeRoute({
+          route: mainRoute,
+          userAddresses,
+          slippageTolerancePercent: "1",
+          ...signers
+        });
+      }
+    } else {
+      // Execute original route without gas
+      await executeRoute({
+        route: originalRoute,
+        userAddresses,
+        slippageTolerancePercent: "1",
+        ...signers
+      });
+    }
+  }
+  
+  private handleRouteStatus(status: RouteStatus) {
+    if (status.status === "completed") {
+      console.log("Swap completed successfully");
+    }
+    
+    // Check gas route status
+    const gasRoute = status.relatedRoutes?.find(r => r.routeKey === "feeRoute");
+    if (gasRoute?.status === "failed") {
+      console.warn("Gas provision failed, but main swap continues");
+    } else if (gasRoute?.status === "completed") {
+      console.log("Gas tokens received successfully");
+    }
+  }
+}
+```
+
+## UI Considerations
+
+When implementing Gas on Receive in your UI:
+
+### Display Gas Information
+
+```typescript
+function GasOnReceiveToggle({ 
+  enabled, 
+  gasAmount, 
+  gasAssetSymbol,
+  onToggle 
+}: GasOnReceiveProps) {
+  return (
+    <div className="gas-on-receive">
+      <div className="gas-info">
+        <GasIcon />
+        <span>Enable gas top up - You'll get {gasAmount} in {gasAssetSymbol}</span>
+        <Tooltip content="Receive native tokens for gas fees on destination chain" />
+      </div>
+      <Switch checked={enabled} onChange={onToggle} />
+    </div>
+  );
+}
+```
+
+### Show Status During Execution
+
+```typescript
+function GasStatus({ status, amount, symbol }: GasStatusProps) {
+  switch (status) {
+    case 'pending':
+      return <span>Receiving {amount} in {symbol}...</span>;
+    case 'completed':
+      return <span>✓ Received {amount} in {symbol} as gas top-up</span>;
+    case 'failed':
+      return <span>⚠ Failed to receive gas tokens</span>;
+    default:
+      return null;
+  }
+}
+```
+
+## Error Handling
+
+Handle various failure scenarios gracefully:
+
+```typescript
+async function handleGasRouteErrors(error: Error, mainRouteStatus: string) {
+  // Gas route failures don't affect main swap
+  if (mainRouteStatus === 'completed') {
+    console.log("Main swap succeeded despite gas route failure");
+    // Show warning to user about missing gas
+    showWarning("Swap completed but gas tokens were not received");
+  }
+  
+  // Log for debugging
+  console.error("Gas route error:", error);
+  
+  // Track in analytics
+  trackEvent("gas_route_failed", {
+    error: error.message,
+    mainRouteStatus
+  });
+}
+```
+
+## Best Practices
+
+1. **Use getRouteWithGasOnReceive**: The automatic function handles edge cases and optimizations
+2. **Auto-detection**: Check gas balances and suggest Gas on Receive when needed
+3. **User Control**: Always allow users to toggle the feature on/off
+4. **Clear Communication**: Show exact amounts and costs transparently
+5. **Graceful Degradation**: Main swap should continue even if gas route fails
+6. **Higher Slippage**: Use 10% slippage for gas routes (vs 1% for main routes)
+7. **Chain Support**: Disable for Ethereum mainnet and Solana
+8. **Amount Limits**: Use recommended amounts ($0.10 for Cosmos, $2.00 for EVM L2s)
+
+## Advanced Configuration
+
+### Custom Gas Amounts
+
+```typescript
+// Override default gas amounts
+const customGasAmounts = {
+  "osmosis-1": "100000", // 0.1 OSMO
+  "42161": "0.001",      // 0.001 ETH on Arbitrum
+  "137": "2"             // 2 MATIC on Polygon
+};
+
+async function getCustomGasAmount(chainId: string): Promise<string> {
+  return customGasAmounts[chainId] || getDefaultGasAmount(chainId);
+}
+```
+
+### Dynamic Pricing
+
+```typescript
+// Adjust gas amount based on current gas prices
+async function calculateDynamicGasAmount(chainId: string) {
+  const gasPrice = await getGasPrice(chainId);
+  const estimatedTxCount = 5; // Assume user needs gas for 5 transactions
+  const gasPerTx = 21000; // Basic transfer gas limit
+  
+  const totalGasNeeded = gasPrice * gasPerTx * estimatedTxCount;
+  return totalGasNeeded.toString();
+}
+```
+
+## Comparison with Widget Implementation
+
+| Feature | Widget (Automatic) | Client Library (Manual) |
+|---------|-------------------|------------------------|
+| Gas balance detection | Automatic | Manual or use `getRouteWithGasOnReceive` |
+| Route creation | Automatic | Use `getRouteWithGasOnReceive` or manual |
+| Amount calculation | Built-in defaults | Built-in with `getRouteWithGasOnReceive` |
+| UI components | Provided | Build your own |
+| Error handling | Automatic | Manual implementation |
+| Status tracking | Built-in | Via callbacks |
+
+## Summary
+
+The Skip Go Client Library provides flexible options for implementing Gas on Receive:
+
+1. **Quick implementation** with `getRouteWithGasOnReceive` for automatic route splitting
+2. **Full control** with manual balance checking and route creation
+3. **Status tracking** via callbacks in `executeMultipleRoutes`
+4. **Graceful error handling** where gas route failures don't affect main swaps
+
+Choose the approach that best fits your application's needs. For most use cases, `getRouteWithGasOnReceive` provides the ideal balance of simplicity and functionality.

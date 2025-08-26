@@ -1,4 +1,4 @@
-import { SmallText } from "@/components/Typography";
+import { SmallText, SmallTextButton } from "@/components/Typography";
 import { Column, Row, Spacer } from "@/components/Layout";
 import { styled, useTheme } from "styled-components";
 import { ChainIcon } from "@/icons/ChainIcon";
@@ -17,6 +17,7 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { track } from "@amplitude/analytics-browser";
 import { GasOnReceive } from "@/components/GasOnReceive";
+import { useClipboard } from "@/hooks/useClipboard";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
   status?: RouteStatus;
@@ -59,6 +60,10 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   base64ExplorerData,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
+  const { saveToClipboard: saveSenderAddressToClipboard, isCopied: isSenderAddressCopied } =
+    useClipboard();
+  const { saveToClipboard: saveReceiverAddressToClipboard, isCopied: isReceiverAddressCopied } =
+    useClipboard();
 
   const initialTxHash = transactionDetails?.[0]?.txHash;
 
@@ -141,14 +146,24 @@ export const TransactionHistoryPageHistoryItemDetails = ({
       {senderAddress && (
         <StyledHistoryItemDetailRow align="center">
           <StyledDetailsLabel>Sender</StyledDetailsLabel>
-          <SmallText normalTextColor>{getTruncatedAddress(senderAddress)}</SmallText>
+          <SmallTextButton
+            normalTextColor
+            onClick={() => saveSenderAddressToClipboard(senderAddress)}
+          >
+            {isSenderAddressCopied ? "Copied!" : getTruncatedAddress(senderAddress)}
+          </SmallTextButton>
         </StyledHistoryItemDetailRow>
       )}
 
       {receiverAddress && (
         <StyledHistoryItemDetailRow align="center">
           <StyledDetailsLabel>Receiver</StyledDetailsLabel>
-          <SmallText normalTextColor>{getTruncatedAddress(receiverAddress)}</SmallText>
+          <SmallTextButton
+            normalTextColor
+            onClick={() => saveReceiverAddressToClipboard(receiverAddress)}
+          >
+            {isReceiverAddressCopied ? "Copied!" : getTruncatedAddress(receiverAddress)}
+          </SmallTextButton>
         </StyledHistoryItemDetailRow>
       )}
 

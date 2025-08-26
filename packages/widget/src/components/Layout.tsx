@@ -7,6 +7,8 @@ export type FlexProps = {
   padding?: number;
   borderRadius?: number;
   flexDirection?: "row" | "column";
+  maxWidth?: string;
+  maxHeight?: string;
 };
 
 type SizeValue = string | number;
@@ -19,6 +21,8 @@ export const flexProps = css<FlexProps>`
   ${({ padding }) => padding && `padding: ${padding}px`};
   ${({ borderRadius }) => borderRadius && `border-radius: ${borderRadius}px`};
   ${({ flexDirection }) => flexDirection && `flex-direction: ${flexDirection}`};
+  ${({ maxWidth }) => maxWidth && `max-width: ${maxWidth}`};
+  ${({ maxHeight }) => maxHeight && `max-height: ${maxHeight}`};
 `;
 
 export const Row = styled.div<SpacerProps & FlexProps>`

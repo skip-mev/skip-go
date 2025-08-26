@@ -56,7 +56,7 @@ export const StyledWrapper = styled(Row)<{
   border-radius: ${(props) => (props.size === "normal" ? "20px" : "12px")};
   transition: all 0.2s ease-in-out;
   flex: 1;
-  @media (max-width: 1023px) {
+  @media (max-width: 1300px) {
     flex: none;
   }
 `;
@@ -64,7 +64,7 @@ export const StyledWrapper = styled(Row)<{
 const InputWrapper = styled(StyledWrapper)`
   flex: 1.8;
 
-  @media (max-width: 1023px) {
+  @media (max-width: 1300px) {
     flex: none;
   }
 `;
@@ -110,6 +110,8 @@ const StyledInput = styled.input<{
       opacity: 0.8;
     }
   }
+
+  text-overflow: ellipsis;
 
   transition: all 0.2s ease-in-out;
 `;

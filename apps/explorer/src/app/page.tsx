@@ -1,12 +1,13 @@
 "use client";
 import React, { useCallback } from "react";
-import { Column, Row } from "@/components/Layout";
+import { Column, Row, Spacer } from "@/components/Layout";
 import {
   getTransferEventsFromTxStatusResponse,
   ClientTransferEvent,
   TxStatusResponse,
   TransactionDetails as TransactionDetailsType,
   waitForTransactionWithCancel,
+  transactionStatus,
 } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
 import {
@@ -17,29 +18,27 @@ import {
   defaultSkipClientConfig,
   skipClientConfigAtom,
   onlyTestnetsAtom,
-  ClientAsset,
-  skipChainsAtom,
 } from "@/state/skipClient";
-import { uniqueAssetsBySymbolAtom } from "../state/uniqueAssetsBySymbol";
-import { useSetAtom, useAtomValue } from "@/jotai";
+import { useSetAtom } from "@/jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
-import { NiceModal, Modals } from "@/nice-modal";
+import { NiceModal } from "@/nice-modal";
 import { GhostButton } from "@/components/Button";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
 import { TokenDetails } from "../components/TokenDetails";
 import { ExplorerModals } from "../constants/modal";
 import { useQueryState, parseAsString, parseAsArrayOf } from "nuqs";
-import { TxHashInput } from "../components/TxHashInput";
-import { ChainSelector } from "../components/ChainSelector";
-import { SearchButton } from "../components/SearchButton";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { CoinsIcon } from "../icons/CoinsIcon";
-import { Logo, TopRightComponent } from "../components/TopNav";
+import { Navbar } from "../components/Navbar";
 import { ErrorCard, ErrorMessages } from "../components/ErrorCard";
 import { ErrorBoundary } from "react-error-boundary";
 import { Bridge } from "../components/Bridge";
 import { styled } from "@/styled-components";
+import { styledScrollbar } from "@/mixins/styledScrollbar";
+import { SuccessfulTransactionCard } from "../components/SuccessfulTransactionCard";
+import { chainIdsSortedToTopAtom } from "@/state/chainIdsSortedToTop";
+import { CHAIN_IDS_SORTED_TO_TOP } from "../constants/chainIdsSortedToTop";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
@@ -63,17 +62,15 @@ export default function Home() {
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
     []
   );
+  const setChainIdsSortedToTop = useSetAtom(chainIdsSortedToTopAtom);
 
-  const { operations } = useTransactionHistoryItemFromUrlParams();
   const [transactionStatusResponse, setTransactionStatusResponse] =
-    useState<TxStatusResponse | null>(null);
-  const chains = useAtomValue(skipChainsAtom);
+    useState<TxStatusResponse | undefined>(undefined);
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
-  const uniqueAssetsBySymbol = useAtomValue(uniqueAssetsBySymbolAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
-  const { transactionDetails: transactionDetailsFromUrlParams } =
+  const { transactionDetails: transactionDetailsFromUrlParams, operations, sourceAsset, destAsset } =
     useTransactionHistoryItemFromUrlParams();
   const [transactionStatuses, setTransactionStatuses] = useState<
     TxStatusResponse[]
@@ -146,7 +143,8 @@ export default function Home() {
   useEffect(() => {
     setSkipClientConfig(defaultSkipClientConfig);
     setOnlyTestnets(false);
-  }, [setSkipClientConfig, setOnlyTestnets]);
+    setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP)
+  }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop]);
 
   const getTxStatus = useCallback(
     async (transactionDetails: TransactionDetailsType[] = []) => {
@@ -212,7 +210,7 @@ export default function Home() {
     setTransactionStatuses([]);
     setTransferEvents([]);
     setErrorDetails(undefined);
-    setTransactionStatusResponse(null);
+    setTransactionStatusResponse(undefined);
 
   }, [cancelStatusPolling, setTxHashes, setChainIds]);
 
@@ -220,7 +218,7 @@ export default function Home() {
     setTransactionStatuses([]);
     setTransferEvents([]);
     setErrorDetails(undefined);
-    setTransactionStatusResponse(null);
+    setTransactionStatusResponse(undefined);
     const hash = _txhash ?? txHash;
     const id = _chainId ?? chainId;
 
@@ -255,27 +253,45 @@ export default function Home() {
     ) {
       setChainId(chainIds[0]);
       setTxHash(txHashes[0]);
-      getTxStatus(
-        txHashes.map((txHash, index) => ({ txHash, chainId: chainIds[index] }))
-      );
+
+      const transactionDetails: TransactionDetailsType[] = [];
+
+      const calculateMissingChainIds = async () => {
+        let nextChainId = chainIds[0];
+        for (const txHash of txHashes) {
+          const response = await transactionStatus({
+            txHash,
+            chainId: nextChainId,
+          });
+          
+          transactionDetails.push({ txHash, chainId: nextChainId });
+          nextChainId = response?.transferAssetRelease?.chainId || "";
+        }
+      }
+
+      if (txHashes.length > 1) {
+        calculateMissingChainIds().then(() => {
+          getTxStatus(transactionDetails);
+        });
+      } else {
+        transactionDetails.push({ txHash: txHashes[0], chainId: chainIds[0] });
+        getTxStatus(transactionDetails);
+      }
+
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const selectedChain = useMemo(() => {
-    if (!chainId) return null;
-    return chains.data?.find((chain) => chain.chainId === chainId) || null;
-  }, [chains.data, chainId]);
-
   const transactionDetails = useMemo(() => {
     const chainIds = uniqueTransfers?.map((event) => event.chainId);
+    const chainIdsFromUrlParams = [sourceAsset?.chainId ?? "", destAsset?.chainId ?? ""]
 
     return {
-      txHash: transferEvents?.[0]?.fromTxHash ?? "",
+      txHash: transferEvents?.[0]?.fromTxHash ?? transactionDetailsFromUrlParams?.[0]?.txHash ?? "",
       state: transactionStatusResponse?.state,
-      chainIds,
+      chainIds: chainIds.length > 0 ? chainIds : chainIdsFromUrlParams,
     };
-  }, [uniqueTransfers, transferEvents, transactionStatusResponse?.state]);
+  }, [uniqueTransfers, sourceAsset, destAsset, transferEvents, transactionDetailsFromUrlParams, transactionStatusResponse?.state]);
 
   const showRawDataModal = useCallback(() => {
     if (transactionStatuses.length > 0) {
@@ -296,7 +312,7 @@ export default function Home() {
     }
   }, [errorDetails, transactionStatuses]);
 
-  const onReindex = async () => {
+  const onReindex = useCallback(async () => {
     try {
       await fetch('https://api.skip.build/v2/tx/retry_track', {
         method: "POST",
@@ -312,7 +328,7 @@ export default function Home() {
     } catch (error) {
       console.error(error);
     }
-  }
+  }, [txHash, chainId, onSearch]);
 
   const isTop = useMemo(() => {
     return (
@@ -322,81 +338,28 @@ export default function Home() {
     );
   }, [chainIds, data, txHashes]);
 
-  const isLessThan1024 = useIsMobileScreenSize(1024);
+  const isLessThan1300 = useIsMobileScreenSize(1300);
   const isSearchAModal = useMemo(() => {
-    return Boolean(isTop && isLessThan1024);
-  }, [isTop, isLessThan1024]);
+    return Boolean(isTop && isLessThan1300);
+  }, [isTop, isLessThan1300]);
 
-  return (
-    <>
-      <Logo />
-      <TopRightComponent />
-      {!isSearchAModal ? (
-        <SearchWrapper isTop={isTop}>
-          <TxHashInput
-            size={isTop ? "small" : "normal"}
-            value={txHash || ""}
-            onChange={(v) => setTxHash(v)}
-            onSearch={() => {
-              if (txHash && chainId) {
-                onSearch();
-              }
-            }}
-            openModal={() => {
-              NiceModal.show(Modals.AssetAndChainSelectorModal, {
-                context: "source",
-                onSelect: (asset: ClientAsset | null) => {
-                  setChainId(asset?.chainId || "");
-
-                  onSearch(txHash, asset?.chainId);
-                  NiceModal.hide(Modals.AssetAndChainSelectorModal);
-                },
-                overrideSelectedGroup: {
-                  assets: uniqueAssetsBySymbol,
-                },
-                selectChain: true,
-              });
-            }}
-          />
-          <ChainSelector
-            size={isTop ? "small" : "normal"}
-            onClick={() => {
-              NiceModal.show(Modals.AssetAndChainSelectorModal, {
-                context: "source",
-                onSelect: (asset: ClientAsset | null) => {
-                  setChainId(asset?.chainId || "");
-                  if (txHash) {
-                    onSearch(txHash, asset?.chainId);
-                  }
-                  NiceModal.hide(Modals.AssetAndChainSelectorModal);
-                },
-                overrideSelectedGroup: {
-                  assets: uniqueAssetsBySymbol,
-                },
-                selectChain: true,
-              });
-            }}
-            selectedChain={selectedChain}
-          />
-          <SearchButton size={isTop ? "small" : "normal"} onClick={() => onSearch()} />
-        </SearchWrapper>
-      ) : (
-        <SearchTopRight>
-           <SearchButton size="small" iconOnly onClick={() => resetState()} />
-        </SearchTopRight>
-      )}
-
-      { uniqueTransfers.length > 0 ? (
-        <StyledColumn>
-          <Row gap={16} flexDirection={isMobileScreenSize ? "column" : "row"}>
-            <Column align="flex-end" width={355}>
+  const renderPageContent = useMemo(() => {
+    if (uniqueTransfers.length > 0) {
+      return (
+        <StyledContentContainer
+          gap={16}
+          flexDirection={isMobileScreenSize ? "column" : "row"}
+          align={isMobileScreenSize ? "center" : "flex-start"}
+        >
+          <StyledColumns>
+            <StyledColumns align="flex-end" style={{ position: !isMobileScreenSize ? "absolute" : "relative" }}>
               <GhostButton
                 gap={5}
                 align="center"
                 justify="center"
                 onClick={() => setShowTokenDetails(!showTokenDetails)}
                 style={{
-                  visibility: transactionDetailsFromUrlParams
+                  visibility: transactionStatusResponse?.transferAssetRelease?.released || transactionDetailsFromUrlParams 
                     ? "visible"
                     : "hidden",
                 }}
@@ -404,57 +367,55 @@ export default function Home() {
                 {showTokenDetails ? "Close" : "View token details"}
                 {!showTokenDetails && <CoinsIcon />}
               </GhostButton>
-            </Column>
-            <Column align="flex-end" width={355}>
-              <GhostButton gap={5} onClick={showRawDataModal}>
-                View raw data <HamburgerIcon />
-              </GhostButton>
-            </Column>
-          </Row>
-          <Row
-            gap={16}
-            flexDirection={isMobileScreenSize ? "column" : "row"}
-            align={isMobileScreenSize ? "center" : "flex-start"}
-          >
-            <Column width={355}>
+              <Spacer height={10} />
+
               {showTokenDetails ? (
-                <TokenDetails />
+                <TokenDetails transactionStatusResponse={transactionStatusResponse} />
               ) : (
                 <TransactionDetails {...transactionDetails} />
               )}
-            </Column>
-            <Column width={355} align="center" justify="center">
-              {uniqueTransfers.map((transfer) => (
-                <>
-                  {transfer.step !== "Origin" && (
-                    <Bridge
-                      transferType={transfer.transferType}
-                      durationInMs={transfer.durationInMs}
+            </StyledColumns>
+          </StyledColumns>
+          <StyledColumns align="center" justify="center">
+            <Row width="100%" justify="flex-end">
+              <GhostButton gap={5} onClick={showRawDataModal}>
+                View raw data <HamburgerIcon />
+              </GhostButton>
+            </Row>
+            <Spacer height={10} />
+            {uniqueTransfers.map((transfer) => (
+              <>
+                {transfer.step !== "Origin" && (
+                  <Bridge
+                    transferType={transfer.transferType}
+                    durationInMs={transfer.durationInMs}
+                  />
+                )}
+                <ErrorBoundary
+                  key={transfer.chainId}
+                  fallback={
+                    <ErrorCard
+                      errorMessage={ErrorMessages.TRANSFER_EVENT_ERROR}
+                      padding="20px 45px"
+                      onRetry={() => onSearch()}
                     />
-                  )}
-                  <ErrorBoundary
-                    key={transfer.chainId}
-                    fallback={
-                      <ErrorCard
-                        errorMessage={ErrorMessages.TRANSFER_EVENT_ERROR}
-                        padding="20px 45px"
-                        onRetry={() => onSearch()}
-                      />
-                    }
-                  >
-                    <TransferEventCard
-                      {...transfer}
-                      state={transactionStatusResponse?.state}
-                      onReindex={onReindex}
-                    />
-                  </ErrorBoundary>
-                </>
-              ))}
-            </Column>
-          </Row>
-        </StyledColumn>
-      ) : errorDetails ? (
-        <Column width={355} align="flex-end">
+                  }
+                >
+                  <TransferEventCard
+                    {...transfer}
+                    state={transactionStatusResponse?.state}
+                    onReindex={onReindex}
+                  />
+                </ErrorBoundary>
+              </>
+            ))}
+          </StyledColumns>
+        </StyledContentContainer>
+      )
+    }
+    if (errorDetails) {
+      return (
+        <Column width={355} align="flex-end" gap={10}>
           <GhostButton gap={5} onClick={showRawDataModal}>
             View raw data <HamburgerIcon />
           </GhostButton>
@@ -463,54 +424,107 @@ export default function Home() {
             onRetry={() => onSearch()}
           />
         </Column>
-      ) : null}
-    </>
+      )
+    }
+    if (transactionStatusResponse?.state === "STATE_COMPLETED_SUCCESS") {
+      if (transactionDetailsFromUrlParams) {
+        return (
+          <StyledContentContainer
+            gap={16}
+            flexDirection={isMobileScreenSize ? "column" : "row"}
+            align={isMobileScreenSize ? "center" : "flex-start"}
+          >
+            <StyledColumns>
+              <StyledColumns align="flex-end" style={{ position: !isMobileScreenSize ? "absolute" : "relative" }}>
+                <GhostButton
+                  gap={5}
+                  align="center"
+                  justify="center"
+                  onClick={() => setShowTokenDetails(!showTokenDetails)}
+                  style={{
+                    visibility: transactionDetailsFromUrlParams
+                      ? "visible"
+                      : "hidden",
+                  }}
+                >
+                  {showTokenDetails ? "Close" : "View token details"}
+                  {!showTokenDetails && <CoinsIcon />}
+                </GhostButton>
+                <Spacer height={10} />
+
+                {showTokenDetails ? (
+                  <TokenDetails />
+                ) : (
+                  <TransactionDetails {...transactionDetails} />
+                )}
+              </StyledColumns>
+            </StyledColumns>
+            <StyledColumns align="center" justify="center">
+              <Row width="100%" justify="flex-end">
+                <GhostButton gap={5} onClick={showRawDataModal}>
+                  View raw data <HamburgerIcon />
+                </GhostButton>
+              </Row>
+              <Spacer height={10} />
+              <TransferEventCard
+                chainId={sourceAsset?.chainId ?? ''}
+                transferType={operations[0]?.type}
+                explorerLink={transactionDetailsFromUrlParams?.[0]?.explorerLink ?? ''}
+                step="Origin"
+                index={0}
+              />
+
+              <Bridge
+                transferType={operations[0]?.type}
+              />
+
+              <TransferEventCard
+                chainId={destAsset?.chainId ?? ''}
+                transferType={operations[0]?.type}
+                status="completed"
+                explorerLink={transactionDetailsFromUrlParams?.[0]?.explorerLink ?? ''}
+                step="Destination"
+                index={1}
+              />
+            </StyledColumns>
+          </StyledContentContainer>
+        )
+      }
+      return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
+    }
+    return;
+  }, [uniqueTransfers, errorDetails, transactionStatusResponse, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch, sourceAsset?.chainId, operations, destAsset?.chainId]);
+
+  return (
+    <Column width="100%" align="center">
+      <Navbar
+        isSearchAModal={isSearchAModal}
+        isTop={isTop}
+        txHash={txHash}
+        chainId={chainId}
+        onSearch={onSearch}
+        resetState={resetState}
+        setTxHash={setTxHash}
+        setChainId={setChainId}
+      />
+      
+      { renderPageContent }
+    </Column>
   );
 }
 
-const SearchTopRight = styled.div`
-  position: fixed;
-  top: 24px;
-  right: 24px;
-  z-index: 1000;
+const StyledContentContainer = styled(Row)`
+  height: calc(100vh - 100px);
   @media (min-width: 1023px) {
-    display: none;
+    height: calc(100vh - 200px);
   }
+  overflow: auto;
+  ${styledScrollbar};
 `;
 
-const StyledColumn = styled(Column)`
-  margin-top: 180px;
-  gap: 10px;
-`;
-
-const SearchWrapper = styled.div<{ isTop: boolean }>`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 10px;
-  position: fixed;
-  max-width: 970px;
-  flex-direction: column;
-  padding: 0px 8px;
-  width: ${(props) => (props.isTop ? "600px" : "100%")};
-  left: 50%;
-  @media (min-width: 1024px) {
-    flex-direction: row;
-    width: ${(props) => (props.isTop ? "600px" : "100%")};
-    left: ${(props) => (props.isTop ? "54%" : "50%")};
+const StyledColumns = styled(Column)`
+  width: calc(100vw - 16px);
+  @media (min-width: 767px) {
+    width: 355px;
   }
-  @media (min-width: 1440px) {
-    width: 100%;
-    left: ${(props) => (props.isTop ? "54%" : "50%")};
-  }
-  @media (min-width: 1500px) {
-    width: 100%;
-    left: 50%;
-  }
-
-  position: fixed;
-  top: ${(props) => (props.isTop ? "48px" : "50%")};
-  transform: translate(-50%, -50%);
-
-  transition: all 0.2s ease-in-out;
 `;
