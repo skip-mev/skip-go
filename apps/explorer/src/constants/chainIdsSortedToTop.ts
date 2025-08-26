@@ -1,0 +1,19 @@
+export const CHAIN_IDS_SORTED_TO_TOP = [
+  "cosmoshub-4",
+  "osmosis-1",
+  "celestia",
+  "noble-1",
+  "stride-1",
+  "axelar-dojo-1",
+  "injective-1",
+  "neutron-1",
+  "1",
+  "stargaze-1",
+  "dydx-mainnet-1",
+  "dymension_1100-1",
+  "42161",
+  "omniflixhub-1",
+  "akashnet-2",
+  "pryzm-1",
+  "8453"
+];

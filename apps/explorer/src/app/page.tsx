@@ -37,6 +37,8 @@ import { Bridge } from "../components/Bridge";
 import { styled } from "@/styled-components";
 import { styledScrollbar } from "@/mixins/styledScrollbar";
 import { SuccessfulTransactionCard } from "../components/SuccessfulTransactionCard";
+import { chainIdsSortedToTopAtom } from "@/state/chainIdsSortedToTop";
+import { CHAIN_IDS_SORTED_TO_TOP } from "../constants/chainIdsSortedToTop";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
@@ -60,6 +62,7 @@ export default function Home() {
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
     []
   );
+  const setChainIdsSortedToTop = useSetAtom(chainIdsSortedToTopAtom);
 
   const [transactionStatusResponse, setTransactionStatusResponse] =
     useState<TxStatusResponse | undefined>(undefined);
@@ -140,7 +143,8 @@ export default function Home() {
   useEffect(() => {
     setSkipClientConfig(defaultSkipClientConfig);
     setOnlyTestnets(false);
-  }, [setSkipClientConfig, setOnlyTestnets]);
+    setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP)
+  }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop]);
 
   const getTxStatus = useCallback(
     async (transactionDetails: TransactionDetailsType[] = []) => {
