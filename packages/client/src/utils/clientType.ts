@@ -329,19 +329,19 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           txHash: goFastTransfer.txs.orderFilledTx?.txHash,
         }
       case TransferType.axelarTransfer:
-        const sendTokenTxs = (axelarTransfer.txs as SendTokenTxs);
+        const sendTokenTxs = axelarTransfer.txs as SendTokenTxs | undefined;
         const contractCallWithTokenTxs = (axelarTransfer.txs as {
           contractCallWithTokenTxs?: ContractCallWithTokenTxs;
-        })?.contractCallWithTokenTxs;
+      })?.contractCallWithTokenTxs;
         if (type === "send") {
           return {
-            explorerLink: sendTokenTxs.sendTx?.explorerLink ?? contractCallWithTokenTxs?.sendTx?.explorerLink,
-            txHash: sendTokenTxs.sendTx?.txHash ?? contractCallWithTokenTxs?.sendTx?.txHash,
+            explorerLink: sendTokenTxs?.sendTx?.explorerLink ?? contractCallWithTokenTxs?.sendTx?.explorerLink,
+            txHash: sendTokenTxs?.sendTx?.txHash ?? contractCallWithTokenTxs?.sendTx?.txHash,
           }
         }
         return {
-          explorerLink: sendTokenTxs.executeTx?.explorerLink ?? contractCallWithTokenTxs?.executeTx?.explorerLink,
-          txHash: sendTokenTxs.executeTx?.txHash ?? contractCallWithTokenTxs?.executeTx?.txHash,
+          explorerLink: sendTokenTxs?.executeTx?.explorerLink ?? contractCallWithTokenTxs?.executeTx?.explorerLink,
+          txHash: sendTokenTxs?.executeTx?.txHash ?? contractCallWithTokenTxs?.executeTx?.txHash,
         }
       default:
         type RemainingTransferTypes =
@@ -392,8 +392,13 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
       }
       
       case TransferType.axelarTransfer: {
-        const sendTime = axelarTransfer?.txs?.sendTx?.onChainAt;
-        const confirmTime = axelarTransfer?.txs?.confirmTx?.onChainAt;
+        const sendTokenTxs = axelarTransfer.txs as SendTokenTxs | undefined;
+        const contractCallWithTokenTxs = (axelarTransfer.txs as {
+          contractCallWithTokenTxs?: ContractCallWithTokenTxs;
+      })?.contractCallWithTokenTxs;
+
+        const sendTime = sendTokenTxs?.sendTx?.onChainAt ?? contractCallWithTokenTxs?.sendTx?.onChainAt;
+        const confirmTime = sendTokenTxs?.confirmTx?.onChainAt ?? contractCallWithTokenTxs?.confirmTx?.onChainAt;
         if (!sendTime || !confirmTime) return;
         return new Date(confirmTime).getTime() - new Date(sendTime).getTime();
       }
