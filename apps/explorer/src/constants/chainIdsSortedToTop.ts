@@ -7,6 +7,13 @@ export const CHAIN_IDS_SORTED_TO_TOP = [
   "axelar-dojo-1",
   "injective-1",
   "neutron-1",
+  "1",
   "stargaze-1",
   "dydx-mainnet-1",
+  "dymension_1100-1",
+  "42161",
+  "omniflixhub-1",
+  "akashnet-2",
+  "pryzm-1",
+  "8453"
 ];
