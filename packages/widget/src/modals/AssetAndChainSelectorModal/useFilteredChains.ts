@@ -188,6 +188,7 @@ export const useFilteredChains = ({
         return chainWithAsset;
       });
   }, [
+    chainIdsSortedToTop,
     chains,
     context,
     cosmosWalletConnected,
