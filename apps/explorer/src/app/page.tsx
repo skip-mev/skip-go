@@ -61,14 +61,13 @@ export default function Home() {
     []
   );
 
-  const { operations } = useTransactionHistoryItemFromUrlParams();
   const [transactionStatusResponse, setTransactionStatusResponse] =
     useState<TxStatusResponse | null>(null);
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
-  const { transactionDetails: transactionDetailsFromUrlParams } =
+  const { transactionDetails: transactionDetailsFromUrlParams, operations, sourceAsset, destAsset } =
     useTransactionHistoryItemFromUrlParams();
   const [transactionStatuses, setTransactionStatuses] = useState<
     TxStatusResponse[]
@@ -281,13 +280,14 @@ export default function Home() {
 
   const transactionDetails = useMemo(() => {
     const chainIds = uniqueTransfers?.map((event) => event.chainId);
+    const chainIdsFromUrlParams = [sourceAsset?.chainId ?? "", destAsset?.chainId ?? ""]
 
     return {
-      txHash: transferEvents?.[0]?.fromTxHash ?? "",
+      txHash: transferEvents?.[0]?.fromTxHash ?? transactionDetailsFromUrlParams?.[0]?.txHash ?? "",
       state: transactionStatusResponse?.state,
-      chainIds,
+      chainIds: chainIds.length > 0 ? chainIds : chainIdsFromUrlParams,
     };
-  }, [uniqueTransfers, transferEvents, transactionStatusResponse?.state]);
+  }, [uniqueTransfers, sourceAsset, destAsset, transferEvents, transactionDetailsFromUrlParams, transactionStatusResponse?.state]);
 
   const showRawDataModal = useCallback(() => {
     if (transactionStatuses.length > 0) {
@@ -423,10 +423,73 @@ export default function Home() {
       )
     }
     if (transactionStatusResponse?.state === "STATE_COMPLETED_SUCCESS") {
-      return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />
+      if (transactionDetailsFromUrlParams) {
+        return (
+          <StyledContentContainer
+            gap={16}
+            flexDirection={isMobileScreenSize ? "column" : "row"}
+            align={isMobileScreenSize ? "center" : "flex-start"}
+          >
+            <StyledColumns>
+              <StyledColumns align="flex-end" style={{ position: !isMobileScreenSize ? "absolute" : "relative" }}>
+                <GhostButton
+                  gap={5}
+                  align="center"
+                  justify="center"
+                  onClick={() => setShowTokenDetails(!showTokenDetails)}
+                  style={{
+                    visibility: transactionDetailsFromUrlParams
+                      ? "visible"
+                      : "hidden",
+                  }}
+                >
+                  {showTokenDetails ? "Close" : "View token details"}
+                  {!showTokenDetails && <CoinsIcon />}
+                </GhostButton>
+                <Spacer height={10} />
+
+                {showTokenDetails ? (
+                  <TokenDetails />
+                ) : (
+                  <TransactionDetails {...transactionDetails} />
+                )}
+              </StyledColumns>
+            </StyledColumns>
+            <StyledColumns align="center" justify="center">
+              <Row width="100%" justify="flex-end">
+                <GhostButton gap={5} onClick={showRawDataModal}>
+                  View raw data <HamburgerIcon />
+                </GhostButton>
+              </Row>
+              <Spacer height={10} />
+              <TransferEventCard
+                chainId={sourceAsset?.chainId ?? ''}
+                transferType={operations[0]?.type}
+                explorerLink={transactionDetailsFromUrlParams?.[0]?.explorerLink ?? ''}
+                step="Origin"
+                index={0}
+              />
+
+              <Bridge
+                transferType={operations[0]?.type}
+              />
+
+              <TransferEventCard
+                chainId={destAsset?.chainId ?? ''}
+                transferType={operations[0]?.type}
+                status="completed"
+                explorerLink={transactionDetailsFromUrlParams?.[0]?.explorerLink ?? ''}
+                step="Destination"
+                index={1}
+              />
+            </StyledColumns>
+          </StyledContentContainer>
+        )
+      }
+      return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
     }
-    return 
-  }, [uniqueTransfers, errorDetails, transactionStatusResponse?.state, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch]);
+    return;
+  }, [uniqueTransfers, errorDetails, transactionStatusResponse?.state, transactionDetailsFromUrlParams, operations, isMobileScreenSize, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch, sourceAsset?.chainId, destAsset?.chainId]);
 
   return (
     <Column width="100%" align="center">
