@@ -132,7 +132,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
 
   const renderTransferEventDetails = useMemo(() => {
 
-    if (userAddress) {
+    if (userAddress && currentAsset?.amount && currentAsset?.asset) {
       return (
         <Column gap={10} justify="center">
           <Row gap={5} align="center">
