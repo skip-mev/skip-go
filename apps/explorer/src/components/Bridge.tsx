@@ -5,8 +5,9 @@ import { ClockIcon } from "../icons/ClockIcon";
 import { useTheme } from "@/styled-components";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { TransferType } from "@skip-go/client";
+import { OperationType } from "@/utils/clientType";
 
-export const getTransferTypeLabel = (transferType: TransferType | string) => {
+export const getTransferTypeLabel = (transferType: TransferType | OperationType | string) => {
   switch (transferType) {
     case TransferType.ibcTransfer:
       return "IBC";
@@ -26,6 +27,10 @@ export const getTransferTypeLabel = (transferType: TransferType | string) => {
       return "Eureka";
     case TransferType.layerZeroTransfer:
       return "Layer Zero";
+    case OperationType.evmSwap:
+      return "EVM Swap";
+    case OperationType.swap:
+      return "Swap";
     default:
       return transferType;
   }
