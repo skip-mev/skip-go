@@ -7,6 +7,7 @@ import type {
   CCTPTransfer,
   CCTPTransferInfo,
   CCTPTransferState,
+  ContractCallWithTokenTxs,
   EurekaTransfer,
   EurekaTransferInfo,
   EvmSwap,
@@ -24,6 +25,7 @@ import type {
   OPInitTransfer,
   OPInitTransferInfo,
   OPInitTransferState,
+  SendTokenTxs,
   StargateTransfer,
   StargateTransferInfo,
   StargateTransferState,
@@ -327,15 +329,19 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           txHash: goFastTransfer.txs.orderFilledTx?.txHash,
         }
       case TransferType.axelarTransfer:
+        const sendTokenTxs = (axelarTransfer.txs as SendTokenTxs);
+        const contractCallWithTokenTxs = (axelarTransfer.txs as {
+          contractCallWithTokenTxs?: ContractCallWithTokenTxs;
+        })?.contractCallWithTokenTxs;
         if (type === "send") {
           return {
-            explorerLink: axelarTransfer.txs.sendTx?.explorerLink,
-            txHash: axelarTransfer?.txs?.sendTx?.txHash,
+            explorerLink: sendTokenTxs.sendTx?.explorerLink ?? contractCallWithTokenTxs?.sendTx?.explorerLink,
+            txHash: sendTokenTxs.sendTx?.txHash ?? contractCallWithTokenTxs?.sendTx?.txHash,
           }
         }
         return {
-          explorerLink: axelarTransfer.txs.executeTx?.explorerLink,
-          txHash: axelarTransfer?.txs?.executeTx?.txHash,
+          explorerLink: sendTokenTxs.executeTx?.explorerLink ?? contractCallWithTokenTxs?.executeTx?.explorerLink,
+          txHash: sendTokenTxs.executeTx?.txHash ?? contractCallWithTokenTxs?.executeTx?.txHash,
         }
       default:
         type RemainingTransferTypes =

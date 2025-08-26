@@ -2158,7 +2158,10 @@ components:
           $ref: '#/components/schemas/AxelarTransferState'
         txs:
           oneOf:
-            - $ref: '#/components/schemas/ContractCallWithTokenTxs'
+            - type: object
+              properties:
+                contract_call_with_token_txs:
+                  $ref: '#/components/schemas/ContractCallWithTokenTxs'
             - $ref: '#/components/schemas/SendTokenTxs'
         type:
           $ref: '#/components/schemas/AxelarTransferType'
