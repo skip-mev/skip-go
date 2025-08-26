@@ -62,7 +62,7 @@ export default function Home() {
   );
 
   const [transactionStatusResponse, setTransactionStatusResponse] =
-    useState<TxStatusResponse | null>(null);
+    useState<TxStatusResponse | undefined>(undefined);
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
@@ -206,7 +206,7 @@ export default function Home() {
     setTransactionStatuses([]);
     setTransferEvents([]);
     setErrorDetails(undefined);
-    setTransactionStatusResponse(null);
+    setTransactionStatusResponse(undefined);
 
   }, [cancelStatusPolling, setTxHashes, setChainIds]);
 
@@ -214,7 +214,7 @@ export default function Home() {
     setTransactionStatuses([]);
     setTransferEvents([]);
     setErrorDetails(undefined);
-    setTransactionStatusResponse(null);
+    setTransactionStatusResponse(undefined);
     const hash = _txhash ?? txHash;
     const id = _chainId ?? chainId;
 
@@ -355,7 +355,7 @@ export default function Home() {
                 justify="center"
                 onClick={() => setShowTokenDetails(!showTokenDetails)}
                 style={{
-                  visibility: transactionDetailsFromUrlParams
+                  visibility: transactionStatusResponse?.transferAssetRelease?.released || transactionDetailsFromUrlParams 
                     ? "visible"
                     : "hidden",
                 }}
@@ -366,7 +366,7 @@ export default function Home() {
               <Spacer height={10} />
 
               {showTokenDetails ? (
-                <TokenDetails />
+                <TokenDetails transactionStatusResponse={transactionStatusResponse} />
               ) : (
                 <TransactionDetails {...transactionDetails} />
               )}
@@ -489,7 +489,7 @@ export default function Home() {
       return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
     }
     return;
-  }, [uniqueTransfers, errorDetails, transactionStatusResponse?.state, transactionDetailsFromUrlParams, operations, isMobileScreenSize, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch, sourceAsset?.chainId, destAsset?.chainId]);
+  }, [uniqueTransfers, errorDetails, transactionStatusResponse, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch, sourceAsset?.chainId, operations, destAsset?.chainId]);
 
   return (
     <Column width="100%" align="center">
