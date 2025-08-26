@@ -10,11 +10,11 @@ import { RightArrowIcon } from "../icons/RightArrowIcon";
 import { TxHashInput } from "./TxHashInput";
 import { css, styled } from "@/styled-components";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
-import { useLocalStorage } from "@uidotdev/usehooks";
 import { Button } from "@/components/Button";
 import Link from "next/link";
 import Image from "next/image";
 import { ExplorerModals } from "../constants/modal";
+import { useTheme } from "../hooks/useTheme";
 
 export type NavbarProps = {
   isSearchAModal: boolean;
@@ -107,7 +107,7 @@ export const Navbar = ({ isSearchAModal, isTop, txHash, chainId, onSearch, reset
 }
 
 export const Logo = ({ onClick }: { onClick?: () => void }) => {
-  const [theme] = useLocalStorage<"dark" | "light">("explorer-theme");
+  const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
 
   return (
@@ -130,8 +130,6 @@ export const Logo = ({ onClick }: { onClick?: () => void }) => {
 };
 
 export const TopRightComponent = () => {
-  const [theme] = useLocalStorage<"dark" | "light">("explorer-theme");
-
   return (
     <TopRightContainer>
       <Row>
@@ -143,9 +141,9 @@ export const TopRightComponent = () => {
             color: "inherit",
           }}
         >
-          <StyledPillButton onClick={() => {}} isDarkMode={theme === "dark"}>
+          <StyledPillButton>
             Need Help?
-            <RightArrowIcon color={theme === "dark" ? "#000" : "#fff"} />
+            <RightArrowIcon color="currentColor" />
           </StyledPillButton>
         </Link>
       </Row>
@@ -159,9 +157,9 @@ const TopRightContainer = styled.div`
   }
 `;
 
-const StyledPillButton = styled(Button)<{ isDarkMode?: boolean }>`
-  background: ${({ isDarkMode }) => (isDarkMode ? "#fff" : "#000")};
-  color: ${({ isDarkMode }) => (isDarkMode ? "#000" : "#fff")};
+const StyledPillButton = styled(Button)`
+  background: white;
+  color: black;
   font-family: "ABCDiatype", sans-serif;
   box-shadow: none;
   border: none;
@@ -173,7 +171,8 @@ const StyledPillButton = styled(Button)<{ isDarkMode?: boolean }>`
   border-radius: 100px;
 
   &:hover {
-    background: ${({ isDarkMode }) => (isDarkMode ? "#f0f0f0" : "#e0e0e0")};
+    background: black;
+    color: white;
   }
 `;
 
