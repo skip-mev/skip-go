@@ -1,9 +1,10 @@
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, useTheme } from "styled-components";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ANIMATION_TIMINGS, EASINGS } from "@/utils/transitions";
 import { SmallText } from "./Typography";
 import { isMobile } from "@/utils/os";
 import { createPortal } from "react-dom";
+import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 
 const fadeIn = keyframes`
   from {
@@ -25,6 +26,7 @@ export const Tooltip = ({
   direction?: "left" | "right";
   style?: React.CSSProperties;
 }) => {
+  const theme = useTheme();
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipTriggerContainerRef = useRef<HTMLDivElement | null>(null);
   const tooltipContainerRef = useRef<HTMLSpanElement | null>(null);
@@ -70,19 +72,21 @@ export const Tooltip = ({
       {children}
       {showTooltip &&
         createPortal(
-          <StyledTooltipContainer
-            ref={tooltipContainerRef}
-            direction={direction}
-            top={tooltipTop}
-            style={{
-              position: "fixed",
-              left: tooltipPosition.left,
-              top: tooltipPosition.top,
-              zIndex: 9999,
-            }}
-          >
-            {renderContent}
-          </StyledTooltipContainer>,
+          <ShadowDomAndProviders theme={theme}>
+            <StyledTooltipContainer
+              ref={tooltipContainerRef}
+              direction={direction}
+              top={tooltipTop}
+              style={{
+                position: "fixed",
+                left: tooltipPosition.left,
+                top: tooltipPosition.top,
+                zIndex: 9999,
+              }}
+            >
+              {renderContent}
+            </StyledTooltipContainer>
+          </ShadowDomAndProviders>,
           document.body,
         )}
     </StyledTooltipTriggerContainer>
