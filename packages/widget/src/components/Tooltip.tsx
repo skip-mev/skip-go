@@ -72,7 +72,7 @@ export const Tooltip = ({
       {children}
       {showTooltip &&
         createPortal(
-          <ShadowDomAndProviders theme={theme}>
+          <ShadowDomAndProviders theme={theme} disableShadowDom>
             <StyledTooltipContainer
               ref={tooltipContainerRef}
               direction={direction}

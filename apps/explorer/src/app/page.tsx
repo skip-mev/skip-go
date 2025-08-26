@@ -46,7 +46,6 @@ type ErrorWithCodeAndDetails = Error & {
 };
 
 export default function Home() {
-  // const theme = useTheme();
   const [txHash, setTxHash] = useState<string>();
   const [chainId, setChainId] = useState<string>();
   const [showTokenDetails, setShowTokenDetails] = useState(false);
