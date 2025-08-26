@@ -30,6 +30,7 @@ type TransactionHistoryPageHistoryItemDetailsProps = {
   feeAssetRouteDetails?: RouteDetails;
   senderAddress?: string;
   receiverAddress?: string;
+  base64ExplorerData?: string;
 };
 
 const statusMap = {
@@ -56,6 +57,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   feeAssetRouteDetails,
   senderAddress,
   receiverAddress,
+  base64ExplorerData,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
   const { saveToClipboard: saveSenderAddressToClipboard, isCopied: isSenderAddressCopied } =
@@ -88,7 +90,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
     chainId: transferAssetRelease?.chainId,
   });
 
-  const skipExplorerLink = createSkipExplorerLink(transactionDetails);
+  const skipExplorerLink = createSkipExplorerLink(transactionDetails, base64ExplorerData);
 
   return (
     <Column padding={10} gap={10} style={{ paddingTop: showTransferAssetRelease ? 0 : 10 }}>

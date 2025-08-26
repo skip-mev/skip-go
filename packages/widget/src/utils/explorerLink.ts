@@ -1,8 +1,21 @@
 import { explorers } from "@/constants/chains";
 import { config } from "@/constants/wagmi";
-import { ChainType, TransactionDetails } from "@skip-go/client";
+import { ChainType, RouteDetails, TransactionDetails } from "@skip-go/client";
 import { jotaiStore } from "@/widget/Widget";
 import { onlyTestnetsAtom } from "@/state/skipClient";
+
+export const getBase64ExplorerData = (historyItem?: RouteDetails) => {
+  const jsonString = JSON.stringify({
+    route: historyItem?.route,
+    userAddresses: historyItem?.userAddresses,
+    transactionDetails: historyItem?.transactionDetails,
+    status: historyItem?.status,
+  });
+
+  const base64Encoded = Buffer.from(jsonString).toString("base64");
+
+  return base64Encoded;
+};
 
 export const createExplorerLink = ({
   chainId,
@@ -35,7 +48,10 @@ export const createExplorerLink = ({
   }
 };
 
-export const createSkipExplorerLink = (transactionDetails?: TransactionDetails[]) => {
+export const createSkipExplorerLink = (
+  transactionDetails?: TransactionDetails[],
+  base64ExplorerData?: string,
+) => {
   if (!transactionDetails) return "";
   const { get } = jotaiStore;
 
@@ -45,6 +61,10 @@ export const createSkipExplorerLink = (transactionDetails?: TransactionDetails[]
 
   const isTestnet = get(onlyTestnetsAtom);
   const initialTxChainId = transactionDetails?.[0]?.chainId;
+
+  if (base64ExplorerData) {
+    return `https://explorer.skip.build/?data=${base64ExplorerData}`;
+  }
 
   return `https://explorer.skip.build/?tx_hash=${txHashCommaSeperatedList}&chain_id=${initialTxChainId}${isTestnet ? "&is_testnet=true" : ""}`;
 };
