@@ -68,7 +68,7 @@ export const DetailsRow = ({ label, value, onClick }: { label: string, value: Re
     <Button as={onClick === undefined ? "div" : "button"} onClick={onClick} align="center" justify="space-between">
       <SmallText>{label}</SmallText>
       {
-        typeof value === "string" ? (
+        typeof value === "string" || typeof value === "number" ? (
           <SmallText normalTextColor>{value}</SmallText>
         ) : (
           value

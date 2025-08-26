@@ -366,11 +366,6 @@ export default function Home() {
                 align="center"
                 justify="center"
                 onClick={() => setShowTokenDetails(!showTokenDetails)}
-                style={{
-                  visibility: transactionDetailsFromUrlParams
-                    ? "visible"
-                    : "hidden",
-                }}
               >
                 {showTokenDetails ? "Close" : "View token details"}
                 {!showTokenDetails && <CoinsIcon />}
@@ -378,7 +373,7 @@ export default function Home() {
               <Spacer height={10} />
 
               {showTokenDetails ? (
-                <TokenDetails />
+                <TokenDetails transactionStatusResponse={transactionStatusResponse} />
               ) : (
                 <TransactionDetails {...transactionDetails} />
               )}
