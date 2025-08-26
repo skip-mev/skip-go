@@ -1,5 +1,16 @@
 ## 0.0.15
 
+## 3.14.6
+
+### Patch Changes
+
+- d6c4457: Update filterNeutronSwapFee to no longer check swap venue
+- 05c1e7f: fix fee decimal display for usd amounts of 0
+- e26ddbe: Truncate sender and receiver addresses in transaction history details.
+- Updated dependencies [39d2448]
+- Updated dependencies [d6c4457]
+  - @skip-go/client@1.5.4
+
 ## 3.14.5
 
 ### Patch Changes

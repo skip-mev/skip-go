@@ -1,5 +1,12 @@
 # @skip-go/client
 
+## 1.5.4
+
+### Patch Changes
+
+- 39d2448: Add timeoutTx explorerLink for ibcTransfers that have been timedout, Fix Axelar explorerLinks
+- d6c4457: Update filterNeutronSwapFee to no longer check swap venue
+
 ## 1.5.3
 
 ### Patch Changes
