@@ -241,7 +241,7 @@ const TransferEventDetailsCard = styled.div`
   border: ${({ theme }) => `1px solid ${theme.secondary.background.normal}`};
 `;
 
-const TransferEventContainer = styled(Container) <{ status?: string, loading?: boolean }>`
+export const TransferEventContainer = styled(Container) <{ status?: string, loading?: boolean }>`
   max-width: 100%;
   ${({ status, theme, loading }) => {
     if (loading) {
