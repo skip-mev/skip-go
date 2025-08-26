@@ -1,55 +1,134 @@
 "use client";
-import React from "react";
-import { ToggleThemeButton } from "./template";
-import { SmallTextButton } from '@/components/Typography';
-import { Column, Row } from "@/components/Layout";
-import { transactionStatus, getTransferEventsFromTxStatusResponse, ClientTransferEvent, TxStatusResponse } from "@skip-go/client";
+import React, { useCallback } from "react";
+import { Column, Row, Spacer } from "@/components/Layout";
+import {
+  getTransferEventsFromTxStatusResponse,
+  ClientTransferEvent,
+  TxStatusResponse,
+  TransactionDetails as TransactionDetailsType,
+  waitForTransactionWithCancel,
+  transactionStatus,
+} from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
-import { TransferEventCard, TransferEventCardProps } from "../components/TransferEventCard";
-import { defaultSkipClientConfig, skipClientConfigAtom, onlyTestnetsAtom, ClientAsset } from "@/state/skipClient";
-import { uniqueAssetsBySymbolAtom } from "../state/uniqueAssetsBySymbol";
-import { useSetAtom, useAtomValue } from "@/jotai";
+import {
+  TransferEventCard,
+  TransferEventCardProps,
+} from "../components/TransferEventCard";
+import {
+  defaultSkipClientConfig,
+  skipClientConfigAtom,
+  onlyTestnetsAtom,
+} from "@/state/skipClient";
+import { useSetAtom } from "@/jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
-import { NiceModal, Modals } from "@/nice-modal";
+import { NiceModal } from "@/nice-modal";
 import { GhostButton } from "@/components/Button";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
+import { TokenDetails } from "../components/TokenDetails";
 import { ExplorerModals } from "../constants/modal";
+import { useQueryState, parseAsString, parseAsArrayOf } from "nuqs";
+import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
+import { CoinsIcon } from "../icons/CoinsIcon";
+import { Navbar } from "../components/Navbar";
+import { ErrorCard, ErrorMessages } from "../components/ErrorCard";
+import { ErrorBoundary } from "react-error-boundary";
+import { Bridge } from "../components/Bridge";
+import { styled } from "@/styled-components";
+import { styledScrollbar } from "@/mixins/styledScrollbar";
+import { SuccessfulTransactionCard } from "../components/SuccessfulTransactionCard";
+import { chainIdsSortedToTopAtom } from "@/state/chainIdsSortedToTop";
+import { CHAIN_IDS_SORTED_TO_TOP } from "../constants/chainIdsSortedToTop";
+
+type ErrorWithCodeAndDetails = Error & {
+  code: number;
+  details: string;
+};
 
 export default function Home() {
-  const [txHash, setTxHash] = useState("BA47144AF79143EECEDA00BC758FA52D8B124934C7051A78B20DAC9DC42C1BCB");
-  const [chainId, setChainId] = useState("osmosis-1");
-  const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>([]);
-  const [transactionStatusResponse, setTransactionStatusResponse] = useState<TxStatusResponse | null>(null);
-  const [rawData, setRawData] = useState<string>("");
+  // const theme = useTheme();
+  const [txHash, setTxHash] = useState<string>();
+  const [chainId, setChainId] = useState<string>();
+  const [showTokenDetails, setShowTokenDetails] = useState(false);
+  const [txHashes, setTxHashes] = useQueryState(
+    "tx_hash",
+    parseAsArrayOf(parseAsString, ",")
+  );
+  const [chainIds, setChainIds] = useQueryState(
+    "chain_id",
+    parseAsArrayOf(parseAsString, ",")
+  );
+  const [data, setData] = useQueryState("data");
+  const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
+    []
+  );
+  const setChainIdsSortedToTop = useSetAtom(chainIdsSortedToTopAtom);
+
+  const [transactionStatusResponse, setTransactionStatusResponse] =
+    useState<TxStatusResponse | undefined>(undefined);
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
-  const uniqueAssetsBySymbol = useAtomValue(uniqueAssetsBySymbolAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
+  const { transactionDetails: transactionDetailsFromUrlParams, operations, sourceAsset, destAsset } =
+    useTransactionHistoryItemFromUrlParams();
+  const [transactionStatuses, setTransactionStatuses] = useState<
+    TxStatusResponse[]
+  >([]);
+  const [errorDetails, setErrorDetails] = useState<{
+    errorMessage: ErrorMessages;
+    error: ErrorWithCodeAndDetails;
+  }>();
+  const [cancelStatusPolling, setCancelStatusPolling] = useState<{promise: Promise<TxStatusResponse>, cancel: () => void}[]>([]);
 
   const uniqueTransfers = useMemo(() => {
     const seen = new Set<string>();
     const transfers: TransferEventCardProps[] = [];
 
+    const transferAssetReleaseChainId = transactionStatusResponse?.transferAssetRelease?.chainId;
+    const transferAssetReleaseIndex = 
+      transferEvents.findLastIndex(event => 
+        event.fromChainId === transferAssetReleaseChainId || 
+        event.toChainId === transferAssetReleaseChainId
+      );
+
     const getStep = (index: number, fromOrTo: "from" | "to") => {
       if (index === 0 && fromOrTo === "from") return "Origin";
-      if (index === transferEvents.length - 1 && fromOrTo === "to") return "Destination";
+      if (index === transferEvents.length - 1 && fromOrTo === "to")
+        return "Destination";
       return "Routed";
-    }
+    };
 
     transferEvents.forEach((event, index) => {
-      const addChainIfUnique = (chainId: string | undefined, explorerLink: string | undefined, fromOrTo: "from" | "to") => {
+      const addChainIfUnique = (
+        chainId: string | undefined,
+        explorerLink: string | undefined,
+        fromOrTo: "from" | "to"
+      ) => {
+
+        const assetMatches = operations[index]?.denom === transactionStatusResponse?.transferAssetRelease?.denom && operations[index]?.chainId === transactionStatusResponse?.transferAssetRelease?.chainId;
+
+        const getTransferAssetRelease = () => {
+          if (!transactionStatusResponse?.transferAssetRelease?.released) return;
+          if (assetMatches) {
+            return transactionStatusResponse?.transferAssetRelease;
+          }
+          if (transferAssetReleaseIndex === index && transferAssetReleaseChainId === chainId) {
+            return transactionStatusResponse?.transferAssetRelease;
+          }
+        }
+
         if (chainId && !seen.has(chainId)) {
           seen.add(chainId);
           transfers.push({
             chainId,
             explorerLink: explorerLink ?? "",
             transferType: event.transferType ?? "",
-            status: event.status ?? "",
+            status: event.status,
             step: getStep(index, fromOrTo),
-            txHash: event[`${fromOrTo}TxHash`] ?? "",
             durationInMs: event.durationInMs ?? 0,
+            index,
+            transferAssetRelease: getTransferAssetRelease(),
           });
         }
       };
@@ -58,106 +137,394 @@ export default function Home() {
       addChainIfUnique(event.toChainId, event.toExplorerLink, "to");
     });
 
-    console.log(transfers);
     return transfers;
-  }, [transferEvents]);
+  }, [operations, transactionStatusResponse?.transferAssetRelease, transferEvents]);
 
   useEffect(() => {
     setSkipClientConfig(defaultSkipClientConfig);
     setOnlyTestnets(false);
-  }, [setSkipClientConfig, setOnlyTestnets]);
+    setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP)
+  }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop]);
 
-  const getTxStatus = async () => {
-    const response = await transactionStatus({
-      txHash,
-      chainId,
-    })
-    setRawData(JSON.stringify(response, null, 2));
-    const transferEvents = getTransferEventsFromTxStatusResponse([response]);
+  const getTxStatus = useCallback(
+    async (transactionDetails: TransactionDetailsType[] = []) => {
+      if (cancelStatusPolling.length > 0) {
+        cancelStatusPolling.forEach(response => response.cancel());
+        setCancelStatusPolling([]);
+      }
 
-    setTransactionStatusResponse(response);
-    setTransferEvents(transferEvents);
-    console.log(response);
-    console.log(transferEvents);
-  }
+      const txsToQuery = transactionDetails?.filter(
+        (tx) => tx.txHash !== undefined && tx.chainId !== undefined
+      );
+
+      const responses = txsToQuery?.map((tx, index) =>
+        waitForTransactionWithCancel({
+          txHash: tx.txHash ?? "",
+          chainId: tx.chainId ?? "",
+          doNotTrack: true,
+          onStatusUpdated: (status) => {
+            setTransactionStatuses((prev) => {
+              const newStatuses = [...prev];
+              newStatuses[index] = status;
+
+              const allTransferEvents =
+                getTransferEventsFromTxStatusResponse(newStatuses);
+              setTransferEvents(allTransferEvents);
+
+              setTransactionStatusResponse(newStatuses[0]);
+
+              return newStatuses;
+            });
+          },
+          onError: (error) => {
+            const errorWithCodeAndDetails = error as ErrorWithCodeAndDetails;
+            if (error.message === "tx not found") {
+              setErrorDetails({
+                errorMessage: ErrorMessages.TRANSACTION_NOT_FOUND,
+                error: errorWithCodeAndDetails,
+              });
+            } else {
+              setErrorDetails({
+                errorMessage: ErrorMessages.TRANSACTION_ERROR,
+                error: errorWithCodeAndDetails,
+              });
+            }
+          },
+        })
+      ) || [];
+
+      setCancelStatusPolling(responses);
+    },
+    [cancelStatusPolling]
+  );
+
+  const resetState = useCallback(() => {
+    cancelStatusPolling.forEach(response => response.cancel());
+    setCancelStatusPolling([]);
+    
+    setTxHashes(null);
+    setChainIds(null);
+    setTxHash("");
+    setChainId("");
+    
+    setTransactionStatuses([]);
+    setTransferEvents([]);
+    setErrorDetails(undefined);
+    setTransactionStatusResponse(undefined);
+
+  }, [cancelStatusPolling, setTxHashes, setChainIds]);
+
+  const onSearch = useCallback((_txhash?: string, _chainId?:string) => {
+    setTransactionStatuses([]);
+    setTransferEvents([]);
+    setErrorDetails(undefined);
+    setTransactionStatusResponse(undefined);
+    const hash = _txhash ?? txHash;
+    const id = _chainId ?? chainId;
+
+    if (hash && id) {
+      setTxHashes([hash]);
+      setChainIds([id]);
+    }
+
+    if (
+      hash !== transactionDetailsFromUrlParams?.[0]?.txHash ||
+      id !== transactionDetailsFromUrlParams?.[0]?.chainId
+    ) {
+      setData(null);
+    }
+
+    if (hash && id) {
+      getTxStatus([{ txHash: hash, chainId: id }]);
+    }
+
+  }, [txHash, chainId, transactionDetailsFromUrlParams, setTxHashes, setChainIds, setData, getTxStatus]);
+
+  useEffect(() => {
+    if (transactionDetailsFromUrlParams) {
+      setChainId(transactionDetailsFromUrlParams[0]?.chainId);
+      setTxHash(transactionDetailsFromUrlParams[0]?.txHash);
+      getTxStatus(transactionDetailsFromUrlParams);
+    } else if (
+      txHashes &&
+      txHashes.length > 0 &&
+      chainIds &&
+      chainIds.length > 0
+    ) {
+      setChainId(chainIds[0]);
+      setTxHash(txHashes[0]);
+
+      const transactionDetails: TransactionDetailsType[] = [];
+
+      const calculateMissingChainIds = async () => {
+        let nextChainId = chainIds[0];
+        for (const txHash of txHashes) {
+          const response = await transactionStatus({
+            txHash,
+            chainId: nextChainId,
+          });
+          
+          transactionDetails.push({ txHash, chainId: nextChainId });
+          nextChainId = response?.transferAssetRelease?.chainId || "";
+        }
+      }
+
+      if (txHashes.length > 1) {
+        calculateMissingChainIds().then(() => {
+          getTxStatus(transactionDetails);
+        });
+      } else {
+        transactionDetails.push({ txHash: txHashes[0], chainId: chainIds[0] });
+        getTxStatus(transactionDetails);
+      }
+
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const transactionDetails = useMemo(() => {
     const chainIds = uniqueTransfers?.map((event) => event.chainId);
+    const chainIdsFromUrlParams = [sourceAsset?.chainId ?? "", destAsset?.chainId ?? ""]
 
     return {
-      txHash: transferEvents?.[0]?.fromTxHash ?? "",
+      txHash: transferEvents?.[0]?.fromTxHash ?? transactionDetailsFromUrlParams?.[0]?.txHash ?? "",
       state: transactionStatusResponse?.state,
-      chainIds,
+      chainIds: chainIds.length > 0 ? chainIds : chainIdsFromUrlParams,
+    };
+  }, [uniqueTransfers, sourceAsset, destAsset, transferEvents, transactionDetailsFromUrlParams, transactionStatusResponse?.state]);
+
+  const showRawDataModal = useCallback(() => {
+    if (transactionStatuses.length > 0) {
+      NiceModal.show(ExplorerModals.ViewRawDataModal, {
+        data: JSON.stringify(Array.from(transactionStatuses.values()), null, 2),
+      });
+    } else {
+      NiceModal.show(ExplorerModals.ViewRawDataModal, {
+        data: JSON.stringify(
+          {
+            ...errorDetails?.error,
+            message: errorDetails?.error?.message,
+          },
+          null,
+          2
+        ),
+      });
     }
-  }, [uniqueTransfers, transferEvents, transactionStatusResponse?.state]);
+  }, [errorDetails, transactionStatuses]);
 
-  return (
-    <Column gap={10}>
-      <ToggleThemeButton />
+  const onReindex = useCallback(async () => {
+    try {
+      await fetch('https://api.skip.build/v2/tx/retry_track', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tx_hash: txHash,
+          chain_id: chainId,
+        }),
+      });
+      onSearch();
+    } catch (error) {
+      console.error(error);
+    }
+  }, [txHash, chainId, onSearch]);
 
-      <Row justify="center" gap={10} >
-        <button onClick={() => {
-          NiceModal.show(Modals.AssetAndChainSelectorModal, {
-            context: "source",
-            onSelect: (asset: ClientAsset | null) => {
-              console.log("chain id selected:", asset?.chainId);
-              NiceModal.hide(Modals.AssetAndChainSelectorModal);
-            },
-            overrideSelectedGroup: {
-              assets: uniqueAssetsBySymbol,
-            },
-            selectChain: true,
-          });
-        }}>open modal</button>
+  const isTop = useMemo(() => {
+    return (
+      Boolean(
+        txHashes && txHashes.length > 0 && chainIds && chainIds.length > 0
+      ) || Boolean(data)
+    );
+  }, [chainIds, data, txHashes]);
 
-        <input type="text" value={txHash} onChange={(e) => setTxHash(e.target.value)} placeholder="tx hash"/>
-        <input type="text" value={chainId} onChange={(e) => setChainId(e.target.value)} placeholder="chain id"/>
-        <SmallTextButton onClick={getTxStatus}>get tx info</SmallTextButton>
-      </Row>
-      {
-        uniqueTransfers.length > 0 && (
-          <>
-            <Row gap={16}>
-              <Column align="flex-end" width={355}>
-                <GhostButton onClick={() => {}}>
-                  View token details
-                </GhostButton>
-              </Column>
-              <Column align="flex-end" width={355}>
-                <GhostButton gap={5} onClick={() => {
-                  NiceModal.show(ExplorerModals.ViewRawDataModal, {
-                    data: rawData,
-                    onClose: () => {
-                      console.log("ViewRawDataModal closed");
-                    },
-                  });
-                }}>
-                  View raw data <HamburgerIcon />
-                </GhostButton>
-              </Column>
-            </Row>
-            <Row gap={16} flexDirection={isMobileScreenSize ? "column" : "row"} align={isMobileScreenSize ? "center" : "flex-start"}>
-              <Column width={355}>
+  const isLessThan1300 = useIsMobileScreenSize(1300);
+  const isSearchAModal = useMemo(() => {
+    return Boolean(isTop && isLessThan1300);
+  }, [isTop, isLessThan1300]);
+
+  const renderPageContent = useMemo(() => {
+    if (uniqueTransfers.length > 0) {
+      return (
+        <StyledContentContainer
+          gap={16}
+          flexDirection={isMobileScreenSize ? "column" : "row"}
+          align={isMobileScreenSize ? "center" : "flex-start"}
+        >
+          <StyledColumns>
+            <StyledColumns align="flex-end" style={{ position: !isMobileScreenSize ? "absolute" : "relative" }}>
+              <GhostButton
+                gap={5}
+                align="center"
+                justify="center"
+                onClick={() => setShowTokenDetails(!showTokenDetails)}
+                style={{
+                  visibility: transactionStatusResponse?.transferAssetRelease?.released || transactionDetailsFromUrlParams 
+                    ? "visible"
+                    : "hidden",
+                }}
+              >
+                {showTokenDetails ? "Close" : "View token details"}
+                {!showTokenDetails && <CoinsIcon />}
+              </GhostButton>
+              <Spacer height={10} />
+
+              {showTokenDetails ? (
+                <TokenDetails transactionStatusResponse={transactionStatusResponse} />
+              ) : (
                 <TransactionDetails {...transactionDetails} />
-              </Column>
-              <Column width={355}>
-                {uniqueTransfers.map((transfer) => (
-                  <TransferEventCard
-                    key={transfer.chainId}
-                    chainId={transfer.chainId}
-                    explorerLink={transfer.explorerLink}
+              )}
+            </StyledColumns>
+          </StyledColumns>
+          <StyledColumns align="center" justify="center">
+            <Row width="100%" justify="flex-end">
+              <GhostButton gap={5} onClick={showRawDataModal}>
+                View raw data <HamburgerIcon />
+              </GhostButton>
+            </Row>
+            <Spacer height={10} />
+            {uniqueTransfers.map((transfer) => (
+              <>
+                {transfer.step !== "Origin" && (
+                  <Bridge
                     transferType={transfer.transferType}
-                    status={transfer.status}
-                    step={transfer.step}
                     durationInMs={transfer.durationInMs}
                   />
-                ))}
-              </Column>
-            </Row>
-          </>
+                )}
+                <ErrorBoundary
+                  key={transfer.chainId}
+                  fallback={
+                    <ErrorCard
+                      errorMessage={ErrorMessages.TRANSFER_EVENT_ERROR}
+                      padding="20px 45px"
+                      onRetry={() => onSearch()}
+                    />
+                  }
+                >
+                  <TransferEventCard
+                    {...transfer}
+                    state={transactionStatusResponse?.state}
+                    onReindex={onReindex}
+                  />
+                </ErrorBoundary>
+              </>
+            ))}
+          </StyledColumns>
+        </StyledContentContainer>
+      )
+    }
+    if (errorDetails) {
+      return (
+        <Column width={355} align="flex-end" gap={10}>
+          <GhostButton gap={5} onClick={showRawDataModal}>
+            View raw data <HamburgerIcon />
+          </GhostButton>
+          <ErrorCard
+            errorMessage={errorDetails.errorMessage}
+            onRetry={() => onSearch()}
+          />
+        </Column>
+      )
+    }
+    if (transactionStatusResponse?.state === "STATE_COMPLETED_SUCCESS") {
+      if (transactionDetailsFromUrlParams) {
+        return (
+          <StyledContentContainer
+            gap={16}
+            flexDirection={isMobileScreenSize ? "column" : "row"}
+            align={isMobileScreenSize ? "center" : "flex-start"}
+          >
+            <StyledColumns>
+              <StyledColumns align="flex-end" style={{ position: !isMobileScreenSize ? "absolute" : "relative" }}>
+                <GhostButton
+                  gap={5}
+                  align="center"
+                  justify="center"
+                  onClick={() => setShowTokenDetails(!showTokenDetails)}
+                  style={{
+                    visibility: transactionDetailsFromUrlParams
+                      ? "visible"
+                      : "hidden",
+                  }}
+                >
+                  {showTokenDetails ? "Close" : "View token details"}
+                  {!showTokenDetails && <CoinsIcon />}
+                </GhostButton>
+                <Spacer height={10} />
+
+                {showTokenDetails ? (
+                  <TokenDetails />
+                ) : (
+                  <TransactionDetails {...transactionDetails} />
+                )}
+              </StyledColumns>
+            </StyledColumns>
+            <StyledColumns align="center" justify="center">
+              <Row width="100%" justify="flex-end">
+                <GhostButton gap={5} onClick={showRawDataModal}>
+                  View raw data <HamburgerIcon />
+                </GhostButton>
+              </Row>
+              <Spacer height={10} />
+              <TransferEventCard
+                chainId={sourceAsset?.chainId ?? ''}
+                transferType={operations[0]?.type}
+                explorerLink={transactionDetailsFromUrlParams?.[0]?.explorerLink ?? ''}
+                step="Origin"
+                index={0}
+              />
+
+              <Bridge
+                transferType={operations[0]?.type}
+              />
+
+              <TransferEventCard
+                chainId={destAsset?.chainId ?? ''}
+                transferType={operations[0]?.type}
+                status="completed"
+                explorerLink={transactionDetailsFromUrlParams?.[0]?.explorerLink ?? ''}
+                step="Destination"
+                index={1}
+              />
+            </StyledColumns>
+          </StyledContentContainer>
         )
       }
+      return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
+    }
+    return;
+  }, [uniqueTransfers, errorDetails, transactionStatusResponse, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch, sourceAsset?.chainId, operations, destAsset?.chainId]);
 
+  return (
+    <Column width="100%" align="center">
+      <Navbar
+        isSearchAModal={isSearchAModal}
+        isTop={isTop}
+        txHash={txHash}
+        chainId={chainId}
+        onSearch={onSearch}
+        resetState={resetState}
+        setTxHash={setTxHash}
+        setChainId={setChainId}
+      />
+      
+      { renderPageContent }
     </Column>
   );
 }
+
+const StyledContentContainer = styled(Row)`
+  height: calc(100vh - 100px);
+  @media (min-width: 1023px) {
+    height: calc(100vh - 200px);
+  }
+  overflow: auto;
+  ${styledScrollbar};
+`;
+
+const StyledColumns = styled(Column)`
+  width: calc(100vw - 16px);
+  @media (min-width: 767px) {
+    width: 355px;
+  }
+`;

@@ -1,0 +1,34 @@
+import { Container } from "@/components/Container"
+import { Column } from "@/components/Layout"
+import { SmallTextButton, Text } from "@/components/Typography"
+import { TriangleWarningIcon } from "@/icons/TriangleWarningIcon";
+
+export enum ErrorMessages {
+  TRANSACTION_ERROR = "We're having trouble displaying this Transaction",
+  TRANSACTION_NOT_FOUND = "Transaction not found",
+  TRANSFER_EVENT_ERROR = "We're having trouble displaying this step",
+}
+
+export const ErrorCard = ({
+  errorMessage,
+  onRetry,
+  padding = "45px",
+}: {
+  errorMessage: string;
+  onRetry?: () => void;
+  padding?: string;
+}) => {
+  return (
+    <Container padding={padding}>
+      <Column align="center" justify="center" gap={12}>
+        <TriangleWarningIcon backgroundColor="white" width={18} height={16} />
+        <Text textAlign="center" lineHeight="24px">
+          {errorMessage}
+        </Text>
+        <SmallTextButton onClick={onRetry}>
+          Retry
+        </SmallTextButton>
+      </Column>
+    </Container>
+  )
+}

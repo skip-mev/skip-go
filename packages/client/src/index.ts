@@ -39,7 +39,7 @@ export { getRecommendedGasPrice } from "./public-functions/getRecommendedGasPric
 export { getFeeInfoForChain } from "./public-functions/getFeeInfoForChain";
 export { setApiOptions } from "./public-functions/setApiOptions";
 export type { SetApiOptionsProps } from "./public-functions/setApiOptions";
-export { waitForTransaction } from "./public-functions/waitForTransaction";
+export { waitForTransaction, waitForTransactionWithCancel } from "./public-functions/waitForTransaction";
 
 export { getCosmosGasAmountForMessage } from "./public-functions/getCosmosGasAmountForMessage";
 export { getEVMGasAmountForMessage } from "./public-functions/getEvmGasAmountForMessage";
@@ -47,7 +47,7 @@ export { validateCosmosGasBalance } from "./public-functions/validateCosmosGasBa
 
 export { subscribeToRouteStatus } from "./public-functions/subscribeToRouteStatus";
 export type { RouteDetails, TransactionDetails, RouteStatus, TransactionStatus } from "./public-functions/subscribeToRouteStatus";
-export type { TransferEventStatus, ClientTransferEvent } from "./utils/clientType"
+export type { TransferEventStatus, ClientTransferEvent, OverallStatus } from "./utils/clientType"
 export { getTransferEventsFromTxStatusResponse, TransferType, getSimpleOverallStatus } from "./utils/clientType"
 
 export { ClientState } from "./state/clientState";

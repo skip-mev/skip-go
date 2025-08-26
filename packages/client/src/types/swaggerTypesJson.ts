@@ -430,7 +430,11 @@ export interface AxelarTransferInfoJson {
    * * `AXELAR_TRANSFER_FAILURE` - Axelar transfer failed
    */
   state: AxelarTransferStateJson;
-  txs: ContractCallWithTokenTxsJson | SendTokenTxsJson;
+  txs:
+    | {
+        contract_call_with_token_txs?: ContractCallWithTokenTxsJson;
+      }
+    | SendTokenTxsJson;
   /**
    * Axelar transfer type:
    * * `AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN` - GMP contract call with token transfer type

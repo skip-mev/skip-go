@@ -18,9 +18,19 @@ export type ModalProps = {
   container?: HTMLElement;
   onOpenChange?: (open: boolean) => void;
   theme?: PartialTheme;
+  blurBackground?: boolean;
+  disableCloseOnClickOutside?: boolean;
 };
 
-export const Modal = ({ children, drawer, container, onOpenChange, theme }: ModalProps) => {
+export const Modal = ({
+  children,
+  drawer,
+  container,
+  onOpenChange,
+  theme,
+  blurBackground,
+  disableCloseOnClickOutside,
+}: ModalProps) => {
   const [prevOverflowStyle, setPrevOverflowStyle] = useState<string>("");
   const modalRef = useRef<HTMLDivElement>(null);
   const modal = useModal();
@@ -43,6 +53,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
     };
 
     const handleClickOutside = (event: MouseEvent) => {
+      if (disableCloseOnClickOutside) return;
       if (modalRef.current !== event.target && modal.visible) {
         modal.hide();
       }
@@ -70,7 +81,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
       onOpenChange?.(false);
       document.documentElement.style.overflow = prevOverflowStyle;
     };
-  }, [drawer, modal, onOpenChange, prevOverflowStyle]);
+  }, [disableCloseOnClickOutside, drawer, modal, onOpenChange, prevOverflowStyle]);
 
   // this fixes a flickering animation when modals are opened
   if (disableShadowDom && wasVisible === undefined) return null;
@@ -81,6 +92,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
         drawer={drawer}
         open={modal.visible}
         data-root-id={rootId}
+        blurBackground={blurBackground}
         onAnimationEnd={() => {
           if (!modal.visible) {
             // this is a hack to avoid an after image on windows
@@ -194,8 +206,14 @@ const fadeOutAndZoomIn = keyframes`
 const StyledOverlay = styled.div<{
   drawer?: boolean;
   open?: boolean;
+  blurBackground?: boolean;
 }>`
   background: rgba(0 0 0 / 0.5);
+  ${({ blurBackground }) =>
+    blurBackground &&
+    css`
+      backdrop-filter: blur(4px);
+    `}
   position: fixed;
   top: 0;
   left: 0;

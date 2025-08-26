@@ -21,6 +21,7 @@ import { CircleSkeletonElement } from "@/components/Skeleton";
 import { convertToPxValue } from "@/utils/style";
 import { RouteDetails } from "@skip-go/client";
 import { BigNumber } from "bignumber.js";
+import { getBase64ExplorerData } from "@/utils/explorerLink";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -219,6 +220,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
             feeAssetRouteDetails={feeAssetRouteDetails}
             senderAddress={senderAddress}
             receiverAddress={receiverAddress}
+            base64ExplorerData={getBase64ExplorerData(txHistoryItem)}
           />
         )}
       </StyledHistoryContainer>

@@ -7,6 +7,7 @@ import type {
   CCTPTransfer,
   CCTPTransferInfo,
   CCTPTransferState,
+  ContractCallWithTokenTxs,
   EurekaTransfer,
   EurekaTransferInfo,
   EvmSwap,
@@ -24,6 +25,7 @@ import type {
   OPInitTransfer,
   OPInitTransferInfo,
   OPInitTransferState,
+  SendTokenTxs,
   StargateTransfer,
   StargateTransferInfo,
   StargateTransferState,
@@ -230,8 +232,6 @@ function filterNeutronSwapFee(operations: Operation[]) {
     const clientOperation = getClientOperation(op);
     if (
       clientOperation.type === OperationType.swap &&
-      clientOperation.swapOut?.swapVenue?.name === "neutron-astroport" &&
-      clientOperation.swapOut?.swapVenue.chainId === "neutron-1" &&
       clientOperation.chainId === "neutron-1" &&
       clientOperation.denomOut === "untrn" &&
       clientOperation.fromChainId === "neutron-1" &&
@@ -242,8 +242,6 @@ function filterNeutronSwapFee(operations: Operation[]) {
         const nextClientOperation = getClientOperation(nextOperation);
         if (
           nextClientOperation.type === OperationType.swap &&
-          nextClientOperation.swapIn?.swapVenue?.name === "neutron-astroport" &&
-          nextClientOperation.swapIn?.swapVenue?.chainId === "neutron-1" &&
           nextClientOperation.chainId === "neutron-1"
         ) {
           return false;
@@ -305,7 +303,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           }
         }
         return {
-          explorerLink: ibcTransfer.packetTxs.receiveTx?.explorerLink,
+          explorerLink: ibcTransfer.packetTxs.receiveTx?.explorerLink ?? ibcTransfer.packetTxs.timeoutTx?.explorerLink,
           txHash: ibcTransfer.packetTxs.receiveTx?.txHash,
         }
       case TransferType.eurekaTransfer:
@@ -316,7 +314,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           }
         }
         return {
-          explorerLink: eurekaTransfer.packetTxs.receiveTx?.explorerLink,
+          explorerLink: eurekaTransfer.packetTxs.receiveTx?.explorerLink ?? eurekaTransfer.packetTxs.timeoutTx?.explorerLink,
           txHash: eurekaTransfer.packetTxs.receiveTx?.txHash,
         }
       case TransferType.goFastTransfer:
@@ -327,13 +325,23 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           }
         }
         return {
-          explorerLink: goFastTransfer.txs.orderFilledTx?.explorerLink,
+          explorerLink: goFastTransfer.txs.orderFilledTx?.explorerLink ?? goFastTransfer.txs.orderTimeoutTx?.explorerLink ?? goFastTransfer.txs.orderRefundedTx?.explorerLink,
           txHash: goFastTransfer.txs.orderFilledTx?.txHash,
         }
       case TransferType.axelarTransfer:
+        const sendTokenTxs = axelarTransfer.txs as SendTokenTxs | undefined;
+        const contractCallWithTokenTxs = (axelarTransfer.txs as {
+          contractCallWithTokenTxs?: ContractCallWithTokenTxs;
+      })?.contractCallWithTokenTxs;
+        if (type === "send") {
+          return {
+            explorerLink: sendTokenTxs?.sendTx?.explorerLink ?? contractCallWithTokenTxs?.sendTx?.explorerLink,
+            txHash: sendTokenTxs?.sendTx?.txHash ?? contractCallWithTokenTxs?.sendTx?.txHash,
+          }
+        }
         return {
-          explorerLink: axelarTransfer?.axelarScanLink,
-          txHash: axelarTransfer?.txs?.sendTx?.txHash,
+          explorerLink: sendTokenTxs?.executeTx?.explorerLink ?? contractCallWithTokenTxs?.executeTx?.explorerLink,
+          txHash: sendTokenTxs?.executeTx?.txHash ?? contractCallWithTokenTxs?.executeTx?.txHash,
         }
       default:
         type RemainingTransferTypes =
@@ -362,25 +370,53 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
 
   const getDuration = () => {
     switch (transferType) {
-      case TransferType.ibcTransfer:
-        return new Date(ibcTransfer.packetTxs.receiveTx?.onChainAt ?? 0).getTime() - new Date(ibcTransfer.packetTxs.sendTx?.onChainAt ?? 0).getTime();
-      case TransferType.eurekaTransfer:
-        return new Date(eurekaTransfer.packetTxs.receiveTx?.onChainAt ?? 0).getTime() - new Date(eurekaTransfer.packetTxs.sendTx?.onChainAt ?? 0).getTime();
-      case TransferType.goFastTransfer:
-        return new Date(goFastTransfer.txs.orderFilledTx?.onChainAt ?? 0).getTime() - new Date(goFastTransfer.txs.orderSubmittedTx?.onChainAt ?? 0).getTime();
-      case TransferType.axelarTransfer:
-        return new Date(axelarTransfer?.txs?.confirmTx?.onChainAt ?? 0).getTime() - new Date(axelarTransfer?.txs?.sendTx?.onChainAt ?? 0).getTime();
-      default:
+      case TransferType.ibcTransfer: {
+        const sendTime = ibcTransfer.packetTxs.sendTx?.onChainAt;
+        const receiveTime = ibcTransfer.packetTxs.receiveTx?.onChainAt;
+        if (!sendTime || !receiveTime) return;
+        return new Date(receiveTime).getTime() - new Date(sendTime).getTime();
+      }
+      
+      case TransferType.eurekaTransfer: {
+        const sendTime = eurekaTransfer.packetTxs.sendTx?.onChainAt;
+        const receiveTime = eurekaTransfer.packetTxs.receiveTx?.onChainAt;
+        if (!sendTime || !receiveTime) return;
+        return new Date(receiveTime).getTime() - new Date(sendTime).getTime();
+      }
+      
+      case TransferType.goFastTransfer: {
+        const submitTime = goFastTransfer.txs.orderSubmittedTx?.onChainAt;
+        const filledTime = goFastTransfer.txs.orderFilledTx?.onChainAt;
+        if (!submitTime || !filledTime) return;
+        return new Date(filledTime).getTime() - new Date(submitTime).getTime();
+      }
+      
+      case TransferType.axelarTransfer: {
+        const sendTokenTxs = axelarTransfer.txs as SendTokenTxs | undefined;
+        const contractCallWithTokenTxs = (axelarTransfer.txs as {
+          contractCallWithTokenTxs?: ContractCallWithTokenTxs;
+      })?.contractCallWithTokenTxs;
+
+        const sendTime = sendTokenTxs?.sendTx?.onChainAt ?? contractCallWithTokenTxs?.sendTx?.onChainAt;
+        const confirmTime = sendTokenTxs?.confirmTx?.onChainAt ?? contractCallWithTokenTxs?.confirmTx?.onChainAt;
+        if (!sendTime || !confirmTime) return;
+        return new Date(confirmTime).getTime() - new Date(sendTime).getTime();
+      }
+      
+      default: {
         type RemainingTransferTypes =
           | CCTPTransferInfo
           | HyperlaneTransferInfo
           | OPInitTransferInfo
           | StargateTransferInfo
           | LayerZeroTransferInfo;
-
-        return new Date((combinedTransferEvent[transferType] as RemainingTransferTypes)
-          ?.txs?.receiveTx?.onChainAt ?? 0).getTime() - new Date((combinedTransferEvent[transferType] as RemainingTransferTypes)
-          ?.txs?.sendTx?.onChainAt ?? 0).getTime();
+  
+        const remainingTransfer = combinedTransferEvent[transferType] as RemainingTransferTypes;
+        const sendTime = remainingTransfer?.txs?.sendTx?.onChainAt;
+        const receiveTime = remainingTransfer?.txs?.receiveTx?.onChainAt;
+        if (!sendTime || !receiveTime) return;
+        return new Date(receiveTime).getTime() - new Date(sendTime).getTime();
+      }
     }
   }
 
@@ -416,7 +452,7 @@ export function getTransferEventsFromTxStatusResponse(
 ) {
   if (!txStatusResponse) return [];
   return txStatusResponse?.flatMap((txStatus) => {
-    return (txStatus.transferSequence ?? []).map((transferEvent) => {
+    return (txStatus?.transferSequence ?? []).map((transferEvent) => {
       return getClientTransferEvent(transferEvent);
     });
   });
