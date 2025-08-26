@@ -12,6 +12,7 @@ import { themeAtom } from "@/state/skipClient";
 import { ViewRawDataModal } from "../components/modals/ViewRawDataModal";
 import { SearchModal } from "../components/modals/SearchModal";
 import { ExplorerModals } from "../constants/modal";
+import { useTheme } from "../hooks/useTheme";
 
 export default function Template({ children }: { children: ReactNode }) {
   return (
@@ -21,7 +22,6 @@ export default function Template({ children }: { children: ReactNode }) {
           <NiceModal.Provider>
             <Wrapper>
               {children}
-              {/* <ToggleThemeButton /> */}
             </Wrapper>
           </NiceModal.Provider>
         </Provider>
@@ -31,7 +31,7 @@ export default function Template({ children }: { children: ReactNode }) {
 }
 
 export const Wrapper = ({ children }: { children: ReactNode }) => {
-  const [theme] = useLocalStorage<"dark" | "light">("explorer-theme", "dark");
+  const theme = useTheme();
   const setTheme= useSetAtom(themeAtom);
 
   useEffect(() => {
