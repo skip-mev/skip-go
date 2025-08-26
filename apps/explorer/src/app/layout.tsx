@@ -4,7 +4,7 @@ import "./globals.css";
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 export const metadata: Metadata = {
-  title: "Skip Go Explorer",
+  title: "Skip:Go - Explorer",
   description: "Explore cross-chain transactions",
   manifest: '/skip-site.webmanifest',
   icons: {
