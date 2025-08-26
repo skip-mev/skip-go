@@ -8,6 +8,7 @@ import { cosmosWalletAtom } from "@/state/wallets";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
 import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
 import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
+import { chainIdsSortedToTopAtom } from "@/state/chainIdsSortedToTop";
 
 export type useFilteredChainsProps = {
   selectedGroup: GroupedAsset | undefined;
@@ -21,6 +22,7 @@ export const useFilteredChains = ({
   context,
 }: useFilteredChainsProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
+  const chainIdsSortedToTop = useAtomValue(chainIdsSortedToTopAtom);
   const hideAssetsUnlessWalletTypeConnected = useAtomValue(hideAssetsUnlessWalletTypeConnectedAtom);
   const filterOutUnlessUserHasBalance = useAtomValue(filterOutUnlessUserHasBalanceAtom);
 
@@ -129,6 +131,16 @@ export const useFilteredChains = ({
 
         if (aIsHighlighted && !bIsHighlighted) return -1;
         if (bIsHighlighted && !aIsHighlighted) return 1;
+
+        // 4. Sort by privileged chainIds
+        const privA = chainIdsSortedToTop.indexOf(chainWithAssetA.chainId);
+        const privB = chainIdsSortedToTop.indexOf(chainWithAssetB.chainId);
+
+        if (privA !== -1 && privB !== -1) {
+          return privA - privB;
+        }
+        if (privA !== -1) return -1;
+        if (privB !== -1) return 1;
 
         // 4. Sort by chainName including asset denom/symbol
         const aMatchesName = chainWithAssetA.chainName

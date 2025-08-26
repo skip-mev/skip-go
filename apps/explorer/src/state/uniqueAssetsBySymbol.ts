@@ -12,6 +12,8 @@ export const uniqueAssetsBySymbolAtom = atom((get) => {
       seen.set(chainId, asset);
     }
   });
+
+  console.log(Array.from(seen.values()));
   
   return Array.from(seen.values());
 });
