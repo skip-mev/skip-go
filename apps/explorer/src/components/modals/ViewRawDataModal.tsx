@@ -69,9 +69,6 @@ const ModalContainer = styled(Container).attrs({
   padding: 16,
 })`
   width: 80vw;
-  @media (min-width: 600px) {
-    width: 100%;
-  }
   max-height: 80vh;
 `;
 
