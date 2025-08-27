@@ -56,22 +56,20 @@ The base64-encoded data must contain a JSON object with this structure:
 {
   route: SimpleRoute,                    // Route from /v2/fungible/route API response
   userAddresses: UserAddress[],          // User wallet addresses for each chain
-  transactionDetails: TransactionDetails[], // Transaction details from /v2/tx/status
-  status: RouteStatus                    // Current route status
+  transactionDetails: TransactionDetails[] // Transaction details from /v2/tx/status
 }
 ```
 
 #### Implementation
 
 ```typescript
-import { SimpleRoute, UserAddress, TransactionDetails, RouteStatus } from '@skip-go/client';
+import { SimpleRoute, UserAddress, TransactionDetails } from '@skip-go/client';
 
 // Collect your data from Skip Go APIs
 const routeData = {
   route: simpleRoute,              // From your /v2/fungible/route call
   userAddresses: userAddresses,    // Your user's addresses per chain  
-  transactionDetails: txDetails,   // From your /v2/tx/status polling
-  status: routeStatus             // Current route status
+  transactionDetails: txDetails    // From your /v2/tx/status polling
 };
 
 // Encode for the explorer
