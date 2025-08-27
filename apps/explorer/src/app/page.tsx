@@ -84,10 +84,18 @@ export default function Home() {
 
   useEffect(() => {
     let scrollTimeout: NodeJS.Timeout;
+  
     const handleWheel = (event: WheelEvent) => {
       if (contentContainerRef.current) {
         event.preventDefault();
-        contentContainerRef.current.scrollTop += event.deltaY;
+  
+        requestAnimationFrame(() => {
+          if (contentContainerRef.current) {
+            const scrollAmount = event.deltaY;
+            contentContainerRef.current.scrollTop += scrollAmount;
+          }
+        });
+  
         setShowScrollbar(true);
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
@@ -95,7 +103,7 @@ export default function Home() {
         }, 400);
       }
     };
-
+  
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => window.removeEventListener('wheel', handleWheel);
   }, []);
@@ -540,10 +548,9 @@ export default function Home() {
 const StyledContentContainer = styled(Row)<{ showScrollbar: boolean }>`
   height: calc(100vh - 100px);
   @media (min-width: 1023px) {
-    height: calc(100vh - 130px);
+    height: calc(100vh - 150px);
   }
   overflow: auto;
-  scroll-behavior: smooth;
 
   ${({ showScrollbar }) => styledScrollbar(showScrollbar)};
 `;
