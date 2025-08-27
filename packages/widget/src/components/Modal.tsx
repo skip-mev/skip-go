@@ -38,6 +38,10 @@ export const Modal = ({
   const disableShadowDom = useAtomValue(disableShadowDomAtom);
   const rootId = useAtomValue(rootIdAtom);
 
+  const handleModalWheel = (event: React.WheelEvent) => {
+    event.stopPropagation();
+  };
+
   useEffect(() => {
     if (wasVisible && !modal.visible) {
       onOpenChange?.(false);
@@ -93,6 +97,7 @@ export const Modal = ({
         open={modal.visible}
         data-root-id={rootId}
         blurBackground={blurBackground}
+        onWheel={handleModalWheel}
         onAnimationEnd={() => {
           if (!modal.visible) {
             // this is a hack to avoid an after image on windows

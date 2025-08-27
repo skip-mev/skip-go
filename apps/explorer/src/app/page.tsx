@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { Column, Row, Spacer } from "@/components/Layout";
 import {
   getTransferEventsFromTxStatusResponse,
@@ -22,7 +22,7 @@ import {
 import { useSetAtom } from "@/jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
-import { NiceModal } from "@/nice-modal";
+import { NiceModal, useModal } from "@/nice-modal";
 import { GhostButton } from "@/components/Button";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
 import { TokenDetails } from "../components/TokenDetails";
@@ -79,6 +79,26 @@ export default function Home() {
     error: ErrorWithCodeAndDetails;
   }>();
   const [cancelStatusPolling, setCancelStatusPolling] = useState<{promise: Promise<TxStatusResponse>, cancel: () => void}[]>([]);
+  const contentContainerRef = useRef<HTMLDivElement>(null);
+  const [showScrollbar, setShowScrollbar] = useState(false);
+
+  useEffect(() => {
+    let scrollTimeout: NodeJS.Timeout;
+    const handleWheel = (event: WheelEvent) => {
+      if (contentContainerRef.current) {
+        event.preventDefault();
+        contentContainerRef.current.scrollTop += event.deltaY;
+        setShowScrollbar(true);
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          setShowScrollbar(false);
+        }, 400);
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, []);
 
   const transfersToShow = useMemo(() => {
     const transfers: TransferEventCardProps[] = [];
@@ -346,6 +366,8 @@ export default function Home() {
     if (transfersToShow.length > 0) {
       return (
         <StyledContentContainer
+          ref={contentContainerRef}
+          showScrollbar={showScrollbar}
           gap={16}
           flexDirection={isMobileScreenSize ? "column" : "row"}
           align={isMobileScreenSize ? "center" : "flex-start"}
@@ -429,6 +451,7 @@ export default function Home() {
       if (transactionDetailsFromUrlParams) {
         return (
           <StyledContentContainer
+            showScrollbar={showScrollbar}
             gap={16}
             flexDirection={isMobileScreenSize ? "column" : "row"}
             align={isMobileScreenSize ? "center" : "flex-start"}
@@ -492,7 +515,7 @@ export default function Home() {
       return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
     }
     return;
-  }, [transfersToShow, errorDetails, transactionStatusResponse, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch, sourceAsset?.chainId, operations, destAsset?.chainId]);
+  }, [transfersToShow, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch, sourceAsset?.chainId, operations, destAsset?.chainId]);
 
   return (
     <Column width="100%" align="center">
@@ -512,13 +535,14 @@ export default function Home() {
   );
 }
 
-const StyledContentContainer = styled(Row)`
+const StyledContentContainer = styled(Row)<{ showScrollbar: boolean }>`
   height: calc(100vh - 100px);
   @media (min-width: 1023px) {
-    height: calc(100vh - 200px);
+    height: calc(100vh - 130px);
   }
   overflow: auto;
-  ${styledScrollbar};
+
+  ${({ showScrollbar }) => styledScrollbar(showScrollbar)};
 `;
 
 const StyledColumns = styled(Column)`
