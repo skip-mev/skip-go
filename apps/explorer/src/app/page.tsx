@@ -87,12 +87,7 @@ export default function Home() {
     const handleWheel = (event: WheelEvent) => {
       if (contentContainerRef.current) {
         event.preventDefault();
-        
-        contentContainerRef.current.scrollTo({
-          top: contentContainerRef.current.scrollTop + event.deltaY,
-          behavior: 'smooth'
-        });
-        
+        contentContainerRef.current.scrollTop += event.deltaY;
         setShowScrollbar(true);
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
@@ -100,7 +95,7 @@ export default function Home() {
         }, 400);
       }
     };
-  
+
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => window.removeEventListener('wheel', handleWheel);
   }, []);
@@ -547,7 +542,7 @@ const StyledContentContainer = styled(Row)<{ showScrollbar: boolean }>`
   }
   overflow: auto;
   scroll-behavior: smooth;
-
+  
   ${({ showScrollbar }) => styledScrollbar(showScrollbar)};
 `;
 
