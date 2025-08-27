@@ -179,7 +179,7 @@ const StyledPillButton = styled(Button)`
 const StyledNavbarContainer = styled(Row)`
   padding: 20px;
   @media (min-width: 1300px) {
-    padding: 30px 24px 110px 24px;
+    padding: 30px 24px 60px 24px;
   }
 `;
 
