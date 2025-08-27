@@ -82,5 +82,5 @@ const StyledContent = styled(Column)`
   background-color: ${({ theme }) => theme.secondary.background.normal};
   border-radius: ${({ theme }) => theme.borderRadius?.modalContainer};
   
-  ${styledScrollbar};
+  ${styledScrollbar()};
 `;
