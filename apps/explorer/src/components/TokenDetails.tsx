@@ -11,6 +11,8 @@ import { getTruncatedAddress } from "@/utils/crypto";
 import { useClipboard } from "@/hooks/useClipboard";
 import { useMemo } from "react";
 import { TxStatusResponse } from "@skip-go/client";
+import { transformHexToMoveDenom } from "../utils/denomUtils";
+import { isEvmNativeDenom } from "../utils/denomUtils";
 
 export const TokenDetails = ({
   transactionStatusResponse,
@@ -24,7 +26,10 @@ export const TokenDetails = ({
   const skipAssets = useAtomValue(skipAssetsAtom);
   const chain = skipChains?.data?.find((chain) => chain.chainId === destAsset?.chainId);
 
-  const transferAssetReleaseAsset = skipAssets?.data?.find((asset) => asset.chainId === transactionStatusResponse?.transferAssetRelease?.chainId && asset.denom === transactionStatusResponse?.transferAssetRelease?.denom);
+  const transferAssetReleaseAsset = skipAssets?.data?.find((asset) => 
+    asset.chainId === transactionStatusResponse?.transferAssetRelease?.chainId && 
+    (asset.denom === transactionStatusResponse?.transferAssetRelease?.denom || 
+      asset.denom === transformHexToMoveDenom(transactionStatusResponse?.transferAssetRelease?.denom)));
 
   const receivedToken = useMemo(() => {
     if (transactionStatusResponse?.transferAssetRelease?.released) {
@@ -55,11 +60,15 @@ export const TokenDetails = ({
   }, [destAsset?.decimals, transferAssetReleaseAsset]);
 
   const isNativeToken = useMemo(() => {
+    if (transactionStatusResponse?.transferAssetRelease?.denom?.startsWith('0x')) {
+      return isEvmNativeDenom(transactionStatusResponse?.transferAssetRelease?.denom);
+    }
     if (transferAssetReleaseAsset) {
-      return transactionStatusResponse?.transferAssetRelease?.chainId === transactionStatusResponse?.transferAssetRelease?.chainId && transactionStatusResponse?.transferAssetRelease?.denom === transactionStatusResponse?.transferAssetRelease?.denom;
+      return (transferAssetReleaseAsset.chainId === transferAssetReleaseAsset?.originChainId &&
+        transferAssetReleaseAsset?.denom === transferAssetReleaseAsset?.originDenom);
     }
     return destAsset?.originChainId === destAsset?.chainId && destAsset?.originDenom === destAsset?.denom;
-  }, [destAsset?.chainId, destAsset?.denom, destAsset?.originChainId, destAsset?.originDenom, transactionStatusResponse?.transferAssetRelease?.chainId, transactionStatusResponse?.transferAssetRelease?.denom, transferAssetReleaseAsset]);
+  }, [destAsset?.chainId, destAsset?.denom, destAsset?.originChainId, destAsset?.originDenom, transactionStatusResponse?.transferAssetRelease?.denom, transferAssetReleaseAsset]);
 
   return (
     <Container gap={20} width="100%" borderRadius={16}>
