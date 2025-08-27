@@ -1,0 +1,160 @@
+---
+title: "Skip Explorer Integration"
+description: "Guide to integrating Skip Explorer v2 for transaction visualization and tracking in your applications."
+---
+
+## Overview
+
+Skip Explorer v2 provides a user-friendly interface for visualizing cross-chain transactions and tracking their progress. This guide covers basic explorer usage and how integrators can leverage it to enhance their user experience.
+
+## Basic Explorer Usage
+
+Users can view transaction details by navigating to [explorer.skip.build](https://explorer.skip.build) and entering:
+
+- **Transaction Hash**: Any transaction hash from a supported chain
+- **Chain ID**: The chain where the transaction occurred
+
+The explorer will automatically detect and display:
+- Transaction status and progress
+- Cross-chain hops and bridges used
+- Asset transfers and swaps
+- Real-time updates as transactions progress
+
+## Integration for Custom Frontends
+
+If you're building a custom frontend and want to provide users with rich transaction visualization, you can generate explorer links that include comprehensive route data.
+
+### Basic Explorer Links
+
+For simple transaction tracking, redirect users to the explorer with URL parameters:
+
+- `tx_hash`: Comma-separated list of transaction hashes
+- `chain_id`: The initial source chain ID  
+- `is_testnet`: Optional boolean parameter for testnet transactions
+
+**Example:**
+```
+https://explorer.skip.build/?tx_hash=ABC123,DEF456&chain_id=osmosis-1&is_testnet=true
+```
+
+This approach works well when you have transaction hashes but limited route context.
+
+### Advanced Rich Data Integration
+
+For a superior user experience with complete transaction context, encode your route data as base64 and pass it via the `data` parameter. This enables the explorer to display detailed multi-hop transaction flows, user addresses, and complete route information.
+
+**Example:**
+```
+https://explorer.skip.build/?data=eyJyb3V0ZSI6ey4uLn0sInVzZXJBZGRyZXNzZXMiOnsuLi59fQ==
+```
+
+#### Required Data Structure
+
+The base64-encoded data must contain a JSON object with this structure:
+
+```typescript
+{
+  route: SimpleRoute,                    // Route from /v2/fungible/route API response
+  userAddresses: UserAddress[],          // User wallet addresses for each chain
+  transactionDetails: TransactionDetails[], // Transaction details from /v2/tx/status
+  status: RouteStatus                    // Current route status
+}
+```
+
+#### Implementation
+
+```typescript
+import { SimpleRoute, UserAddress, TransactionDetails, RouteStatus } from '@skip-go/client';
+
+// Collect your data from Skip Go APIs
+const routeData = {
+  route: simpleRoute,              // From your /v2/fungible/route call
+  userAddresses: userAddresses,    // Your user's addresses per chain  
+  transactionDetails: txDetails,   // From your /v2/tx/status polling
+  status: routeStatus             // Current route status
+};
+
+// Encode for the explorer
+const jsonString = JSON.stringify(routeData);
+const base64Encoded = btoa(jsonString); // Browser-compatible base64 encoding
+
+// Generate the rich explorer URL  
+const explorerUrl = `https://explorer.skip.build/?data=${base64Encoded}`;
+
+// Redirect user or open in new tab
+window.open(explorerUrl, '_blank');
+```
+
+## Benefits for Your Users
+
+### Basic Integration Benefits
+- **Quick Access**: Users can easily view transaction details without leaving your app
+- **Multi-Chain Support**: Works across all supported chains and bridges
+- **Real-time Updates**: Live transaction status and progress tracking
+
+### Advanced Integration Benefits
+- **Complete Transaction Context**: Users see the full route, not just individual transactions
+- **Multi-Hop Visualization**: Clear view of complex transfers across chains and bridges  
+- **Address Mapping**: Explorer knows which addresses belong to the user
+- **Real-time Status**: Current transaction state integrated with visual progress
+- **Shareable Links**: Users can bookmark or share complete transaction context
+
+## Best Practices
+
+### When to Use Basic vs Advanced Integration
+
+**Use Basic Integration when:**
+- You only have transaction hashes available
+- Users initiated transactions outside your application
+- You want minimal integration effort
+
+**Use Advanced Integration when:**
+- You have complete route information from Skip Go APIs
+- Users initiated transactions through your application
+- You want to provide the richest user experience
+
+### Implementation Tips
+
+1. **Handle Loading States**: Show loading indicators while generating explorer links
+2. **Error Handling**: Provide fallbacks if base64 encoding fails
+3. **User Feedback**: Inform users they're being redirected to the explorer
+4. **Mobile Optimization**: Consider in-app browser vs external browser on mobile
+
+## Common Use Cases
+
+### Transaction Confirmation Pages
+After users submit a transaction, redirect them to the explorer with full context:
+
+```typescript
+// After transaction submission
+const explorerUrl = generateExplorerLink(routeData);
+window.location.href = explorerUrl;
+```
+
+### Transaction History
+Provide explorer links for each historical transaction:
+
+```typescript
+// In transaction history component
+{transactions.map(tx => (
+  <div key={tx.id}>
+    <span>{tx.amount} {tx.asset}</span>
+    <a href={generateExplorerLink(tx)} target="_blank">
+      View Details
+    </a>
+  </div>
+))}
+```
+
+### Support and Debugging
+Help users troubleshoot failed transactions by providing detailed explorer views:
+
+```typescript
+// For failed transactions
+const supportUrl = generateExplorerLink(failedTransaction);
+// Share this URL with support team or user
+```
+
+<Info>
+**Best Practice**: Always use the advanced base64 approach when you have access to complete route information from your Skip Go integration. This provides the richest user experience in the explorer.
+</Info>
