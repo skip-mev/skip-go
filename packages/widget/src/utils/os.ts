@@ -31,3 +31,11 @@ export function isWindows() {
     navigator.platform.startsWith("Win")
   );
 }
+
+export function isMac() {
+  return (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window.navigator as any).userAgentData?.platform.startsWith("macOS") ??
+    navigator.platform.startsWith("macOS")
+  );
+}

@@ -39,6 +39,7 @@ import { styledScrollbar } from "@/mixins/styledScrollbar";
 import { SuccessfulTransactionCard } from "../components/SuccessfulTransactionCard";
 import { chainIdsSortedToTopAtom } from "@/state/chainIdsSortedToTop";
 import { CHAIN_IDS_SORTED_TO_TOP } from "../constants/chainIdsSortedToTop";
+import { detectScrollCapabilities, isMac, isWindows } from "@/utils/os";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
@@ -551,6 +552,8 @@ const StyledContentContainer = styled(Row)<{ showScrollbar: boolean }>`
     height: calc(100vh - 150px);
   }
   overflow: auto;
+
+  ${isMac() ? "scroll-behavior: auto;" : "scroll-behavior: smooth;"}
 
   ${({ showScrollbar }) => styledScrollbar(showScrollbar)};
 `;
