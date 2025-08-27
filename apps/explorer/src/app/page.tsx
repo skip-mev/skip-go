@@ -39,7 +39,7 @@ import { styledScrollbar } from "@/mixins/styledScrollbar";
 import { SuccessfulTransactionCard } from "../components/SuccessfulTransactionCard";
 import { chainIdsSortedToTopAtom } from "@/state/chainIdsSortedToTop";
 import { CHAIN_IDS_SORTED_TO_TOP } from "../constants/chainIdsSortedToTop";
-import { detectScrollCapabilities, isMac, isWindows } from "@/utils/os";
+import { isMac } from "@/utils/os";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
