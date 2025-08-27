@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { Column, Row, Spacer } from "@/components/Layout";
 import {
   getTransferEventsFromTxStatusResponse,
@@ -27,7 +27,7 @@ import { GhostButton } from "@/components/Button";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
 import { TokenDetails } from "../components/TokenDetails";
 import { ExplorerModals } from "../constants/modal";
-import { useQueryState, parseAsString, parseAsArrayOf } from "nuqs";
+import { useQueryState, parseAsString, parseAsArrayOf, parseAsBoolean } from "nuqs";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { CoinsIcon } from "../icons/CoinsIcon";
 import { Navbar } from "../components/Navbar";
@@ -39,6 +39,7 @@ import { styledScrollbar } from "@/mixins/styledScrollbar";
 import { SuccessfulTransactionCard } from "../components/SuccessfulTransactionCard";
 import { chainIdsSortedToTopAtom } from "@/state/chainIdsSortedToTop";
 import { CHAIN_IDS_SORTED_TO_TOP } from "../constants/chainIdsSortedToTop";
+import { isMac } from "@/utils/os";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
@@ -57,6 +58,12 @@ export default function Home() {
     "chain_id",
     parseAsArrayOf(parseAsString, ",")
   );
+
+  const [isTestnet] = useQueryState(
+    "is_testnet",
+    parseAsBoolean.withDefault(false)
+  );
+
   const [data, setData] = useQueryState("data");
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
     []
@@ -79,9 +86,36 @@ export default function Home() {
     error: ErrorWithCodeAndDetails;
   }>();
   const [cancelStatusPolling, setCancelStatusPolling] = useState<{promise: Promise<TxStatusResponse>, cancel: () => void}[]>([]);
+  const contentContainerRef = useRef<HTMLDivElement>(null);
+  const [showScrollbar, setShowScrollbar] = useState(false);
 
-  const uniqueTransfers = useMemo(() => {
-    const seen = new Set<string>();
+  useEffect(() => {
+    let scrollTimeout: NodeJS.Timeout;
+  
+    const handleWheel = (event: WheelEvent) => {
+      if (contentContainerRef.current) {
+        event.preventDefault();
+  
+        requestAnimationFrame(() => {
+          if (contentContainerRef.current) {
+            const scrollAmount = event.deltaY;
+            contentContainerRef.current.scrollTop += scrollAmount;
+          }
+        });
+  
+        setShowScrollbar(true);
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          setShowScrollbar(false);
+        }, 400);
+      }
+    };
+  
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, []);
+
+  const transfersToShow = useMemo(() => {
     const transfers: TransferEventCardProps[] = [];
 
     const transferAssetReleaseChainId = transactionStatusResponse?.transferAssetRelease?.chainId;
@@ -99,7 +133,7 @@ export default function Home() {
     };
 
     transferEvents.forEach((event, index) => {
-      const addChainIfUnique = (
+      const addChain = (
         chainId: string | undefined,
         explorerLink: string | undefined,
         fromOrTo: "from" | "to"
@@ -117,8 +151,7 @@ export default function Home() {
           }
         }
 
-        if (chainId && !seen.has(chainId)) {
-          seen.add(chainId);
+        if (chainId) {
           transfers.push({
             chainId,
             explorerLink: explorerLink ?? "",
@@ -131,9 +164,11 @@ export default function Home() {
           });
         }
       };
-
-      addChainIfUnique(event.fromChainId, event.fromExplorerLink, "from");
-      addChainIfUnique(event.toChainId, event.toExplorerLink, "to");
+      
+      if (index === 0) {
+        addChain(event.fromChainId, event.fromExplorerLink, "from");
+      }
+      addChain(event.toChainId, event.toExplorerLink, "to");
     });
 
     return transfers;
@@ -141,9 +176,9 @@ export default function Home() {
 
   useEffect(() => {
     setSkipClientConfig(defaultSkipClientConfig);
-    setOnlyTestnets(false);
+    setOnlyTestnets(isTestnet);
     setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP)
-  }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop]);
+  }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop, isTestnet]);
 
   const getTxStatus = useCallback(
     async (transactionDetails: TransactionDetailsType[] = []) => {
@@ -282,7 +317,7 @@ export default function Home() {
   }, []);
 
   const transactionDetails = useMemo(() => {
-    const chainIds = uniqueTransfers?.map((event) => event.chainId);
+    const chainIds = transfersToShow?.map((event) => event.chainId);
     const chainIdsFromUrlParams = [sourceAsset?.chainId ?? "", destAsset?.chainId ?? ""]
 
     return {
@@ -290,12 +325,13 @@ export default function Home() {
       state: transactionStatusResponse?.state,
       chainIds: chainIds.length > 0 ? chainIds : chainIdsFromUrlParams,
     };
-  }, [uniqueTransfers, sourceAsset, destAsset, transferEvents, transactionDetailsFromUrlParams, transactionStatusResponse?.state]);
+  }, [transfersToShow, sourceAsset, destAsset, transferEvents, transactionDetailsFromUrlParams, transactionStatusResponse?.state]);
 
   const showRawDataModal = useCallback(() => {
     if (transactionStatuses.length > 0) {
       NiceModal.show(ExplorerModals.ViewRawDataModal, {
         data: JSON.stringify(Array.from(transactionStatuses.values()), null, 2),
+        blurBackground: true,
       });
     } else {
       NiceModal.show(ExplorerModals.ViewRawDataModal, {
@@ -307,6 +343,7 @@ export default function Home() {
           null,
           2
         ),
+        blurBackground: true,
       });
     }
   }, [errorDetails, transactionStatuses]);
@@ -343,9 +380,11 @@ export default function Home() {
   }, [isTop, isLessThan1300]);
 
   const renderPageContent = useMemo(() => {
-    if (uniqueTransfers.length > 0) {
+    if (transfersToShow.length > 0) {
       return (
         <StyledContentContainer
+          ref={contentContainerRef}
+          showScrollbar={showScrollbar}
           gap={16}
           flexDirection={isMobileScreenSize ? "column" : "row"}
           align={isMobileScreenSize ? "center" : "flex-start"}
@@ -382,7 +421,7 @@ export default function Home() {
               </GhostButton>
             </Row>
             <Spacer height={10} />
-            {uniqueTransfers.map((transfer) => (
+            {transfersToShow.map((transfer) => (
               <>
                 {transfer.step !== "Origin" && (
                   <Bridge
@@ -429,6 +468,7 @@ export default function Home() {
       if (transactionDetailsFromUrlParams) {
         return (
           <StyledContentContainer
+            showScrollbar={showScrollbar}
             gap={16}
             flexDirection={isMobileScreenSize ? "column" : "row"}
             align={isMobileScreenSize ? "center" : "flex-start"}
@@ -492,7 +532,7 @@ export default function Home() {
       return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
     }
     return;
-  }, [uniqueTransfers, errorDetails, transactionStatusResponse, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch, sourceAsset?.chainId, operations, destAsset?.chainId]);
+  }, [transfersToShow, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch, sourceAsset?.chainId, operations, destAsset?.chainId]);
 
   return (
     <Column width="100%" align="center">
@@ -512,13 +552,16 @@ export default function Home() {
   );
 }
 
-const StyledContentContainer = styled(Row)`
+const StyledContentContainer = styled(Row)<{ showScrollbar: boolean }>`
   height: calc(100vh - 100px);
   @media (min-width: 1023px) {
-    height: calc(100vh - 200px);
+    height: calc(100vh - 150px);
   }
   overflow: auto;
-  ${styledScrollbar};
+
+  ${isMac() ? "scroll-behavior: auto;" : "scroll-behavior: smooth;"}
+
+  ${({ showScrollbar }) => styledScrollbar(showScrollbar)};
 `;
 
 const StyledColumns = styled(Column)`

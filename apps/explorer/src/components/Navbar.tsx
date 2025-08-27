@@ -1,7 +1,6 @@
 import { Row } from "@/components/Layout";
 import { NiceModal, Modals } from "@/nice-modal";
 import { skipChainsAtom, ClientAsset } from "@/state/skipClient";
-import { uniqueAssetsBySymbolAtom } from "../state/uniqueAssetsBySymbol";
 import { useAtomValue } from "@/jotai";
 import { useMemo } from "react";
 import { ChainSelector } from "./ChainSelector";
@@ -28,7 +27,6 @@ export type NavbarProps = {
 }
 
 export const Navbar = ({ isSearchAModal, isTop, txHash, chainId, onSearch, resetState, setTxHash, setChainId }: NavbarProps) => {
-  const uniqueAssetsBySymbol = useAtomValue(uniqueAssetsBySymbolAtom);
   const chains = useAtomValue(skipChainsAtom);
   
   const selectedChain = useMemo(() => {
@@ -59,10 +57,9 @@ export const Navbar = ({ isSearchAModal, isTop, txHash, chainId, onSearch, reset
                   onSearch(txHash, asset?.chainId);
                   NiceModal.hide(Modals.AssetAndChainSelectorModal);
                 },
-                overrideSelectedGroup: {
-                  assets: uniqueAssetsBySymbol,
-                },
+                onlySelectChain: true,
                 selectChain: true,
+                blurBackground: true,
               });
             }}
           />
@@ -78,10 +75,9 @@ export const Navbar = ({ isSearchAModal, isTop, txHash, chainId, onSearch, reset
                   }
                   NiceModal.hide(Modals.AssetAndChainSelectorModal);
                 },
-                overrideSelectedGroup: {
-                  assets: uniqueAssetsBySymbol,
-                },
+                onlySelectChain: true,
                 selectChain: true,
+                blurBackground: true,
               });
             }}
             selectedChain={selectedChain}
@@ -179,7 +175,7 @@ const StyledPillButton = styled(Button)`
 const StyledNavbarContainer = styled(Row)`
   padding: 20px;
   @media (min-width: 1300px) {
-    padding: 30px 24px 110px 24px;
+    padding: 30px 24px 60px 24px;
   }
 `;
 

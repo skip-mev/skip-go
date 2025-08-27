@@ -55,7 +55,6 @@ export const StyledWrapper = styled(Row)<{
   padding: ${(props) => (props.size === "normal" ? "0px 20px" : "0px 16px")};
   border-radius: ${(props) => (props.size === "normal" ? "20px" : "12px")};
   transition: all 0.2s ease-in-out;
-  flex: 1;
   @media (max-width: 1300px) {
     flex: none;
   }

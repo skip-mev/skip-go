@@ -1,14 +1,13 @@
 import { css } from "@/styled-components";
 
-export const styledScrollbar = css`
+export const styledScrollbar = (showScrollbar: boolean = false) => css`
   scrollbar-gutter: stable both-edges;
 
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
 
   &:hover,
-  &:focus-visible,
-  &.show-scrollbar {
+  &:focus-visible {
     scrollbar-color: ${({ theme }) => theme.brandColor} transparent;
   }
 
@@ -26,16 +25,26 @@ export const styledScrollbar = css`
   }
 
   &:hover::-webkit-scrollbar-thumb,
-  &:focus-visible::-webkit-scrollbar-thumb,
-  &.show-scrollbar::-webkit-scrollbar-thumb {
+  &:focus-visible::-webkit-scrollbar-thumb {
     background: ${({ theme }) => theme.brandColor};
   }
 
   &:hover::-webkit-scrollbar-thumb:hover,
-  &:focus-visible::-webkit-scrollbar-thumb:hover,
-  &.show-scrollbar::-webkit-scrollbar-thumb:hover {
+  &:focus-visible::-webkit-scrollbar-thumb:hover {
     background: ${({ theme }) => theme.primary.text.lowContrast};
   }
 
   &::-webkit-scrollbar-corner { background: transparent; }
-`
+
+  ${showScrollbar && css`
+    scrollbar-color: ${({ theme }) => theme.brandColor} transparent;
+    
+    &::-webkit-scrollbar-thumb {
+      background: ${({ theme }) => theme.brandColor};
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+      background: ${({ theme }) => theme.primary.text.lowContrast};
+    }
+  `}
+`;

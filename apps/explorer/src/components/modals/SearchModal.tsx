@@ -4,7 +4,6 @@ import { styled, useTheme } from "@/styled-components";
 import { TxHashInput } from "../TxHashInput";
 import { Modals, NiceModal } from "@/nice-modal";
 import { ClientAsset, skipChainsAtom } from "@/state/skipClient";
-import { uniqueAssetsBySymbolAtom } from "../../state/uniqueAssetsBySymbol";
 import { useAtomValue } from "@/jotai";
 import { ChainSelector } from "../ChainSelector";
 import { useEffect, useMemo, useState } from "react";
@@ -24,7 +23,6 @@ export type SearchModalProps = ModalProps & {
 export const SearchModal = createModal(
   (modalProps: SearchModalProps) => {
     const theme = useTheme();
-    const uniqueAssetsBySymbol = useAtomValue(uniqueAssetsBySymbolAtom);
     const { txHash: initialTxHash, chainId: initialChainId, onSearch, setTxHash, setChainId } = modalProps;
 
     const [localTxHash, setLocalTxHash] = useState(initialTxHash || "");
@@ -76,9 +74,7 @@ export const SearchModal = createModal(
                   onSearch(localTxHash, asset?.chainId);
                   NiceModal.hide(Modals.AssetAndChainSelectorModal);
                 },
-                overrideSelectedGroup: {
-                  assets: uniqueAssetsBySymbol,
-                },
+                onlySelectChain: true,
                 selectChain: true,
               });
             }}
@@ -92,9 +88,7 @@ export const SearchModal = createModal(
                   handleChainIdChange(asset?.chainId || "");
                   NiceModal.hide(Modals.AssetAndChainSelectorModal);
                 },
-                overrideSelectedGroup: {
-                  assets: uniqueAssetsBySymbol,
-                },
+                onlySelectChain: true,
                 selectChain: true,
               });
             }}
@@ -110,7 +104,7 @@ export const SearchModal = createModal(
   }
 );
 
-const CloseIconContainer = styled(Row)`
+export const CloseIconContainer = styled(Row)`
   width: 48px;
   height: 48px;
   justify-content: center;
