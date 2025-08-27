@@ -7,6 +7,10 @@ import { styled, useTheme } from "@/styled-components";
 import { Text } from "@/components/Typography";
 import { useClipboard } from "@/hooks/useClipboard";
 import { styledScrollbar } from "../../mixins/styledScrollbar";
+import { ExplorerModals } from "../../constants/modal";
+import { XIcon } from "@/icons/XIcon";
+import { NiceModal } from "@/nice-modal";
+import { CloseIconContainer } from "./SearchModal";
 
 export type ViewRawDataModalProps = ModalProps & {
   data: string;
@@ -19,6 +23,9 @@ export const ViewRawDataModal = createModal(
 
     return (
       <ModalContainer>
+        <StyledCloseIconContainer onClick={() => NiceModal.hide(ExplorerModals.ViewRawDataModal)}>
+          <XIcon width={14} height={14} color={theme.primary.text.lowContrast} />
+        </StyledCloseIconContainer>
         <StyledContent>
           <StyledPre>{modalProps.data}</StyledPre>
         </StyledContent>
@@ -44,6 +51,12 @@ export const ViewRawDataModal = createModal(
     );
   }
 );
+
+const StyledCloseIconContainer = styled(CloseIconContainer)`
+  position: absolute;
+  top: -55px;
+  right: 0px;
+`;
 
 const StyledPre = styled.pre`
   margin-top: 0;
