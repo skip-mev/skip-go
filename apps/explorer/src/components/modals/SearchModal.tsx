@@ -110,7 +110,7 @@ export const SearchModal = createModal(
   }
 );
 
-const CloseIconContainer = styled(Row)`
+export const CloseIconContainer = styled(Row)`
   width: 48px;
   height: 48px;
   justify-content: center;

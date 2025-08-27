@@ -63,6 +63,7 @@ export const Navbar = ({ isSearchAModal, isTop, txHash, chainId, onSearch, reset
                   assets: uniqueAssetsBySymbol,
                 },
                 selectChain: true,
+                blurBackground: true,
               });
             }}
           />
@@ -82,6 +83,7 @@ export const Navbar = ({ isSearchAModal, isTop, txHash, chainId, onSearch, reset
                   assets: uniqueAssetsBySymbol,
                 },
                 selectChain: true,
+                blurBackground: true,
               });
             }}
             selectedChain={selectedChain}

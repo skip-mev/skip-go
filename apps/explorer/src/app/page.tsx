@@ -316,6 +316,7 @@ export default function Home() {
     if (transactionStatuses.length > 0) {
       NiceModal.show(ExplorerModals.ViewRawDataModal, {
         data: JSON.stringify(Array.from(transactionStatuses.values()), null, 2),
+        blurBackground: true,
       });
     } else {
       NiceModal.show(ExplorerModals.ViewRawDataModal, {
@@ -327,6 +328,7 @@ export default function Home() {
           null,
           2
         ),
+        blurBackground: true,
       });
     }
   }, [errorDetails, transactionStatuses]);
