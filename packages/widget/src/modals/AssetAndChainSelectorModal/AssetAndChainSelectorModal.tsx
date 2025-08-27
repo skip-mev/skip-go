@@ -62,10 +62,19 @@ export const AssetAndChainSelectorModal = createModal(
       context,
       overrideSelectedGroup,
     } = modalProps;
-    const { data: assets, isFetching, isPending } = useAtomValue(skipAssetsAtom);
+    const {
+      data: assets,
+      isFetching: isFetchingAssets,
+      isPending: isPendingAssets,
+    } = useAtomValue(skipAssetsAtom);
     const ibcEurekaHighlightedAssets = useAtomValue(ibcEurekaHighlightedAssetsAtom);
-    const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
-    const isLoading = (isFetching && isPending) || isChainsLoading;
+    const {
+      data: chains,
+      isFetching: isFetchingChains,
+      isPending: isPendingChains,
+    } = useAtomValue(skipChainsAtom);
+    const isLoading =
+      (isFetchingAssets && isPendingAssets) || (isFetchingChains && isPendingChains);
 
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -119,10 +128,10 @@ export const AssetAndChainSelectorModal = createModal(
     });
 
     useEffect(() => {
-      if (!isLoading && assets) {
+      if (!isLoading && assets && chains) {
         setShowSkeleton(false);
       }
-    }, [isLoading, assets]);
+    }, [isLoading, assets, chains]);
 
     useEffect(() => {
       setSearchQuery("");
