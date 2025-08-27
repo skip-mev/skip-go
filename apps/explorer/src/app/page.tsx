@@ -80,8 +80,7 @@ export default function Home() {
   }>();
   const [cancelStatusPolling, setCancelStatusPolling] = useState<{promise: Promise<TxStatusResponse>, cancel: () => void}[]>([]);
 
-  const uniqueTransfers = useMemo(() => {
-    const seen = new Set<string>();
+  const transfersToShow = useMemo(() => {
     const transfers: TransferEventCardProps[] = [];
 
     const transferAssetReleaseChainId = transactionStatusResponse?.transferAssetRelease?.chainId;
@@ -99,7 +98,7 @@ export default function Home() {
     };
 
     transferEvents.forEach((event, index) => {
-      const addChainIfUnique = (
+      const addChain = (
         chainId: string | undefined,
         explorerLink: string | undefined,
         fromOrTo: "from" | "to"
@@ -117,8 +116,7 @@ export default function Home() {
           }
         }
 
-        if (chainId && !seen.has(chainId)) {
-          seen.add(chainId);
+        if (chainId) {
           transfers.push({
             chainId,
             explorerLink: explorerLink ?? "",
@@ -131,9 +129,11 @@ export default function Home() {
           });
         }
       };
-
-      addChainIfUnique(event.fromChainId, event.fromExplorerLink, "from");
-      addChainIfUnique(event.toChainId, event.toExplorerLink, "to");
+      
+      if (index === 0) {
+        addChain(event.fromChainId, event.fromExplorerLink, "from");
+      }
+      addChain(event.toChainId, event.toExplorerLink, "to");
     });
 
     return transfers;
@@ -282,7 +282,7 @@ export default function Home() {
   }, []);
 
   const transactionDetails = useMemo(() => {
-    const chainIds = uniqueTransfers?.map((event) => event.chainId);
+    const chainIds = transfersToShow?.map((event) => event.chainId);
     const chainIdsFromUrlParams = [sourceAsset?.chainId ?? "", destAsset?.chainId ?? ""]
 
     return {
@@ -290,7 +290,7 @@ export default function Home() {
       state: transactionStatusResponse?.state,
       chainIds: chainIds.length > 0 ? chainIds : chainIdsFromUrlParams,
     };
-  }, [uniqueTransfers, sourceAsset, destAsset, transferEvents, transactionDetailsFromUrlParams, transactionStatusResponse?.state]);
+  }, [transfersToShow, sourceAsset, destAsset, transferEvents, transactionDetailsFromUrlParams, transactionStatusResponse?.state]);
 
   const showRawDataModal = useCallback(() => {
     if (transactionStatuses.length > 0) {
@@ -343,7 +343,7 @@ export default function Home() {
   }, [isTop, isLessThan1300]);
 
   const renderPageContent = useMemo(() => {
-    if (uniqueTransfers.length > 0) {
+    if (transfersToShow.length > 0) {
       return (
         <StyledContentContainer
           gap={16}
@@ -382,7 +382,7 @@ export default function Home() {
               </GhostButton>
             </Row>
             <Spacer height={10} />
-            {uniqueTransfers.map((transfer) => (
+            {transfersToShow.map((transfer) => (
               <>
                 {transfer.step !== "Origin" && (
                   <Bridge
@@ -492,7 +492,7 @@ export default function Home() {
       return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
     }
     return;
-  }, [uniqueTransfers, errorDetails, transactionStatusResponse, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch, sourceAsset?.chainId, operations, destAsset?.chainId]);
+  }, [transfersToShow, errorDetails, transactionStatusResponse, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch, sourceAsset?.chainId, operations, destAsset?.chainId]);
 
   return (
     <Column width="100%" align="center">
