@@ -22,7 +22,7 @@ import {
 import { useSetAtom } from "@/jotai";
 import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
-import { NiceModal, useModal } from "@/nice-modal";
+import { NiceModal } from "@/nice-modal";
 import { GhostButton } from "@/components/Button";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
 import { TokenDetails } from "../components/TokenDetails";
@@ -542,7 +542,7 @@ const StyledContentContainer = styled(Row)<{ showScrollbar: boolean }>`
   }
   overflow: auto;
   scroll-behavior: smooth;
-  
+
   ${({ showScrollbar }) => styledScrollbar(showScrollbar)};
 `;
 
