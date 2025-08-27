@@ -27,7 +27,7 @@ import { GhostButton } from "@/components/Button";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
 import { TokenDetails } from "../components/TokenDetails";
 import { ExplorerModals } from "../constants/modal";
-import { useQueryState, parseAsString, parseAsArrayOf } from "nuqs";
+import { useQueryState, parseAsString, parseAsArrayOf, parseAsBoolean } from "nuqs";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { CoinsIcon } from "../icons/CoinsIcon";
 import { Navbar } from "../components/Navbar";
@@ -57,6 +57,12 @@ export default function Home() {
     "chain_id",
     parseAsArrayOf(parseAsString, ",")
   );
+
+  const [isTestnet] = useQueryState(
+    "is_testnet",
+    parseAsBoolean.withDefault(false)
+  );
+
   const [data, setData] = useQueryState("data");
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
     []
@@ -169,9 +175,9 @@ export default function Home() {
 
   useEffect(() => {
     setSkipClientConfig(defaultSkipClientConfig);
-    setOnlyTestnets(false);
+    setOnlyTestnets(isTestnet);
     setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP)
-  }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop]);
+  }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop, isTestnet]);
 
   const getTxStatus = useCallback(
     async (transactionDetails: TransactionDetailsType[] = []) => {
