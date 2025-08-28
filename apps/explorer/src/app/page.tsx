@@ -565,7 +565,7 @@ const StyledContentContainer = styled(Row)<{ showScrollbar: boolean }>`
 `;
 
 const StyledColumns = styled(Column)`
-  width: calc(100vw - 16px);
+  width: calc(100vw - 32px);
   @media (min-width: 767px) {
     width: 355px;
   }
