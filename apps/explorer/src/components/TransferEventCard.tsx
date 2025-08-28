@@ -17,6 +17,7 @@ import { loadingPulseAnimation } from "@/components/Container";
 import { getTransferTypeLabel } from "./Bridge";
 import { CoinsIcon } from "../icons/CoinsIcon";
 import { Tooltip } from "@/components/Tooltip";
+import { useClipboard } from "@/hooks/useClipboard";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -48,6 +49,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
   const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations } = useTransactionHistoryItemFromUrlParams();
+  const { saveToClipboard: saveUserAddressToClipboard, isCopied: isUserAddressCopied } = useClipboard();
 
   const statusLabelAndColor = useOverallStatusLabelAndColor({ status });
   const stateLabelAndColor = useOverallStatusLabelAndColor({ state });
@@ -141,7 +143,11 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
           </Row>
           <Row gap={5} align="center">
             <SmallText normalTextColor>on {chain?.prettyName}</SmallText>
-            <SmallText>{getTruncatedAddress(userAddress)}</SmallText>
+            <SmallTextButton onClick={() => saveUserAddressToClipboard(userAddress)}>
+              <Tooltip content={userAddress}>
+                <SmallText>{isUserAddressCopied ? "Copied!" : getTruncatedAddress(userAddress)}</SmallText>
+              </Tooltip>
+            </SmallTextButton>
           </Row>
         </Column>
       )
