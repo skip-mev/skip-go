@@ -7,7 +7,7 @@ import Image from "next/image";
 import { SmallText } from "@/components/Typography";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { formatDisplayAmount } from "@/utils/number";
-import { getTruncatedAddress } from "@/utils/crypto";
+import { convertTokenAmountToHumanReadableAmount, getTruncatedAddress } from "@/utils/crypto";
 import { useClipboard } from "@/hooks/useClipboard";
 import { useMemo } from "react";
 import { TxStatusResponse } from "@skip-go/client";
@@ -26,16 +26,16 @@ export const TokenDetails = ({
   const skipAssets = useAtomValue(skipAssetsAtom);
   const chain = skipChains?.data?.find((chain) => chain.chainId === destAsset?.chainId);
 
-  const transferAssetReleaseAsset = skipAssets?.data?.find((asset) => 
-    asset.chainId === transactionStatusResponse?.transferAssetRelease?.chainId && 
-    (asset.denom === transactionStatusResponse?.transferAssetRelease?.denom || 
+  const transferAssetReleaseAsset = skipAssets?.data?.find((asset) =>
+    asset.chainId === transactionStatusResponse?.transferAssetRelease?.chainId &&
+    (asset.denom === transactionStatusResponse?.transferAssetRelease?.denom ||
       asset.denom === transformHexToMoveDenom(transactionStatusResponse?.transferAssetRelease?.denom)));
 
   const receivedToken = useMemo(() => {
     if (transactionStatusResponse?.transferAssetRelease?.released) {
-      return `${formatDisplayAmount(transactionStatusResponse?.transferAssetRelease?.amount, { decimals: transferAssetReleaseAsset?.decimals, abbreviate: true })} ${transferAssetReleaseAsset?.recommendedSymbol}`;
+      return `${formatDisplayAmount(convertTokenAmountToHumanReadableAmount(transactionStatusResponse?.transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals), { decimals: transferAssetReleaseAsset?.decimals, abbreviate: true })} ${transferAssetReleaseAsset?.recommendedSymbol}`;
     }
-    return `${formatDisplayAmount(destAmount, { decimals: destAsset?.decimals, abbreviate: true })} ${destAsset?.recommendedSymbol}`;
+    return `${formatDisplayAmount(convertTokenAmountToHumanReadableAmount(destAmount ?? '', destAsset?.decimals), { decimals: destAsset?.decimals, abbreviate: true })} ${destAsset?.recommendedSymbol}`;
   }, [destAmount, destAsset?.decimals, destAsset?.recommendedSymbol, transactionStatusResponse?.transferAssetRelease?.amount, transactionStatusResponse?.transferAssetRelease?.released, transferAssetReleaseAsset?.decimals, transferAssetReleaseAsset?.recommendedSymbol]);
 
   const chainId = useMemo(() => {
@@ -80,7 +80,7 @@ export const TokenDetails = ({
               <SmallText normalTextColor>{chain?.prettyName}</SmallText>
               <SmallText>({destAsset?.recommendedSymbol})</SmallText>
             </Row>
-            { isNativeToken && (
+            {isNativeToken && (
               <SmallText>The native token of {chain?.prettyName}</SmallText>
             )}
           </Column>
