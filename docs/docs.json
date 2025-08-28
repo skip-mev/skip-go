@@ -21,6 +21,7 @@
               "general/overview-and-typical-usage",
               "general/supported-ecosystems-and-bridges",
               "general/multi-chain-realtime-transaction-and-packet-tracking",
+              "general/explorer-integration",
               "general/api-keys",
               "general/smart-relay",
               "general/post-route-actions",
