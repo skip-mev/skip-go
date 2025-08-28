@@ -18,6 +18,7 @@ import { getTransferTypeLabel } from "./Bridge";
 import { CoinsIcon } from "../icons/CoinsIcon";
 import { Tooltip } from "@/components/Tooltip";
 import { useClipboard } from "@/hooks/useClipboard";
+import { transformHexToMoveDenom } from "@/utils/denomUtils";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -60,6 +61,11 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const userAddress = userAddresses?.find((address) => address.chainId === chainId)?.address;
 
   const showTransferAssetRelease = transferAssetRelease && step !== "Destination";
+
+  const transferAssetReleaseAsset = skipAssets?.data?.find((asset) =>
+    asset.chainId === transferAssetRelease?.chainId &&
+    (asset.denom === transferAssetRelease?.denom ||
+      asset.denom === transformHexToMoveDenom(transferAssetRelease?.denom)));
 
   const renderStatusBadge = useMemo(() => {
     if (stateAbandoned) {
@@ -119,22 +125,23 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       };
     } else if (step === "Destination") {
       return {
-        asset: destAsset,
-        amount: destAmount,
+        asset: transferAssetReleaseAsset ?? destAsset,
+        amount: transferAssetRelease ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals) : destAmount,
       };
     } else {
       const currentOperation = operations?.[index];
       const asset = skipAssets?.data?.find((asset) => asset.chainId === currentOperation?.chainId && asset.denom === currentOperation?.denomIn);
+      
       return {
-        asset: asset,
-        amount: convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals),
+        asset: transferAssetReleaseAsset ?? asset,
+        amount: transferAssetRelease ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals) : convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals),
       };
     }
   }, [step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
 
   const renderTransferEventDetails = useMemo(() => {
 
-    if (userAddress) {
+    if (currentAsset?.asset) {
       return (
         <Column gap={10} justify="center">
           <Row gap={5} align="center">
@@ -143,11 +150,15 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
           </Row>
           <Row gap={5} align="center">
             <SmallText normalTextColor>on {chain?.prettyName}</SmallText>
-            <SmallTextButton onClick={() => saveUserAddressToClipboard(userAddress)}>
-              <Tooltip content={userAddress}>
-                <SmallText>{isUserAddressCopied ? "Copied!" : getTruncatedAddress(userAddress)}</SmallText>
-              </Tooltip>
-            </SmallTextButton>
+            {
+              userAddress && (
+                <SmallTextButton onClick={() => saveUserAddressToClipboard(userAddress)}>
+                  <Tooltip content={userAddress}>
+                    <SmallText>{isUserAddressCopied ? "Copied!" : getTruncatedAddress(userAddress)}</SmallText>
+                  </Tooltip>
+                </SmallTextButton>
+              )
+            }
           </Row>
         </Column>
       )
@@ -163,10 +174,6 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       </>
     )
   }, [currentAsset, userAddress, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId]);
-
-  const transferAssetReleaseAsset = useMemo(() => {
-    return skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId);
-  }, [skipAssets?.data, transferAssetRelease]);
 
   const isLoading = useMemo(() => {
     return status === "pending" && !stateAbandoned && step !== "Origin";
@@ -190,7 +197,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         </SmallText>
       )
     }
-    
+
     return (
       <SmallText>
         {
