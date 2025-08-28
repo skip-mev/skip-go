@@ -35,8 +35,8 @@ export const TokenDetails = ({
     if (transactionStatusResponse?.transferAssetRelease?.released) {
       return `${formatDisplayAmount(transactionStatusResponse?.transferAssetRelease?.amount, { decimals: transferAssetReleaseAsset?.decimals, abbreviate: true })} ${transferAssetReleaseAsset?.recommendedSymbol}`;
     }
-    return `${formatDisplayAmount(destAmount, { decimals: 2, abbreviate: true })} ${destAsset?.recommendedSymbol}`;
-  }, [destAmount, destAsset?.recommendedSymbol, transactionStatusResponse?.transferAssetRelease?.amount, transactionStatusResponse?.transferAssetRelease?.released, transferAssetReleaseAsset?.decimals, transferAssetReleaseAsset?.recommendedSymbol]);
+    return `${formatDisplayAmount(destAmount, { decimals: destAsset?.decimals, abbreviate: true })} ${destAsset?.recommendedSymbol}`;
+  }, [destAmount, destAsset?.decimals, destAsset?.recommendedSymbol, transactionStatusResponse?.transferAssetRelease?.amount, transactionStatusResponse?.transferAssetRelease?.released, transferAssetReleaseAsset?.decimals, transferAssetReleaseAsset?.recommendedSymbol]);
 
   const chainId = useMemo(() => {
     if (transactionStatusResponse?.transferAssetRelease?.chainId) {
