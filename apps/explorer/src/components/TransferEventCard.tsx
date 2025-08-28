@@ -118,15 +118,16 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   }, [stateAbandoned, status, step]);
 
   const currentAsset = useMemo(() => {
+    const transferAssetReleaseAmount = convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals);
     if (step === "Origin") {
       return {
-        asset: sourceAsset,
-        amount: sourceAmount,
+        asset: transferAssetReleaseAsset ?? sourceAsset,
+        amount: transferAssetRelease ? transferAssetReleaseAmount : sourceAmount,
       };
     } else if (step === "Destination") {
       return {
         asset: transferAssetReleaseAsset ?? destAsset,
-        amount: transferAssetRelease ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals) : destAmount,
+        amount: transferAssetReleaseAmount ?? destAmount,
       };
     } else {
       const currentOperation = operations?.[index];
@@ -134,7 +135,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       
       return {
         asset: transferAssetReleaseAsset ?? asset,
-        amount: transferAssetRelease ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals) : convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals),
+        amount: transferAssetRelease ? transferAssetReleaseAmount : convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals),
       };
     }
   }, [step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
