@@ -18,7 +18,7 @@ import { getTransferTypeLabel } from "./Bridge";
 import { CoinsIcon } from "../icons/CoinsIcon";
 import { Tooltip } from "@/components/Tooltip";
 import { useClipboard } from "@/hooks/useClipboard";
-import { transformHexToMoveDenom } from "@/utils/denomUtils";
+import { transformHexToMoveDenom } from "../utils/denomUtils";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
