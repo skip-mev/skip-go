@@ -182,7 +182,7 @@ export default function Home() {
     setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP)
   }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop, isTestnet]);
 
-  const onReindex = useCallback(async () => {
+  const onReindex = useCallback(async (_txHash: string, _chainId: string) => {
     try {
       await fetch('https://api.skip.build/v2/tx/retry_track', {
         method: "POST",
@@ -190,8 +190,8 @@ export default function Home() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          tx_hash: txHash,
-          chain_id: chainId,
+          tx_hash: _txHash ?? txHash,
+          chain_id: _chainId ?? chainId,
         }),
       });
     } catch (error) {
@@ -231,10 +231,12 @@ export default function Home() {
           },
           onError: async (error) => {
             const errorWithCodeAndDetails = error as ErrorWithCodeAndDetails;
-            if (error.message === "tx not found") {
+            if (error.message === "tx not found" || error.message === "Tracking for the transaction has been abandoned") {
               if (tx.txHash && !reindexedTxHashes.current.includes(tx.txHash)) {
                 reindexedTxHashes.current.push(tx.txHash);
-                await onReindex();
+                await onReindex(tx.txHash, tx.chainId);
+                setErrorDetails(undefined);
+                setTransactionStatusResponse(undefined);
                 getTxStatus(transactionDetails);
               } else {
                 setErrorDetails({
