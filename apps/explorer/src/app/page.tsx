@@ -67,7 +67,9 @@ export default function Home() {
   const [data, setData] = useQueryState("data");
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
     []
-  );
+  );  
+  const reindexedTxHashes = useRef<string[]>([]);
+  
   const setChainIdsSortedToTop = useSetAtom(chainIdsSortedToTopAtom);
 
   const [transactionStatusResponse, setTransactionStatusResponse] =
@@ -180,6 +182,23 @@ export default function Home() {
     setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP)
   }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop, isTestnet]);
 
+  const onReindex = useCallback(async (_txHash?: string, _chainId?: string) => {
+    try {
+      await fetch('https://api.skip.build/v2/tx/retry_track', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tx_hash: _txHash ?? txHash,
+          chain_id: _chainId ?? chainId,
+        }),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }, [txHash, chainId]);
+
   const getTxStatus = useCallback(
     async (transactionDetails: TransactionDetailsType[] = []) => {
       if (cancelStatusPolling.length > 0) {
@@ -210,13 +229,22 @@ export default function Home() {
               return newStatuses;
             });
           },
-          onError: (error) => {
+          onError: async (error) => {
             const errorWithCodeAndDetails = error as ErrorWithCodeAndDetails;
-            if (error.message === "tx not found") {
-              setErrorDetails({
-                errorMessage: ErrorMessages.TRANSACTION_NOT_FOUND,
-                error: errorWithCodeAndDetails,
-              });
+            if (error.message === "tx not found" || error.message === "Tracking for the transaction has been abandoned") {
+              if (tx.txHash && !reindexedTxHashes.current.includes(tx.txHash)) {
+                reindexedTxHashes.current.push(tx.txHash);
+                await onReindex(tx.txHash, tx.chainId);
+                setErrorDetails(undefined);
+                setTransactionStatusResponse(undefined);
+                getTxStatus(transactionDetails);
+              } else {
+                setErrorDetails({
+                  errorMessage: ErrorMessages.TRANSACTION_NOT_FOUND,
+                  error: errorWithCodeAndDetails,
+                });
+              }
+
             } else {
               setErrorDetails({
                 errorMessage: ErrorMessages.TRANSACTION_ERROR,
@@ -229,7 +257,7 @@ export default function Home() {
 
       setCancelStatusPolling(responses);
     },
-    [cancelStatusPolling]
+    [cancelStatusPolling, onReindex]
   );
 
   const resetState = useCallback(() => {
@@ -348,24 +376,6 @@ export default function Home() {
     }
   }, [errorDetails, transactionStatuses]);
 
-  const onReindex = useCallback(async () => {
-    try {
-      await fetch('https://api.skip.build/v2/tx/retry_track', {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          tx_hash: txHash,
-          chain_id: chainId,
-        }),
-      });
-      onSearch();
-    } catch (error) {
-      console.error(error);
-    }
-  }, [txHash, chainId, onSearch]);
-
   const isTop = useMemo(() => {
     return (
       Boolean(
@@ -442,7 +452,10 @@ export default function Home() {
                   <TransferEventCard
                     {...transfer}
                     state={transactionStatusResponse?.state}
-                    onReindex={onReindex}
+                    onReindex={() => {
+                      onReindex();
+                      onSearch();
+                    }}
                   />
                 </ErrorBoundary>
               </>
