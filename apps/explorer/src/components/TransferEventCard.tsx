@@ -127,7 +127,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     } else if (step === "Destination") {
       return {
         asset: transferAssetReleaseAsset ?? destAsset,
-        amount: transferAssetReleaseAmount ?? destAmount,
+        amount: transferAssetRelease ? transferAssetReleaseAmount : destAmount,
       };
     } else {
       const currentOperation = operations?.[index];
@@ -138,7 +138,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         amount: transferAssetRelease ? transferAssetReleaseAmount : convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals),
       };
     }
-  }, [step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
+  }, [transferAssetRelease, transferAssetReleaseAsset, step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
 
   const renderTransferEventDetails = useMemo(() => {
 
@@ -174,7 +174,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         </Column>
       </>
     )
-  }, [currentAsset, userAddress, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId]);
+  }, [currentAsset?.asset, currentAsset?.amount, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId, userAddress, isUserAddressCopied, saveUserAddressToClipboard]);
 
   const isLoading = useMemo(() => {
     return status === "pending" && !stateAbandoned && step !== "Origin";
