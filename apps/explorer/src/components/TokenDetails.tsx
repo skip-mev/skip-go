@@ -28,8 +28,7 @@ export const TokenDetails = ({
   const transferAssetReleaseAsset = skipAssets?.data?.find((asset) =>
     asset.chainId === transactionStatusResponse?.transferAssetRelease?.chainId &&
     (asset.denom === transactionStatusResponse?.transferAssetRelease?.denom ||
-      asset.denom === transformHexToMoveDenom(transactionStatusResponse?.transferAssetRelease?.denom) ||
-        asset.originDenom === transactionStatusResponse?.transferAssetRelease?.denom
+      asset.denom === transformHexToMoveDenom(transactionStatusResponse?.transferAssetRelease?.denom)
       ));
 
   const receivedAsset = useMemo(() => {
