@@ -12,7 +12,7 @@ import { useClipboard } from "@/hooks/useClipboard";
 import { useMemo } from "react";
 import { TxStatusResponse } from "@skip-go/client";
 import { transformHexToMoveDenom } from "../utils/denomUtils";
-import { isEvmNativeDenom } from "../utils/denomUtils";
+import { styled } from "@/styled-components";
 
 export const TokenDetails = ({
   transactionStatusResponse,
@@ -24,18 +24,28 @@ export const TokenDetails = ({
 
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
-  const chain = skipChains?.data?.find((chain) => chain.chainId === destAsset?.chainId);
 
   const transferAssetReleaseAsset = skipAssets?.data?.find((asset) =>
     asset.chainId === transactionStatusResponse?.transferAssetRelease?.chainId &&
     (asset.denom === transactionStatusResponse?.transferAssetRelease?.denom ||
-      asset.denom === transformHexToMoveDenom(transactionStatusResponse?.transferAssetRelease?.denom)));
+      asset.denom === transformHexToMoveDenom(transactionStatusResponse?.transferAssetRelease?.denom) ||
+        asset.originDenom === transactionStatusResponse?.transferAssetRelease?.denom
+      ));
+
+  const receivedAsset = useMemo(() => {
+    if (transactionStatusResponse?.transferAssetRelease?.released) {
+      return transferAssetReleaseAsset;
+    }
+    return destAsset;
+  }, [destAsset, transferAssetReleaseAsset, transactionStatusResponse?.transferAssetRelease?.released]);
+
+  const chain = skipChains?.data?.find((chain) => chain.chainId === receivedAsset?.chainId);
 
   const receivedToken = useMemo(() => {
     if (transactionStatusResponse?.transferAssetRelease?.released) {
-      return `${formatDisplayAmount(convertTokenAmountToHumanReadableAmount(transactionStatusResponse?.transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals), { decimals: transferAssetReleaseAsset?.decimals, abbreviate: true })} ${transferAssetReleaseAsset?.recommendedSymbol}`;
+      return `${formatDisplayAmount(convertTokenAmountToHumanReadableAmount(transactionStatusResponse?.transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals), { decimals: transferAssetReleaseAsset?.decimals, abbreviate: true })} ${transferAssetReleaseAsset?.recommendedSymbol ?? ''}`;
     }
-    return `${formatDisplayAmount(convertTokenAmountToHumanReadableAmount(destAmount ?? '', destAsset?.decimals), { decimals: destAsset?.decimals, abbreviate: true })} ${destAsset?.recommendedSymbol}`;
+    return `${formatDisplayAmount(convertTokenAmountToHumanReadableAmount(destAmount ?? '', destAsset?.decimals), { decimals: destAsset?.decimals, abbreviate: true })} ${destAsset?.recommendedSymbol ?? ''}`;
   }, [destAmount, destAsset?.decimals, destAsset?.recommendedSymbol, transactionStatusResponse?.transferAssetRelease?.amount, transactionStatusResponse?.transferAssetRelease?.released, transferAssetReleaseAsset?.decimals, transferAssetReleaseAsset?.recommendedSymbol]);
 
   const chainId = useMemo(() => {
@@ -60,30 +70,29 @@ export const TokenDetails = ({
   }, [destAsset?.decimals, transferAssetReleaseAsset]);
 
   const isNativeToken = useMemo(() => {
-    if (transactionStatusResponse?.transferAssetRelease?.denom?.startsWith('0x')) {
-      return isEvmNativeDenom(transactionStatusResponse?.transferAssetRelease?.denom);
-    }
-    if (transferAssetReleaseAsset) {
-      return (transferAssetReleaseAsset.chainId === transferAssetReleaseAsset?.originChainId &&
-        transferAssetReleaseAsset?.denom === transferAssetReleaseAsset?.originDenom);
-    }
-    return destAsset?.originChainId === destAsset?.chainId && destAsset?.originDenom === destAsset?.denom;
-  }, [destAsset?.chainId, destAsset?.denom, destAsset?.originChainId, destAsset?.originDenom, transactionStatusResponse?.transferAssetRelease?.denom, transferAssetReleaseAsset]);
+    return receivedAsset?.description?.includes('native')
+   
+  }, [receivedAsset?.description]);
 
   return (
     <Container gap={20} width="100%" borderRadius={16}>
       {
-        destAsset && (
+        receivedAsset && (
           <Column gap={10}>
             <Row align="center" gap={5}>
-              {destAsset?.logoUri && <Image src={destAsset?.logoUri} alt={destAsset?.symbol ?? ''} width={16} height={16} />}
+              {receivedAsset?.logoUri && <Image src={receivedAsset?.logoUri} alt={receivedAsset?.symbol ?? ''} width={16} height={16} />}
               <SmallText normalTextColor>{chain?.prettyName}</SmallText>
-              <SmallText>({destAsset?.recommendedSymbol})</SmallText>
+              <SmallText>({receivedAsset?.recommendedSymbol})</SmallText>
             </Row>
-            {isNativeToken && (
-              <SmallText>The native token of {chain?.prettyName}</SmallText>
-            )}
+            <SmallText>{receivedAsset?.description}</SmallText>
           </Column>
+        )
+      }
+      {
+        !receivedAsset && (
+          <StyledNoMetadataContainer>
+            <SmallText>No metadata found for this asset.</SmallText>
+          </StyledNoMetadataContainer>
         )
       }
 
@@ -100,10 +109,14 @@ export const TokenDetails = ({
         onClick={() => saveToClipboard(denom)}
         value={isCopied ? "Copied!" : getTruncatedAddress(denom)}
       />
-      <DetailsRow
-        label="Decimals"
-        value={decimals}
-      />
+      {
+        decimals && (
+          <DetailsRow
+            label="Decimals"
+            value={decimals}
+          />
+        )
+      }
       {
         isNativeToken && (
           <DetailsRow
@@ -115,3 +128,9 @@ export const TokenDetails = ({
     </Container>
   );
 };
+
+const StyledNoMetadataContainer = styled.div`
+  padding: 12px;
+  border-radius: 5px;
+  background: ${({ theme }) => theme.warning.background};
+`;
