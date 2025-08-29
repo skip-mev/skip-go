@@ -182,7 +182,7 @@ export default function Home() {
     setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP)
   }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop, isTestnet]);
 
-  const onReindex = useCallback(async (_txHash: string, _chainId: string) => {
+  const onReindex = useCallback(async (_txHash?: string, _chainId?: string) => {
     try {
       await fetch('https://api.skip.build/v2/tx/retry_track', {
         method: "POST",
