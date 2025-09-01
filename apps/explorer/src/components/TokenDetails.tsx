@@ -68,11 +68,6 @@ export const TokenDetails = ({
     return destAsset?.decimals;
   }, [destAsset?.decimals, transferAssetReleaseAsset]);
 
-  const isNativeToken = useMemo(() => {
-    return receivedAsset?.description?.includes('native')
-   
-  }, [receivedAsset?.description]);
-
   return (
     <Container gap={20} width="100%" borderRadius={16}>
       {
@@ -113,14 +108,6 @@ export const TokenDetails = ({
           <DetailsRow
             label="Decimals"
             value={decimals}
-          />
-        )
-      }
-      {
-        isNativeToken && (
-          <DetailsRow
-            label="Type"
-            value="Native"
           />
         )
       }
