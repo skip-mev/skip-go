@@ -28,17 +28,14 @@ export function atomWithStorageNoCrossTabSync<T>(storageKey: string, initialValu
 }
 
 type IndexedDBStorageOptions = {
-  dbName?: string;
-  storeName?: string;
+  dbName: string;
+  storeName: string;
 };
 
 type CachedData<T> = {
   data: T;
   timestamp: number;
 };
-
-const DEFAULT_DB_NAME = "skip-go-widget";
-const DEFAULT_STORE_NAME = "skip-data";
 
 async function getIndexedDB(dbName: string, storeName: string): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -63,11 +60,11 @@ async function getIndexedDB(dbName: string, storeName: string): Promise<IDBDatab
 
 export async function getIndexedDBItem<T>(
   key: string,
-  options: IndexedDBStorageOptions = {},
+  options: IndexedDBStorageOptions,
 ): Promise<T | null> {
   try {
-    const dbName = options.dbName || DEFAULT_DB_NAME;
-    const storeName = options.storeName || DEFAULT_STORE_NAME;
+    const dbName = options.dbName;
+    const storeName = options.storeName;
 
     const db = await getIndexedDB(dbName, storeName);
 
@@ -96,11 +93,11 @@ export async function getIndexedDBItem<T>(
 export async function setIndexedDBItem<T>(
   key: string,
   value: T,
-  options: IndexedDBStorageOptions = {},
+  options: IndexedDBStorageOptions,
 ): Promise<void> {
   try {
-    const dbName = options.dbName || DEFAULT_DB_NAME;
-    const storeName = options.storeName || DEFAULT_STORE_NAME;
+    const dbName = options.dbName;
+    const storeName = options.storeName;
 
     const db = await getIndexedDB(dbName, storeName);
 
@@ -125,11 +122,11 @@ export async function setIndexedDBItem<T>(
 
 export async function removeIndexedDBItem(
   key: string,
-  options: IndexedDBStorageOptions = {},
+  options: IndexedDBStorageOptions,
 ): Promise<void> {
   try {
-    const dbName = options.dbName || DEFAULT_DB_NAME;
-    const storeName = options.storeName || DEFAULT_STORE_NAME;
+    const dbName = options.dbName;
+    const storeName = options.storeName;
 
     const db = await getIndexedDB(dbName, storeName);
 
@@ -146,10 +143,10 @@ export async function removeIndexedDBItem(
   }
 }
 
-export async function clearIndexedDB(options: IndexedDBStorageOptions = {}): Promise<void> {
+export async function clearIndexedDB(options: IndexedDBStorageOptions): Promise<void> {
   try {
-    const dbName = options.dbName || DEFAULT_DB_NAME;
-    const storeName = options.storeName || DEFAULT_STORE_NAME;
+    const dbName = options.dbName;
+    const storeName = options.storeName;
 
     const db = await getIndexedDB(dbName, storeName);
 
@@ -166,7 +163,7 @@ export async function clearIndexedDB(options: IndexedDBStorageOptions = {}): Pro
   }
 }
 
-export function createIndexedDBStorage(options?: IndexedDBStorageOptions) {
+export function createIndexedDBStorage(options: IndexedDBStorageOptions) {
   return {
     getItem: <T>(key: string) => getIndexedDBItem<T>(key, options),
     setItem: <T>(key: string, value: T) => setIndexedDBItem(key, value, options),
