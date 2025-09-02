@@ -45,8 +45,8 @@ const flattenData = (data: Record<string, Asset[]>, chains?: Chain[]) => {
 export const onlyTestnetsAtom = atom<boolean | undefined>(undefined);
 
 const { getItem, setItem } = createIndexedDBStorage({
-  dbName: "skip-go-data",
-  storeName: "cache",
+  dbName: "skip-go-widget",
+  storeName: "data-cache",
 });
 
 const getCachedDataWhileQuerying = <T>({

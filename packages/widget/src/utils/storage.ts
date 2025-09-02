@@ -44,12 +44,35 @@ async function getIndexedDB(dbName: string, storeName: string): Promise<IDBDatab
       return;
     }
 
-    const request = indexedDB.open(dbName);
+    const checkRequest = indexedDB.open(dbName);
 
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(request.result);
+    checkRequest.onerror = () => reject(checkRequest.error);
+    checkRequest.onsuccess = () => {
+      const existingDb = checkRequest.result;
+      const existingStores = Array.from(existingDb.objectStoreNames);
 
-    request.onupgradeneeded = (event) => {
+      if (existingStores.includes(storeName)) {
+        resolve(existingDb);
+        return;
+      }
+
+      existingDb.close();
+
+      const currentVersion = existingDb.version;
+      const upgradeRequest = indexedDB.open(dbName, currentVersion + 1);
+
+      upgradeRequest.onerror = () => reject(upgradeRequest.error);
+      upgradeRequest.onsuccess = () => resolve(upgradeRequest.result);
+
+      upgradeRequest.onupgradeneeded = (event) => {
+        const db = (event.target as IDBOpenDBRequest).result;
+        if (!db.objectStoreNames.contains(storeName)) {
+          db.createObjectStore(storeName, { keyPath: "key" });
+        }
+      };
+    };
+
+    checkRequest.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
       if (!db.objectStoreNames.contains(storeName)) {
         db.createObjectStore(storeName, { keyPath: "key" });
