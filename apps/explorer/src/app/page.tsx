@@ -8,6 +8,7 @@ import {
   TransactionDetails as TransactionDetailsType,
   waitForTransactionWithCancel,
   transactionStatus,
+  trackTransaction,
 } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
 import {
@@ -68,7 +69,7 @@ export default function Home() {
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
     []
   );  
-  const reindexedTxHashes = useRef<string[]>([]);
+  const trackedTxHashes = useRef<string[]>([]);
   
   const setChainIdsSortedToTop = useSetAtom(chainIdsSortedToTopAtom);
 
@@ -231,10 +232,20 @@ export default function Home() {
           },
           onError: async (error) => {
             const errorWithCodeAndDetails = error as ErrorWithCodeAndDetails;
-            if (error.message === "tx not found" || error.message === "Tracking for the transaction has been abandoned") {
-              if (tx.txHash && !reindexedTxHashes.current.includes(tx.txHash)) {
-                reindexedTxHashes.current.push(tx.txHash);
-                await onReindex(tx.txHash, tx.chainId);
+            const notFound = error.message === "tx not found";
+            const abandoned = error.message === "Tracking for the transaction has been abandoned";
+
+            if (notFound || abandoned) {
+              if (tx.txHash && !trackedTxHashes.current.includes(tx.txHash)) {
+                trackedTxHashes.current.push(tx.txHash);
+                if (notFound) {
+                  await trackTransaction({
+                    txHash: tx.txHash,
+                    chainId: tx.chainId,
+                  });
+                } else if (abandoned) {
+                  await onReindex(tx.txHash, tx.chainId);
+                }
                 setErrorDetails(undefined);
                 setTransactionStatusResponse(undefined);
                 getTxStatus(transactionDetails);
