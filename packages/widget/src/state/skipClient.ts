@@ -85,11 +85,9 @@ export const skipChainsAtom = atomWithQuery((get) => {
   const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
-  const cacheKey = `skip-chains-${onlyTestnets ? "testnet" : "mainnet"}`;
-
   return getCachedDataWhileQuerying<Chain[]>({
     queryKey: ["skipChains", { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
-    cacheKey: cacheKey,
+    cacheKey: `skip-chains-${onlyTestnets ? "testnet" : "mainnet"}`,
     queryFn: async () => {
       const response = await chains({
         includeEvm: true,
@@ -108,11 +106,9 @@ export const skipAssetsAtom = atomWithQuery((get) => {
   const chains = get(skipChainsAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
-  const cacheKey = `skip-assets-${onlyTestnets ? "testnet" : "mainnet"}`;
-
   return getCachedDataWhileQuerying<ClientAsset[]>({
     queryKey: ["skipAssets", onlyTestnets, { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
-    cacheKey: cacheKey,
+    cacheKey: `skip-assets-${onlyTestnets ? "testnet" : "mainnet"}`,
     queryFn: async () => {
       const response = await assets({
         includeEvmAssets: true,
@@ -144,13 +140,13 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
   const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
-  const cacheKey = `skip-swap-venues-${onlyTestnets ? "testnet" : "mainnet"}`;
-
   return getCachedDataWhileQuerying({
     queryKey: ["skipSwapVenues", onlyTestnets, { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
-    cacheKey: cacheKey,
+    cacheKey: `skip-swap-venues-${onlyTestnets ? "testnet" : "mainnet"}`,
     queryFn: async () => {
-      return await venues();
+      return await venues({
+        onlyTestnets,
+      });
     },
     options: { enabled: onlyTestnets !== undefined && apiUrl !== undefined },
   });
