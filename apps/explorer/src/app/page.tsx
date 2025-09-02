@@ -75,6 +75,8 @@ export default function Home() {
   const [transactionStatusResponse, setTransactionStatusResponse] =
     useState<TxStatusResponse | undefined>(undefined);
 
+  const [destinationNodeFailed, setDestinationNodeFailed] = useState<boolean>(false);
+
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
@@ -173,8 +175,23 @@ export default function Home() {
       addChain(event.toChainId, event.toExplorerLink, "to");
     });
 
+    if (destAsset && destinationNodeFailed) {
+      const lastTransfer = transfers.at(-1);
+      if (lastTransfer) {
+        lastTransfer.step = "Routed";
+      }
+      transfers.push({
+        chainId: destAsset.chainId,
+        transferType: "N/A",
+        status: "failed",
+        step: "Destination",
+        index: transferEvents.length,
+        explorerLink: "",
+      });
+    }
+
     return transfers;
-  }, [operations, transactionStatusResponse?.transferAssetRelease, transferEvents]);
+  }, [destAsset, destinationNodeFailed, operations, transactionStatusResponse?.transferAssetRelease, transferEvents]);
 
   useEffect(() => {
     setSkipClientConfig(defaultSkipClientConfig);
@@ -231,6 +248,9 @@ export default function Home() {
           },
           onError: async (error) => {
             const errorWithCodeAndDetails = error as ErrorWithCodeAndDetails;
+            if (index !== 0) {
+              setDestinationNodeFailed(true);
+            }
             if (error.message === "tx not found" || error.message === "Tracking for the transaction has been abandoned") {
               if (tx.txHash && !reindexedTxHashes.current.includes(tx.txHash)) {
                 reindexedTxHashes.current.push(tx.txHash);
@@ -350,10 +370,10 @@ export default function Home() {
 
     return {
       txHash: transferEvents?.[0]?.fromTxHash ?? transactionDetailsFromUrlParams?.[0]?.txHash ?? "",
-      state: transactionStatusResponse?.state,
+      state: destinationNodeFailed ? "STATE_COMPLETED_ERROR" : transactionStatusResponse?.state as TransactionState,
       chainIds: chainIds.length > 0 ? chainIds : chainIdsFromUrlParams,
     };
-  }, [transfersToShow, sourceAsset, destAsset, transferEvents, transactionDetailsFromUrlParams, transactionStatusResponse?.state]);
+  }, [transfersToShow, sourceAsset?.chainId, destAsset?.chainId, transferEvents, transactionDetailsFromUrlParams, destinationNodeFailed, transactionStatusResponse?.state]);
 
   const showRawDataModal = useCallback(() => {
     if (transactionStatuses.length > 0) {
