@@ -249,9 +249,6 @@ export default function Home() {
             });
           },
           onError: async (error) => {
-            if (index !== 0 && destAsset) {
-              setDestinationNodeFailed(true);
-            }
             const errorWithCodeAndDetails = error as ErrorWithCodeAndDetails;
             const notFound = error.message === "tx not found";
             const abandoned = error.message === "Tracking for the transaction has been abandoned";
@@ -271,6 +268,9 @@ export default function Home() {
                 setTransactionStatusResponse(undefined);
                 getTxStatus(transactionDetails);
               } else {
+                if (index !== 0 && destAsset) {
+                  setDestinationNodeFailed(true);
+                }
                 setErrorDetails({
                   errorMessage: ErrorMessages.TRANSACTION_NOT_FOUND,
                   error: errorWithCodeAndDetails,
@@ -278,6 +278,9 @@ export default function Home() {
               }
 
             } else {
+              if (index !== 0 && destAsset) {
+                setDestinationNodeFailed(true);
+              }
               setErrorDetails({
                 errorMessage: ErrorMessages.TRANSACTION_ERROR,
                 error: errorWithCodeAndDetails,
