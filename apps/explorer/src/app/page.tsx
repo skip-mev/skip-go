@@ -278,7 +278,7 @@ export default function Home() {
 
       setCancelStatusPolling(responses);
     },
-    [cancelStatusPolling, onReindex]
+    [cancelStatusPolling, destAsset, onReindex]
   );
 
   const resetState = useCallback(() => {
