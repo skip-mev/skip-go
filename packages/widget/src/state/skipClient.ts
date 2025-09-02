@@ -85,7 +85,7 @@ export const skipChainsAtom = atomWithQuery((get) => {
   const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
-  return getCachedDataWhileQuerying<Chain[]>({
+  return getCachedDataWhileQuerying<Chain[] | undefined>({
     queryKey: ["skipChains", { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
     cacheKey: `skip-chains-${onlyTestnets ? "testnet" : "mainnet"}`,
     queryFn: async () => {
@@ -95,7 +95,7 @@ export const skipChainsAtom = atomWithQuery((get) => {
         onlyTestnets,
         abortDuplicateRequests: true,
       });
-      return response || [];
+      return response;
     },
     options: { enabled: onlyTestnets !== undefined && apiUrl !== undefined },
   });
