@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-Add caching assets, chains, venues for faster subsequent pageload on slower internet speeds
+Add caching assets, chains, bridges, venues for faster subsequent pageload on slower internet speeds
