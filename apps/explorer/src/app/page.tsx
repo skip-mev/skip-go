@@ -8,6 +8,7 @@ import {
   TransactionDetails as TransactionDetailsType,
   waitForTransactionWithCancel,
   transactionStatus,
+  TransactionState,
 } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
 import {
@@ -248,7 +249,7 @@ export default function Home() {
           },
           onError: async (error) => {
             const errorWithCodeAndDetails = error as ErrorWithCodeAndDetails;
-            if (index !== 0) {
+            if (index !== 0 && destAsset) {
               setDestinationNodeFailed(true);
             }
             if (error.message === "tx not found" || error.message === "Tracking for the transaction has been abandoned") {
@@ -370,7 +371,7 @@ export default function Home() {
 
     return {
       txHash: transferEvents?.[0]?.fromTxHash ?? transactionDetailsFromUrlParams?.[0]?.txHash ?? "",
-      state: destinationNodeFailed ? "STATE_COMPLETED_ERROR" : transactionStatusResponse?.state as TransactionState,
+      state: destinationNodeFailed ? "STATE_COMPLETED_ERROR" as TransactionState : transactionStatusResponse?.state,
       chainIds: chainIds.length > 0 ? chainIds : chainIdsFromUrlParams,
     };
   }, [transfersToShow, sourceAsset?.chainId, destAsset?.chainId, transferEvents, transactionDetailsFromUrlParams, destinationNodeFailed, transactionStatusResponse?.state]);
