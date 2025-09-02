@@ -4,6 +4,7 @@ import { Asset, assets, bridges, Chain, chains, SkipClientOptions, venues } from
 import { atomWithQuery } from "jotai-tanstack-query";
 import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
 import { defaultTheme, Theme } from "@/widget/theme";
+import { createIndexedDBStorage } from "@/utils/storage";
 
 export const defaultSkipClientConfig = {
   apiUrl: prodApiUrl,
@@ -43,14 +44,74 @@ const flattenData = (data: Record<string, Asset[]>, chains?: Chain[]) => {
 
 export const onlyTestnetsAtom = atom<boolean | undefined>(undefined);
 
+const { getItem, setItem } = createIndexedDBStorage({
+  dbName: "skip-go-widget",
+  storeName: "skip-data",
+});
+
+const getCachedDataWhileQuerying = <T>(
+  cacheKey: string,
+  queryFn: () => Promise<T>,
+  options: {
+    enabled?: boolean;
+    staleTime?: number;
+    gcTime?: number;
+  } = {},
+) => {
+  return {
+    queryKey: [cacheKey],
+    queryFn: async () => {
+      const cachedData = await getItem<T>(cacheKey);
+
+      if (cachedData !== null) {
+        queryFn().then(async (newData) => {
+          await setItem(cacheKey, newData);
+        });
+
+        return cachedData;
+      }
+
+      const newData = await queryFn();
+      await setItem(cacheKey, newData);
+      return newData;
+    },
+    enabled: options.enabled ?? true,
+  };
+};
+
+export const skipChainsAtom = atomWithQuery((get) => {
+  const { apiUrl } = get(skipClientConfigAtom);
+  const onlyTestnets = get(onlyTestnetsAtom);
+
+  const cacheKey = `skip-chains-${onlyTestnets ? "testnet" : "mainnet"}`;
+
+  return getCachedDataWhileQuerying<Chain[]>(
+    cacheKey,
+    async () => {
+      const response = await chains({
+        includeEvm: true,
+        includeSvm: true,
+        onlyTestnets,
+        abortDuplicateRequests: true,
+      });
+      return response || [];
+    },
+    {
+      enabled: onlyTestnets !== undefined && apiUrl !== undefined,
+    },
+  );
+});
+
 export const skipAssetsAtom = atomWithQuery((get) => {
-  const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
+  const { apiUrl } = get(skipClientConfigAtom);
   const chains = get(skipChainsAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
-  return {
-    queryKey: ["skipAssets", onlyTestnets, { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
-    queryFn: async () => {
+  const cacheKey = `skip-assets-${onlyTestnets ? "testnet" : "mainnet"}`;
+
+  return getCachedDataWhileQuerying<ClientAsset[]>(
+    cacheKey,
+    async () => {
       const response = await assets({
         includeEvmAssets: true,
         includeCw20Assets: true,
@@ -61,46 +122,33 @@ export const skipAssetsAtom = atomWithQuery((get) => {
 
       return flattenData(response as Record<string, Asset[]>, chains.data);
     },
-    enabled: onlyTestnets !== undefined && apiUrl !== undefined,
-  };
-});
-
-export const skipChainsAtom = atomWithQuery((get) => {
-  const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
-  const onlyTestnets = get(onlyTestnetsAtom);
-
-  return {
-    queryKey: ["skipChains", { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
-    queryFn: async () => {
-      const response = await chains({
-        includeEvm: true,
-        includeSvm: true,
-        onlyTestnets,
-        abortDuplicateRequests: true,
-      });
-      return response;
+    {
+      enabled: onlyTestnets !== undefined && apiUrl !== undefined,
     },
-    enabled: onlyTestnets !== undefined && apiUrl !== undefined,
-  };
+  );
 });
 
-export const skipBridgesAtom = atomWithQuery((get) => {
-  const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
-  return {
-    queryKey: ["skipBridges", { apiUrl, apiKey, cacheDurationMs }],
-    queryFn: async () => bridges(),
-  };
+export const skipBridgesAtom = atomWithQuery((_get) => {
+  return getCachedDataWhileQuerying("skip-bridges", async () => {
+    return await bridges();
+  });
 });
 
 export const skipSwapVenuesAtom = atomWithQuery((get) => {
-  const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
+  const { apiUrl } = get(skipClientConfigAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
-  return {
-    queryKey: ["skipSwapVenue", { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
-    queryFn: async () => venues(),
-    enabled: onlyTestnets !== undefined && apiUrl !== undefined,
-  };
+  const cacheKey = `skip-venues-${onlyTestnets ? "testnet" : "mainnet"}`;
+
+  return getCachedDataWhileQuerying(
+    cacheKey,
+    async () => {
+      return await venues();
+    },
+    {
+      enabled: onlyTestnets !== undefined && apiUrl !== undefined,
+    },
+  );
 });
 
 export type ChainWithAsset = Chain & {
