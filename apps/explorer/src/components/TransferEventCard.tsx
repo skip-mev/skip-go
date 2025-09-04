@@ -119,23 +119,24 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
 
   const currentAsset = useMemo(() => {
     const transferAssetReleaseAmount = convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals);
+
     if (step === "Origin") {
       return {
-        asset: transferAssetReleaseAsset ?? sourceAsset,
-        amount: transferAssetRelease ? transferAssetReleaseAmount : sourceAmount,
+        asset: sourceAsset ?? transferAssetReleaseAsset,
+        amount: sourceAmount ?? transferAssetReleaseAmount,
       };
     } else if (step === "Destination") {
       return {
-        asset: transferAssetReleaseAsset ?? destAsset,
-        amount: transferAssetRelease ? transferAssetReleaseAmount : destAmount,
+        asset: destAsset ?? transferAssetReleaseAsset,
+        amount: destAmount ?? transferAssetReleaseAmount,
       };
     } else {
       const currentOperation = operations?.[index];
       const asset = skipAssets?.data?.find((asset) => asset.chainId === currentOperation?.chainId && asset.denom === currentOperation?.denomIn);
       
       return {
-        asset: transferAssetReleaseAsset ?? asset,
-        amount: transferAssetRelease ? transferAssetReleaseAmount : convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals),
+        asset: asset ?? transferAssetReleaseAsset,
+        amount: currentOperation?.amountIn && asset?.decimals ? convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals) : transferAssetReleaseAmount,
       };
     }
   }, [transferAssetRelease, transferAssetReleaseAsset, step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);

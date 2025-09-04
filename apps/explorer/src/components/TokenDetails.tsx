@@ -41,11 +41,15 @@ export const TokenDetails = ({
   const chain = skipChains?.data?.find((chain) => chain.chainId === receivedAsset?.chainId);
 
   const receivedToken = useMemo(() => {
-    if (transactionStatusResponse?.transferAssetRelease?.released) {
-      return `${formatDisplayAmount(convertTokenAmountToHumanReadableAmount(transactionStatusResponse?.transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals), { decimals: transferAssetReleaseAsset?.decimals, abbreviate: true })} ${transferAssetReleaseAsset?.recommendedSymbol ?? ''}`;
+    if (destAsset) {
+      return `${formatDisplayAmount(destAmount)} ${destAsset?.recommendedSymbol ?? ''}`;
     }
-    return `${formatDisplayAmount(convertTokenAmountToHumanReadableAmount(destAmount ?? '', destAsset?.decimals), { decimals: destAsset?.decimals, abbreviate: true })} ${destAsset?.recommendedSymbol ?? ''}`;
-  }, [destAmount, destAsset?.decimals, destAsset?.recommendedSymbol, transactionStatusResponse?.transferAssetRelease?.amount, transactionStatusResponse?.transferAssetRelease?.released, transferAssetReleaseAsset?.decimals, transferAssetReleaseAsset?.recommendedSymbol]);
+
+    if (transactionStatusResponse?.transferAssetRelease?.released && transferAssetReleaseAsset) {
+      return `${formatDisplayAmount(convertTokenAmountToHumanReadableAmount(transactionStatusResponse?.transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals), { decimals: 2 })} ${transferAssetReleaseAsset?.recommendedSymbol ?? ''}`;
+    }
+    
+  }, [destAmount, destAsset, transactionStatusResponse?.transferAssetRelease?.amount, transactionStatusResponse?.transferAssetRelease?.released, transferAssetReleaseAsset]);
 
   const chainId = useMemo(() => {
     if (transactionStatusResponse?.transferAssetRelease?.chainId) {
