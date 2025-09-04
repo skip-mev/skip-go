@@ -1,5 +1,5 @@
 import { Container } from "@/components/Container";
-import { Column, Row } from "@/components/Layout";
+import { Row } from "@/components/Layout";
 import { SmallText } from '@/components/Typography';
 import { ReactNode, useMemo } from "react";
 import { TransactionState } from "@skip-go/client";

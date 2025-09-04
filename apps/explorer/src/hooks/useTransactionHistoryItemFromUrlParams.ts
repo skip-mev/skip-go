@@ -43,14 +43,14 @@ export const useTransactionHistoryItemFromUrlParams = () => {
   return {
     sourceAsset,
     destAsset,
-    sourceAmount: convertTokenAmountToHumanReadableAmount(
+    sourceAmount: transactionHistoryItemFromUrlParams?.route?.amountIn ? convertTokenAmountToHumanReadableAmount(
       transactionHistoryItemFromUrlParams?.route?.amountIn, 
       sourceAsset?.decimals
-    ),
-    destAmount: convertTokenAmountToHumanReadableAmount(
+    ) : undefined,
+    destAmount: transactionHistoryItemFromUrlParams?.route?.amountOut ? convertTokenAmountToHumanReadableAmount(
       transactionHistoryItemFromUrlParams?.route?.amountOut,
       destAsset?.decimals
-    ),
+    ) : undefined,
     userAddresses: transactionHistoryItemFromUrlParams?.userAddresses as { chainId: string, address: string }[],
     operations: getClientOperations(transactionHistoryItemFromUrlParams?.route?.operations),
     transactionDetails: transactionHistoryItemFromUrlParams?.transactionDetails,
