@@ -12,7 +12,6 @@ import { SwapExecutionState } from "./SwapExecutionPage";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React, { useCallback, useMemo } from "react";
 import { Tooltip } from "@/components/Tooltip";
-import { useIsGasStationTx } from "./useIsGasStationTx";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 type operationTypeToIcon = Record<OperationType, React.ReactElement>;
@@ -62,7 +61,6 @@ export const SwapExecutionPageRouteDetailed = ({
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
   const { originalRoute } = useAtomValue(swapExecutionStateAtom);
-  const isGasStationTx = useIsGasStationTx();
   const status = statusData?.transferEvents;
 
   const getBridgeSwapVenue = useCallback(
@@ -112,9 +110,9 @@ export const SwapExecutionPageRouteDetailed = ({
     (operation: ClientOperation) => {
       const simpleOperationType = operationTypeToSimpleOperationType[operation.type];
       const bridgeOrSwapVenue = getBridgeSwapVenue(operation);
-      
+
       const isBankSend = operation.type === OperationType.bankSend;
-      const tooltipText = isBankSend 
+      const tooltipText = isBankSend
         ? `${simpleOperationType} with BankSend`
         : `${simpleOperationType} with ${bridgeOrSwapVenue.name}`;
 
@@ -202,12 +200,6 @@ export const SwapExecutionPageRouteDetailed = ({
           index={0}
         />
         {renderOperations}
-        {isGasStationTx && (
-          <StyledGasStationTxText>
-            Transactions from EVM to Babylon have gas provided automatically if no gas tokens are
-            found.
-          </StyledGasStationTxText>
-        )}
       </Column>
       {bottomContent}
     </StyledSwapExecutionPageRoute>
