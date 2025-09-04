@@ -18,6 +18,7 @@ import { getTransferTypeLabel } from "./Bridge";
 import { CoinsIcon } from "../icons/CoinsIcon";
 import { Tooltip } from "@/components/Tooltip";
 import { useClipboard } from "@/hooks/useClipboard";
+import { transformHexToMoveDenom } from "../utils/denomUtils";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -48,8 +49,8 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const theme = useTheme();
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
-  const { saveToClipboard, isCopied } = useClipboard();
   const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations } = useTransactionHistoryItemFromUrlParams();
+  const { saveToClipboard: saveUserAddressToClipboard, isCopied: isUserAddressCopied } = useClipboard();
 
   const statusLabelAndColor = useOverallStatusLabelAndColor({ status });
   const stateLabelAndColor = useOverallStatusLabelAndColor({ state });
@@ -60,6 +61,11 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const userAddress = userAddresses?.find((address) => address.chainId === chainId)?.address;
 
   const showTransferAssetRelease = transferAssetRelease && step !== "Destination";
+
+  const transferAssetReleaseAsset = skipAssets?.data?.find((asset) =>
+    asset.chainId === transferAssetRelease?.chainId &&
+    (asset.denom === transferAssetRelease?.denom ||
+      asset.denom === transformHexToMoveDenom(transferAssetRelease?.denom)));
 
   const renderStatusBadge = useMemo(() => {
     if (stateAbandoned) {
@@ -112,29 +118,31 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   }, [stateAbandoned, status, step]);
 
   const currentAsset = useMemo(() => {
+    const transferAssetReleaseAmount = convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals);
     if (step === "Origin") {
       return {
-        asset: sourceAsset,
-        amount: sourceAmount,
+        asset: transferAssetReleaseAsset ?? sourceAsset,
+        amount: transferAssetRelease ? transferAssetReleaseAmount : sourceAmount,
       };
     } else if (step === "Destination") {
       return {
-        asset: destAsset,
-        amount: destAmount,
+        asset: transferAssetReleaseAsset ?? destAsset,
+        amount: transferAssetRelease ? transferAssetReleaseAmount : destAmount,
       };
     } else {
       const currentOperation = operations?.[index];
       const asset = skipAssets?.data?.find((asset) => asset.chainId === currentOperation?.chainId && asset.denom === currentOperation?.denomIn);
+      
       return {
-        asset: asset,
-        amount: convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals),
+        asset: transferAssetReleaseAsset ?? asset,
+        amount: transferAssetRelease ? transferAssetReleaseAmount : convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals),
       };
     }
-  }, [step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
+  }, [transferAssetRelease, transferAssetReleaseAsset, step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
 
   const renderTransferEventDetails = useMemo(() => {
 
-    if (userAddress) {
+    if (currentAsset?.asset) {
       return (
         <Column gap={10} justify="center">
           <Row gap={5} align="center">
@@ -153,9 +161,15 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
           </Row>
           <Row gap={5} align="center">
             <SmallText normalTextColor>on {chain?.prettyName}</SmallText>
-            <SmallTextButton onClick={() => saveToClipboard(userAddress)}>
-              { isCopied ? "Copied!" : getTruncatedAddress(userAddress)}
-            </SmallTextButton>
+            {
+              userAddress && (
+                <SmallTextButton onClick={() => saveUserAddressToClipboard(userAddress)}>
+                  <Tooltip content={userAddress}>
+                    <SmallText>{isUserAddressCopied ? "Copied!" : getTruncatedAddress(userAddress)}</SmallText>
+                  </Tooltip>
+                </SmallTextButton>
+              )
+            }
           </Row>
         </Column>
       )
@@ -170,11 +184,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         </Column>
       </>
     )
-  }, [userAddress, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId, currentAsset?.asset?.logoUri, currentAsset?.asset?.symbol, currentAsset?.amount, isCopied, saveToClipboard]);
-
-  const transferAssetReleaseAsset = useMemo(() => {
-    return skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId);
-  }, [skipAssets?.data, transferAssetRelease]);
+  }, [currentAsset?.asset, currentAsset?.amount, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId, userAddress, isUserAddressCopied, saveUserAddressToClipboard]);
 
   const isLoading = useMemo(() => {
     return status === "pending" && !stateAbandoned && step !== "Origin";
@@ -198,7 +208,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         </SmallText>
       )
     }
-    
+
     return (
       <SmallText>
         {
