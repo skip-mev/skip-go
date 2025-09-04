@@ -8,6 +8,8 @@ import {
   TransactionDetails as TransactionDetailsType,
   waitForTransactionWithCancel,
   transactionStatus,
+  TransactionState,
+  trackTransaction,
 } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
 import {
@@ -67,11 +69,15 @@ export default function Home() {
   const [data, setData] = useQueryState("data");
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
     []
-  );
+  );  
+  const trackedTxHashes = useRef<string[]>([]);
+  
   const setChainIdsSortedToTop = useSetAtom(chainIdsSortedToTopAtom);
 
   const [transactionStatusResponse, setTransactionStatusResponse] =
     useState<TxStatusResponse | undefined>(undefined);
+
+  const [destinationNodeFailed, setDestinationNodeFailed] = useState<boolean>(false);
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
@@ -171,14 +177,46 @@ export default function Home() {
       addChain(event.toChainId, event.toExplorerLink, "to");
     });
 
+    if (destAsset && destinationNodeFailed) {
+      const lastTransfer = transfers.at(-1);
+      if (lastTransfer) {
+        lastTransfer.step = "Routed";
+      }
+      transfers.push({
+        chainId: destAsset.chainId,
+        transferType: "N/A",
+        status: "failed",
+        step: "Destination",
+        index: transferEvents.length,
+        explorerLink: "",
+      });
+    }
+
     return transfers;
-  }, [operations, transactionStatusResponse?.transferAssetRelease, transferEvents]);
+  }, [destAsset, destinationNodeFailed, operations, transactionStatusResponse?.transferAssetRelease, transferEvents]);
 
   useEffect(() => {
     setSkipClientConfig(defaultSkipClientConfig);
     setOnlyTestnets(isTestnet);
     setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP)
   }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop, isTestnet]);
+
+  const onReindex = useCallback(async (_txHash?: string, _chainId?: string) => {
+    try {
+      await fetch('https://api.skip.build/v2/tx/retry_track', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tx_hash: _txHash ?? txHash,
+          chain_id: _chainId ?? chainId,
+        }),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }, [txHash, chainId]);
 
   const getTxStatus = useCallback(
     async (transactionDetails: TransactionDetailsType[] = []) => {
@@ -210,14 +248,39 @@ export default function Home() {
               return newStatuses;
             });
           },
-          onError: (error) => {
+          onError: async (error) => {
             const errorWithCodeAndDetails = error as ErrorWithCodeAndDetails;
-            if (error.message === "tx not found") {
-              setErrorDetails({
-                errorMessage: ErrorMessages.TRANSACTION_NOT_FOUND,
-                error: errorWithCodeAndDetails,
-              });
+            const notFound = error.message === "tx not found";
+            const abandoned = error.message === "Tracking for the transaction has been abandoned";
+
+            if (notFound || abandoned) {
+              if (tx.txHash && !trackedTxHashes.current.includes(tx.txHash)) {
+                trackedTxHashes.current.push(tx.txHash);
+                if (notFound) {
+                  await trackTransaction({
+                    txHash: tx.txHash,
+                    chainId: tx.chainId,
+                  });
+                } else if (abandoned) {
+                  await onReindex(tx.txHash, tx.chainId);
+                }
+                setErrorDetails(undefined);
+                setTransactionStatusResponse(undefined);
+                getTxStatus(transactionDetails);
+              } else {
+                if (index !== 0 && destAsset) {
+                  setDestinationNodeFailed(true);
+                }
+                setErrorDetails({
+                  errorMessage: ErrorMessages.TRANSACTION_NOT_FOUND,
+                  error: errorWithCodeAndDetails,
+                });
+              }
+
             } else {
+              if (index !== 0 && destAsset) {
+                setDestinationNodeFailed(true);
+              }
               setErrorDetails({
                 errorMessage: ErrorMessages.TRANSACTION_ERROR,
                 error: errorWithCodeAndDetails,
@@ -229,7 +292,7 @@ export default function Home() {
 
       setCancelStatusPolling(responses);
     },
-    [cancelStatusPolling]
+    [cancelStatusPolling, destAsset, onReindex]
   );
 
   const resetState = useCallback(() => {
@@ -322,10 +385,10 @@ export default function Home() {
 
     return {
       txHash: transferEvents?.[0]?.fromTxHash ?? transactionDetailsFromUrlParams?.[0]?.txHash ?? "",
-      state: transactionStatusResponse?.state,
+      state: destinationNodeFailed ? "STATE_COMPLETED_ERROR" as TransactionState : transactionStatusResponse?.state,
       chainIds: chainIds.length > 0 ? chainIds : chainIdsFromUrlParams,
     };
-  }, [transfersToShow, sourceAsset, destAsset, transferEvents, transactionDetailsFromUrlParams, transactionStatusResponse?.state]);
+  }, [transfersToShow, sourceAsset?.chainId, destAsset?.chainId, transferEvents, transactionDetailsFromUrlParams, destinationNodeFailed, transactionStatusResponse?.state]);
 
   const showRawDataModal = useCallback(() => {
     if (transactionStatuses.length > 0) {
@@ -347,24 +410,6 @@ export default function Home() {
       });
     }
   }, [errorDetails, transactionStatuses]);
-
-  const onReindex = useCallback(async () => {
-    try {
-      await fetch('https://api.skip.build/v2/tx/retry_track', {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          tx_hash: txHash,
-          chain_id: chainId,
-        }),
-      });
-      onSearch();
-    } catch (error) {
-      console.error(error);
-    }
-  }, [txHash, chainId, onSearch]);
 
   const isTop = useMemo(() => {
     return (
@@ -442,7 +487,10 @@ export default function Home() {
                   <TransferEventCard
                     {...transfer}
                     state={transactionStatusResponse?.state}
-                    onReindex={onReindex}
+                    onReindex={() => {
+                      onReindex();
+                      onSearch();
+                    }}
                   />
                 </ErrorBoundary>
               </>
@@ -565,7 +613,7 @@ const StyledContentContainer = styled(Row)<{ showScrollbar: boolean }>`
 `;
 
 const StyledColumns = styled(Column)`
-  width: calc(100vw - 16px);
+  width: calc(100vw - 32px);
   @media (min-width: 767px) {
     width: 355px;
   }
