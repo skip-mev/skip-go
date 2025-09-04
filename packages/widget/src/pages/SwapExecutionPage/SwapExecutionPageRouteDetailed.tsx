@@ -14,6 +14,7 @@ import React, { useCallback, useMemo } from "react";
 import { Tooltip } from "@/components/Tooltip";
 import { useIsGasStationTx } from "./useIsGasStationTx";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { capitalize } from "@/utils/string";
 
 type operationTypeToIcon = Record<OperationType, React.ReactElement>;
 
@@ -72,11 +73,14 @@ export const SwapExecutionPageRouteDetailed = ({
 
       const bridge = bridges?.find((bridge) => bridge.id === bridgeId);
       const swapVenue = swapVenues?.find((swapVenue) => swapVenue.chainId === swapVenueId);
+
       const imageUrl = bridge?.logoUri ?? swapVenue?.logoUri;
       const isSvg = imageUrl?.endsWith(".svg");
 
+      const fallbackName = operation?.type ? capitalize(operation.type) : "";
+
       const bridgeOrSwapVenue = {
-        name: bridge?.name ?? swapVenue?.name,
+        name: bridge?.name ?? swapVenue?.name ?? fallbackName,
         image: imageUrl,
         isSvg,
       };
@@ -112,11 +116,8 @@ export const SwapExecutionPageRouteDetailed = ({
     (operation: ClientOperation) => {
       const simpleOperationType = operationTypeToSimpleOperationType[operation.type];
       const bridgeOrSwapVenue = getBridgeSwapVenue(operation);
-      
-      const isBankSend = operation.type === OperationType.bankSend;
-      const tooltipText = isBankSend 
-        ? `${simpleOperationType} with BankSend`
-        : `${simpleOperationType} with ${bridgeOrSwapVenue.name}`;
+
+      const tooltipText = `${simpleOperationType} with ${bridgeOrSwapVenue.name}`;
 
       return (
         <StyledOperationTypeAndTooltipContainer align="center">
@@ -124,9 +125,9 @@ export const SwapExecutionPageRouteDetailed = ({
             content={
               <SmallText normalTextColor textWrap="nowrap">
                 {tooltipText}
-                {!isBankSend && bridgeOrSwapVenue.isSvg ? (
+                {bridgeOrSwapVenue.isSvg ? (
                   <StyledSwapVenueOrBridgeSvg svg={bridgeOrSwapVenue.image} />
-                ) : !isBankSend && bridgeOrSwapVenue.image ? (
+                ) : bridgeOrSwapVenue.image ? (
                   <StyledSwapVenueOrBridgeImage
                     width="10"
                     height="10"
