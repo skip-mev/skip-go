@@ -84,6 +84,7 @@ export const formatDisplayAmount = (
   }
 
   const abs = Math.abs(num);
+  const absRounded = Math.abs(Number(num.toFixed(decimals)));
   const THRESHOLD = 10 ** -decimals;
 
   if (abs > 0 && abs < THRESHOLD) {
@@ -97,10 +98,19 @@ export const formatDisplayAmount = (
       { value: 1e3, symbol: "K" },
     ];
 
-    for (const { value, symbol } of scales) {
-      if (abs >= value) {
-        const formatted = (num / value).toFixed(2).replace(/\.?0+$/, "");
-        return `${formatted}${symbol}`;
+    for (let i = 0; i < scales.length; i++) {
+      const { value, symbol } = scales[i];
+      if (absRounded >= value) {
+        const scaled = num / value;
+        let formattedNumber = Number(scaled.toFixed(2));
+
+        if (formattedNumber >= 1000) {
+          const next = scales[i - 1];
+          formattedNumber = Number((num / next.value).toFixed(2));
+          return `${formattedNumber.toString().replace(/\.?0+$/, "")}${next.symbol}`;
+        }
+
+        return `${formattedNumber.toString().replace(/\.?0+$/, "")}${symbol}`;
       }
     }
   }
