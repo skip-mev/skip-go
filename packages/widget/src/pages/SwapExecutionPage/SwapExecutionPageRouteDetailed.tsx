@@ -242,11 +242,3 @@ const StyledOperationTypeAndTooltipContainer = styled(Row)`
   position: relative;
   height: 25px;
 `;
-
-const StyledGasStationTxText = styled(SmallText)`
-  margin-top: 10px;
-  color: ${({ theme }) => theme.success.text};
-  background: ${({ theme }) => theme.secondary.background.transparent};
-  padding: 12px;
-  border-radius: 6px;
-`;
