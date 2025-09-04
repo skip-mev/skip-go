@@ -119,23 +119,24 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
 
   const currentAsset = useMemo(() => {
     const transferAssetReleaseAmount = convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals);
+
     if (step === "Origin") {
       return {
-        asset: transferAssetReleaseAsset ?? sourceAsset,
-        amount: transferAssetRelease ? transferAssetReleaseAmount : sourceAmount,
+        asset: sourceAsset ?? transferAssetReleaseAsset,
+        amount: sourceAmount ?? transferAssetReleaseAmount,
       };
     } else if (step === "Destination") {
       return {
-        asset: transferAssetReleaseAsset ?? destAsset,
-        amount: transferAssetRelease ? transferAssetReleaseAmount : destAmount,
+        asset: destAsset ?? transferAssetReleaseAsset,
+        amount: destAmount ?? transferAssetReleaseAmount,
       };
     } else {
       const currentOperation = operations?.[index];
       const asset = skipAssets?.data?.find((asset) => asset.chainId === currentOperation?.chainId && asset.denom === currentOperation?.denomIn);
       
       return {
-        asset: transferAssetReleaseAsset ?? asset,
-        amount: transferAssetRelease ? transferAssetReleaseAmount : convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals),
+        asset: asset ?? transferAssetReleaseAsset,
+        amount: currentOperation?.amountIn && asset?.decimals ? convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals) : transferAssetReleaseAmount,
       };
     }
   }, [transferAssetRelease, transferAssetReleaseAsset, step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
@@ -146,18 +147,8 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       return (
         <Column gap={10} justify="center">
           <Row gap={5} align="center">
-            {currentAsset?.asset?.logoUri ? (
-              <>
-                <Image src={currentAsset?.asset?.logoUri} alt={currentAsset?.asset?.symbol ?? ''} width={20} height={20} /> 
-                <Text useWindowsTextHack>{formatDisplayAmount(currentAsset?.amount)} {currentAsset?.asset?.symbol}</Text>
-              </>
-            ): (
-              <>
-                <Image src={chain?.logoUri ?? ''} alt={chain?.chainName ?? ''} width={40} height={40} />
-                <Text>{chain?.prettyName}</Text>
-              </>
-            )}
-            
+            {currentAsset?.asset?.logoUri && <Image src={currentAsset?.asset?.logoUri} alt={currentAsset?.asset?.symbol ?? ''} width={20} height={20} />}
+            <Text useWindowsTextHack>{formatDisplayAmount(currentAsset?.amount)} {currentAsset?.asset?.symbol}</Text>
           </Row>
           <Row gap={5} align="center">
             <SmallText normalTextColor>on {chain?.prettyName}</SmallText>
