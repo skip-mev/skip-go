@@ -112,8 +112,8 @@ export const validateGasBalances = async ({
             tx: tx.evmTx,
             signer,
             getFallbackGasAmount,
-            useUnlimitedApproval: options?.useUnlimitedApproval,
-            bypassApprovalCheck: options?.bypassApprovalCheck,
+            routeId,
+            options,
           });
           return res;
         } catch (e) {
