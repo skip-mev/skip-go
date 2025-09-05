@@ -1,5 +1,19 @@
 ## 0.0.15
 
+## 3.14.8
+
+### Patch Changes
+
+- c860b8a: Fix display of operation type in detailed view
+- bbbeda4: Fix formatDisplayAmount logic
+- e7030f0: Add caching assets, chains, bridges, venues for faster subsequent pageload on slower internet speeds
+- 5611da4: Remove gas station logic
+- f84c866: Map LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE transferState as "pending"
+- Updated dependencies [c8ad02e]
+- Updated dependencies [5611da4]
+- Updated dependencies [f84c866]
+  - @skip-go/client@1.5.5
+
 ## 3.14.7
 
 ### Patch Changes
