@@ -1,5 +1,13 @@
 # @skip-go/client
 
+## 1.5.5
+
+### Patch Changes
+
+- c8ad02e: update status and call callbacks properly when validasting evm token approvals upfront
+- 5611da4: Remove gas station logic
+- f84c866: Map LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE transferState as "pending"
+
 ## 1.5.4
 
 ### Patch Changes
