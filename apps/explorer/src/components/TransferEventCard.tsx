@@ -118,7 +118,9 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   }, [stateAbandoned, status, step]);
 
   const currentAsset = useMemo(() => {
-    const transferAssetReleaseAmount = convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals);
+    const transferAssetReleaseAmount = transferAssetRelease?.amount && transferAssetReleaseAsset?.decimals !== undefined 
+      ? convertTokenAmountToHumanReadableAmount(transferAssetRelease.amount, transferAssetReleaseAsset.decimals)
+      : transferAssetRelease?.amount ?? undefined;
 
     if (step === "Origin") {
       return {
@@ -136,7 +138,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       
       return {
         asset: asset ?? transferAssetReleaseAsset,
-        amount: currentOperation?.amountIn && asset?.decimals ? convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals) : transferAssetReleaseAmount,
+        amount: currentOperation?.amountIn && asset?.decimals !== undefined ? convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset.decimals) : transferAssetReleaseAmount,
       };
     }
   }, [transferAssetRelease, transferAssetReleaseAsset, step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
@@ -183,7 +185,11 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
 
   const renderBottomButton = useMemo(() => {
     const decimals = skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId)?.decimals;
-    const skipGoLink = `https://go.skip.build/?src_asset=${transferAssetRelease?.denom}&src_chain=${transferAssetRelease?.chainId}&amount_in=${transferAssetRelease?.amount ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount, decimals) : undefined}`;
+    const convertedAmount = transferAssetRelease?.amount && decimals !== undefined 
+      ? convertTokenAmountToHumanReadableAmount(transferAssetRelease.amount, decimals)
+      : transferAssetRelease?.amount;
+    const skipGoLink = `https://go.skip.build/?src_asset=${transferAssetRelease?.denom}&src_chain=${transferAssetRelease?.chainId}&amount_in=${convertedAmount || undefined}`;
+    
     if (stateAbandoned) {
       return (
         <SmallTextButton onClick={onReindex} textAlign="center" color={stateLabelAndColor?.color}>Reindex →</SmallTextButton>
