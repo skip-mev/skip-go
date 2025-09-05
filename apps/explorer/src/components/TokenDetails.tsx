@@ -42,11 +42,11 @@ export const TokenDetails = ({
 
   const receivedToken = useMemo(() => {
     if (destAsset) {
-      return `${formatDisplayAmount(destAmount)} ${destAsset?.recommendedSymbol ?? ''}`;
+      return `${formatDisplayAmount(destAmount, { decimals: 2, abbreviate: true })} ${destAsset?.recommendedSymbol ?? ''}`;
     }
 
     if (transactionStatusResponse?.transferAssetRelease?.released && transferAssetReleaseAsset) {
-      return `${formatDisplayAmount(convertTokenAmountToHumanReadableAmount(transactionStatusResponse?.transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals), { decimals: 2 })} ${transferAssetReleaseAsset?.recommendedSymbol ?? ''}`;
+      return `${formatDisplayAmount(convertTokenAmountToHumanReadableAmount(transactionStatusResponse?.transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals), { decimals: 2, abbreviate: true })} ${transferAssetReleaseAsset?.recommendedSymbol ?? ''}`;
     }
     
   }, [destAmount, destAsset, transactionStatusResponse?.transferAssetRelease?.amount, transactionStatusResponse?.transferAssetRelease?.released, transferAssetReleaseAsset]);

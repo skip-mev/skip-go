@@ -148,7 +148,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         <Column gap={10} justify="center">
           <Row gap={5} align="center">
             {currentAsset?.asset?.logoUri && <Image src={currentAsset?.asset?.logoUri} alt={currentAsset?.asset?.symbol ?? ''} width={20} height={20} />}
-            <Text useWindowsTextHack>{formatDisplayAmount(currentAsset?.amount)} {currentAsset?.asset?.symbol}</Text>
+            <Text useWindowsTextHack>{formatDisplayAmount(currentAsset?.amount, { decimals: 2, abbreviate: true })} {currentAsset?.asset?.symbol}</Text>
           </Row>
           <Row gap={5} align="center">
             <SmallText normalTextColor>on {chain?.prettyName}</SmallText>
