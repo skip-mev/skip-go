@@ -16,7 +16,7 @@ This parameter currently supports:
 
 All `post_route` actions must have the following characteristics: 
 
-* **Permissionless:** Skip Go can only support permissionless actions because the underlying protocols (e.g. ibc-hooks, packet-forward-middleware) derive the addresses they use to call contracts based on the origin of the transfer. This means one user originating on two different chains or starting with two different tokens will eventually call the final contract / module with different addresses. You can only reliably permission actions that you know will 1) always originate on the same chain and 2) always take the same path to the destination chain. In general, we recommend not making this assumption unless you are an interoperability expert
+* **Permissionless:** Skip Go can only support permissionless actions because the underlying protocols (e.g. IBC hooks, IBC callbacks, packet-forward-middleware) derive the addresses they use to call contracts based on the origin of the transfer. Skip Go supports both `ibc-hooks` and `ibc-callbacks` depending on which module the destination chain has implemented (they are incompatible approaches), automatically generating the appropriate message payloads for each. This means one user originating on two different chains or starting with two different tokens will eventually call the final contract / module with different addresses. You can only reliably permission actions that you know will 1) always originate on the same chain and 2) always take the same path to the destination chain. In general, we recommend not making this assumption unless you are an interoperability expert
 * **Single-token input:** The underlying IBC transfer protocol (ICS-20) doesn't support transfers of more than 1 token denom in a single transfer message, so we can only send 1 token denom to the final contract or module at a time. This means the contract or module in the `post_route_handler` must not require multiple token denoms sent to it simultaneously. For example, a classic LP action where the user must provide tokens in both sides of the pool simultaneously would not work.
 
 <Warning>
@@ -37,7 +37,7 @@ We recommend setting these authority delegation parameters to the user's local a
 
 To call a CosmWasm contract on the destination chain, the following requirements must be satisfied:
 
-1. The destination chain supports CosmWasm & `ibc-hooks`.
+1. The destination chain supports CosmWasm & either `ibc-hooks` or `ibc-callbacks`.
 2. The chain in the route immediately before the destination chain supports IBC memos as well as `packet-forward-middleware`.
 
 To specify a CosmWasm contract call on the destination chain, pass a `wasm_msg` as the `post_route_handler` in the `/v2/fungible/msgs` call with: 

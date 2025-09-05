@@ -52,5 +52,3 @@ export { getTransferEventsFromTxStatusResponse, TransferType, getSimpleOverallSt
 
 export { ClientState } from "./state/clientState";
 export type { SkipClientOptions } from "./state/clientState";
-
-export { GAS_STATION_CHAIN_IDS } from "./constants/constants";

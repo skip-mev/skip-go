@@ -165,7 +165,7 @@ You can find the Swagger page here: [https://api-swagger.skip.build](https://api
 #### What technologies does Skip Go use under the hood?
 
 * IBC and...  
-   * `ibc-hooks`: Enables the Skip Go swap contracts to be executed as callbacks of IBC transfers, which enables constructing transactions that can transfer tokens to a chain with a swap venue, perform a swap, and transfer them out -- without multiple signing events / transactions.  
+   * `ibc hooks` and `ibc callbacks`: Enables the Skip Go swap contracts to be executed as callbacks of IBC transfers, which enables constructing transactions that can transfer tokens to a chain with a swap venue, perform a swap, and transfer them out -- without multiple signing events / transactions.  
          * Skip Go will likely not support DEXes on any chains that do not have `ibc-hooks` or equivalent functionality  
    * `Packet-forward-middleware`(PFM): Enables incoming IBC transfers from one chain to atomically initiate outgoing transfers to other chains. This allows the chain with PFM to function as the intermediate chain on a multi-hop route. This is especially valuable for chains that issue assets for use throughout the interchain (e.g. Stride + stATOM, Noble + USDC, Axelar + axlUSDC)  
    * (This [article we wrote](https://ideas.skip.build/t/how-to-give-ibc-superpowers/81) goes into more detail about both technologies and how to adopt them on your chain)
@@ -173,7 +173,7 @@ You can find the Swagger page here: [https://api-swagger.skip.build](https://api
 * [CCTP](https://www.circle.com/en/cross-chain-transfer-protocol): A cross-chain messaging protocol built by Circle (the issuer of USDC) to move USDC between chains without trusting any parties other than Circle (which USDC users already trust implicitly)
 * [Hyperlane](https://www.hyperlane.xyz/): A cross-chain messaging protocol that allows developers to deploy permissionlessly and choose their own security module
 * [Go Fast](https://skip-protocol.notion.site/EXT-Skip-Go-Fast-b30bc47ecc114871bc856184633b504b): A decentralized bridging protocol that enables faster-than-finality cross-chain actions across EVM and Cosmos
-* [Eureka](https://docs.skip.build/go/eureka/eureka-overview): IBC v2 that enables seamless interoperability between Cosmos and Ethereum ecosystem
+* [Eureka](https://docs.skip.build/go/eureka/eureka-overview): IBC v2 that enables seamless interoperability between Cosmos and Ethereum ecosystem. Eureka uses Succinct's SP1 zero-knowledge proofs for gas-efficient verification of Cosmos state on Ethereum
 * [Stargate](https://docs.skip.build/go/advanced-transfer/experimental-features#stargate-%E2%80%9Cstargate%E2%80%9D): Support for routing over the Stargate V2 bridge on EVM chains incl. Sei EVM
 * [Layerzero](https://docs.skip.build/go/advanced-transfer/experimental-features): A omnichain messaging protocol that sends data and instructions between different blockchains
 

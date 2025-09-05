@@ -8,7 +8,7 @@ description: "Technical details of how IBC Eureka works"
 
 Eureka implements the full IBC light client security model, providing trust-minimized verification of cross-chain transactions:
 
-- **Light Client Verification**: Each chain runs a light client of the other chain, enabling cryptographic verification of state transitions
+- **Light Client Verification**: Each chain runs a light client of the other chain, enabling cryptographic verification of state transitions. On the Ethereum side we use Succinct's SP1 zero-knowledge proofs for efficient verification
 - **No Multisig Dependencies**: Unlike many bridge solutions, Eureka doesn't rely on trusted validator sets or multisigs for security
 - **Permissionless Access**: Anyone can connect to the IBC network and Ethereum, as long as your chain has an IBC implementation, classic or v2
 - **Minimal Infrastructure Overhead, no ongoing costs**: Relaying, proving and routing between the Cosmos Hub and Ethereum onto your chain is handled by the smart relayer, paid for by end users. Simply maintain an IBC classic connection to the Cosmos Hub
@@ -36,7 +36,7 @@ Eureka connects blockchains through a combination of:
 
 1. **IBC Protocol v2**: The standardized communication layer that defines packet formats and verification logic
 2. **Solidity Implementation**: Smart contracts deployed on Ethereum and EVM chains that implement the IBC protocol (Other smart contract chains to come)
-3. **Light Clients**: Each chain runs a light client of the other chain to verify state transitions
+3. **Light Clients**: Each chain runs a light client of the other chain to verify state transitions. On Ethereum, this uses SP1 zero-knowledge proofs for gas-efficient verification
 4. **Relayers**: IBC v2 uses relayers to send messages between chains. We facilitate and operate the relaying infrastructure for Eureka for you.
 
 <Note>

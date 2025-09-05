@@ -12,8 +12,8 @@ import { SwapExecutionState } from "./SwapExecutionPage";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React, { useCallback, useMemo } from "react";
 import { Tooltip } from "@/components/Tooltip";
-import { useIsGasStationTx } from "./useIsGasStationTx";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { capitalize } from "@/utils/string";
 
 type operationTypeToIcon = Record<OperationType, React.ReactElement>;
 
@@ -62,7 +62,6 @@ export const SwapExecutionPageRouteDetailed = ({
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
   const { originalRoute } = useAtomValue(swapExecutionStateAtom);
-  const isGasStationTx = useIsGasStationTx();
   const status = statusData?.transferEvents;
 
   const getBridgeSwapVenue = useCallback(
@@ -72,11 +71,14 @@ export const SwapExecutionPageRouteDetailed = ({
 
       const bridge = bridges?.find((bridge) => bridge.id === bridgeId);
       const swapVenue = swapVenues?.find((swapVenue) => swapVenue.chainId === swapVenueId);
+
       const imageUrl = bridge?.logoUri ?? swapVenue?.logoUri;
       const isSvg = imageUrl?.endsWith(".svg");
 
+      const fallbackName = operation?.type ? capitalize(operation.type) : "";
+
       const bridgeOrSwapVenue = {
-        name: bridge?.name ?? swapVenue?.name,
+        name: bridge?.name ?? swapVenue?.name ?? fallbackName,
         image: imageUrl,
         isSvg,
       };
@@ -112,11 +114,8 @@ export const SwapExecutionPageRouteDetailed = ({
     (operation: ClientOperation) => {
       const simpleOperationType = operationTypeToSimpleOperationType[operation.type];
       const bridgeOrSwapVenue = getBridgeSwapVenue(operation);
-      
-      const isBankSend = operation.type === OperationType.bankSend;
-      const tooltipText = isBankSend 
-        ? `${simpleOperationType} with BankSend`
-        : `${simpleOperationType} with ${bridgeOrSwapVenue.name}`;
+
+      const tooltipText = `${simpleOperationType} with ${bridgeOrSwapVenue.name}`;
 
       return (
         <StyledOperationTypeAndTooltipContainer align="center">
@@ -124,9 +123,9 @@ export const SwapExecutionPageRouteDetailed = ({
             content={
               <SmallText normalTextColor textWrap="nowrap">
                 {tooltipText}
-                {!isBankSend && bridgeOrSwapVenue.isSvg ? (
+                {bridgeOrSwapVenue.isSvg ? (
                   <StyledSwapVenueOrBridgeSvg svg={bridgeOrSwapVenue.image} />
-                ) : !isBankSend && bridgeOrSwapVenue.image ? (
+                ) : bridgeOrSwapVenue.image ? (
                   <StyledSwapVenueOrBridgeImage
                     width="10"
                     height="10"
@@ -202,12 +201,6 @@ export const SwapExecutionPageRouteDetailed = ({
           index={0}
         />
         {renderOperations}
-        {isGasStationTx && (
-          <StyledGasStationTxText>
-            Transactions from EVM to Babylon have gas provided automatically if no gas tokens are
-            found.
-          </StyledGasStationTxText>
-        )}
       </Column>
       {bottomContent}
     </StyledSwapExecutionPageRoute>
@@ -249,12 +242,4 @@ const StyledSwapVenueOrBridgeSvg = styled.div<{ svg?: string }>`
 const StyledOperationTypeAndTooltipContainer = styled(Row)`
   position: relative;
   height: 25px;
-`;
-
-const StyledGasStationTxText = styled(SmallText)`
-  margin-top: 10px;
-  color: ${({ theme }) => theme.success.text};
-  background: ${({ theme }) => theme.secondary.background.transparent};
-  padding: 12px;
-  border-radius: 6px;
 `;
