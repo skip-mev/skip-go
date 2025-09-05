@@ -6,7 +6,6 @@ import { executeCosmosTransaction } from "./cosmos/executeCosmosTransaction";
 import { executeEvmTransaction } from "./evm/executeEvmTransaction";
 import { executeSvmTransaction } from "./svm/executeSvmTransaction";
 import { validateGasBalances } from "./validateGasBalances";
-import { GAS_STATION_CHAIN_IDS } from "src/constants/constants";
 import { venues } from "src/api/getVenues";
 import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
 import { signSvmTransaction } from "./svm/signSvmTransaction";
@@ -68,19 +67,10 @@ export const executeTransactions = async (
     options,
   });
 
-  const isGasStationSourceEVM = chainIds.find((item, i, array) => {
-    return (
-      GAS_STATION_CHAIN_IDS.includes(item?.chainId ?? "") &&
-      array[i - 1]?.chainType === ChainType.Evm
-    );
-  });
-
   ClientState.validateGasResults = undefined;
   const validateChainIds = !batchSimulate
     ? chainIds.map((x) => x?.chainId ?? "")
-    : isGasStationSourceEVM
-      ? GAS_STATION_CHAIN_IDS
-      : [];
+    : [];
 
   await validateGasBalances({
     txs,
