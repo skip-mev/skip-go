@@ -496,6 +496,7 @@ export function getSimpleStatus(
     case "GO_FAST_TRANSFER_SENT":
     case "STARGATE_TRANSFER_SENT":
     case "LAYER_ZERO_TRANSFER_SENT":
+    case "LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE":
       return "pending";
     case "TRANSFER_SUCCESS":
     case "AXELAR_TRANSFER_SUCCESS":
