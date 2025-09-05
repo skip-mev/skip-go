@@ -4,6 +4,8 @@ import type { BalanceResponseDenomEntry, Chain, Erc20Approval, EvmTx } from "src
 import { formatUnits, maxUint256, publicActions } from "viem";
 import type { WalletClient } from "viem";
 import { BigNumber } from "bignumber.js";
+import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
+import { updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
 
 export const validateEvmTokenApproval = async ({
   requiredErc20Approvals,
@@ -11,14 +13,16 @@ export const validateEvmTokenApproval = async ({
   chain,
   gasBalance,
   tx,
-  useUnlimitedApproval,
+  routeId,
+  options,
 }: {
   requiredErc20Approvals: Erc20Approval[];
   signer: WalletClient;
   gasBalance?: BalanceResponseDenomEntry | undefined;
   chain: Chain;
   tx: EvmTx;
-  useUnlimitedApproval?: boolean;
+  routeId: string,
+  options: ExecuteRouteOptions;
 }) => {
   if (!signer.account?.address) {
     throw new Error("validateEvmGasBalance: Signer address not found");
@@ -82,6 +86,19 @@ export const validateEvmTokenApproval = async ({
       };
     }
 
+    const { onApproveAllowance, useUnlimitedApproval } = options;
+
+    onApproveAllowance?.({
+      status: "pending",
+      allowance: requiredApproval,
+    });
+
+    updateRouteDetails({
+      status: "allowance",
+      routeId,
+      options
+    });
+
     const txHash = await extendedSigner.writeContract({
       account: signer.account,
       address: requiredApproval.tokenContract as `0x${string}`,
@@ -103,5 +120,15 @@ export const validateEvmTokenApproval = async ({
         `executeEVMTransaction error: evm tx reverted for hash ${receipt.transactionHash}`,
       );
     }
+
+    onApproveAllowance?.({
+      status: "completed",
+    });
+
+    updateRouteDetails({
+      status: "signing",
+      routeId,
+      options
+    });
   }
 };
