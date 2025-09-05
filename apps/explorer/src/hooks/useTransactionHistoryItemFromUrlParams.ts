@@ -51,6 +51,8 @@ export const useTransactionHistoryItemFromUrlParams = () => {
       transactionHistoryItemFromUrlParams?.route?.amountOut,
       destAsset?.decimals
     ) : undefined,
+    rawSourceAmount: transactionHistoryItemFromUrlParams?.route?.amountIn,
+    rawDestAmount: transactionHistoryItemFromUrlParams?.route?.amountOut,
     userAddresses: transactionHistoryItemFromUrlParams?.userAddresses as { chainId: string, address: string }[],
     operations: getClientOperations(transactionHistoryItemFromUrlParams?.route?.operations),
     transactionDetails: transactionHistoryItemFromUrlParams?.transactionDetails,

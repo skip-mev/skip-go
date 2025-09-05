@@ -49,7 +49,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const theme = useTheme();
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
-  const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations } = useTransactionHistoryItemFromUrlParams();
+  const { sourceAsset, sourceAmount, destAsset, destAmount, rawDestAmount, userAddresses, operations } = useTransactionHistoryItemFromUrlParams();
   const { saveToClipboard: saveUserAddressToClipboard, isCopied: isUserAddressCopied } = useClipboard();
 
   const statusLabelAndColor = useOverallStatusLabelAndColor({ status });
@@ -126,9 +126,19 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         amount: sourceAmount ?? transferAssetReleaseAmount,
       };
     } else if (step === "Destination") {
+      // If destAmount is already converted, use it
+      // If not, try to convert rawDestAmount with proper decimals
+      // Fall back to transferAssetReleaseAmount as last resort
+      let finalDestAmount = destAmount;
+      
+      if (!finalDestAmount && rawDestAmount && destAsset?.decimals) {
+        // Re-convert the raw amount if we now have the asset info
+        finalDestAmount = convertTokenAmountToHumanReadableAmount(rawDestAmount, destAsset.decimals);
+      }
+      
       return {
         asset: destAsset ?? transferAssetReleaseAsset,
-        amount: destAmount ?? transferAssetReleaseAmount,
+        amount: finalDestAmount ?? transferAssetReleaseAmount,
       };
     } else {
       const currentOperation = operations?.[index];
@@ -139,7 +149,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         amount: currentOperation?.amountIn && asset?.decimals ? convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals) : transferAssetReleaseAmount,
       };
     }
-  }, [transferAssetRelease, transferAssetReleaseAsset, step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
+  }, [transferAssetRelease, transferAssetReleaseAsset, step, sourceAsset, sourceAmount, destAsset, destAmount, rawDestAmount, operations, index, skipAssets?.data]);
 
   const renderTransferEventDetails = useMemo(() => {
 

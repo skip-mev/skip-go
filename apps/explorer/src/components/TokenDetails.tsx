@@ -19,7 +19,7 @@ export const TokenDetails = ({
 }: {
   transactionStatusResponse?: TxStatusResponse;
 }) => {
-  const { destAsset, destAmount } = useTransactionHistoryItemFromUrlParams();
+  const { destAsset, destAmount, rawDestAmount } = useTransactionHistoryItemFromUrlParams();
   const { saveToClipboard, isCopied } = useClipboard();
 
   const skipChains = useAtomValue(skipChainsAtom);
@@ -42,14 +42,19 @@ export const TokenDetails = ({
 
   const receivedToken = useMemo(() => {
     if (destAsset) {
-      return `${formatDisplayAmount(destAmount)} ${destAsset?.recommendedSymbol ?? ''}`;
+      // Use already converted amount, or re-convert raw amount if needed
+      let finalAmount = destAmount;
+      if (!finalAmount && rawDestAmount && destAsset?.decimals) {
+        finalAmount = convertTokenAmountToHumanReadableAmount(rawDestAmount, destAsset.decimals);
+      }
+      return `${formatDisplayAmount(finalAmount)} ${destAsset?.recommendedSymbol ?? ''}`;
     }
 
     if (transactionStatusResponse?.transferAssetRelease?.released && transferAssetReleaseAsset) {
       return `${formatDisplayAmount(convertTokenAmountToHumanReadableAmount(transactionStatusResponse?.transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals), { decimals: 2 })} ${transferAssetReleaseAsset?.recommendedSymbol ?? ''}`;
     }
     
-  }, [destAmount, destAsset, transactionStatusResponse?.transferAssetRelease?.amount, transactionStatusResponse?.transferAssetRelease?.released, transferAssetReleaseAsset]);
+  }, [destAmount, rawDestAmount, destAsset, transactionStatusResponse?.transferAssetRelease?.amount, transactionStatusResponse?.transferAssetRelease?.released, transferAssetReleaseAsset]);
 
   const chainId = useMemo(() => {
     if (transactionStatusResponse?.transferAssetRelease?.chainId) {
