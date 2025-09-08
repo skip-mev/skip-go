@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.14.9
+
+### Patch Changes
+
+- cd93838: Update gasFeeTokenAmount for EVM to also check for 0x denoms
+
 ## 3.14.8
 
 ### Patch Changes
