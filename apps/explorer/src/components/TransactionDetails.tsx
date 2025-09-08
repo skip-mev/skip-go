@@ -30,9 +30,21 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
 
   const transaction = useMemo(() => {
     if (sourceAsset && destAsset) {
-      return `${formatDisplayAmount(sourceAmount, { decimals: 2, abbreviate: true })} ${sourceAsset?.symbol} → ${formatDisplayAmount(destAmount, { decimals: 2, abbreviate: true })} ${destAsset?.symbol}`
+      return (
+        <Row gap={5}>
+          <SmallText normalTextColor>{formatDisplayAmount(sourceAmount, { decimals: 2, abbreviate: true })} {sourceAsset?.symbol}</SmallText>
+          <SmallText>→</SmallText>
+          <SmallText normalTextColor>{formatDisplayAmount(destAmount, { decimals: 2, abbreviate: true })} {destAsset?.symbol}</SmallText>
+        </Row>
+      );  
     }
-    return `${chains?.at(0)?.prettyName} → ${chains?.at(-1)?.prettyName}`
+    return (
+      <Row gap={5}>
+        <SmallText normalTextColor>{chains?.at(0)?.prettyName}</SmallText>
+        <SmallText>→</SmallText>
+        <SmallText normalTextColor>{chains?.at(-1)?.prettyName}</SmallText>
+      </Row>
+    )
   }, [chains, destAmount, destAsset, sourceAmount, sourceAsset]);
   
   return (
