@@ -80,7 +80,7 @@ const StyledInput = styled.input<{
   font-size: ${(props) => (props.size === "normal" ? "24px" : "16px")};
 
   font-family: "ABCDiatype", sans-serif;
-  font-weight: 500;
+  font-weight: 400;
   ::placeholder {
     color: ${(props) => props.theme.primary.text.normal};
     font-weight: 500;
