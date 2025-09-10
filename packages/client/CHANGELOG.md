@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.5.6
+
+### Patch Changes
+
+- 58e6688: Fix passing affiliates to widget/client library via setClientOptions
+
 ## 1.5.5
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 ## 0.0.15
 
+## 3.14.10
+
+### Patch Changes
+
+- 58e6688: Fix passing affiliates to widget/client library via setClientOptions
+- f854996: Remove routePreference selector entirely if goFast:false is passed
+- 55c337b: Show extra message on mobile for bad price warning
+- Updated dependencies [58e6688]
+  - @skip-go/client@1.5.6
+
 ## 3.14.9
 
 ### Patch Changes
