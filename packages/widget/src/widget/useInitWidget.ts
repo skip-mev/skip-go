@@ -28,6 +28,7 @@ import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAsse
 import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
 import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
 import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
+import { RoutePreference } from "@/state/types";
 
 export const useInitWidget = (props: WidgetProps = {}) => {
   if (props.enableAmplitudeAnalytics) {
@@ -111,12 +112,6 @@ export const useInitWidget = (props: WidgetProps = {}) => {
   }, [getSigners, mergedSkipClientConfig, wallets.cosmos, wallets.svm?.walletName]);
 
   useEffect(() => {
-    if (props.settings) {
-      setSwapSettings((prev) => ({
-        ...prev,
-        ...props.settings,
-      }));
-    }
     if (props.routeConfig) {
       setRouteConfig((prev) => {
         return {
@@ -124,6 +119,16 @@ export const useInitWidget = (props: WidgetProps = {}) => {
           ...props.routeConfig,
         };
       });
+    }
+
+    if (props.settings) {
+      setSwapSettings((prev) => ({
+        ...prev,
+        ...props.settings,
+        ...(props.routeConfig?.goFast === false && {
+          routePreference: RoutePreference.CHEAPEST,
+        }),
+      }));
     }
     if (props.filter) {
       setFilter(props.filter);
