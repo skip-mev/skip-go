@@ -5,7 +5,7 @@ import { SmallText, SmallTextButton } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
 import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
-import { skipRouteAtom } from "@/state/route";
+import { routeConfigAtom, skipRouteAtom } from "@/state/route";
 import { Fragment, useMemo } from "react";
 import { getFeeList } from "@/utils/fees";
 import SlippageSelector from "@/modals/SwapSettingsDrawer/SlippageSelector";
@@ -19,6 +19,9 @@ export const SwapSettingsDrawer = createModal(() => {
   const theme = useTheme();
   const { data: route } = useAtomValue(skipRouteAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
+  const { goFast } = useAtomValue(routeConfigAtom);
+
+  const showRoutePreference = goFast !== false;
 
   const chainsRoute = useMemo(() => {
     return route?.chainIds?.map((chainId) => chains?.find((chain) => chain.chainId === chainId));
@@ -75,7 +78,7 @@ export const SwapSettingsDrawer = createModal(() => {
           ))}
         </Column>
       )}
-      <RoutePreferenceSelector />
+      {showRoutePreference && <RoutePreferenceSelector />}
       <SlippageSelector />
       <Row gap={10}>
         <SmallText
