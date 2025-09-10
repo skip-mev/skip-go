@@ -30,6 +30,8 @@ and we will help guide you through it to the extent we can.
    1. Use the `/info/chains` endpoint to query a list of actively supported chains: [/v2/info/chains](/api-reference/prod/info/get-v2infochains)  
    2. If the chain is not already supported, follow the instructions in [Chain Support Requirements](./chain-support-requirements) to request support  
    3. **_This is a pre-requisite_**
+
+    **Note:** We are unable to support tokens from a source chain that is not integrated with Skip Go. Skip Go requires direct integration with the source chain to query chain state and balances, submit and monitor transactions, calculate accurate gas fees and handle chain-specific token mechanics.
 3. Token metadata is available in a commonly used chain registry (e.g. [Cosmos Chain Registry](https://github.com/cosmos/chain-registry)) . Metadata should include at least:  
    1. Denom (programmatic string identifier)  
    2. Symbol (aka "ticker")  
