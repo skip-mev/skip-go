@@ -125,9 +125,9 @@ export const useInitWidget = (props: WidgetProps = {}) => {
       setSwapSettings((prev) => ({
         ...prev,
         ...props.settings,
-        ...(props.routeConfig?.goFast === false && {
-          routePreference: RoutePreference.CHEAPEST,
-        }),
+        ...(props.routeConfig?.goFast === false
+          ? { routePreference: RoutePreference.CHEAPEST }
+          : {}),
       }));
     }
     if (props.filter) {
