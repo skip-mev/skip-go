@@ -4,8 +4,8 @@ import {
 } from "@/utils/crypto";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { EVM_GAS_AMOUNT, sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { useAtom, useSetAtom } from "jotai";
+import { skipChainsAtom } from "@/state/skipClient";
 import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
 import { BigNumber } from "bignumber.js";
 import {
@@ -40,7 +40,6 @@ export const getEvmGasPriceEstimate = async (chainId?: string) => {
 };
 export const useGasFeeTokenAmount = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
-  const { data: skipAssets } = useAtomValue(skipAssetsAtom);
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
@@ -56,23 +55,19 @@ export const useGasFeeTokenAmount = () => {
     switch (chainType) {
       case ChainType.Evm: {
         const isFeeAsset =
-          (sourceAsset?.denom?.includes("-native") ||
-            sourceAsset?.denom?.includes("0x0000000000000000000000000000000000000000")) &&
+          sourceAsset?.denom?.includes("-native") &&
           sourceAsset?.originChainId === sourceAsset?.chainId;
 
         if (isFeeAsset) {
-          const nativeAsset = skipAssets?.find(
-            (asset) =>
-              sourceAsset?.originChainId === sourceAsset?.chainId &&
-              asset.denom?.includes("-native"),
-          );
-
-          const gasPriceEstimate = await getEvmGasPriceEstimate(sourceAsset?.chainId ?? "");
-          if (!gasPriceEstimate) {
-            return convertHumanReadableAmountToCryptoAmount(0.0008, nativeAsset?.decimals);
+          const result = await getEvmGasPriceEstimate(sourceAsset?.chainId ?? "");
+          if (!result) {
+            return convertHumanReadableAmountToCryptoAmount(0.0008, sourceDetails?.asset?.decimals);
           }
+          const gasFeeEstimate = BigNumber(EVM_GAS_AMOUNT).multipliedBy(result);
 
-          return BigNumber(EVM_GAS_AMOUNT).multipliedBy(gasPriceEstimate).toString();
+          if (gasFeeEstimate.isGreaterThan(0)) {
+            return gasFeeEstimate.toString();
+          }
         }
 
         return 0;
@@ -87,10 +82,10 @@ export const useGasFeeTokenAmount = () => {
   }, [
     chainType,
     cosmosFeeUsed,
-    skipAssets,
     sourceAsset?.chainId,
     sourceAsset?.denom,
     sourceAsset?.originChainId,
+    sourceDetails?.asset?.decimals,
   ]);
 
   const { data: gasFeeTokenAmount } = useQuery({
