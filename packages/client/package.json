@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/client",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "1.5.5",
+  "version": "1.5.6",
   "repository": "https://github.com/skip-mev/skip-go",
   "type": "module",
   "main": "./dist/cjs/index.cjs",
