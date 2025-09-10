@@ -478,7 +478,8 @@ export default function Home() {
                   key={transfer.chainId}
                   fallback={
                     <ErrorCard
-                      errorMessage={ErrorMessages.TRANSFER_EVENT_ERROR}
+                      errorTitle={ErrorMessages.TRANSFER_EVENT_ERROR}
+                      errorMessage={transactionStatuses.map(status => status.error?.message).join("")}
                       padding="20px 45px"
                       onRetry={() => onSearch()}
                     />
@@ -501,15 +502,16 @@ export default function Home() {
     }
     if (errorDetails) {
       return (
-        <Column width={355} align="flex-end" gap={10}>
+        <StyledColumns align="flex-end" gap={10}>
           <GhostButton gap={5} onClick={showRawDataModal}>
             View raw data <HamburgerIcon />
           </GhostButton>
           <ErrorCard
-            errorMessage={errorDetails.errorMessage}
+            errorTitle={ErrorMessages.TRANSACTION_ERROR}
+            errorMessage={transactionStatuses.map(status => status.error?.message).join("")}
             onRetry={() => onSearch()}
           />
-        </Column>
+        </StyledColumns>
       )
     }
     if (transactionStatusResponse?.state === "STATE_COMPLETED_SUCCESS") {
@@ -580,7 +582,7 @@ export default function Home() {
       return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
     }
     return;
-  }, [transfersToShow, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, onReindex, onSearch, sourceAsset?.chainId, operations, destAsset?.chainId]);
+  }, [transfersToShow, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, transactionStatuses, onSearch, onReindex, sourceAsset?.chainId, operations, destAsset?.chainId]);
 
   return (
     <Column width="100%" align="center">

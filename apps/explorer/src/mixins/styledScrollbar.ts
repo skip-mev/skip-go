@@ -1,8 +1,6 @@
 import { css } from "@/styled-components";
 
 export const styledScrollbar = (showScrollbar: boolean = false) => css`
-  scrollbar-gutter: stable both-edges;
-
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
 
