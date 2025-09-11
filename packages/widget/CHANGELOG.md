@@ -1,5 +1,15 @@
 ## 0.0.15
 
+## 3.14.11
+
+### Patch Changes
+
+- 0c598dd: Update keplr icon
+- e55abae: Fix showing error even if statusData is undefined
+- a66d014: Fix showing error even if statusData is undefined
+- Updated dependencies [8dfa5c6]
+  - @skip-go/client@1.5.7
+
 ## 3.14.10
 
 ### Patch Changes
