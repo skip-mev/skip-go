@@ -1,7 +1,7 @@
 import { Container } from "@/components/Container";
 import { Column, Row } from "@/components/Layout";
 import { DetailsRow } from "./TransactionDetails";
-import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "@/jotai";
 import Image from "next/image";
 import { SmallText } from "@/components/Typography";
@@ -11,8 +11,8 @@ import { convertTokenAmountToHumanReadableAmount, getTruncatedAddress } from "@/
 import { useClipboard } from "@/hooks/useClipboard";
 import { useMemo } from "react";
 import { TxStatusResponse } from "@skip-go/client";
-import { transformHexToMoveDenom } from "../utils/denomUtils";
 import { styled } from "@/styled-components";
+import { useGetTransferAssetReleaseAsset } from "../hooks/useGetTransferAssetReleaseAsset";
 
 export const TokenDetails = ({
   transactionStatusResponse,
@@ -23,13 +23,8 @@ export const TokenDetails = ({
   const { saveToClipboard, isCopied } = useClipboard();
 
   const skipChains = useAtomValue(skipChainsAtom);
-  const skipAssets = useAtomValue(skipAssetsAtom);
 
-  const transferAssetReleaseAsset = skipAssets?.data?.find((asset) =>
-    asset.chainId === transactionStatusResponse?.transferAssetRelease?.chainId &&
-    (asset.denom === transactionStatusResponse?.transferAssetRelease?.denom ||
-      asset.denom === transformHexToMoveDenom(transactionStatusResponse?.transferAssetRelease?.denom)
-      ));
+  const transferAssetReleaseAsset = useGetTransferAssetReleaseAsset(transactionStatusResponse?.transferAssetRelease);
 
   const receivedAsset = useMemo(() => {
     if (transactionStatusResponse?.transferAssetRelease?.released) {
