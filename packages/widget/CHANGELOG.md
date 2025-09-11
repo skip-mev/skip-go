@@ -1,5 +1,35 @@
 ## 0.0.15
 
+## 3.14.10
+
+### Patch Changes
+
+- 58e6688: Fix passing affiliates to widget/client library via setClientOptions
+- f854996: Remove routePreference selector entirely if goFast:false is passed
+- 55c337b: Show extra message on mobile for bad price warning
+- Updated dependencies [58e6688]
+  - @skip-go/client@1.5.6
+
+## 3.14.9
+
+### Patch Changes
+
+- cd93838: Update gasFeeTokenAmount for EVM to also check for 0x denoms
+
+## 3.14.8
+
+### Patch Changes
+
+- c860b8a: Fix display of operation type in detailed view
+- bbbeda4: Fix formatDisplayAmount logic
+- e7030f0: Add caching assets, chains, bridges, venues for faster subsequent pageload on slower internet speeds
+- 5611da4: Remove gas station logic
+- f84c866: Map LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE transferState as "pending"
+- Updated dependencies [c8ad02e]
+- Updated dependencies [5611da4]
+- Updated dependencies [f84c866]
+  - @skip-go/client@1.5.5
+
 ## 3.14.7
 
 ### Patch Changes

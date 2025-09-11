@@ -18,7 +18,7 @@ import { getTransferTypeLabel } from "./Bridge";
 import { CoinsIcon } from "../icons/CoinsIcon";
 import { Tooltip } from "@/components/Tooltip";
 import { useClipboard } from "@/hooks/useClipboard";
-import { transformHexToMoveDenom } from "../utils/denomUtils";
+import { useGetTransferAssetReleaseAsset } from "../hooks/useGetTransferAssetReleaseAsset";
 
 export type Step = "Origin" | "Routed" | "Destination";
 
@@ -62,10 +62,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
 
   const showTransferAssetRelease = transferAssetRelease && step !== "Destination";
 
-  const transferAssetReleaseAsset = skipAssets?.data?.find((asset) =>
-    asset.chainId === transferAssetRelease?.chainId &&
-    (asset.denom === transferAssetRelease?.denom ||
-      asset.denom === transformHexToMoveDenom(transferAssetRelease?.denom)));
+  const transferAssetReleaseAsset = useGetTransferAssetReleaseAsset(transferAssetRelease);
 
   const renderStatusBadge = useMemo(() => {
     if (stateAbandoned) {

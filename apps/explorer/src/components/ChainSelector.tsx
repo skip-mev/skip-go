@@ -37,7 +37,7 @@ export const ChainSelector = ({
             <StyledText size={size}>{selectedChain.prettyName}</StyledText>
           </StyledSelectedRow>
         ) : (
-          <StyledText size={size} fontSize={size === "normal" ? 24 : 16 } color={theme.primary.text.lowContrast}>Select Chain</StyledText>
+          <StyledText size={size} fontSize={size === "normal" ? 24 : 16 } color={theme.primary.text.lowContrast}>Source Chain</StyledText>
         )}
       </Row>
       <ChevronIcon noBackground width={18} color={theme.primary.text.lowContrast} />

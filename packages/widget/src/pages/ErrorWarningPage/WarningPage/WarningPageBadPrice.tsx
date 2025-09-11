@@ -10,6 +10,7 @@ import { useMemo } from "react";
 import { RouteResponse } from "@skip-go/client";
 import { PageHeader } from "@/components/PageHeader";
 import { styled } from "styled-components";
+import { isMobile } from "@/utils/os";
 
 export type WarningPageBadPriceProps = {
   onClickContinue: () => void;
@@ -64,11 +65,18 @@ export const WarningPageBadPrice = ({
         title: `Warning: Bad trade (-${swapDifferencePercentage})`,
         descriptionContent: (
           <StyledDescriptionContent>
+            {isMobile() && (
+              <>
+                You may get a better quote on desktop because 2 tx routes are disabled on mobile
+                <br />
+              </>
+            )}
             You will lose {swapDifferencePercentage} of your input value with this trade
             <br />
             Input: {sourceDetails?.amount} {sourceDetails?.symbol} (${usdAmountIn})
             <br />
-            Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} (${usdAmountOut})
+            Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} ($
+            {usdAmountOut})
           </StyledDescriptionContent>
         ),
       };
@@ -157,4 +165,4 @@ export const WarningPageBadPrice = ({
 
 const StyledDescriptionContent = styled.div`
   line-height: 1.5;
-`
+`;
