@@ -26,6 +26,7 @@ export async function getCosmosGasAmountForMessage(
     chainId.includes("evmos") ||
     chainId.includes("injective") ||
     chainId.includes("dymension") ||
+    chainId.includes("sunrise-1") ||
     process?.env.NODE_ENV === "test"
   ) {
     if (messages?.find((i) => i.msgTypeUrl === "/cosmwasm.wasm.v1.MsgExecuteContract")) {
