@@ -513,6 +513,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
         console.error(error);
         const currentTransaction = get(currentTransactionAtom);
         submitSwapExecutionCallbacks?.onError?.(error, currentTransaction?.transactionDetails);
+        throw error;
       }
       return null;
     },
