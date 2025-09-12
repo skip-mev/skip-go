@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.5.7
+
+### Patch Changes
+
+- 8dfa5c6: include sunrise-1 in hard-coded cosmosGas fees
+
 ## 1.5.6
 
 ### Patch Changes

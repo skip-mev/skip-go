@@ -104,7 +104,9 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
   ]);
 
   useEffect(() => {
-    if (statusData?.status === "failed" || statusData?.status === "incomplete") {
+    if (error) {
+      handleTransactionFailed();
+    } else if (statusData?.status === "failed" || statusData?.status === "incomplete") {
       const timeout = setTimeout(() => {
         handleTransactionFailed();
       }, DELAY_EXPECTING_TRANSFER_ASSET_RELEASE);
@@ -115,5 +117,11 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
       }
       return () => clearTimeout(timeout);
     }
-  }, [statusData?.transferAssetRelease, handleTransactionFailed, statusData?.status, statusData]);
+  }, [
+    statusData?.transferAssetRelease,
+    handleTransactionFailed,
+    statusData?.status,
+    statusData,
+    error,
+  ]);
 };
