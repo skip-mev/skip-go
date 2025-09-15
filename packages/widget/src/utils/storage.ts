@@ -224,14 +224,14 @@ export const getNumberOfHistoryItemsToEvict = () => {
   }
 
   const totalSizeInKB = totalSize / 1024;
+  const transactionHistorySizeInKB = transactionHistorySize / 1024;
   const storageLimitInKB = 4_000;
 
   let itemsToRemove = 0;
 
   if (totalSizeInKB > storageLimitInKB && transactionHistoryItemCount > 0) {
     const excessSizeInKB = totalSizeInKB - storageLimitInKB;
-    const averageItemSizeInKB = transactionHistorySize / transactionHistoryItemCount;
-
+    const averageItemSizeInKB = transactionHistorySizeInKB / transactionHistoryItemCount;
     itemsToRemove = Math.ceil(excessSizeInKB / averageItemSizeInKB);
     itemsToRemove = Math.min(itemsToRemove, transactionHistoryItemCount);
   }
