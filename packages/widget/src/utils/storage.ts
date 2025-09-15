@@ -1,3 +1,4 @@
+import { LOCAL_STORAGE_KEYS } from "@/state/localStorageKeys";
 import { atomWithStorage } from "jotai/utils";
 import type { SyncStorage } from "jotai/vanilla/utils/atomWithStorage";
 
@@ -210,7 +211,7 @@ export const getNumberOfHistoryItemsToEvict = () => {
     totalSize += itemSize;
 
     // Track transaction history specifically
-    if (key === "transactionHistory" && value) {
+    if (key === LOCAL_STORAGE_KEYS.transactionHistory && value) {
       try {
         const history = JSON.parse(value);
         if (Array.isArray(history)) {
