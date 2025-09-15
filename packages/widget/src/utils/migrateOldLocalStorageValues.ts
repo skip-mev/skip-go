@@ -55,9 +55,9 @@ export const migrateOldLocalStorageValues = () => {
     }
   });
 
-  evictOldHistoryItems();
   updateHistoryFromCamelCaseToRouteDetails();
   updateHistoryFromRouteDetailsToUserAddresses();
+  evictOldHistoryItems();
 };
 
 export function toCamelCase<T extends object>(obj: T) {
