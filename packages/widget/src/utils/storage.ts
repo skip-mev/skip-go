@@ -224,7 +224,7 @@ export const getNumberOfHistoryItemsToEvict = () => {
   }
 
   const totalSizeInKB = totalSize / 1024;
-  const storageLimitInKB = 3_000;
+  const storageLimitInKB = 4_000;
 
   let itemsToRemove = 0;
 
