@@ -8,6 +8,7 @@ import {
   TransactionHistoryItem,
 } from "./updateHistoryVersion/updateHistoryFromCamelCaseToRouteDetails";
 import { updateHistoryFromRouteDetailsToUserAddresses } from "./updateHistoryVersion/updateHistoryFromRouteDetailsToUserAddresses";
+import { evictOldHistoryItems } from "./updateHistoryVersion/evictOldHistoryItems";
 
 export const migrateOldLocalStorageValues = () => {
   if (typeof window === "undefined") return;
@@ -54,6 +55,7 @@ export const migrateOldLocalStorageValues = () => {
     }
   });
 
+  evictOldHistoryItems();
   updateHistoryFromCamelCaseToRouteDetails();
   updateHistoryFromRouteDetailsToUserAddresses();
 };

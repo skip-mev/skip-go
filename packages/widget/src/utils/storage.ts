@@ -194,3 +194,103 @@ export function createIndexedDBStorage(options: IndexedDBStorageOptions) {
     clear: () => clearIndexedDB(options),
   };
 }
+
+export const getNumberOfHistoryItemsToEvict = () => {
+  let totalSize = 0;
+  let transactionHistorySize = 0;
+  let transactionHistoryItemCount = 0;
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i) ?? "";
+    const value = localStorage.getItem(key);
+    // Each character in a JavaScript string is 2 bytes when stored in UTF-16,
+    // which is commonly used in browser storage.
+    // We also account for the key's length.
+    const itemSize = (key.length + (value?.length ?? 0)) * 2;
+    totalSize += itemSize;
+
+    if (key === "transactionHistory" && value) {
+      try {
+        const history = JSON.parse(value);
+        if (Array.isArray(history)) {
+          transactionHistoryItemCount = history.length;
+          transactionHistorySize = itemSize;
+        }
+      } catch {
+        console.warn(`Failed to parse transaction history: ${value}`);
+      }
+    }
+  }
+
+  const totalSizeInKB = totalSize / 1024;
+  const storageLimitInKB = 3_000;
+
+  let itemsToRemove = 0;
+
+  if (totalSizeInKB > storageLimitInKB && transactionHistoryItemCount > 0) {
+    const excessSizeInKB = totalSizeInKB - storageLimitInKB;
+    const averageItemSizeInKB = transactionHistorySize / transactionHistoryItemCount;
+
+    itemsToRemove = Math.ceil(excessSizeInKB / averageItemSizeInKB);
+    itemsToRemove = Math.min(itemsToRemove, transactionHistoryItemCount);
+  }
+
+  return itemsToRemove;
+};
+
+/**
+ * Calculates the estimated maximum number of history items that can be stored
+ * based on the current storage limit and average item size.
+ * @returns estimated max number of history items
+ */
+export const getEstimatedMaxHistoryItems = (): number => {
+  let totalSize = 0;
+  let transactionHistorySize = 0;
+  let transactionHistoryItemCount = 0;
+  let otherStorageSize = 0;
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i) ?? "";
+    const value = localStorage.getItem(key);
+    const itemSize = (key.length + (value?.length ?? 0)) * 2;
+    totalSize += itemSize;
+
+    if (key === "transactionHistory" && value) {
+      try {
+        const history = JSON.parse(value);
+        if (Array.isArray(history)) {
+          transactionHistoryItemCount = history.length;
+          transactionHistorySize = itemSize;
+        }
+      } catch {
+        console.warn(`Failed to parse transaction history: ${value}`);
+      }
+    } else {
+      // Track non-transaction history storage
+      otherStorageSize += itemSize;
+    }
+  }
+
+  const storageLimitInKB = 3_000;
+  const otherStorageSizeInKB = otherStorageSize / 1024;
+  const availableForHistoryInKB = storageLimitInKB - otherStorageSizeInKB;
+
+  // If we have existing transaction history, use its average item size
+  let averageItemSizeInKB = 0;
+  if (transactionHistoryItemCount > 0) {
+    averageItemSizeInKB = (transactionHistorySize / 1024) / transactionHistoryItemCount;
+  } else {
+    // Estimate based on typical RouteDetails size (5-10KB per item)
+    averageItemSizeInKB = 7.5; // Conservative estimate
+  }
+
+  const estimatedMaxItems = Math.floor(availableForHistoryInKB / averageItemSizeInKB);
+  
+  console.log(`Storage limit: ${storageLimitInKB} KB`);
+  console.log(`Other storage usage: ${otherStorageSizeInKB.toFixed(2)} KB`);
+  console.log(`Available for history: ${availableForHistoryInKB.toFixed(2)} KB`);
+  console.log(`Average item size: ${averageItemSizeInKB.toFixed(2)} KB`);
+  console.log(`Estimated max history items: ${estimatedMaxItems}`);
+
+  return Math.max(0, estimatedMaxItems);
+};
