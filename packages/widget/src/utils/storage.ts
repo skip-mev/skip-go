@@ -210,7 +210,6 @@ export const getNumberOfHistoryItemsToEvict = () => {
     const itemSize = (key.length + (value?.length ?? 0)) * 2;
     totalSize += itemSize;
 
-    // Track transaction history specifically
     if (key === LOCAL_STORAGE_KEYS.transactionHistory && value) {
       try {
         const history = JSON.parse(value);
