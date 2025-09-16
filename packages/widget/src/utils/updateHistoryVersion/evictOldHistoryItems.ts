@@ -13,7 +13,7 @@ export const evictOldHistoryItems = () => {
     const transactionHistory: RouteDetails[] = JSON.parse(
       localStorage.getItem(LOCAL_STORAGE_KEYS.transactionHistory) ?? "[]",
     );
-    if (!transactionHistory || transactionHistory.length === 0) {
+    if (!transactionHistory || transactionHistory?.length === 0) {
       return;
     }
 
