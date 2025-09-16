@@ -55,9 +55,7 @@ export const setTransactionHistoryAtom = atom(
 
     const index = history.findIndex((item) => item.id === historyItem.id);
 
-    const newHistory = [...history]
-      .sort((a, b) => b.timestamp - a.timestamp)
-      .slice(0, TRANSACTION_HISTORY_LIMIT);
+    const newHistory = [...history];
 
     if (index !== -1) {
       const oldItem = newHistory[index];
@@ -71,7 +69,11 @@ export const setTransactionHistoryAtom = atom(
       }
     }
 
-    set(transactionHistoryAtom, newHistory);
+    const sortedHistory = newHistory
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, TRANSACTION_HISTORY_LIMIT);
+
+    set(transactionHistoryAtom, sortedHistory);
   },
 );
 
