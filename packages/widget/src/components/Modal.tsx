@@ -33,6 +33,7 @@ export const Modal = ({
 }: ModalProps) => {
   const [prevOverflowStyle, setPrevOverflowStyle] = useState<string>("");
   const modalRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const modal = useModal();
   const [wasVisible, setWasVisible] = useState<boolean>();
   const disableShadowDom = useAtomValue(disableShadowDomAtom);
@@ -58,7 +59,7 @@ export const Modal = ({
 
     const handleClickOutside = (event: MouseEvent) => {
       if (disableCloseOnClickOutside) return;
-      if (modalRef.current !== event.target && modal.visible) {
+      if (overlayRef.current === event.target && modal.visible) {
         modal.hide();
       }
     };
@@ -93,6 +94,7 @@ export const Modal = ({
   return createPortal(
     <ShadowDomAndProviders theme={theme}>
       <StyledOverlay
+        ref={overlayRef}
         drawer={drawer}
         open={modal.visible}
         data-root-id={rootId}

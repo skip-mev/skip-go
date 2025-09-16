@@ -27,6 +27,8 @@ import { migrateOldLocalStorageValues } from "@/utils/migrateOldLocalStorageValu
 import { EVMProvider } from "@/providers/EVMProvider";
 import { CosmosProvider } from "@/providers/CosmosProvider";
 import { SolanaProvider } from "@/providers/SolanaProvider";
+import { ParaGrazConfig } from "@getpara/graz-integration";
+import ParaWeb, { Environment } from "@getpara/react-sdk-lite";
 
 export type WidgetRouteConfig = RouteRequest & Pick<MessagesRequest, "timeoutSeconds">;
 
@@ -109,6 +111,14 @@ export const Widget = (props: WidgetProps) => {
   );
 };
 
+export const para = new ParaWeb(Environment.BETA, "beta_78b0d3884fb3e56ba999b9bc034b25bc");
+
+const paraConfig: ParaGrazConfig = {
+  paraWeb: para,
+  modalProps: { appName: "Your App Name" }, // Customize modal appearance. Learn more at https://docs.getpara.com/v2/react/guides/customization/modal
+  queryClient, // Share with the internal ParaProvider
+};
+
 export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
   const { theme } = useInitWidget(props);
   const setRootId = useSetAtom(rootIdAtom);
@@ -118,7 +128,7 @@ export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
     <ShadowDomAndProviders theme={theme}>
       <EVMProvider>
         <QueryClientProvider client={queryClient} key={"skip-widget"}>
-          <CosmosProvider>
+          <CosmosProvider paraConfig={paraConfig}>
             <SolanaProvider>
               <NiceModal.Provider>
                 <WidgetWrapper>

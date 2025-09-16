@@ -66,6 +66,7 @@ export const useCreateCosmosWallets = () => {
 
       for (const wallet of cosmosWallets) {
         const isWC = isWalletConnect(wallet);
+        const isPara = wallet === WalletType.PARA;
         const mobile = isMobile();
         const walletInfo = getCosmosWalletInfo(wallet);
         const initialChainIds = filterValidChainIds(
@@ -82,7 +83,7 @@ export const useCreateCosmosWallets = () => {
               const chainInfo = getChainInfo(chainIdToConnect);
               if (!chainInfo)
                 throw new Error(`connect: Chain info not found for chainId: ${chainId}`);
-              if (!mobile && !isWC) {
+              if (!mobile && !isWC && !isPara) {
                 await getWallet(wallet).experimentalSuggestChain(chainInfo);
               }
             }
@@ -337,6 +338,7 @@ const getAvailableWallets = () => {
     WalletType.STATION,
     WalletType.VECTIS,
     WalletType.WALLETCONNECT,
+    WalletType.PARA,
   ];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (typeof window !== "undefined" && window.keplr && (window?.keplr as any).isOkxWallet) {

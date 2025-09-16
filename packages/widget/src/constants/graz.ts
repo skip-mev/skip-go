@@ -112,6 +112,11 @@ export const walletInfo: Record<
     mobile?: boolean;
   }
 > = {
+  [WalletType.PARA]: {
+    name: "Para",
+    imgSrc:
+      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-para.png",
+  },
   [WalletType.OKX]: {
     name: "OKX",
     imgSrc:

@@ -25,7 +25,8 @@
     "update-registries": "yarn up @initia/initia-registry chain-registry",
     "test": "yarn playwright test",
     "update-screenshots": "UPDATE_SCREENSHOTS=true yarn playwright test Keplr.test.tsx",
-    "combine-images": "node scripts/combine-images.mjs"
+    "combine-images": "node scripts/combine-images.mjs",
+    "postinstall": "npx setup-para"
   },
   "exports": {
     ".": {
@@ -64,6 +65,7 @@
     "@vitejs/plugin-react": "^4.3.1",
     "buffer": "^6.0.3",
     "chain-registry": "^2.0.43",
+    "crypto-browserify": "3.12.1",
     "download": "^8.0.0",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
@@ -81,8 +83,10 @@
     "raw-loader": "^4.0.2",
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0",
+    "readable-stream": "4.7.0",
     "starknet": "6.11.0",
     "storybook": "^8.2.6",
+    "stream-browserify": "3.0.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.2.0",
@@ -111,6 +115,8 @@
     "@cosmjs/stargate": "0.33.1",
     "@ebay/nice-modal-react": "^1.2.13",
     "@eslint/compat": "^1.1.1",
+    "@getpara/graz-integration": "2.0.0-alpha.51",
+    "@getpara/react-sdk-lite": "2.0.0-alpha.51",
     "@penumbra-zone/bech32m": "^13.0.0",
     "@penumbra-zone/client": "^24.0.0",
     "@penumbra-zone/protobuf": "^7.2.0",
@@ -128,7 +134,7 @@
     "@walletconnect/solana-adapter": "^0.0.8",
     "add": "^2.0.6",
     "bech32": "^2.0.0",
-    "graz": "0.3.3",
+    "graz": "0.3.4-alpha.0",
     "jotai": "^2.10.1",
     "jotai-effect": "^1.0.2",
     "jotai-tanstack-query": "^0.8.6",
@@ -144,5 +150,14 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "overrides": {
+    "readable-stream": "^3.6.2",
+    "browserify-sign": {
+      "readable-stream": "^3.6.2"
+    },
+    "crypto-browserify": {
+      "readable-stream": "^3.6.2"
+    }
   }
 }
