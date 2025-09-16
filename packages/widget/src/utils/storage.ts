@@ -1,4 +1,3 @@
-import { LOCAL_STORAGE_KEYS } from "@/state/localStorageKeys";
 import { atomWithStorage } from "jotai/utils";
 import type { SyncStorage } from "jotai/vanilla/utils/atomWithStorage";
 
