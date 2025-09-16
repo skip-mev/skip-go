@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-Add localStorage/transaction history item eviction strategy
+Add logic to cap number of history items to 400
