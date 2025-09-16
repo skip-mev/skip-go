@@ -10,6 +10,8 @@ export enum HISTORY_VERSION {
   "userAddresses",
 }
 
+export const TRANSACTION_HISTORY_LIMIT = 400;
+
 export const transactionHistoryVersionAtom = atomWithStorage<number | undefined>(
   LOCAL_STORAGE_KEYS.transactionHistoryVersion,
   undefined,
@@ -67,7 +69,11 @@ export const setTransactionHistoryAtom = atom(
       }
     }
 
-    set(transactionHistoryAtom, newHistory);
+    const sortedHistory = newHistory
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, TRANSACTION_HISTORY_LIMIT);
+
+    set(transactionHistoryAtom, sortedHistory);
   },
 );
 
