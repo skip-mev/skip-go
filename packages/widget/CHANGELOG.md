@@ -1,5 +1,14 @@
 ## 0.0.15
 
+## 3.14.12
+
+### Patch Changes
+
+- a266ea2: update registries
+- 2c0ec19: Limit the number of history items to 400
+- Updated dependencies [a266ea2]
+  - @skip-go/client@1.5.8
+
 ## 3.14.11
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.5.8
+
+### Patch Changes
+
+- a266ea2: update registries
+
 ## 1.5.7
 
 ### Patch Changes
