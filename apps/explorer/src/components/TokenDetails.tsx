@@ -41,7 +41,10 @@ export const TokenDetails = ({
     }
 
     if (transactionStatusResponse?.transferAssetRelease?.released && transferAssetReleaseAsset) {
-      return `${formatDisplayAmount(convertTokenAmountToHumanReadableAmount(transactionStatusResponse?.transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals), { decimals: 2 })} ${transferAssetReleaseAsset?.recommendedSymbol ?? ''}`;
+      const convertedAmount = transactionStatusResponse?.transferAssetRelease?.amount && transferAssetReleaseAsset?.decimals !== undefined 
+        ? convertTokenAmountToHumanReadableAmount(transactionStatusResponse.transferAssetRelease.amount, transferAssetReleaseAsset.decimals)
+        : transactionStatusResponse?.transferAssetRelease?.amount || '';
+      return `${formatDisplayAmount(convertedAmount, { decimals: 2 })} ${transferAssetReleaseAsset?.recommendedSymbol ?? ''}`;
     }
     
   }, [destAmount, destAsset, transactionStatusResponse?.transferAssetRelease?.amount, transactionStatusResponse?.transferAssetRelease?.released, transferAssetReleaseAsset]);
