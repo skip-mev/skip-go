@@ -107,10 +107,16 @@ export const formatDisplayAmount = (
         if (formattedNumber >= 1000) {
           const next = scales[i - 1];
           formattedNumber = Number((num / next.value).toFixed(2));
-          return `${formattedNumber.toString().replace(/\.?0+$/, "")}${next.symbol}`;
+          return `${formattedNumber
+            .toString()
+            .replace(/(\.\d*?[1-9])0+$/, "$1")
+            .replace(/\.0+$/, "")}${next.symbol}`;
         }
 
-        return `${formattedNumber.toString().replace(/\.?0+$/, "")}${symbol}`;
+        return `${formattedNumber
+          .toString()
+          .replace(/(\.\d*?[1-9])0+$/, "$1")
+          .replace(/\.0+$/, "")}${symbol}`;
       }
     }
   }
