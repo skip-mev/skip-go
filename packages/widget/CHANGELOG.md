@@ -1,5 +1,16 @@
 ## 0.0.15
 
+## 3.14.12
+
+### Patch Changes
+
+- a266ea2: update registries
+- cabf9f4: fix abbreviate formatting
+- 2c0ec19: Limit the number of history items to 400
+- 8e5fdc9: Add modalZIndex Prop to specify custom z-index on all modals
+- Updated dependencies [a266ea2]
+  - @skip-go/client@1.5.8
+
 ## 3.14.11
 
 ### Patch Changes
