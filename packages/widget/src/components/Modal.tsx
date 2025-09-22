@@ -7,7 +7,7 @@ import { PartialTheme } from "@/widget/theme";
 import { ErrorBoundary } from "react-error-boundary";
 import { useAtomValue, useSetAtom } from "jotai";
 import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
-import { rootIdAtom, themeAtom } from "@/state/skipClient";
+import { rootIdAtom, themeAtom, modalZIndexAtom } from "@/state/skipClient";
 import { createPortal } from "react-dom";
 import { Column } from "./Layout";
 import { Container } from "./Container";
@@ -37,6 +37,7 @@ export const Modal = ({
   const [wasVisible, setWasVisible] = useState<boolean>();
   const disableShadowDom = useAtomValue(disableShadowDomAtom);
   const rootId = useAtomValue(rootIdAtom);
+  const modalZIndex = useAtomValue(modalZIndexAtom);
 
   const handleModalWheel = (event: React.WheelEvent) => {
     event.stopPropagation();
@@ -97,6 +98,7 @@ export const Modal = ({
         open={modal.visible}
         data-root-id={rootId}
         blurBackground={blurBackground}
+        modalZIndex={modalZIndex}
         onWheel={handleModalWheel}
         onAnimationEnd={() => {
           if (!modal.visible) {
@@ -112,6 +114,7 @@ export const Modal = ({
           ref={modalRef}
           drawer={drawer}
           open={modal.visible}
+          modalZIndex={modalZIndex}
           onClick={(e) => e.stopPropagation()}
         >
           {children}
@@ -212,6 +215,7 @@ const StyledOverlay = styled.div<{
   drawer?: boolean;
   open?: boolean;
   blurBackground?: boolean;
+  modalZIndex?: number;
 }>`
   background: rgba(0 0 0 / 0.5);
   ${({ blurBackground }) =>
@@ -226,7 +230,7 @@ const StyledOverlay = styled.div<{
   bottom: 0;
   display: grid;
   place-items: center;
-  z-index: 10;
+  z-index: ${({ modalZIndex }) => modalZIndex ?? 10};
   animation: ${({ open }) => (open ? fadeIn : fadeOut)} 150ms ease-in-out forwards;
 
   /* For Chrome */
@@ -261,6 +265,7 @@ const StyledOverlay = styled.div<{
 const StyledContent = styled.div<{
   drawer?: boolean;
   open?: boolean;
+  modalZIndex?: number;
 }>`
   max-width: 600px;
   width: 100%;
@@ -268,7 +273,7 @@ const StyledContent = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: ${({ modalZIndex }) => (modalZIndex ?? 10) + 90};
   animation: ${({ drawer, open }) =>
       open
         ? drawer
