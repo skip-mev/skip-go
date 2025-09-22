@@ -66,6 +66,7 @@ const DevMode = () => {
           "1": ["0xbf45a5029d081333407cc52a84be5ed40e181c46"],
         },
       },
+      modalZIndex: 100,
       onSourceAndDestinationSwapped(props) {
         console.log("onSourceAndDestinationSwapped", props);
       },
