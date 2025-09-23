@@ -20,6 +20,8 @@ export const rootIdAtom = atom<string | undefined>(undefined);
 
 export const themeAtom = atom<Theme>(defaultTheme);
 
+export const modalZIndexAtom = atom<number>(10);
+
 export type ClientAsset = Asset & {
   chain_key: string;
   chainName: string;

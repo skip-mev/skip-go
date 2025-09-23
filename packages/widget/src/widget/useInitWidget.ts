@@ -4,6 +4,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import {
   skipClientConfigAtom,
   themeAtom,
+  modalZIndexAtom,
   defaultSkipClientConfig,
   onlyTestnetsAtom,
 } from "@/state/skipClient";
@@ -40,6 +41,7 @@ export const useInitWidget = (props: WidgetProps = {}) => {
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
+  const setModalZIndex = useSetAtom(modalZIndexAtom);
   const setSwapSettings = useSetAtom(swapSettingsAtom);
   const setRouteConfig = useSetAtom(routeConfigAtom);
   const setFilter = useSetAtom(filterAtom);
@@ -119,6 +121,10 @@ export const useInitWidget = (props: WidgetProps = {}) => {
           ...props.routeConfig,
         };
       });
+    }
+
+    if (props.modalZIndex) {
+      setModalZIndex(props.modalZIndex);
     }
 
     if (props.settings) {
@@ -222,6 +228,8 @@ export const useInitWidget = (props: WidgetProps = {}) => {
     props.batchSignTxs,
     setBatchSignTxs,
     props.onTransactionSignRequested,
+    props.modalZIndex,
+    setModalZIndex,
   ]);
 
   return { theme: mergedTheme };

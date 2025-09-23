@@ -86,6 +86,11 @@ export type WidgetProps = {
   assetSymbolsSortedToTop?: string[];
   hideAssetsUnlessWalletTypeConnected?: boolean;
   batchSignTxs?: boolean;
+  /**
+   * Custom z-index for modals. If not provided, defaults to 10
+   * @default 10
+   */
+  modalZIndex?: number;
 } & SkipClientOptions &
   Callbacks &
   SignerGetters &
