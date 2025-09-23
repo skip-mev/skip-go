@@ -166,11 +166,11 @@ Terms Accepted: Yes
           setSubmitMessage('Please enter a valid email address.');
         }
       } else {
-        setSubmitMessage(`Failed to submit request (Error ${response.status}). Please try again later.`);
+        setSubmitMessage(`Failed to submit request (Error ${response.status}). Please try again or contact us on our Interchain Discord if the issue persists.`);
       }
     } catch (error) {
       console.error('Form submission error:', error);
-      setSubmitMessage('Network error occurred. Please try again later.');
+      setSubmitMessage('Network error occurred. Please try again or contact us on our Interchain Discord if the issue persists.');
     }
 
     setIsSubmitting(false);
