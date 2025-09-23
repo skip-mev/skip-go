@@ -205,16 +205,36 @@ Terms Accepted: Yes
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '24px' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '8px', color: 'var(--heading-color, inherit)' }}>
-            Skip API Chain Integration Request
-          </h2>
-          <p style={{ color: 'var(--muted-text, #64748b)', fontSize: '14px' }}>
-            Submit your blockchain for integration with Skip API
-          </p>
-        </div>
+    <div style={{ margin: '20px 0' }}>
+      {/* Important disclaimer */}
+      <div style={{
+        padding: '16px',
+        backgroundColor: 'var(--background-warning, rgba(251, 191, 36, 0.1))',
+        border: '1px solid var(--border-warning, rgba(251, 191, 36, 0.3))',
+        borderRadius: '8px',
+        marginBottom: '24px',
+        color: 'var(--text-primary, inherit)'
+      }}>
+        <strong style={{ color: 'var(--text-warning, #f59e0b)' }}>Important:</strong> Cosmos Labs reserves the right to remove support for any chain that becomes a burden to maintain, including but not limited to chains with unstable infrastructure, frequent breaking changes, or insufficient ecosystem activity.
+      </div>
+
+      {/* Requirements section */}
+      <div style={{ marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '12px', color: 'var(--text-primary, inherit)' }}>
+          Requirements
+        </h3>
+        <p style={{ marginBottom: '8px', color: 'var(--text-primary, inherit)' }}>
+          Before submitting this form, ensure you have:
+        </p>
+        <ul style={{ marginLeft: '20px', marginBottom: '16px', color: 'var(--text-primary, inherit)' }}>
+          <li><strong>Chain Registry Listing:</strong> Your chain must be listed in the official Cosmos Chain Registry</li>
+          <li><strong>Dedicated Endpoints:</strong> Non-rate-limited RPC, gRPC, and REST endpoints</li>
+          <li><strong>Stable Infrastructure:</strong> Endpoints must maintain high availability</li>
+          <li><strong>Technical Contact:</strong> Valid email for integration support</li>
+        </ul>
+      </div>
+
+      <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
 
         <div style={{ marginBottom: '20px' }}>
           <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
@@ -405,6 +425,25 @@ Terms Accepted: Yes
           </div>
         )}
       </form>
+
+      {/* What Happens Next section */}
+      <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--border-color, #e2e8f0)' }}>
+        <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '12px', color: 'var(--text-primary, inherit)' }}>
+          What Happens Next?
+        </h3>
+        <p style={{ marginBottom: '12px', color: 'var(--text-primary, inherit)' }}>
+          After submitting this form:
+        </p>
+        <ol style={{ marginLeft: '20px', color: 'var(--text-primary, inherit)' }}>
+          <li>Our team will review your request within 2-3 business days</li>
+          <li>We'll validate your endpoints and chain configuration</li>
+          <li>If approved, your chain will be added to Skip API</li>
+          <li>You'll receive confirmation via the contact email provided</li>
+        </ol>
+        <p style={{ marginTop: '16px', fontSize: '14px', color: 'var(--text-muted, #64748b)' }}>
+          For questions or support, please contact our Customer Success Engineering team.
+        </p>
+      </div>
     </div>
   );
 }
