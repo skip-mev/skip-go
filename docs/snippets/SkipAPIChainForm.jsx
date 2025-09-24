@@ -1,6 +1,6 @@
 export default function SkipGoChainForm() {
   const [isPreLaunch, setIsPreLaunch] = React.useState(false);
-  const [chainRegistryUrl, setChainRegistryUrl] = React.useState('');
+  const [chainRegistryUrl, setChainRegistryUrl] = React.useState('https://github.com/cosmos/chain-registry/tree/master/');
   const [projectName, setProjectName] = React.useState('');
   const [developmentStage, setDevelopmentStage] = React.useState('');
   const [projectDescription, setProjectDescription] = React.useState('');
@@ -14,8 +14,6 @@ export default function SkipGoChainForm() {
   const [slackInfo, setSlackInfo] = React.useState('');
   const [useTelegram, setUseTelegram] = React.useState(false);
   const [telegramHandle, setTelegramHandle] = React.useState('');
-  const [otherComms, setOtherComms] = React.useState('');
-  const [acceptTerms, setAcceptTerms] = React.useState(false);
   const [isValidating, setIsValidating] = React.useState(false);
   const [chainData, setChainData] = React.useState(null);
   const [validationErrors, setValidationErrors] = React.useState({});
@@ -150,9 +148,6 @@ Contact: ${contactEmail}
 Communication Preferences:
 ${useSlack && slackInfo ? `- Slack: ${slackInfo}` : ''}
 ${useTelegram && telegramHandle ? `- Telegram: ${telegramHandle}` : ''}
-${otherComms ? `- Other: ${otherComms}` : ''}
-
-Terms Accepted: Yes
       `.trim();
     } else {
       messageBody = `
@@ -172,9 +167,6 @@ Contact: ${contactEmail}
 Communication Preferences:
 ${useSlack && slackInfo ? `- Slack: ${slackInfo}` : ''}
 ${useTelegram && telegramHandle ? `- Telegram: ${telegramHandle}` : ''}
-${otherComms ? `- Other: ${otherComms}` : ''}
-
-Terms Accepted: Yes
       `.trim();
     }
 
@@ -214,8 +206,6 @@ Terms Accepted: Yes
             setSlackInfo('');
             setUseTelegram(false);
             setTelegramHandle('');
-            setOtherComms('');
-            setAcceptTerms(false);
             setChainData(null);
             setIsSubmitting(false);
             setSubmitMessage('Thank you! Your integration request has been submitted. Our Customer Success Engineering team will review it shortly.');
@@ -287,6 +277,27 @@ Terms Accepted: Yes
         color: 'var(--text-primary, inherit)'
       }}>
         <strong style={{ color: 'var(--text-warning, #f59e0b)' }}>Important:</strong> Cosmos Labs reserves the right to remove support for any chain that becomes a burden to maintain, including but not limited to chains with unstable infrastructure, frequent breaking changes, or insufficient ecosystem activity.
+      </div>
+
+      {/* Looking for something else? */}
+      <div style={{
+        marginBottom: '24px',
+        padding: '12px',
+        backgroundColor: 'var(--background-secondary, #f8f9fa)',
+        border: '1px solid var(--border-color, #e2e8f0)',
+        borderRadius: '6px',
+        fontSize: '14px',
+        color: 'var(--text-primary, inherit)'
+      }}>
+        Looking for something else? Contact the team through the{' '}
+        <a
+          href="https://cosmos.network/interest-form"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: 'var(--link-color, #3b82f6)', textDecoration: 'underline' }}
+        >
+          Cosmos Network interest form
+        </a>.
       </div>
 
       {/* Pre-launch checkbox */}
@@ -459,7 +470,7 @@ Terms Accepted: Yes
                 type="url"
                 value={chainRegistryUrl}
                 onChange={(e) => setChainRegistryUrl(e.target.value)}
-                placeholder="https://github.com/cosmos/chain-registry/tree/main/osmosis"
+                placeholder="https://github.com/cosmos/chain-registry/tree/master/osmosis"
                 required
                 style={inputStyle}
               />
@@ -523,14 +534,20 @@ Terms Accepted: Yes
             How would you prefer we communicate with you during the integration process?
           </p>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px' }}>
+          <div style={{
+            marginBottom: '16px',
+            padding: '12px',
+            backgroundColor: 'var(--success-bg, rgba(34, 197, 94, 0.05))',
+            border: '1px solid var(--success-border, #86efac)',
+            borderRadius: '6px'
+          }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '600' }}>
               <input
                 type="checkbox"
                 checked={useSlack}
                 onChange={(e) => setUseSlack(e.target.checked)}
               />
-              Slack (we'll invite you to a shared channel)
+              Slack (Strongly Preferred - we'll invite you to a shared channel)
             </label>
             {useSlack && (
               <>
@@ -548,6 +565,9 @@ Terms Accepted: Yes
                 )}
               </>
             )}
+            <div style={{ marginTop: '8px', marginLeft: '24px', fontSize: '12px', color: 'var(--text-secondary, #64748b)', fontStyle: 'italic' }}>
+              Slack is typically more active during business hours, in addition we have some shared public channels available.
+            </div>
           </div>
 
           <div style={{ marginBottom: '16px' }}>
@@ -577,18 +597,6 @@ Terms Accepted: Yes
             )}
           </div>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
-              Other Communication Preferences (Optional)
-            </label>
-            <input
-              type="text"
-              value={otherComms}
-              onChange={(e) => setOtherComms(e.target.value)}
-              placeholder="Discord, Matrix, or other preferred channels"
-              style={inputStyle}
-            />
-          </div>
         </div>
 
         {/* Only show endpoints section for post-launch chains */}
@@ -621,7 +629,7 @@ Terms Accepted: Yes
                   type="url"
                   value={grpcEndpoint}
                   onChange={(e) => setGrpcEndpoint(e.target.value)}
-                  placeholder="https://grpc.yourchain.com:9090"
+                  placeholder="grpc.yourchain.com:443"
                   required
                   style={getInputStyle('grpc')}
                 />
@@ -666,37 +674,22 @@ Terms Accepted: Yes
           </>
         )}
 
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', cursor: 'pointer' }}>
-            <input
-              type="checkbox"
-              checked={acceptTerms}
-              onChange={(e) => setAcceptTerms(e.target.checked)}
-              required
-              style={{ marginTop: '2px' }}
-            />
-            <span style={{ fontSize: '14px', color: 'var(--text-color, inherit)' }}>
-              I understand and agree to the Terms of Service.
-            </span>
-          </label>
-        </div>
-
         <button
           type="submit"
-          disabled={isSubmitting || !acceptTerms || (!isPreLaunch && !chainData)}
+          disabled={isSubmitting || (!isPreLaunch && !chainData)}
           style={{
             width: '100%',
             padding: '12px',
             borderRadius: '6px',
             border: 'none',
-            backgroundColor: (!acceptTerms || (!isPreLaunch && !chainData) || isSubmitting)
+            backgroundColor: ((!isPreLaunch && !chainData) || isSubmitting)
               ? 'var(--muted-text, #64748b)'
               : 'var(--link-color, #3b82f6)',
             color: 'white',
             fontSize: '14px',
             fontWeight: '600',
-            cursor: (!acceptTerms || (!isPreLaunch && !chainData) || isSubmitting) ? 'not-allowed' : 'pointer',
-            opacity: (!acceptTerms || (!isPreLaunch && !chainData) || isSubmitting) ? 0.5 : 1,
+            cursor: ((!isPreLaunch && !chainData) || isSubmitting) ? 'not-allowed' : 'pointer',
+            opacity: ((!isPreLaunch && !chainData) || isSubmitting) ? 0.5 : 1,
             transition: 'all 0.2s'
           }}
         >
