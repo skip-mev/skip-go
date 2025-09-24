@@ -1,10 +1,20 @@
-export default function SkipAPIChainForm() {
+export default function SkipGoChainForm() {
+  const [isPreLaunch, setIsPreLaunch] = React.useState(false);
   const [chainRegistryUrl, setChainRegistryUrl] = React.useState('');
+  const [projectName, setProjectName] = React.useState('');
+  const [developmentStage, setDevelopmentStage] = React.useState('');
+  const [projectDescription, setProjectDescription] = React.useState('');
+  const [projectWebsite, setProjectWebsite] = React.useState('');
   const [contactEmail, setContactEmail] = React.useState('');
   const [rpcEndpoint, setRpcEndpoint] = React.useState('');
   const [grpcEndpoint, setGrpcEndpoint] = React.useState('');
   const [restEndpoint, setRestEndpoint] = React.useState('');
   const [evmEndpoint, setEvmEndpoint] = React.useState('');
+  const [useSlack, setUseSlack] = React.useState(false);
+  const [slackInfo, setSlackInfo] = React.useState('');
+  const [useTelegram, setUseTelegram] = React.useState(false);
+  const [telegramHandle, setTelegramHandle] = React.useState('');
+  const [otherComms, setOtherComms] = React.useState('');
   const [acceptTerms, setAcceptTerms] = React.useState(false);
   const [isValidating, setIsValidating] = React.useState(false);
   const [chainData, setChainData] = React.useState(null);
@@ -23,7 +33,7 @@ export default function SkipAPIChainForm() {
   };
 
   const validateChainRegistry = async () => {
-    if (!chainRegistryUrl) {
+    if (!chainRegistryUrl || !chainRegistryUrl.trim()) {
       setChainData(null);
       return;
     }
@@ -32,9 +42,10 @@ export default function SkipAPIChainForm() {
     setChainData(null);
 
     try {
-      const match = chainRegistryUrl.match(/github\.com\/([^\/]+)\/([^\/]+)(?:\/tree\/[^\/]+)?\/([^\/]+)$/);
+      // Handle various GitHub URL formats
+      const match = chainRegistryUrl.match(/github\.com\/([^\/]+)\/([^\/]+)(?:\/(?:tree|blob)\/[^\/]+)?\/([^\/\?]+)/);
       if (!match) {
-        setValidationErrors({ chainRegistry: 'Invalid GitHub URL format' });
+        setValidationErrors({ chainRegistry: 'Invalid GitHub URL format. Please provide a valid Chain Registry GitHub URL.' });
         setIsValidating(false);
         return;
       }
@@ -73,7 +84,11 @@ export default function SkipAPIChainForm() {
       });
 
     } catch (error) {
-      setValidationErrors({ chainRegistry: 'Failed to validate chain registry URL' });
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        setValidationErrors({ chainRegistry: 'Network error. Please check your connection and try again.' });
+      } else {
+        setValidationErrors({ chainRegistry: 'Failed to validate chain registry URL. Please check the URL and try again.' });
+      }
     }
 
     setIsValidating(false);
@@ -90,11 +105,27 @@ export default function SkipAPIChainForm() {
     e.preventDefault();
 
     const errors = {};
-    if (!validateEndpoint(rpcEndpoint)) errors.rpc = true;
-    if (!validateEndpoint(grpcEndpoint)) errors.grpc = true;
-    if (!validateEndpoint(restEndpoint)) errors.rest = true;
-    if (evmEndpoint && !validateEndpoint(evmEndpoint)) errors.evm = true;
-    if (!chainData) errors.chainRegistry = 'Please provide a valid chain registry URL';
+
+    if (isPreLaunch) {
+      // Pre-launch validation - only require basic info
+      if (!projectName.trim()) errors.projectName = 'Project name is required';
+      if (!developmentStage) errors.developmentStage = 'Please select a development stage';
+      if (!contactEmail.trim()) errors.contactEmail = 'Contact email is required';
+      // Validate communication preferences if checked
+      if (useSlack && !slackInfo.trim()) errors.slackInfo = 'Please provide Slack workspace or channel';
+      if (useTelegram && !telegramHandle.trim()) errors.telegramHandle = 'Please provide Telegram handle';
+    } else {
+      // Post-launch validation - full requirements
+      if (!validateEndpoint(rpcEndpoint)) errors.rpc = true;
+      if (!validateEndpoint(grpcEndpoint)) errors.grpc = true;
+      if (!validateEndpoint(restEndpoint)) errors.rest = true;
+      if (evmEndpoint && !validateEndpoint(evmEndpoint)) errors.evm = true;
+      if (!chainData) errors.chainRegistry = 'Please provide a valid chain registry URL';
+      if (!contactEmail.trim()) errors.contactEmail = 'Contact email is required';
+      // Validate communication preferences if checked
+      if (useSlack && !slackInfo.trim()) errors.slackInfo = 'Please provide Slack workspace or channel';
+      if (useTelegram && !telegramHandle.trim()) errors.telegramHandle = 'Please provide Telegram handle';
+    }
 
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
@@ -105,15 +136,47 @@ export default function SkipAPIChainForm() {
     setIsSubmitting(true);
     setSubmitMessage('');
 
-    const messageBody = `
-Chain Registry: ${chainRegistryUrl}
-RPC Endpoint: ${rpcEndpoint}
-gRPC Endpoint: ${grpcEndpoint}
-REST Endpoint: ${restEndpoint}
-${evmEndpoint ? `EVM Endpoint: ${evmEndpoint}` : ''}
-Contact Email: ${contactEmail}
+    let messageBody;
+    if (isPreLaunch) {
+      messageBody = `
+Pre-Launch Chain Integration Interest
+
+Project: ${projectName}
+Development Stage: ${developmentStage}
+Description: ${projectDescription || 'Not provided'}
+Website: ${projectWebsite || 'Not provided'}
+
+Contact: ${contactEmail}
+Communication Preferences:
+${useSlack && slackInfo ? `- Slack: ${slackInfo}` : ''}
+${useTelegram && telegramHandle ? `- Telegram: ${telegramHandle}` : ''}
+${otherComms ? `- Other: ${otherComms}` : ''}
+
 Terms Accepted: Yes
-    `.trim();
+      `.trim();
+    } else {
+      messageBody = `
+Chain Integration Request
+
+Chain Registry: ${chainRegistryUrl}
+Chain Name: ${chainData.pretty_name}
+Chain ID: ${chainData.chain_id}
+
+Required Endpoints:
+- RPC: ${rpcEndpoint}
+- gRPC: ${grpcEndpoint}
+- REST: ${restEndpoint}
+${evmEndpoint ? `- EVM: ${evmEndpoint}` : ''}
+
+Contact: ${contactEmail}
+Communication Preferences:
+${useSlack && slackInfo ? `- Slack: ${slackInfo}` : ''}
+${useTelegram && telegramHandle ? `- Telegram: ${telegramHandle}` : ''}
+${otherComms ? `- Other: ${otherComms}` : ''}
+
+Terms Accepted: Yes
+      `.trim();
+    }
 
     // Use simple URL-encoded string exactly like curl
     const encodedData = `email=${encodeURIComponent(contactEmail.trim())}&message=${encodeURIComponent(messageBody)}`;
@@ -136,12 +199,22 @@ Terms Accepted: Yes
           const data = JSON.parse(responseData);
           if (data.ok) {
             // Clear form and show success message
+            setIsPreLaunch(false);
             setChainRegistryUrl('');
+            setProjectName('');
+            setDevelopmentStage('');
+            setProjectDescription('');
+            setProjectWebsite('');
             setContactEmail('');
             setRpcEndpoint('');
             setGrpcEndpoint('');
             setRestEndpoint('');
             setEvmEndpoint('');
+            setUseSlack(false);
+            setSlackInfo('');
+            setUseTelegram(false);
+            setTelegramHandle('');
+            setOtherComms('');
             setAcceptTerms(false);
             setChainData(null);
             setIsSubmitting(false);
@@ -149,7 +222,6 @@ Terms Accepted: Yes
             return;
           }
         } catch (e) {
-          console.log('Could not parse response as JSON:', e);
           setSubmitMessage('Submission received. Our team will review your request.');
         }
       } else if (response.status === 422) {
@@ -169,7 +241,6 @@ Terms Accepted: Yes
         setSubmitMessage(`Failed to submit request (Error ${response.status}). Please try again or contact us on our Interchain Discord if the issue persists.`);
       }
     } catch (error) {
-      console.error('Form submission error:', error);
       setSubmitMessage('Network error occurred. Please try again or contact us on our Interchain Discord if the issue persists.');
     }
 
@@ -218,70 +289,216 @@ Terms Accepted: Yes
         <strong style={{ color: 'var(--text-warning, #f59e0b)' }}>Important:</strong> Cosmos Labs reserves the right to remove support for any chain that becomes a burden to maintain, including but not limited to chains with unstable infrastructure, frequent breaking changes, or insufficient ecosystem activity.
       </div>
 
-      {/* Requirements section */}
+      {/* Pre-launch checkbox */}
+      <div style={{
+        marginBottom: '24px',
+        padding: '16px',
+        backgroundColor: 'var(--background-secondary, rgba(59, 130, 246, 0.05))',
+        border: '2px solid var(--link-color, #3b82f6)',
+        borderRadius: '8px'
+      }}>
+        <label style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          cursor: 'pointer',
+          fontSize: '16px',
+          fontWeight: '600',
+          color: 'var(--text-primary, inherit)'
+        }}>
+          <input
+            type="checkbox"
+            checked={isPreLaunch}
+            onChange={(e) => {
+              setIsPreLaunch(e.target.checked);
+              setValidationErrors({});
+              setSubmitMessage('');
+              // Clear chain data when switching modes
+              if (e.target.checked) {
+                setChainData(null);
+                setChainRegistryUrl('');
+              }
+            }}
+            style={{
+              width: '20px',
+              height: '20px',
+              cursor: 'pointer'
+            }}
+          />
+          <div>
+            <div style={{ marginBottom: '4px' }}>
+              My chain is pre-launch / in development
+            </div>
+            <div style={{
+              fontSize: '14px',
+              fontWeight: '400',
+              color: 'var(--text-secondary, #64748b)'
+            }}>
+              Check this if your chain is not yet live on mainnet or not in the Chain Registry
+            </div>
+          </div>
+        </label>
+      </div>
+
+      {/* Requirements section - show different requirements based on pre-launch state */}
       <div style={{ marginBottom: '24px' }}>
         <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '12px', color: 'var(--text-primary, inherit)' }}>
           Requirements
         </h3>
-        <p style={{ marginBottom: '8px', color: 'var(--text-primary, inherit)' }}>
-          Before submitting this form, ensure you have:
-        </p>
-        <ul style={{ marginLeft: '20px', marginBottom: '16px', color: 'var(--text-primary, inherit)' }}>
-          <li><strong>Chain Registry Listing:</strong> Your chain must be listed in the official Cosmos Chain Registry</li>
-          <li><strong>Dedicated Endpoints:</strong> Non-rate-limited RPC, gRPC, and REST endpoints</li>
-          <li><strong>Stable Infrastructure:</strong> Endpoints must maintain high availability</li>
-          <li><strong>Technical Contact:</strong> Valid email for integration support</li>
-        </ul>
+        {isPreLaunch ? (
+          <>
+            <p style={{ marginBottom: '8px', color: 'var(--text-primary, inherit)' }}>
+              For pre-launch chains, we focus on establishing communication:
+            </p>
+            <ul style={{ marginLeft: '20px', marginBottom: '16px', color: 'var(--text-primary, inherit)' }}>
+              <li><strong>Project Information:</strong> Name and development stage</li>
+              <li><strong>Contact Details:</strong> Valid email for establishing communication</li>
+              <li><strong>Communication Preferences:</strong> Slack, Telegram, or other preferred channels</li>
+              <li><strong>Endpoints (Optional):</strong> If available, provide your test endpoints</li>
+            </ul>
+          </>
+        ) : (
+          <>
+            <p style={{ marginBottom: '8px', color: 'var(--text-primary, inherit)' }}>
+              Before submitting this form, ensure you have:
+            </p>
+            <ul style={{ marginLeft: '20px', marginBottom: '16px', color: 'var(--text-primary, inherit)' }}>
+              <li><strong>Chain Registry Listing:</strong> Your chain must be listed in the official Cosmos Chain Registry</li>
+              <li><strong>Dedicated Endpoints:</strong> Non-rate-limited RPC, gRPC, and REST endpoints</li>
+              <li><strong>Stable Infrastructure:</strong> Endpoints must maintain high availability</li>
+              <li><strong>Technical Contact:</strong> Valid email for integration support</li>
+            </ul>
+          </>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
 
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
-            Chain Registry URL *
-          </label>
-          <input
-            type="url"
-            value={chainRegistryUrl}
-            onChange={(e) => setChainRegistryUrl(e.target.value)}
-            placeholder="https://github.com/cosmos/chain-registry/tree/main/osmosis"
-            required
-            style={inputStyle}
-          />
-          <div style={{ marginTop: '6px', fontSize: '13px', color: 'var(--muted-text, #64748b)' }}>
-            Your chain must be listed in the{' '}
-            <a
-              href="https://github.com/cosmos/chain-registry?tab=readme-ov-file#contributing"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: 'var(--link-color, #3b82f6)', textDecoration: 'underline' }}
-            >
-              Cosmos Chain Registry
-            </a>
-          </div>
-          {isValidating && (
-            <div style={{ marginTop: '6px', fontSize: '13px', color: 'var(--muted-text, #64748b)' }}>
-              Validating chain...
+        {/* Honeypot field for spam prevention */}
+        <input type="text" name="_gotcha" style={{ display: 'none' }} tabIndex="-1" autoComplete="off" />
+
+        {/* Conditional fields based on pre-launch status */}
+        {isPreLaunch ? (
+          <>
+            {/* Pre-launch fields */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                Project/Chain Name *
+              </label>
+              <input
+                type="text"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                placeholder="Enter your project or chain name"
+                required
+                style={inputStyle}
+              />
+              {validationErrors.projectName && (
+                <div style={{ marginTop: '6px', color: '#ef4444', fontSize: '13px' }}>
+                  {validationErrors.projectName}
+                </div>
+              )}
             </div>
-          )}
-          {chainData && (
-            <div style={{
-              marginTop: '8px',
-              padding: '8px',
-              borderRadius: '4px',
-              backgroundColor: 'var(--success-bg, #f0fdf4)',
-              border: '1px solid var(--success-border, #86efac)',
-              fontSize: '13px'
-            }}>
-              ✓ Found: {chainData.pretty_name} ({chainData.chain_id})
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                Development Stage *
+              </label>
+              <select
+                value={developmentStage}
+                onChange={(e) => setDevelopmentStage(e.target.value)}
+                required
+                style={inputStyle}
+              >
+                <option value="">Select stage...</option>
+                <option value="Planning">Planning / Research</option>
+                <option value="Development">Active Development</option>
+                <option value="Testnet">Testnet Live</option>
+              </select>
+              {validationErrors.developmentStage && (
+                <div style={{ marginTop: '6px', color: '#ef4444', fontSize: '13px' }}>
+                  {validationErrors.developmentStage}
+                </div>
+              )}
             </div>
-          )}
-          {validationErrors.chainRegistry && (
-            <div style={{ marginTop: '6px', color: '#ef4444', fontSize: '13px' }}>
-              {validationErrors.chainRegistry}
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                Project Description
+              </label>
+              <textarea
+                value={projectDescription}
+                onChange={(e) => setProjectDescription(e.target.value)}
+                placeholder="Brief description of your project..."
+                rows={3}
+                style={{ ...inputStyle, resize: 'vertical' }}
+              />
             </div>
-          )}
-        </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                Project Website
+              </label>
+              <input
+                type="url"
+                value={projectWebsite}
+                onChange={(e) => setProjectWebsite(e.target.value)}
+                placeholder="https://yourproject.com"
+                style={inputStyle}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Post-launch fields */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                Chain Registry URL *
+              </label>
+              <input
+                type="url"
+                value={chainRegistryUrl}
+                onChange={(e) => setChainRegistryUrl(e.target.value)}
+                placeholder="https://github.com/cosmos/chain-registry/tree/main/osmosis"
+                required
+                style={inputStyle}
+              />
+              <div style={{ marginTop: '6px', fontSize: '13px', color: 'var(--muted-text, #64748b)' }}>
+                Your chain must be listed in the{' '}
+                <a
+                  href="https://github.com/cosmos/chain-registry?tab=readme-ov-file#contributing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--link-color, #3b82f6)', textDecoration: 'underline' }}
+                >
+                  Cosmos Chain Registry
+                </a>
+              </div>
+              {isValidating && (
+                <div style={{ marginTop: '6px', fontSize: '13px', color: 'var(--muted-text, #64748b)' }}>
+                  Validating chain...
+                </div>
+              )}
+              {chainData && (
+                <div style={{
+                  marginTop: '8px',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  backgroundColor: 'var(--success-bg, #f0fdf4)',
+                  border: '1px solid var(--success-border, #86efac)',
+                  fontSize: '13px'
+                }}>
+                  Found: {chainData.pretty_name} ({chainData.chain_id})
+                </div>
+              )}
+              {validationErrors.chainRegistry && (
+                <div style={{ marginTop: '6px', color: '#ef4444', fontSize: '13px' }}>
+                  {validationErrors.chainRegistry}
+                </div>
+              )}
+            </div>
+          </>
+        )}
 
         <div style={{ marginBottom: '20px' }}>
           <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
@@ -297,75 +514,157 @@ Terms Accepted: Yes
           />
         </div>
 
+        {/* Communication Preferences */}
         <div style={{ marginBottom: '20px' }}>
           <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>
-            Required Endpoints
+            Communication Preferences
           </h3>
+          <p style={{ marginBottom: '12px', fontSize: '14px', color: 'var(--text-secondary, #64748b)' }}>
+            How would you prefer we communicate with you during the integration process?
+          </p>
 
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
-              RPC Endpoint *
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px' }}>
+              <input
+                type="checkbox"
+                checked={useSlack}
+                onChange={(e) => setUseSlack(e.target.checked)}
+              />
+              Slack (we'll invite you to a shared channel)
             </label>
-            <input
-              type="url"
-              value={rpcEndpoint}
-              onChange={(e) => setRpcEndpoint(e.target.value)}
-              placeholder="https://rpc.yourchain.com"
-              required
-              style={getInputStyle('rpc')}
-            />
+            {useSlack && (
+              <>
+                <input
+                  type="text"
+                  value={slackInfo}
+                  onChange={(e) => setSlackInfo(e.target.value)}
+                  placeholder="Your Slack email or workspace name"
+                  style={{ ...inputStyle, marginTop: '8px', marginLeft: '24px', width: 'calc(100% - 24px)' }}
+                />
+                {validationErrors.slackInfo && (
+                  <div style={{ marginTop: '6px', marginLeft: '24px', color: '#ef4444', fontSize: '13px' }}>
+                    {validationErrors.slackInfo}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px' }}>
+              <input
+                type="checkbox"
+                checked={useTelegram}
+                onChange={(e) => setUseTelegram(e.target.checked)}
+              />
+              Telegram
+            </label>
+            {useTelegram && (
+              <>
+                <input
+                  type="text"
+                  value={telegramHandle}
+                  onChange={(e) => setTelegramHandle(e.target.value)}
+                  placeholder="@your_telegram_handle"
+                  style={{ ...inputStyle, marginTop: '8px', marginLeft: '24px', width: 'calc(100% - 24px)' }}
+                />
+                {validationErrors.telegramHandle && (
+                  <div style={{ marginTop: '6px', marginLeft: '24px', color: '#ef4444', fontSize: '13px' }}>
+                    {validationErrors.telegramHandle}
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
-              gRPC Endpoint *
+              Other Communication Preferences (Optional)
             </label>
             <input
-              type="url"
-              value={grpcEndpoint}
-              onChange={(e) => setGrpcEndpoint(e.target.value)}
-              placeholder="https://grpc.yourchain.com"
-              required
-              style={getInputStyle('grpc')}
-            />
-          </div>
-
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
-              REST API Endpoint *
-            </label>
-            <input
-              type="url"
-              value={restEndpoint}
-              onChange={(e) => setRestEndpoint(e.target.value)}
-              placeholder="https://rest.yourchain.com"
-              required
-              style={getInputStyle('rest')}
+              type="text"
+              value={otherComms}
+              onChange={(e) => setOtherComms(e.target.value)}
+              placeholder="Discord, Matrix, or other preferred channels"
+              style={inputStyle}
             />
           </div>
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>
-            Optional Endpoints
-          </h3>
+        {/* Only show endpoints section for post-launch chains */}
+        {!isPreLaunch && (
+          <>
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>
+                Required Endpoints
+              </h3>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
-              EVM JSON-RPC Endpoint
-            </label>
-            <input
-              type="url"
-              value={evmEndpoint}
-              onChange={(e) => setEvmEndpoint(e.target.value)}
-              placeholder="https://evm.yourchain.com"
-              style={getInputStyle('evm')}
-            />
-            <div style={{ marginTop: '6px', fontSize: '13px', color: 'var(--muted-text, #64748b)' }}>
-              Only if your chain supports EVM
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                  RPC Endpoint *
+                </label>
+                <input
+                  type="url"
+                  value={rpcEndpoint}
+                  onChange={(e) => setRpcEndpoint(e.target.value)}
+                  placeholder="https://rpc.yourchain.com"
+                  required
+                  style={getInputStyle('rpc')}
+                />
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                  gRPC Endpoint (with port) *
+                </label>
+                <input
+                  type="url"
+                  value={grpcEndpoint}
+                  onChange={(e) => setGrpcEndpoint(e.target.value)}
+                  placeholder="https://grpc.yourchain.com:9090"
+                  required
+                  style={getInputStyle('grpc')}
+                />
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                  REST API Endpoint *
+                </label>
+                <input
+                  type="url"
+                  value={restEndpoint}
+                  onChange={(e) => setRestEndpoint(e.target.value)}
+                  placeholder="https://rest.yourchain.com"
+                  required
+                  style={getInputStyle('rest')}
+                />
+              </div>
             </div>
-          </div>
-        </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>
+                Optional Endpoints
+              </h3>
+
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                  EVM JSON-RPC Endpoint
+                </label>
+                <input
+                  type="url"
+                  value={evmEndpoint}
+                  onChange={(e) => setEvmEndpoint(e.target.value)}
+                  placeholder="https://evm.yourchain.com"
+                  style={getInputStyle('evm')}
+                />
+                <div style={{ marginTop: '6px', fontSize: '13px', color: 'var(--muted-text, #64748b)' }}>
+                  Only if your chain supports EVM
+                </div>
+              </div>
+            </div>
+          </>
+        )}
 
         <div style={{ marginBottom: '20px' }}>
           <label style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', cursor: 'pointer' }}>
@@ -377,28 +676,27 @@ Terms Accepted: Yes
               style={{ marginTop: '2px' }}
             />
             <span style={{ fontSize: '14px', color: 'var(--text-color, inherit)' }}>
-              I agree to the Skip API Terms of Service and understand that Cosmos Labs will review this integration request
+              I understand and agree to the Terms of Service.
             </span>
           </label>
         </div>
 
         <button
           type="submit"
-          disabled={isSubmitting || !acceptTerms || !chainData}
+          disabled={isSubmitting || !acceptTerms || (!isPreLaunch && !chainData)}
           style={{
             width: '100%',
             padding: '12px',
             borderRadius: '6px',
-            border: '1px solid var(--border-color, #e2e8f0)',
-            backgroundColor: (!acceptTerms || !chainData || isSubmitting)
-              ? 'var(--background-secondary, #f1f5f9)'
-              : 'var(--primary, #3b82f6)',
-            color: (!acceptTerms || !chainData || isSubmitting)
-              ? 'var(--text-muted, #64748b)'
-              : 'var(--primary-foreground, white)',
+            border: 'none',
+            backgroundColor: (!acceptTerms || (!isPreLaunch && !chainData) || isSubmitting)
+              ? 'var(--muted-text, #64748b)'
+              : 'var(--link-color, #3b82f6)',
+            color: 'white',
             fontSize: '14px',
             fontWeight: '600',
-            cursor: (!acceptTerms || !chainData || isSubmitting) ? 'not-allowed' : 'pointer',
+            cursor: (!acceptTerms || (!isPreLaunch && !chainData) || isSubmitting) ? 'not-allowed' : 'pointer',
+            opacity: (!acceptTerms || (!isPreLaunch && !chainData) || isSubmitting) ? 0.5 : 1,
             transition: 'all 0.2s'
           }}
         >
@@ -441,7 +739,15 @@ Terms Accepted: Yes
           <li>You'll receive confirmation via the contact email provided</li>
         </ol>
         <p style={{ marginTop: '16px', fontSize: '14px', color: 'var(--text-muted, #64748b)' }}>
-          For questions or support, please contact our Customer Success Engineering team.
+          For questions or support, please open a ticket in our{' '}
+          <a
+            href="https://discord.gg/interchain"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'var(--link-color, #3b82f6)', textDecoration: 'underline' }}
+          >
+            Discord
+          </a>.
         </p>
       </div>
     </div>
