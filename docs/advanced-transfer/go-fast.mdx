@@ -53,7 +53,7 @@ Below is a table summarizing the minimum and maximum transfer sizes for each cha
 
 | Source Chain                                | Minimum Transfer Size (in USD) | Maximum Transfer Size (in USD)|
 | ------------------------------------------- | --------------------- | --------------------- |
-| **Ethereum Mainnet**                        | 50                    | 25,000                 |
+| **Ethereum Mainnet**                        | 20                    | 25,000                 |
 | **Arbitrum**                                | 10                    | 25,000                 |
 | **Avalanche**                               | 10                    | 25,000                 |
 | **Base**                                    | 10                    | 25,000                 |
@@ -62,6 +62,10 @@ Below is a table summarizing the minimum and maximum transfer sizes for each cha
 
 
 Note: If a user is starting from an asset that is not USDC on the source chain, Skip Go will swap the asset to USDC on the source chain and the post-swap amount is used to see if it is within the min/max bounds of Go Fast transfer sizes.
+
+
+### dYdX Volume Limits
+When transferring to dYdX via Go Fast, there is a $100,000 USD maximum transfer size.
 
 # What is the fee model for Go Fast?
 
