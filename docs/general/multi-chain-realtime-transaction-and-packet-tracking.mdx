@@ -130,9 +130,11 @@ More precise details about the different/new fields are below:
    * `CCTP_TRANSFER_PENDING_CONFIRMATION` \- CCTP transfer is pending confirmation by the cctp attestation api  
    * `CCTP_TRANSFER_CONFIRMED` \- CCTP transfer has been confirmed by the cctp attestation api but not yet received on the destination chain  
    * `CCTP_TRANSFER_RECEIVED` \- CCTP transfer has been received at the destination chain
-* `txs` contains the chain IDs, block explorer links, and hashes for two transactions:  
-   * `send_tx`: The transaction submitted the CCTP burn action on the source chain to initiate the transfer  
+* `txs` contains the chain IDs, block explorer links, and hashes for two transactions:
+   * `send_tx`: The transaction submitted the CCTP burn action on the source chain to initiate the transfer
    * `receive_tx`: The transaction on the destination chain where the user receives their funds
+
+**Note:** CCTP transfers have a maximum limit of 1,000,000 USDC per transaction.
 
 #### Hyperlane Transfer Data
 
