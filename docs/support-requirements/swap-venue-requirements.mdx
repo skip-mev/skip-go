@@ -10,9 +10,9 @@ description: "This document covers what Skip Go API requires of DEXes to support
 
 ### Chain Requirements
 
-1. The chain must already be supported by the Skip Go API  
-   1. Use the `/info/chains` endpoint to query a list of actively supported chains: [/v2/info/chains](/api-reference/prod/info/get-v2infochains)  
-   2. If your chain is not already supported, follow the instructions in [Chain Support Requirements](./chain-support-requirements) to request support  
+1. The chain must already be supported by the Skip Go API
+   1. Use the `/info/chains` endpoint to query a list of actively supported chains: [/v2/info/chains](/api-reference/prod/info/get-v2infochains)
+   2. If your chain is not already supported, follow the instructions in [Chain Support Requirements](./chain-support-requirements) to request support
    3. **_This is a pre-requisite_**
 2. CosmWasm Support
 3. IBC support
@@ -26,15 +26,15 @@ description: "This document covers what Skip Go API requires of DEXes to support
 
 #### Execution Messages
 
-1. Supports a “Swap Exact In” method where a user specifies an input asset and path to swap, and the module / contract swaps the given user asset to the user’s desired output asset and sends it to the user ([see Osmosis for a module example](https://github.com/osmosis-labs/osmosis/blob/d7eb3b7018cde0557216237c84f063b3915af650/x/poolmanager/msg%5Fserver.go#L22), or [Astroport for a contract example](https://github.com/astroport-fi/astroport-core/blob/52af83eab04c620ac40019f7cc9cee433d0c601e/contracts/router/src/contract.rs#L74)).  
-   1. Inputs into the swap:  
-         1. An asset (Native cosmos coin or CW20 token, incl. denom and amount)  
-         2. A path (can be a single pool, or multiple pools if designed like a router)  
-   2. Outputs of the swap:  
+1. Supports a “Swap Exact In” method where a user specifies an input asset and path to swap, and the module / contract swaps the given user asset to the user’s desired output asset and sends it to the user ([see Osmosis for a module example](https://github.com/osmosis-labs/osmosis/blob/d7eb3b7018cde0557216237c84f063b3915af650/x/poolmanager/msg%5Fserver.go#L22), or [Astroport for a contract example](https://github.com/astroport-fi/astroport-core/blob/52af83eab04c620ac40019f7cc9cee433d0c601e/contracts/router/src/contract.rs#L74)).
+   1. Inputs into the swap:
+         1. An asset (Native cosmos coin or CW20 token, incl. denom and amount)
+         2. A path (can be a single pool, or multiple pools if designed like a router)
+   2. Outputs of the swap:
          1. An asset
-2. NICE TO HAVE (Optional): Supports a “Swap Exact Out” method where a user specifies a desired output asset, a path to swap through to achieve that asset, and a maximum amount of an input asset to swap, and the module / contracts swaps in the exact input asset needed to acquire the specified output asset and sends it to the user ([see Osmosis for a module example](https://github.com/osmosis-labs/osmosis/blob/d7eb3b7018cde0557216237c84f063b3915af650/x/poolmanager/msg%5Fserver.go#L48)).  
+2. NICE TO HAVE (Optional): Supports a “Swap Exact Out” method where a user specifies a desired output asset, a path to swap through to achieve that asset, and a maximum amount of an input asset to swap, and the module / contracts swaps in the exact input asset needed to acquire the specified output asset and sends it to the user ([see Osmosis for a module example](https://github.com/osmosis-labs/osmosis/blob/d7eb3b7018cde0557216237c84f063b3915af650/x/poolmanager/msg%5Fserver.go#L48)).
 
-###  Query Messages  
+###  Query Messages
 3. Exposes a “Swap Exact In Simulation” method where a user can put the inputs that would be used in the “Swap Exact In” execution method, and gets a response from the query that specifies the asset they would receive if executing the method ([see Osmosis for a module example](https://github.com/osmosis-labs/osmosis/blob/d7eb3b7018cde0557216237c84f063b3915af650/x/poolmanager/client/grpc/grpc%5Fquery.go#L113), or [Astroport for a contract example](https://github.com/astroport-fi/astroport-core/blob/52af83eab04c620ac40019f7cc9cee433d0c601e/contracts/router/src/contract.rs#L240)).
 4. Exposes a “Swap Exact Out Simulation” method where a user can input the asset desired and a given pool / path, and the query returns the asset required to swap in to receive the output asset desired ([see Osmosis for a module example](https://github.com/osmosis-labs/osmosis/blob/d7eb3b7018cde0557216237c84f063b3915af650/x/poolmanager/client/grpc/grpc%5Fquery.go#L93), or [Astroport for a contract example](https://github.com/astroport-fi/astroport-core/blob/52af83eab04c620ac40019f7cc9cee433d0c601e/contracts/pair/src/contract.rs#L892)).
 ## Getting Skip to Add Support for Your DEX
@@ -53,12 +53,12 @@ We may request additional information to help prioritize the integration of your
 
 #### General Information
 
-- Team Name  
-- Contact Name  
+- Team Name
+- Contact Name
 - Contact Telegram
 - Team Website
-- Swapping Venue Name (if different from team name)  
-- Swapping Venue Website  
+- Swapping Venue Name (if different from team name)
+- Swapping Venue Website
 - Swapping Venue Documentation
 
 ---
@@ -67,15 +67,15 @@ We may request additional information to help prioritize the integration of your
 
 Please answer the following questions to help us assess integration suitability:
 
-- **What kind of venue is it?**  
+- **What kind of venue is it?**
   _e.g., AMM, CLOB, staking protocol_
 
-- **If an AMM, what pricing curves are supported?**  
-  - Include documentation  
-  - Describe any non-standard logic  
+- **If an AMM, what pricing curves are supported?**
+  - Include documentation
+  - Describe any non-standard logic
 
-- **How are fees calculated?**  
-  - Pool fees, maker/taker fees, etc.  
+- **How are fees calculated?**
+  - Pool fees, maker/taker fees, etc.
   - Include documentation and note any non-standard mechanisms
 
 - **Which tokens typically offer better pricing on this venue?**
