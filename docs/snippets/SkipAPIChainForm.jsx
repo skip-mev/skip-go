@@ -283,8 +283,8 @@ ${useTelegram && telegramHandle ? `- Telegram: ${telegramHandle}` : ''}
       <div style={{
         marginBottom: '24px',
         padding: '12px',
-        backgroundColor: 'var(--background-secondary, #f8f9fa)',
-        border: '1px solid var(--border-color, #e2e8f0)',
+        backgroundColor: 'var(--background-info, rgba(59, 130, 246, 0.1))',
+        border: '1px solid var(--border-info, rgba(59, 130, 246, 0.3))',
         borderRadius: '6px',
         fontSize: '14px',
         color: 'var(--text-primary, inherit)'
@@ -294,7 +294,7 @@ ${useTelegram && telegramHandle ? `- Telegram: ${telegramHandle}` : ''}
           href="https://cosmos.network/interest-form"
           target="_blank"
           rel="noopener noreferrer"
-          style={{ color: 'var(--link-color, #3b82f6)', textDecoration: 'underline' }}
+          style={{ color: 'var(--link-color, #3b82f6)', textDecoration: 'underline', fontWeight: '500' }}
         >
           Cosmos Network interest form
         </a>.
