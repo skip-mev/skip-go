@@ -5,7 +5,7 @@ description: "Understand how Skip Go handles user-facing fees"
 
 ## Background
 
-This doc describes functionality in Skip Go for accessing standardized information about the various fees that a user can incur while swapping or transferring. Common fees include: 
+This doc describes functionality in Skip Go for accessing standardized information about the various fees that a user can incur while swapping or transferring. Common fees include:
 
 * Affiliate fees (e.g. fees you charge the user for swapping on your frontend)
 * Bridge and relayer fees
@@ -21,9 +21,9 @@ The method for applying bridging fees depends on the source chain of the transfe
 
 ## Understanding incurred fees from all sources: `estimated_fees`
 
-`estimated_fees` in the response of `/route` and `/msgs_direct` provides a `Fee` array where each entry gives information about a particular fee. 
+`estimated_fees` in the response of `/route` and `/msgs_direct` provides a `Fee` array where each entry gives information about a particular fee.
 
-Each `Fee` object in the array will have the following attributes: 
+Each `Fee` object in the array will have the following attributes:
 
 * `fee_type`: Enum giving the kind of fee — `SMART_RELAY` , `SWAP` , `BRIDGE`, `RELAY` , `GAS`
 * `bridge_id` : If the fee is a relayer fee (`RELAY`) or a bridge fee (`BRIDGE`), this gives the ID of the bridge charging the fee (or the bridge where the relayer is providing a service)
@@ -45,9 +45,9 @@ Each `Fee` object in the array will have the following attributes:
  Please note that fees for other bridges (`IBC`, `Stargate`, `LayerZero`, etc.) and other fee types like `Swap` or `Gas` are not yet included here and the steps where these fees occur are detailed in the `operations` array. We plan to expand the coverage of `estimated_fees` in the future.
  </Warning>
 
-  
+
 <Info>
  **Have questions or feedback? Help us get better!**
- 
- Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
+
+ Join [our Discord](https://discord.com/invite/interchain) and select the "Skip Go Developer" role to share your questions and feedback.
 </Info>

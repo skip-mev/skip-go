@@ -3,11 +3,11 @@ title: "CW20 Tokens & Their Limitations"
 description: "Information about performing CW20 swaps"
 ---
 
-This page covers the basics of CW20s and the limitations around performing cross-chain actions with CW20 tokens -- compared to tokenfactory and "native" Cosmos assets (aka Bank Module assets). 
+This page covers the basics of CW20s and the limitations around performing cross-chain actions with CW20 tokens -- compared to tokenfactory and "native" Cosmos assets (aka Bank Module assets).
 
 ### CW20 Token Denom Formatting In API Requests
 
-To use CW20 tokens in the Skip Go API, specify the denom as "cw20:" + the token contract address. 
+To use CW20 tokens in the Skip Go API, specify the denom as "cw20:" + the token contract address.
 
 Example denom for Astro on Terra2: `cw20:terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26`
 
@@ -15,9 +15,9 @@ Example denom for Astro on Terra2: `cw20:terra1nsuqsk6kh58ulczatwev87ttq2z6r3pus
 
 #### What is a CW20 token?
 
-[CW20](https://github.com/CosmWasm/cw-plus/blob/main/packages/cw20/README.md) is the fungible token spec for the CosmWasm (i.e. CW) VM. CosmWasm is the most popular smart contract VM among CosmosSDK blockchains today. At a high-level, CW20 is very similar to ERC20 (the popular EVM fungible token standard). 
+[CW20](https://github.com/CosmWasm/cw-plus/blob/main/packages/cw20/README.md) is the fungible token spec for the CosmWasm (i.e. CW) VM. CosmWasm is the most popular smart contract VM among CosmosSDK blockchains today. At a high-level, CW20 is very similar to ERC20 (the popular EVM fungible token standard).
 
-Contracts that comply with the standard implement the following functionalities: 
+Contracts that comply with the standard implement the following functionalities:
 
 * Transferring tokens from one account to another
 * Sending tokens to a contract along with a message (similar to `callContractWithToken`)
@@ -28,9 +28,9 @@ ASTRO (Astroport's governance token) is one CW20 token issued on Terra2.
 
 #### How do CW20 tokens interact with IBC?
 
-[CW20-ICS20](https://github.com/CosmWasm/cw-plus/tree/v0.6.0-beta1/contracts/cw20-ics20) converter contracts make a CW20 token compatible with the ICS20 token transfer standard, so they can be sent to other chains over normal ICS20 transfer channels. When they arrive on the destination chain, they're indistinguishable from bank module and tokenfactory tokens. 
+[CW20-ICS20](https://github.com/CosmWasm/cw-plus/tree/v0.6.0-beta1/contracts/cw20-ics20) converter contracts make a CW20 token compatible with the ICS20 token transfer standard, so they can be sent to other chains over normal ICS20 transfer channels. When they arrive on the destination chain, they're indistinguishable from bank module and tokenfactory tokens.
 
-These converter contracts are the source of much difficulty when attempting to perform cross-chain actions with CW20s: 
+These converter contracts are the source of much difficulty when attempting to perform cross-chain actions with CW20s:
 
 * Different converter contracts implement different versions of the ICS20 standard (e.g. Some don't support memos, which are required for post-transfer contract calls and multi-hop transfers)
 * On transfer failure, converter contracts just return assets to sender. That means if one of our contracts attempts to send tokens on your behalf unsuccessfully, it will receive the tokens. We can't atomically send them to you.
@@ -43,20 +43,20 @@ The downside of native tokens is that they're permissioned and deeply ingrained 
 
 #### How do CW20 tokens compare to "tokenfactory" tokens?
 
-Tokenfactory tokens are created with the [tokenfactory](https://docs.osmosis.zone/osmosis-core/modules/tokenfactory/) module. They're designed to have the best of both worlds of CW20 and native tokens: 
+Tokenfactory tokens are created with the [tokenfactory](https://docs.osmosis.zone/osmosis-core/modules/tokenfactory/) module. They're designed to have the best of both worlds of CW20 and native tokens:
 
 * Like CW20s, they're permissionless and users can create new ones just by submitting transactions -- no need to modify the chain's state machine
 * Like native tokens, they're directly compatible with IBC out-of-the-box, and the bank module manages their balances + transferring functionality.
 
-This combination of traits leads many to see tokenfactory as a strict improvement on CW20 that devs should prefer in the vast majority of cases. We strongly agree with this conclusion. 
+This combination of traits leads many to see tokenfactory as a strict improvement on CW20 that devs should prefer in the vast majority of cases. We strongly agree with this conclusion.
 
-Unlike `CW20s` , tokenfactory tokens have no limitations in the cross-chain functionality Skip Go API can offer for them. 
+Unlike `CW20s` , tokenfactory tokens have no limitations in the cross-chain functionality Skip Go API can offer for them.
 
 ### What limitations do CW20 tokens have within the Skip Go API?
 
-At a high-level, basically any multi-chain action--in which the token is on the chain where it was issued for one stage of the action--requires multiple transactions. 
+At a high-level, basically any multi-chain action--in which the token is on the chain where it was issued for one stage of the action--requires multiple transactions.
 
-In particular, this means you cannot perform the following actions in 1 transaction: 
+In particular, this means you cannot perform the following actions in 1 transaction:
 
 * IBC transfer after purchasing a cw20 asset
 
@@ -78,6 +78,6 @@ In principle, you can use the Skip Go API to construct any of these action seque
 
 <Info>
  **Have questions or feedback? Help us get better!**
- 
- Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
+
+ Join [our Discord](https://discord.com/invite/interchain) and select the "Skip Go Developer" role to share your questions and feedback.
 </Info>
