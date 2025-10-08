@@ -4,9 +4,9 @@ title: "`allow_unsafe`: Preventing & Handling Bad Execution"
 
 ## Introduction
 
-**The`allow_unsafe` parameter in the requests to `/route` & `/msgs_direct` endpoints is designed to protect users from bad trade execution.** 
+**The`allow_unsafe` parameter in the requests to `/route` & `/msgs_direct` endpoints is designed to protect users from bad trade execution.**
 
-This parameter indicates whether you want to allow the API to return and execute a route even when our routing engine forecasts low or unknown execution quality: 
+This parameter indicates whether you want to allow the API to return and execute a route even when our routing engine forecasts low or unknown execution quality:
 
 * `allow_unsafe=false` (default): The API will throw an error instead of returning a route when the routing engine forecasts bad execution quality (i.e. > 10% `price_impact` or difference between USD value in and out) or when execution quality can't be determined.
 * `allow_unsafe=true`: The API will return a route for a trade even when the routing engine forecasts bad execution quality (i.e. > 10% `price_impact` or difference between USD value in and out) or when execution quality can't be determined. In these cases, the API appends a `warning` to the response in a `warning` field
@@ -14,13 +14,13 @@ This parameter indicates whether you want to allow the API to return and execute
 
  <Info>
  **Make sure you understand execution/quote quality measurements first**
- 
+
  Before reading this doc, you should read our documentation on quote quality: [ Understanding Quote Quality Metrics](./understanding-quote-quality-metrics). This provides basic background information about the different ways the Skip Go API measures whether a route will likely give a user a bad execution price, namely the difference between the USD value of the input and the output & on-chain price impact.
 </Info>
 
 ## `allow_unsafe=false` Behavior
 
-When `allow_unsafe=false`, the endpoint throws an error when execution quality is poor (as measured by price impact or estimated USD value lost) or when execution quality can't be determined (i.e. neither of these measurements are available). 
+When `allow_unsafe=false`, the endpoint throws an error when execution quality is poor (as measured by price impact or estimated USD value lost) or when execution quality can't be determined (i.e. neither of these measurements are available).
 
 In particular, if `allow_unsafe=false`, `/route` and `/msgs_direct` return errors when:
 
@@ -28,99 +28,99 @@ In particular, if `allow_unsafe=false`, `/route` and `/msgs_direct` return error
 * `(usd_amount_in-usd_amount_out)/usd_amount_in)>.10` (greater than 10% of the value of the input is lost)
 * Neither of the above metrics can be computed
 
-Below, we provide examples of the responses in each these cases. 
+Below, we provide examples of the responses in each these cases.
 
 The price impact is greater than 10% (`BAD_PRICE_ERROR`):
 
-* 
-```{  
-  "code": 3,  
-  "message": "swap execution price in route deviates too far from market price. expected price impact: 98.6915%",  
-  "details": [  
-    {  
-      "@type": "type.googleapis.com/google.rpc.ErrorInfo",  
-      "reason": "BAD_PRICE_ERROR",  
-      "domain": "skip.build",  
-      "metadata": {}  
-    }  
-  ]  
-}  
+*
+```{
+  "code": 3,
+  "message": "swap execution price in route deviates too far from market price. expected price impact: 98.6915%",
+  "details": [
+    {
+      "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+      "reason": "BAD_PRICE_ERROR",
+      "domain": "skip.build",
+      "metadata": {}
+    }
+  ]
+}
 ```
 
 The user loses more than 10% of their USD value (`BAD_PRICE_ERROR`):
 
-* 
-```{  
-  "code": 3,  
-  "message": "difference in usd value of route input and output is too large. input usd value: 1000 output usd value: 600",  
-  "details": [  
-    {  
-      "@type": "type.googleapis.com/google.rpc.ErrorInfo",  
-      "reason": "BAD_PRICE_ERROR",  
-      "domain": "skip.build",  
-      "metadata": {}  
-    }  
-  ]  
-}  
+*
+```{
+  "code": 3,
+  "message": "difference in usd value of route input and output is too large. input usd value: 1000 output usd value: 600",
+  "details": [
+    {
+      "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+      "reason": "BAD_PRICE_ERROR",
+      "domain": "skip.build",
+      "metadata": {}
+    }
+  ]
+}
 ```
 
 The `price_impact` and the estimated USD value difference cannot be calculated (`LOW_INFO_ERROR`)
 
-*   
+*
 ```JSON JSON
-{  
-  "code": 3,  
-  "message": "unable to determine route safety",  
-  "details": [  
-    {  
-      "@type": "type.googleapis.com/google.rpc.ErrorInfo",  
-      "reason": "LOW_INFO_ERROR",  
-      "domain": "skip.build",  
-      "metadata": {}  
-    }  
-  ]  
-}  
+{
+  "code": 3,
+  "message": "unable to determine route safety",
+  "details": [
+    {
+      "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+      "reason": "LOW_INFO_ERROR",
+      "domain": "skip.build",
+      "metadata": {}
+    }
+  ]
+}
 ```
 
 ## `allow_unsafe=true` Behavior
 
-When `allow_unsafe=true`, the endpoints will still return routes even when the routing engine forecasts will have unknown or poor execution quality (measured by price\_impact or estimated USD lost), but they will have a `warning` field appended to them. 
+When `allow_unsafe=true`, the endpoints will still return routes even when the routing engine forecasts will have unknown or poor execution quality (measured by price\_impact or estimated USD lost), but they will have a `warning` field appended to them.
 
-The `warning` field is populated exactly when the endpoints would return an error if `allow_unsafe` were `false`, namely: 
+The `warning` field is populated exactly when the endpoints would return an error if `allow_unsafe` were `false`, namely:
 
 * `price_impact > .10`(the swap will move the on-chain price by more than 10%)
 * `(usd_amount_in-usd_amount_out)/usd_amount_in)>.10` (greater than 10% of the value of the input is lost)
 * Neither of the above metrics can be computed
 
-Below, we provide examples of the responses in each these cases. 
+Below, we provide examples of the responses in each these cases.
 
 The price impact is greater than 10% (`BAD_PRICE_WARNING`):
 
-*   
+*
 ```JSON JSON
-"warning": {  
-    "type": "BAD_PRICE_WARNING",  
-    "message": "swap execution price in route deviates too far from market price. expected price impact: 98.6826%"  
-}  
+"warning": {
+    "type": "BAD_PRICE_WARNING",
+    "message": "swap execution price in route deviates too far from market price. expected price impact: 98.6826%"
+}
 ```
 
-More than 10% of the USD value of the input is lost in the swap (`BAD_PRICE_WARNING`): 
+More than 10% of the USD value of the input is lost in the swap (`BAD_PRICE_WARNING`):
 
-* 
-```"warning": {  
-    "type": "BAD_PRICE_WARNING",  
-    "message": "difference in usd value of route input and output is too large. input usd value: 1000 output usd value: 600"  
-}  
+*
+```"warning": {
+    "type": "BAD_PRICE_WARNING",
+    "message": "difference in usd value of route input and output is too large. input usd value: 1000 output usd value: 600"
+}
 ```
 
 The `price_impact` and the estimated USD value difference cannot be calculated (`LOW_INFO_ERROR`)
 
-* 
+*
 ```
-"warning": {  
-    "type": "LOW_INFO_WARNING",  
-    "message": "unable to determine route safety"  
-}  
+"warning": {
+    "type": "LOW_INFO_WARNING",
+    "message": "unable to determine route safety"
+}
 ```
 
 ## Best Practices for Protecting Users
@@ -131,6 +131,6 @@ In addition, we recommend reading our documentation around [safe API integration
 
 <Info>
  **Have questions or feedback? Help us get better!**
- 
- Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
+
+ Join [our Discord](https://discord.com/invite/interchain) and select the "Skip Go Developer" role to share your questions and feedback.
 </Info>

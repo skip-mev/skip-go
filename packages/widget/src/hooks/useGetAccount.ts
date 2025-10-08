@@ -16,9 +16,7 @@ export const useGetAccount = () => {
   const connectedAddress = useAtomValue(connectedAddressesAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
 
-  const { data: cosmosAccounts } = useCosmosAccount({
-    multiChain: true,
-  });
+  const { data: cosmosAccounts } = useCosmosAccount();
 
   const { wallets: _wallets } = useWallet();
 

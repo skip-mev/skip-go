@@ -11,9 +11,7 @@ export const useKeepWalletStateSynced = () => {
   const [cosmosWallet, setCosmosWallet] = useAtom(cosmosWalletAtom);
   const [svmWallet, setSvmWallet] = useAtom(svmWalletAtom);
 
-  const { data: cosmosAccounts, walletType } = useCosmosAccount({
-    multiChain: true,
-  });
+  const { data: cosmosAccounts, walletType } = useCosmosAccount();
 
   const currentCosmosId = cosmosAccounts
     ? cosmosAccounts[Object.keys(cosmosAccounts)[0]]?.bech32Address

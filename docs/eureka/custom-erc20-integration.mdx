@@ -63,10 +63,10 @@ These functions must be callable by the proxy of the `ICS20Transfer` contract:
 
 - **Mainnet**: `0xa348CfE719B63151F228e3C30EB424BA5a983012`
 
-> **Security Note:**  
+> **Security Note:**
 > Access to the `mint` and `burn` functions must be strictly limited to the `ICS20Transfer` proxy. Allowing any other address or contract to call these functions could lead to unauthorized token manipulation and compromise the integrity of your token. While token teams may implement additional access controls or rate limits as needed, the `ICS20Transfer` proxy must always retain its ability to perform mint and burn operations.
 >
-> **Upgradability & Extensibility:**  
+> **Upgradability & Extensibility:**
 > We may update our interface over time, but we're committed to ensuring backwards compatibility. While making your contract upgradable is not required, doing so allows you to adopt new features or improvements we introduce in the future.
 
 ### Upgradability
@@ -79,7 +79,7 @@ The `ICS20Transfer` contract includes a permissioned method for registering a cu
 
 ### Prerequisites
 
-Only addresses assigned the `ERC20_CUSTOMIZER_ROLE` can call this function. This role is established by the protocol's security council and administered by the Eureka Ops multi-sig. To request registration of your custom ERC20 contract, [join our Discord](https://skip.build/discord) and open a support ticket.
+Only addresses assigned the `ERC20_CUSTOMIZER_ROLE` can call this function. This role is established by the protocol's security council and administered by the Eureka Ops multi-sig. To request registration of your custom ERC20 contract, [join our Discord](https://discord.com/invite/interchain) and open a support ticket.
 
 Additionally, the token's denomination on the Cosmos Hub must be established. The token must either be live on the Hub, or its original denomination and complete IBC path must be known if it originates elsewhere. We require the token to be active on the Cosmos Hub before registration can proceed.
 
@@ -98,7 +98,7 @@ If you're an asset issuer looking to deploy a custom ERC20 contract for your tok
     Deploy your custom ERC20 contract that implements the `IMintableAndBurnable` interface with proper access controls for the `ICS20Transfer` proxy. For an example, see the [reference implementation](https://github.com/cosmos/solidity-ibc-eureka/blob/main/test/solidity-ibc/utils/RefImplIBCERC20.sol) in the `solidity-ibc-eureka` repository.
   </Step>
   <Step title="Request Registration">
-    [Join our Discord](https://skip.build/discord) and open a support ticket to request registration of your custom ERC20 contract.
+    [Join our Discord](https://discord.com/invite/interchain) and open a support ticket to request registration of your custom ERC20 contract.
   </Step>
   <Step title="Verify and Launch">
     Verify your contract on Etherscan for greater transparency. For assistance, see the [Etherscan Contract Verification page](https://etherscan.io/verifyContract). Once verified, start bridging your token with complete control over its ERC20 representation.
@@ -109,9 +109,9 @@ If you're an asset issuer looking to deploy a custom ERC20 contract for your tok
 
 Need help with your custom ERC20 integration? Our team is ready to assist:
 
-- [Join our Discord](https://skip.build/discord) and open a support ticket
+- [Join our Discord](https://discord.com/invite/interchain) and open a support ticket
 
 Additional resources:
 - For technical specifications, visit the [solidity-ibc-eureka repository](https://github.com/cosmos/solidity-ibc-eureka)
 - View the [reference implementation](https://github.com/cosmos/solidity-ibc-eureka/blob/main/test/solidity-ibc/utils/RefImplIBCERC20.sol) for a sample ERC20 contract
-- Learn about [Etherscan contract verification](https://etherscan.io/verifyContract) to enhance trust in your token 
+- Learn about [Etherscan contract verification](https://etherscan.io/verifyContract) to enhance trust in your token

@@ -6,7 +6,7 @@ description: "This doc covers the various ways route quote quality is measured -
 
 <Info>
  **Video Summary**
- 
+
  [Here's a video](https://www.loom.com/share/5293719872714557b03db41fb5ca590e) that summarizes the content below.
 </Info>
 
@@ -18,7 +18,7 @@ description: "This doc covers the various ways route quote quality is measured -
 
 ### More on `slippage` vs `price_impact`
 
-Some people have asked why are both slippage and price\_impact necessary. The reason is that they are trying to capture fundamentally different concepts: 
+Some people have asked why are both slippage and price\_impact necessary. The reason is that they are trying to capture fundamentally different concepts:
 
 * slippage = tolerance to the world / liquidity changing between when the API gives you a quote and when the transaction gets executed (0 slippage = "I want to get exactly the amount out that Skip estimates"). Of course, this could still be a bad price if there's high price\_impact, or if the difference between `usd_amount_in` and `usd_amount_out` is large. **Slippage is better understood as a tolerance to volatility, rather than an estimate of execution quality.**
 * price impact = A measure of how much you're going to move the on-chain price with your trade. Some folks use the word "slippage" to describe price impact. This is intended to capture your tolerance to low liquidity and bad pricing.
@@ -31,6 +31,6 @@ If you're wondering how you should use these values to help protect your users f
 
 <Info>
  **Have questions or feedback? Help us get better!**
- 
- Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
+
+ Join [our Discord](https://discord.com/invite/interchain) and select the "Skip Go Developer" role to share your questions and feedback.
 </Info>
