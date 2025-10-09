@@ -14,7 +14,7 @@ This parameter currently supports:
 
 ### Background Info
 
-All `post_route` actions must have the following characteristics: 
+All `post_route` actions must have the following characteristics:
 
 * **Permissionless:** Skip Go can only support permissionless actions because the underlying protocols (e.g. IBC hooks, IBC callbacks, packet-forward-middleware) derive the addresses they use to call contracts based on the origin of the transfer. Skip Go supports both `ibc-hooks` and `ibc-callbacks` depending on which module the destination chain has implemented (they are incompatible approaches), automatically generating the appropriate message payloads for each. This means one user originating on two different chains or starting with two different tokens will eventually call the final contract / module with different addresses. You can only reliably permission actions that you know will 1) always originate on the same chain and 2) always take the same path to the destination chain. In general, we recommend not making this assumption unless you are an interoperability expert
 * **Single-token input:** The underlying IBC transfer protocol (ICS-20) doesn't support transfers of more than 1 token denom in a single transfer message, so we can only send 1 token denom to the final contract or module at a time. This means the contract or module in the `post_route_handler` must not require multiple token denoms sent to it simultaneously. For example, a classic LP action where the user must provide tokens in both sides of the pool simultaneously would not work.
@@ -23,9 +23,9 @@ All `post_route` actions must have the following characteristics:
 
 **Use authority-delegation with local address for permissionless actions that enable permissioned follow-ups**
 
-Commonly, the first interaction with a contract is permissionless, but it awards the end-user some kind of permissioned authority to perform follow-on actions (e.g. staking enables unstaking + collecting rewards; depositing enables withdrawing and earning yield) or receipt tokens (e.g. LPing produces LP receipt tokens). 
+Commonly, the first interaction with a contract is permissionless, but it awards the end-user some kind of permissioned authority to perform follow-on actions (e.g. staking enables unstaking + collecting rewards; depositing enables withdrawing and earning yield) or receipt tokens (e.g. LPing produces LP receipt tokens).
 
-As a cross-chain caller, you should generally avoid contracts that implicitly delegate these authorities or give receipt tokens to the caller because the caller will depend on the path the user has taken over IBC. You should look for contracts to imply authority delegation -- i.e. contracts that explicitly assign permissions to an address in the calldata that may be different than the caller and address sending the tokens. Examples of this pattern are: 
+As a cross-chain caller, you should generally avoid contracts that implicitly delegate these authorities or give receipt tokens to the caller because the caller will depend on the path the user has taken over IBC. You should look for contracts to imply authority delegation -- i.e. contracts that explicitly assign permissions to an address in the calldata that may be different than the caller and address sending the tokens. Examples of this pattern are:
 
 * Astroport’s `receiver` parameter in the `provide_liquidity` message
 * Mars’ `on_behalf_of` parameter in the `deposit` message
@@ -40,7 +40,7 @@ To call a CosmWasm contract on the destination chain, the following requirements
 1. The destination chain supports CosmWasm & either `ibc-hooks` or `ibc-callbacks`.
 2. The chain in the route immediately before the destination chain supports IBC memos as well as `packet-forward-middleware`.
 
-To specify a CosmWasm contract call on the destination chain, pass a `wasm_msg` as the `post_route_handler` in the `/v2/fungible/msgs` call with: 
+To specify a CosmWasm contract call on the destination chain, pass a `wasm_msg` as the `post_route_handler` in the `/v2/fungible/msgs` call with:
 
 * `contract_address`: The target contract address
 * `msg`: JSON string of the message to pass to the contract
@@ -80,7 +80,7 @@ For example, this is a request for a transfer of USDC from Axelar to Neutron, wi
     }
   }
 }
-    
+
 ```
 
 Note that the last address provided in the `address_list` is the address of the pool contract on Neutron, rather than a user address.
@@ -94,10 +94,10 @@ To use Autopilot after route actions, the following requirements must be satisfi
 1. The destination chain supports the `autopilot` module. Currently, this means the destination chain must be `stride-1`.
 2. The chain in the route immediately before the destination chain supports IBC memos as well as `packet-forward-middleware`.
 
-To specify an Autopilot action on the destination chain, pass a `autopilot_msg` as the `post_route_handler` in the `/v2/fungible/msgs` call with: 
+To specify an Autopilot action on the destination chain, pass a `autopilot_msg` as the `post_route_handler` in the `/v2/fungible/msgs` call with:
 
 * `receiver`: Set to the address on behalf of which you're performing the action
-* `action`: An enum giving the action that you wish to execute  
+* `action`: An enum giving the action that you wish to execute
    * This may be one of `LIQUID_STAKE` (for liquid staking an asset) or `CLAIM` for updating airdrop claim addresses.
 
 For example, this is a request for a transfer of ATOM from Cosmos Hub to Stride, with a post-route handler that atomically liquid stakes the transferred ATOM on Stride, sending stATOM to the specific receiver on Stride:
@@ -139,5 +139,5 @@ For example, this is a request for a transfer of ATOM from Cosmos Hub to Stride,
 <Check>
   **Have questions or feedback? Help us get better!**
 
-Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
+Join [our Discord](https://discord.com/invite/interchain) and select the "Skip Go Developer" role to share your questions and feedback.
 </Check>

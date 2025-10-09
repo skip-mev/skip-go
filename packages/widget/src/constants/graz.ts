@@ -23,7 +23,6 @@ export const keplrMainnetChainIdsInitialConnect = [
   "crypto-org-chain-mainnet-1",
   "dydx-mainnet-1",
   "dymension_1100-1",
-  "evmos_9001-2",
   "injective-1",
   "juno-1",
   "kava_2222-10",
@@ -125,70 +124,70 @@ export const walletInfo: Record<
   [WalletType.LEAP]: {
     name: "Leap",
     imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-leap.png",
+      "https://raw.githubusercontent.com/skip-mev/skip-go/refs/heads/main/assets/wallet-icon-leap.png",
   },
   [WalletType.COSMOSTATION]: {
     name: "Cosmostation",
     imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-cosmostation.png",
+      "https://raw.githubusercontent.com/skip-mev/skip-go/refs/heads/main/assets/wallet-icon-cosmostation.png",
   },
   [WalletType.VECTIS]: {
     name: "Vectis",
     imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-vectis.svg",
+      "https://raw.githubusercontent.com/skip-mev/skip-go/refs/heads/main/assets/wallet-icon-vectis.svg",
   },
   [WalletType.STATION]: {
     name: "Station",
     imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-station.svg",
+      "https://raw.githubusercontent.com/skip-mev/skip-go/refs/heads/main/assets/wallet-icon-station.svg",
   },
   [WalletType.XDEFI]: {
     name: "XDefi",
     imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-xdefi.jpeg",
+      "https://raw.githubusercontent.com/skip-mev/skip-go/refs/heads/main/assets/wallet-icon-xdefi.jpeg",
   },
   [WalletType.METAMASK_SNAP_LEAP]: {
     name: "Metamask Snap Leap",
     imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-metamask.png",
+      "https://raw.githubusercontent.com/skip-mev/skip-go/refs/heads/main/assets/wallet-icon-metamask.png",
   },
   [WalletType.METAMASK_SNAP_COSMOS]: {
     name: "Metamask Snap Cosmos",
     imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-metamask.png",
+      "https://raw.githubusercontent.com/skip-mev/skip-go/refs/heads/main/assets/wallet-icon-metamask.png",
   },
   [WalletType.WALLETCONNECT]: {
     name: "WalletConnect",
     imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-walletconnect.png",
+      "https://raw.githubusercontent.com/skip-mev/skip-go/refs/heads/main/assets/wallet-icon-walletconnect.png",
   },
   [WalletType.WC_KEPLR_MOBILE]: {
     name: "Keplr Mobile",
     imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-keplr.png",
+      "https://raw.githubusercontent.com/skip-mev/skip-go/refs/heads/main/assets/wallet-icon-keplr.png",
     mobile: true,
   },
   [WalletType.WC_LEAP_MOBILE]: {
     name: "Leap Mobile",
     imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-leap.png",
+      "https://raw.githubusercontent.com/skip-mev/skip-go/refs/heads/main/assets/wallet-icon-leap.png",
     mobile: true,
   },
   [WalletType.WC_COSMOSTATION_MOBILE]: {
     name: "Cosmostation Mobile",
     imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-cosmostation.png",
+      "https://raw.githubusercontent.com/skip-mev/skip-go/refs/heads/main/assets/wallet-icon-cosmostation.png",
     mobile: true,
   },
   [WalletType.COSMIFRAME]: {
     name: "DAO DAO",
     imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-daodao.png",
+      "https://raw.githubusercontent.com/skip-mev/skip-go/refs/heads/main/assets/wallet-icon-daodao.png",
   },
   [WalletType.COMPASS]: {
     name: "Compass",
     imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-compass.png",
+      "https://raw.githubusercontent.com/skip-mev/skip-go/refs/heads/main/assets/wallet-icon-compass.png",
   },
 };
 

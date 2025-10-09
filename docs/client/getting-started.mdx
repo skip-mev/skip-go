@@ -3,7 +3,7 @@ title: 'Getting Started'
 description: '@skip-go/client is a TypeScript library that streamlines interaction with the Skip Go API, enabling cross-chain swaps and transfers across multiple ecosystems.'
 ---
 
-<Steps> 
+<Steps>
 <Step title="Install Library">
 
 Install the library using npm or yarn:
@@ -51,7 +51,7 @@ import {
   // ... other functions you need
 } from "@skip-go/client";
 
-// Example: Initialize for executeRoute usage 
+// Example: Initialize for executeRoute usage
 setClientOptions({
   apiUrl: "YOUR_API_URL", // Optional: defaults to Skip API
   apiKey: "YOUR_API_KEY",   // Optional: required for certain features
@@ -164,12 +164,12 @@ const testnetChains = await chains({
 import { assets } from "@skip-go/client";
 
 // returns `Record<string, Asset[]>`
-const allAssets = await assets({ includeEvmAssets: true, includeSvmAssets: true, }); 
+const allAssets = await assets({ includeEvmAssets: true, includeSvmAssets: true, });
 
 // get assets filtered by chain ID
 const cosmosHubAssets = await assets({
-  chainId: 'cosmoshub-4', 
-  includeCw20Assets: true, 
+  chainId: 'cosmoshub-4',
+  includeCw20Assets: true,
 });
 
 // only get assets for specific chains
@@ -269,11 +269,11 @@ After generating a route, you need to provide user addresses for the required ch
 
  <Warning>
  **Only use addresses your user can sign for.**
- Funds could get stuck in any address you provide, including intermediate chains in certain failure conditions. Ensure your user can sign for each address you provide. 
+ Funds could get stuck in any address you provide, including intermediate chains in certain failure conditions. Ensure your user can sign for each address you provide.
 See [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases) for more details.
 </Warning>
 
-We recommend storing the user's addresses and creating a function like [`getAddress`](https://github.com/skip-mev/skip-go-example/blob/c55d9208bb46fbf1a4934000e7ec4196d8ccdca4/pages/index.tsx#L99) that retrieves the address based on the chain ID. 
+We recommend storing the user's addresses and creating a function like [`getAddress`](https://github.com/skip-mev/skip-go-example/blob/c55d9208bb46fbf1a4934000e7ec4196d8ccdca4/pages/index.tsx#L99) that retrieves the address based on the chain ID.
 
 ```ts
 // Assuming 'routeResult' holds the object from the route() call in Step 5
@@ -343,7 +343,7 @@ After a transaction is registered for tracking (either via `executeRoute`, `subm
   // Example of checking transaction status:
   // Assuming you have txHash and chainId from a previous step:
   // const statusResult = await transactionStatus({ txHash: "your_tx_hash", chainId: "your_chain_id" });
-  // console.log("Transaction State:", statusResult.state); 
+  // console.log("Transaction State:", statusResult.state);
   // console.log("Full Status Response:", statusResult);
   // Possible states include: STATE_COMPLETED_SUCCESS, STATE_COMPLETED_ERROR, STATE_ABANDONED, STATE_PENDING_CONFIRMATION, STATE_PENDING_EXECUTION, etc.
   // Refer to the TxStatusResponse type or API documentation for a complete list of states.
@@ -356,6 +356,6 @@ Remember, if you use `executeRoute` (Step 7), it automatically handles the trans
 <Info>
  **Have questions or feedback? Help us get better!**
 
-Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
+Join [our Discord](https://discord.com/invite/interchain) and select the "Skip Go Developer" role to share your questions and feedback.
 
 </Info>

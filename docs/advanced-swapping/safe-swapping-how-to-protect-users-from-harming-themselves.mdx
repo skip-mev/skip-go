@@ -5,9 +5,9 @@ title: "SAFE Swapping: How to Protect Users from Bad Trades"
 
  <Info>
  **Summary**
- 
- **This doc covers several UI/UX principles we recommend Skip Go API integrators implement to protect users from harming themselves by swapping at bad execution prices. Collectively, we refer to these principles as S.A.F.E.** 
- 
+
+ **This doc covers several UI/UX principles we recommend Skip Go API integrators implement to protect users from harming themselves by swapping at bad execution prices. Collectively, we refer to these principles as S.A.F.E.**
+
  The document introduces the S.A.F.E framework and provides detailed guidance for how you can use the information provided in the Skip Go API to implement the framework & give your users a worry-free swapping experience.
 </Info>
 ### Keeping Users Safe on your Application
@@ -17,7 +17,7 @@ Many users are unfamiliar with the technology behind cross-chain swaps and trans
 1. Execute swaps & transfers they don't understand at unfavorable prices using money they cannot afford to lose (e.g. Spending $1000 on a new, illiquid meme coin within 2 hours of launch)
 2. Accuse **you** (& Skip) of responsibility for their losses (even if your software & ours worked as expected), demand a refund, and publicly vilify & troll you if you do not give one.
 
-To protect both you and the user, we've developed a framework called **S.A.F.E** to help you remember and organize the UX principles that can keep your users safe: 
+To protect both you and the user, we've developed a framework called **S.A.F.E** to help you remember and organize the UX principles that can keep your users safe:
 
 1. **S**hare all available information about expected execution price
 2. **A**lert when info indicates an action might be harmful
@@ -28,7 +28,7 @@ To protect both you and the user, we've developed a framework called **S.A.F.E**
 
 You should share as much information about the estimated swap with your users as possible. Fortunately, the `/fungible/route` and `/fungible/msgs_direct` endpoints return a ton of useful information.
 
-In addition to showing estimated amount in and out (the obvious ones), we recommend showing: 
+In addition to showing estimated amount in and out (the obvious ones), we recommend showing:
 
 * **Estimated USD value of the amount in** (`response.usd_amount_in`)
 * **Estimated USD value of the amount out** (`response.usd_amount_out`)
@@ -37,19 +37,19 @@ In addition to showing estimated amount in and out (the obvious ones), we recomm
 * **Bridge Fee Amounts** (Available in the `transfer` and `axelar_transfer` entries in `response.operations` under `fee_asset` and `fee_amount`) -- These represent the fees that bridges take from the user along the route, denominated in the token(s) they're taking. It's important to show because sometimes bridges take fees unexpectedly (e.g. Noble used to take 0.10% fee on IBC transfers), and sometimes they take large fees (e.g. During periods of high gas prices, Axelar fees can be as high as $200)
 * **USD value of bridge fee amounts** (Available in the `transfer` and `axelar_transfer` entries in `response.operations` under `usd_fee_amount`) -- This gives the user a sense of the actual cost of their fee amounts. In cases of more complex swaps and transfers, the user might have a hard time making sense of the underlying fee tokens because the fees are being charged at an intermediate point in the route
 
-The quote shown to the users should **always** match the transaction that they end up signing. Once you have called `/route` and displayed the quote to the user, a call to `/msgs` is the only way to generate the correct message. (DO NOT call `/msgs_direct` after calling `/route` since this will regenerate the quote) 
+The quote shown to the users should **always** match the transaction that they end up signing. Once you have called `/route` and displayed the quote to the user, a call to `/msgs` is the only way to generate the correct message. (DO NOT call `/msgs_direct` after calling `/route` since this will regenerate the quote)
 
 Alternatively you can call `/msgs_direct` to both generate the quote information and the transaction that needs to be signed with 1 request. Remember that these endpoints are not deterministic and calling either again will generate a different output and your user will not execute the transaction they think they are executing.
 
 ### A.lert users to bad prices
 
-We recommend alerting users in the following three scenarios at least: 
+We recommend alerting users in the following three scenarios at least:
 
 1. **High Price Impact** (`swap_price_impact > PRICE_IMPACT_THRESHOLD`) : This indicates the user's swap is executing at a considerably worse price than the on-chain spot price -- meaning they're probably getting a worse price than they think they should. It also indicates the size of their trade is large relative to the available on chain liquidity. We recommend using`PRICE_IMPACT_THRESHOLD = 2.5 `in your calculations
 2. **High difference in relative USD value in and out** (`(usd_amount_in - usd_amount_out)/usd_amount_in)*100 > USD_REL_VALUE_THRESHOLD` ): This estimates the underlying value the user will lose instantly as a result of swapping, represented as a percentage of the value of their input. A high value for this figure indicates the user is instantly losing a large percentage of the value of their starting tokens. For example, a value of 50 indicates the user loses 50% of the estimated value of their input. We recommend using `USD_REL_VALUE_THRESHOLD=2.5`
 3. **High fees** ( `usd_fee_amount / usd_amount_in > FEE_THRESHOLD`) : This indicates that the value of fees charged by bridges used in the route amount to a large percentage of the underlying amount being transferred. If this value is high, user might want to wait until bridging more funds to execute (since bridge fees rarely scale with volume). We recommend setting `FEE_THRESHOLD=.25`
 
-Loud visual emphasis of the values that exceed safe tolerances is the most effective form of alerting. This includes: 
+Loud visual emphasis of the values that exceed safe tolerances is the most effective form of alerting. This includes:
 
 * Bolding unusually high/low quote numbers -- or otherwise making them larger than surrounding text/numbers
 * Automatically opening drop downs / detail panes that are usually closed by default to display the alert field
@@ -61,22 +61,22 @@ For example, when a swap exceeds our `PRICE_IMPACT_THRESHOLD` on [go.skip.build]
 
 ### F.ail Transactions when they're likely to cause user harm
 
-We recommend preventing transactions that may significantly harm the user altogether -- even if your user seems to want to complete the transaction. 
+We recommend preventing transactions that may significantly harm the user altogether -- even if your user seems to want to complete the transaction.
 
-We recommend failing/preventing user transactions in the following scenarios: 
+We recommend failing/preventing user transactions in the following scenarios:
 
 1. **Greater than 10% difference in relative USD value in and out** `(usd_amount_in - usd_amount_out)/usd_amount_in)*100 > 10`
 2. **Greater than 10% price impact** (`swap_price_impact > 10`)
 
-You could can decide how you want to signal this failure to user, e.g. no route found, some form of low liquidity message, or something else entirely. 
+You could can decide how you want to signal this failure to user, e.g. no route found, some form of low liquidity message, or something else entirely.
 
 Preventing transactions altogether that violate your safety thresholds is the strongest form of user safety.
 
 ### E.nforce explicit, additional approval
 
-If you do not want to fail transactions that exceed safety thresholds outright, one viable alternative is to require additional stages of user approval before letting the user sign the transaction. 
+If you do not want to fail transactions that exceed safety thresholds outright, one viable alternative is to require additional stages of user approval before letting the user sign the transaction.
 
-Importantly, this is different and more disruptive than simply warning the user about some aspect of the quote looking unfavorable. This means putting additional clicks between the user and the swap they want to perform, and having them explicitly agree to performing a swap your UI indicates will have a bad price. 
+Importantly, this is different and more disruptive than simply warning the user about some aspect of the quote looking unfavorable. This means putting additional clicks between the user and the swap they want to perform, and having them explicitly agree to performing a swap your UI indicates will have a bad price.
 
 For example, this is go.skip.build's warning screen:
 
@@ -85,7 +85,7 @@ For example, this is go.skip.build's warning screen:
 * The page explicitly reminds the user what the problem is -- foregrounding the predicted price impact and forcing them to acknowledge it again
 * The "happy path" or "default" path is to go back -- not to finish the swap (Notice that the "Go Back" button is highlighted)
 
-We recommend requiring additional steps of user approval in the following cases: 
+We recommend requiring additional steps of user approval in the following cases:
 
 1. **Greater than 5% difference in relative USD value in and out** `(usd_amount_in - usd_amount_out)/usd_amount_in)*100 > 5`
 2. **Greater than 5% price impact** (`swap_price_impact > 5`)
@@ -95,20 +95,20 @@ We recommend requiring additional steps of user approval in the following cases:
 
 It's important to think about this tradeoff because protecting users often directly trades off against making a cleaner, simpler, and more powerful user experiences. For example, excessive warnings might get annoying to users who know they're trading illiquid shitcoins, and additional steps of approval might frustrate pro traders who care deeply about speed
 
-For any safety metric you might track to determine whether a transaction could harm a user, consider 4 tiers of safety you can implement. From least safe and least disruptive to most safe and most disruptive: 
+For any safety metric you might track to determine whether a transaction could harm a user, consider 4 tiers of safety you can implement. From least safe and least disruptive to most safe and most disruptive:
 
 1. **None**: Just let it rip. Don't give the user any heads up. Don't do anything to slow them down or prevent them from trading.
 2. **Alert**: Use some visual cue to indicate to the user that they should be wary about swap
 3. **Enforce additional approval**: Require additional clicks to actually execute the swap and foreground the warning -- so the user needs to approve it explicitly.
 4. **Fail**: Just block / fail / prevent transactions that exceed your safety tolerance bounds outright
 
-Here are some suggestions for navigating this design space: 
+Here are some suggestions for navigating this design space:
 
 1. **Set lower trigger thresholds for weaker forms of security and more conservative thresholds for stronger forms of security** (e.g. You could alert users about high price impact at 2.5%, require an additional stage of approval at 10%, and fail the transaction outright at 25%) This approach is nice because it gives users who may be very conservative some indication that they may face some danger without getting in their way too much, while still hard-stopping more inexcusable failures that are probably never acceptable to any trader
 2. **Use stronger forms of security when safety tolerances are exceeded for higher value transactions** (e.g. You could use warnings when price impact is greater than 10% for transactions where the amount in is $0-100, additional approvals when amount in is $1,000 - 10,000, and block transactions above $10k outright if price impact is greater than 10%.
 
 <Info>
  **Have questions or feedback? Help us get better!**
- 
- Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
+
+ Join [our Discord](https://discord.com/invite/interchain) and select the "Skip Go Developer" role to share your questions and feedback.
 </Info>

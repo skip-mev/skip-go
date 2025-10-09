@@ -40,9 +40,7 @@ export const ConnectEcoRow = ({
 }) => {
   const { saveToClipboard: copyAddress, isCopied: isShowingCopyAddressFeedback } = useClipboard();
 
-  const { data: cosmosAccounts } = useCosmosAccount({
-    multiChain: true,
-  });
+  const { data: cosmosAccounts } = useCosmosAccount();
 
   const theme = useTheme();
   const getAccount = useGetAccount();

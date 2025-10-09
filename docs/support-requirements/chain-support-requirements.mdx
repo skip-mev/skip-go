@@ -7,43 +7,43 @@ description: "This document describes what new chains need to do the support Ski
 
 * New chains often want Skip Go API to add support for their chain as a source + destination for tokens because the API powers cross-chain swaps + transfers in all the major cosmos wallets (Leap, Keplr, IBC Wallet, Metamask Snap) and many popular DeFi aggregators and dapp frontends (e.g. Stargaze). As a result, being added to the Skip Go API instantly offers distribution across the interchain
 * This document covers the basic requirements chains must satisfy and steps their contributors must complete in order for Skip Go API to support them
-* You can create a support ticket on our [Interchain Discord](https://discord.gg/interchain) and provide chain support information that we request
+* Once you've met the requirements below, submit an integration request through our [API Chain Integration Request Form](/support-requirements/chain-integration-request)
 
 
  <Info>
  **Want help at the beginning of this process?**
- 
+
  Getting connected to IBC, Axelar, CCTP, Layerzero or Hyperlane can be hard. Even choosing among them is a challenge. We're happy to provide guidance and hands-on support to serious teams early in their journey -- even before they've made a choice of interop protocol if helpful!
 </Info>
 
 
  <Warning>
  **This guide assumes using IBC for Interop**
- 
- The rest of this guide assumes you want Skip to support users interacting with your chain primarily over IBC. 
- 
- The Skip Go API supports other bridges and interop protocols in addition to IBC, including Hyperlane, CCTP, and Axelar. If you're using one of these, please get in contact with us on [our Discord](https://skip.build/discord), and we will help guide you through it to the extent we can.
- 
+
+ The rest of this guide assumes you want Skip to support users interacting with your chain primarily over IBC.
+
+ The Skip Go API supports other bridges and interop protocols in addition to IBC, including Hyperlane, CCTP, and Axelar. If you're using one of these, please get in contact with us on [our Discord](https://discord.com/invite/interchain), and we will help guide you through it to the extent we can.
+
  These other interop protocols are less standardized and/or less permissionless than IBC, so the process of adding support for new chains is more bespoke and varies by protocol. We're happy to help where we can, providing guidance, implementation, and introductions where necessary
 </Warning>
 
 ## 1\. Satisfy the following basic requirements
 
-1. Provides clear instructions for permissionlessly running a full node and joining the network. Commonly instructions should include:  
-   1. Link to genesis file  
-   2. Full node binary or instructions for building binary from source code  
-   3. Public peer / seeder nodes  
+1. Provides clear instructions for permissionlessly running a full node and joining the network. Commonly instructions should include:
+   1. Link to genesis file
+   2. Full node binary or instructions for building binary from source code
+   3. Public peer / seeder nodes
    4. Public RPCs
-2. Chain metadata is available in a commonly used chain registry (e.g. [https://github.com/cosmos/chain-registry](https://github.com/cosmos/chain-registry)). Metadata should include:  
-   1. Chain name (and optionally "pretty name"  
-   2. Website  
-   3. chain\_id  
-   4. Bech32 prefix  
-   5. slip44 (aka "coin type")  
-   6. Fee information (with denom, low price, average price, and high price)  
-   7. Logo URIs  
-   8. Persistent peer lists  
-   9. Public RPCs  
+2. Chain metadata is available in a commonly used chain registry (e.g. [https://github.com/cosmos/chain-registry](https://github.com/cosmos/chain-registry)). Metadata should include:
+   1. Chain name (and optionally "pretty name"
+   2. Website
+   3. chain\_id
+   4. Bech32 prefix
+   5. slip44 (aka "coin type")
+   6. Fee information (with denom, low price, average price, and high price)
+   7. Logo URIs
+   8. Persistent peer lists
+   9. Public RPCs
    _This metadata and the chain registry of choice might differ for EVM chains. Please use your best judgement of whats required_
 3. IBC, Axelar, Layerzero, Eureka, and/or Hyperlane support.
 
@@ -54,16 +54,16 @@ _Here we set up IBC clients, channels, and relayers._
 
  <Info>
  **What is a relayer?**
- 
+
  Relayers are the off-chain actors that:
- 
+
  * Keep IBC light clients up to date (Regular updates are required to prevent "expiration")
  * Monitor chains for outbound IBC packets, grab them, and send the packet data and packet proof to the destination chain
 </Info>
 
-_The easiest way to complete the steps below is to use the ibc relayer software ([Hermes](https://github.com/informalsystems/hermes) or [Relayer](https://github.com/cosmos/relayer). The CLIs of both support channel and client instantiation._ 
+_The easiest way to complete the steps below is to use the ibc relayer software ([Hermes](https://github.com/informalsystems/hermes) or [Relayer](https://github.com/cosmos/relayer). The CLIs of both support channel and client instantiation._
 
-For each chain that you want your chain to have a direct IBC transfer path to, you must complete steps to ensure IBC works properly: 
+For each chain that you want your chain to have a direct IBC transfer path to, you must complete steps to ensure IBC works properly:
 
 1. Create a light client of the remote chain on your chain, and a light client of your chain on the remote chain
 2. Create a ICS-20 "transfer" channel between these two clients
@@ -71,11 +71,11 @@ For each chain that you want your chain to have a direct IBC transfer path to, y
 
  <Warning>
  **Don't create more than 1 channel between your chain and a remote chain**
- 
- Your chain only needs 1 transfer channel for each chain it should communicate with directly. 
- 
- All tokens from your chain can be transferred to a particular remote chain over the same channel. 
- 
+
+ Your chain only needs 1 transfer channel for each chain it should communicate with directly.
+
+ All tokens from your chain can be transferred to a particular remote chain over the same channel.
+
  Additional transfer channels may create confusion and liquidity fragmentation since users will need to pick which channel to transfer over (The Skip Go API automates this choice for the apps and users that use it, but others might not be so lucky)
 </Warning>
 
@@ -84,9 +84,9 @@ For each chain that you want your chain to have a direct IBC transfer path to, y
 
  <Info>
  **What if I don't want to run my own relayers?**
- 
+
  Get in touch with us on [our Discord](https://discord.gg/interchain)
- 
+
  We have great relationships with all the top relayer operators in the Cosmos ecosystem and can put you in touch with them.
 </Info>
 
@@ -99,51 +99,50 @@ For each native asset that you want to ensure users can transfer over the
 3. **Leave the transferred tokens on the destination chain**
 
 ## 4\. What chains will be asked for when submitting to get added to the Skip API on discord
- 
+
 Please include the following:
 
-- Team Name: 
+- Team Name:
 - Team Contact Name:
 - Team Contact Telegram:
 - Team Website:
-- Swapping Venue Name** (if different from team name):  
-- Swapping Venue Website** (if different from team website):  
-- Swapping Venue Documentation:**  
+- Swapping Venue Name** (if different from team name):
+- Swapping Venue Website** (if different from team website):
+- Swapping Venue Documentation:**
 
 
-Chain supported by the Skip API 
-  - Use the [`/info/chains` endpoint](https://docs.skip.build/go/api-reference/prod/info/get-v2infochains) to verify: `/v2/info/chains`  
-  - If not listed, follow the [Chain Support Requirements](https://docs.skip.build/go/support-requirements/chain-support-requirements)  
+Chain supported by the Skip API
+  - Use the [`/info/chains` endpoint](https://docs.skip.build/go/api-reference/prod/info/get-v2infochains) to verify: `/v2/info/chains`
+  - If not listed, follow the [Chain Support Requirements](https://docs.skip.build/go/support-requirements/chain-support-requirements)
   - _This is a required prerequisite_
 
-CosmWasm Support  
+CosmWasm Support
   - Include documentation or notes on any special setup or limitations
 
-IBC Support  
+IBC Support
   - Provide relevant details, especially if not using standard IBC-go
 
-IBC-hooks Support  
-  - Indicate if using upstream ibc-hooks or a modified version  
+IBC-hooks Support
+  - Indicate if using upstream ibc-hooks or a modified version
   - [Upstream ibc-hooks](https://github.com/cosmos/ibc-apps/tree/main/modules/ibc-hooks)
 ---
 
 ## **Additional Chain Questions**
 
-- Does the chain support **Packet Forward Middleware (PFM)?**  
-- Is **CosmWasm contract deployment permissionless**?  
+- Does the chain support **Packet Forward Middleware (PFM)?**
+- Is **CosmWasm contract deployment permissionless**?
   If not, what is the approval or governance process?
 
  <Info>
  **Why is this required?**
- 
+
  Warm starting the channels kicks off Skip's intelligent routing suggestions for folks bridging to and from your chain. We choose routes between chains that ensure users are always receiving the most desirable version of their chosen token on their destination chain.
- 
+
  As a part of providing good user experiences for everyone using the API, we don't enable users to bridge assets to new chains where no one has previously bridged that asset. (Often times, for ordinary users, taking an existing token to a chain it doesn't exist leaves them stuck on that new chain with a useless token). That's why we need to "warm start" channels -- to enable recommending them as bridging routes.
 </Info>
 
 <Info>
  **Have questions or feedback? Help us get better!**
- 
+
  Join [our Discord](https://discord.gg/interchain) and select the "Skip Go Developer" role to share your questions and feedback.
 </Info>
-
