@@ -22,7 +22,7 @@ export const test = base.extend<TestFixtures>({
    * Fixture that sets up a browser with Keplr wallet
    * Automatically initializes before each test and cleans up after
    */
-  widgetPage: async ({}, use) => {
+  widgetPage: async (_, use) => {
     console.log("🔧 Setting up widget page fixture...");
 
     // Setup: Create browser context with Keplr
