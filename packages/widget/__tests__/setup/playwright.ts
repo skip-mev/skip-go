@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Browser, BrowserType, chromium, Page } from "@playwright/test";
 
 let browser: Browser;
@@ -69,10 +70,17 @@ export async function watchKeplrPopupApproveWindow() {
   }
 }
 
+/**
+ * Polls for Keplr approval popup and clicks the approve button
+ * @param timeoutMs - Maximum time to wait for popup (default: 5000ms)
+ * @returns "approved" if popup was found and approved, "no-popup-found" if timeout reached
+ * @throws Error if approval process fails
+ */
 export async function approveInKeplr(timeoutMs = 5_000): Promise<"approved" | "no-popup-found"> {
   return new Promise((resolve, reject) => {
     let lastSeenPopupAt = Date.now();
     let isRunning = true;
+    let hasApproved = false;
 
     const poll = async () => {
       if (!isRunning) return;
@@ -80,17 +88,35 @@ export async function approveInKeplr(timeoutMs = 5_000): Promise<"approved" | "n
       try {
         assignWindows();
 
-        if (_keplrPopupWindow) {
+        if (_keplrPopupWindow && !hasApproved) {
           lastSeenPopupAt = Date.now();
+          console.log("   🔍 Keplr popup detected, attempting to approve...");
 
           try {
             const approveButton = _keplrPopupWindow.getByRole("button", {
               name: /approve/i,
             });
+
+            // Wait for button to be visible and clickable
+            await approveButton.waitFor({ state: "visible", timeout: 2_000 });
             await approveButton.click();
+
+            hasApproved = true;
             _keplrPopupWindow = undefined;
-            await _mainWindow.bringToFront();
-          } catch (_err) {
+
+            // Bring main window back to front
+            if (_mainWindow) {
+              await _mainWindow.bringToFront();
+            }
+
+            console.log("   ✅ Keplr approval successful");
+            isRunning = false;
+            resolve("approved");
+            return;
+          } catch (err) {
+            console.warn(
+              `   ⚠️ Failed to click approve button: ${err instanceof Error ? err.message : err}`,
+            );
             _keplrPopupWindow = undefined;
           }
         }
@@ -98,6 +124,7 @@ export async function approveInKeplr(timeoutMs = 5_000): Promise<"approved" | "n
         const timeSinceLastSeen = Date.now() - lastSeenPopupAt;
         if (timeSinceLastSeen >= timeoutMs) {
           isRunning = false;
+          console.warn(`   ⏱️ Keplr popup not found within ${timeoutMs}ms timeout`);
           resolve("no-popup-found");
           return;
         }
@@ -105,7 +132,9 @@ export async function approveInKeplr(timeoutMs = 5_000): Promise<"approved" | "n
         setTimeout(poll, 100);
       } catch (err) {
         isRunning = false;
-        reject(new Error(`Keplr approval loop error: ${err instanceof Error ? err.message : err}`));
+        const errorMessage = `Keplr approval loop error: ${err instanceof Error ? err.message : err}`;
+        console.error(`   ❌ ${errorMessage}`);
+        reject(new Error(errorMessage));
       }
     };
 
