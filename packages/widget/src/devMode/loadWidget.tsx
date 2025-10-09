@@ -78,6 +78,17 @@ const DevMode = () => {
       onTransactionSignRequested: (props) => {
         console.log("onTransactionSignRequested", props);
       },
+      // Only include routeConfig when running tests
+      ...(process.env.VISUAL_TEST === "true" && {
+        routeConfig: {
+          swapVenues: [
+            {
+              chainId: "osmosis-1",
+              name: "osmosis-poolmanager",
+            },
+          ],
+        },
+      }),
     };
   }, [apiUrl, disableShadowDom, testnet, theme]);
 
