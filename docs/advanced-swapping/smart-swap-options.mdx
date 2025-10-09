@@ -37,7 +37,7 @@ Currently supported external swap routers:
 
 ### Usage
 
-Pass an empty `smartSwapOptions` object into your route request. 
+Pass an empty `smartSwapOptions` object into your route request.
 
 <CodeGroup>
 ```ts TypeScript (Client)
@@ -53,7 +53,7 @@ const route = await skipClient.route({
 ```
 ```JSON JSON (REST API)
 // POST /v2/fungible/route
-{ 
+{
   "amount_in": "1000000",
   "source_asset_denom": "uusdc",
   "source_asset_chain_id": "noble-1",
@@ -93,7 +93,7 @@ const route = await skipClient.route({
 
 ```JSON JSON (REST API)
 // POST /v2/fungible/route
-{ 
+{
   "amount_in": "1000000",
   "source_asset_denom": "uusdc",
   "source_asset_chain_id": "noble-1",
@@ -185,10 +185,10 @@ const route = await skipClient.route({
 
 ### How do EVM Swaps Change the `route` Response?
 
-When an EVM swap occurs in a route, a new operation of type `evm_swap` is returned in the array of `operations` in the `v2/route` and `v2/msgs_direct` response. 
+When an EVM swap occurs in a route, a new operation of type `evm_swap` is returned in the array of `operations` in the `v2/route` and `v2/msgs_direct` response.
 
 <Warning>
-If your API use follows the `v2/route` then `v2/msgs` call pattern, this new operation type must be passed to the `v2/msgs` endpoint, so make sure you use the latest [Skip Go Client version](https://www.npmjs.com/package/@skip-go/client) and decode the operation properly. 
+If your API use follows the `v2/route` then `v2/msgs` call pattern, this new operation type must be passed to the `v2/msgs` endpoint, so make sure you use the latest [Skip Go Client version](https://www.npmjs.com/package/@skip-go/client) and decode the operation properly.
 </Warning>
 
 The `evm_swap` operation type is as follows:
@@ -233,6 +233,6 @@ Nothing new in particular! The `msg_type` used for EVM swaps is the same `evm_tx
  <Info>
  **Have questions or feedback? Help us get better!**
 
-Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
+Join [our Discord](https://discord.com/invite/interchain) and select the "Skip Go Developer" role to share your questions and feedback.
 
 </Info>

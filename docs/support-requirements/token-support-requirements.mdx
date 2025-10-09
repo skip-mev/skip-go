@@ -11,41 +11,41 @@ description: "This document describes the steps you must complete for the Skip G
 
  <Warning>
  **Guide assumes using IBC for interop**
- 
- This guide assumes you're using IBC to transfer your token between chains. 
- 
- The Skip Go API supports other bridges and interop protocols in addition to IBC, including Hyperlane, CCTP, and Axelar. If you're using one of these, please get in contact with us on [our Discord](https://skip.build/discord).
+
+ This guide assumes you're using IBC to transfer your token between chains.
+
+ The Skip Go API supports other bridges and interop protocols in addition to IBC, including Hyperlane, CCTP, and Axelar. If you're using one of these, please get in contact with us on [our Discord](https://discord.com/invite/interchain).
 and we will help guide you through it to the extent we can.
- 
+
  These other interop protocols are less standardized and/or less permissionless than IBC, so the process of adding support for transferring new tokens over them is more bespoke and varies by protocol. We're happy to help where we can, providing guidance, implementation, and introductions where necessary.
 </Warning>
 
 ## 1\. Satisfy the following basic requirements
 
-1. The chain where the token is issued must already be supported by the Skip Go API  
-   1. Use the `/info/chains` endpoint to query a list of actively supported chains: [/v2/info/chains](/api-reference/prod/info/get-v2infochains)  
-   2. If the chain is not already supported, follow the instructions in [Chain Support Requirements](./chain-support-requirements) to request support  
+1. The chain where the token is issued must already be supported by the Skip Go API
+   1. Use the `/info/chains` endpoint to query a list of actively supported chains: [/v2/info/chains](/api-reference/prod/info/get-v2infochains)
+   2. If the chain is not already supported, follow the instructions in [Chain Support Requirements](./chain-support-requirements) to request support
    3. **_This is a pre-requisite_**
-2. The Skip Go API must also support the remote chains to which you wish users to be able to transfer the asset  
-   1. Use the `/info/chains` endpoint to query a list of actively supported chains: [/v2/info/chains](/api-reference/prod/info/get-v2infochains)  
-   2. If the chain is not already supported, follow the instructions in [Chain Support Requirements](./chain-support-requirements) to request support  
+2. The Skip Go API must also support the remote chains to which you wish users to be able to transfer the asset
+   1. Use the `/info/chains` endpoint to query a list of actively supported chains: [/v2/info/chains](/api-reference/prod/info/get-v2infochains)
+   2. If the chain is not already supported, follow the instructions in [Chain Support Requirements](./chain-support-requirements) to request support
    3. **_This is a pre-requisite_**
 
     **Note:** We are unable to support IBC tokens from a source chain that is not integrated with Skip Go. Skip Go requires direct integration with the source chain to query chain state and balances, submit and monitor transactions, calculate accurate gas fees and handle chain-specific token mechanics.
-3. Token metadata is available in a commonly used chain registry (e.g. [Cosmos Chain Registry](https://github.com/cosmos/chain-registry)) . Metadata should include at least:  
-   1. Denom (programmatic string identifier)  
-   2. Symbol (aka "ticker")  
-   3. Asset name (human readable denom)  
-   4. Display name (aka pretty name)  
-   5. Decimals / exponent  
-   6. Images  
-   7. coingecko\_id (if applicable)  
+3. Token metadata is available in a commonly used chain registry (e.g. [Cosmos Chain Registry](https://github.com/cosmos/chain-registry)) . Metadata should include at least:
+   1. Denom (programmatic string identifier)
+   2. Symbol (aka "ticker")
+   3. Asset name (human readable denom)
+   4. Display name (aka pretty name)
+   5. Decimals / exponent
+   6. Images
+   7. coingecko\_id (if applicable)
    8. Description
 4. Ensure IBC relayers are actively monitoring and relaying packets on all channels over which you want users to transfer your token (See [Chain Support Requirements](./chain-support-requirements) for more info on relayers.)
 
 ## 2\. "Warm Start" your Asset Routes
 
-For each destination chain: 
+For each destination chain:
 
 1. Pick a channel that you would like to be the canonical channel for transferring the asset to this destination chain
 1. Transfer a non-zero amount of the token over the channel
@@ -55,41 +55,41 @@ For each destination chain:
 
  <Info>
  **How do I pick a channel for a destination chain?**
- 
+
  If you're launching a new chain, you should just pick whatever channel your team has set up. Usually, there's just one highly-trafficked and well-relayed channel between two chains over which all assets are transferred. (In theory, there can be many because IBC is permissionless, but usually relayers are only monitoring 1 and creating more adds confusion for all parties)
- 
- If you're launching a new token on a chain that already has a vibrant IBC ecosystem and has already issued tokens that are widely used throughout the interchain (e.g. Osmosis or Neutron), you should probably use the same channel the well-established tokens use, since relayers are most likely to support these ones. To see which channel this is, call the [/v2/fungible/recommend\_assets](/api-reference/prod/fungible/get-v2fungibleassets) endpoint with the following values: 
- 
+
+ If you're launching a new token on a chain that already has a vibrant IBC ecosystem and has already issued tokens that are widely used throughout the interchain (e.g. Osmosis or Neutron), you should probably use the same channel the well-established tokens use, since relayers are most likely to support these ones. To see which channel this is, call the [/v2/fungible/recommend\_assets](/api-reference/prod/fungible/get-v2fungibleassets) endpoint with the following values:
+
  * `source_denom`: A well-established token on the chain where your asset is issued (e.g. `uatom`)
  * `source_chain_id`: The `chain_id` of the chain where your asset is issued (`e.g. cosmoshub-4`)
  * `dest_chain_id`: The `chain_id` of the chain to which you want to be able to transfer your asset (e.g. `osmosis-1`)
- 
+
  The channel you want to use is available in the response in `recommendations[0].asset.trace`
 </Info>
 
 
  <Info>
  **How do I transfer tokens over my chosen channel before Skip Go API supports it?**
- 
+
  The easiest way to transfer tokens over a channel before official Skip Go API support is to use Keplr's developer mode. To enable developer mode in the Keplr extension, open the hamburger menu, click on settings, then click advanced, then activate the toggle for "Developer Mode".
- 
+
  Once developer mode is active, at the bottom of the main page you should see "Advanced IBC Transfer". Click on this then follow the instructions for inputting your token and desired channel ID.
 </Info>
 
 
  <Info>
  **Why is this required?**
- 
+
  Warm starting the channels kicks off Skip's intelligent routing suggestions for folks bridging to and from your chain. We choose routes between chains that ensure users are always receiving the most desirable version of their chosen token on their destination chain.
- 
+
  As a part of providing good user experiences for everyone using the API, we don't enable users to bridge assets to new chains where no one has previously bridged that asset. (Often times, for ordinary users, taking an existing token to a chain it doesn't exist leaves them stuck on that new chain with a useless token). That's why we need to "warm start" channels -- to enable recommending them as bridging routes.
 </Info>
 
 ## 3\. Wait up to 24 hours and verify
 
-Skip's intelligent route detection should automatically detect new routes for all assets and chains that meet the above requirements in 4-8 hours. This will not happen immediately. Please ensure you wait the necessary amount of time. 
+Skip's intelligent route detection should automatically detect new routes for all assets and chains that meet the above requirements in 4-8 hours. This will not happen immediately. Please ensure you wait the necessary amount of time.
 
-After you've let enough time pass, you can verify that Skip Go API supports the new routes you've configured using the [/v2/fungible/recommend\_assets](/api-reference/prod/fungible/get-v2fungibleassets) endpoint. For each destination chain you've configured, call this endpoint with the following data: 
+After you've let enough time pass, you can verify that Skip Go API supports the new routes you've configured using the [/v2/fungible/recommend\_assets](/api-reference/prod/fungible/get-v2fungibleassets) endpoint. For each destination chain you've configured, call this endpoint with the following data:
 
 * `source_denom`: Your token
 * `source_chain_id`: The chain on which your token is issued

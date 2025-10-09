@@ -54,6 +54,7 @@ const widgetPropTypes: Required<PropDescriptors> = {
   onSourceAssetUpdated: "any",
   onTransactionSignRequested: "any",
   allowOptionsUpdateAfterApiCall: "any",
+  modalZIndex: "any",
 };
 
 const WebComponent = toWebComponent(Widget, {

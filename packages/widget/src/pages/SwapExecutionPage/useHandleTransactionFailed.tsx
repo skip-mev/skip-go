@@ -75,7 +75,7 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
       track("unexpected error page: transaction failed", { lastTransaction, error, route });
       setErrorWarning({
         errorWarningType: ErrorWarningType.TransactionFailed,
-        onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
+        onClickContactSupport: () => window.open("https://discord.com/invite/interchain", "_blank"),
         explorerLink,
         txHash: lastTxHash ?? "",
       });

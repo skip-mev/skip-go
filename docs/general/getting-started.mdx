@@ -9,11 +9,11 @@ description: "This pages explains what the Skip Go API is, gives examples of app
 
 Welcome to the Skip Go API docs!
 
-**Skip Go API is an end-to-end interoperability platform that enables developers to create seamless cross-chain experiences for their end users with a variety of underlying DEXes and cross-chain messaging protocols, including IBC, CCTP, Hyperlane, Eureka, Stargate, Gofast and Axelar. We're on a mission to make all interop dead easy for developers and their users!** 
+**Skip Go API is an end-to-end interoperability platform that enables developers to create seamless cross-chain experiences for their end users with a variety of underlying DEXes and cross-chain messaging protocols, including IBC, CCTP, Hyperlane, Eureka, Stargate, Gofast and Axelar. We're on a mission to make all interop dead easy for developers and their users!**
 
-Unlike most aggregators, Skip Go API is based around the idea of composing many underlying bridging and swapping operations to create multi-hop routes that can connect any two chains and tokens in a single transaction. The goal is to help developers build interfaces where users can teleport any token to any chain from wherever they might be. 
+Unlike most aggregators, Skip Go API is based around the idea of composing many underlying bridging and swapping operations to create multi-hop routes that can connect any two chains and tokens in a single transaction. The goal is to help developers build interfaces where users can teleport any token to any chain from wherever they might be.
 
-We've designed it so that even developers who are completely new to interoperability and have never worked with any of the bridges or DEXes we use can build applications and frontends that feel magical and offer: 
+We've designed it so that even developers who are completely new to interoperability and have never worked with any of the bridges or DEXes we use can build applications and frontends that feel magical and offer:
 
 * Any-to-any cross-chain swaps with built-in cross-chain DEX aggregation under the hood (e.g. Swap OSMO on Neutron for ARCH on Archway in a single transaction)
 * Onboarding to a sovereign chain from an origin chain or token in any ecosystem (e.g. Onboard to Sei from ETH on Blast)
@@ -21,10 +21,10 @@ We've designed it so that even developers who are completely new to interoperabi
 * Multi-hop cross-chain transfers with automatic denom & path recommendations for any asset and chain (e.g. Get the most liquid version of ATOM on Terra2)
 * Composite bridging paths that use multiple underlying bridges for different stages of the path (e.g. Transfer USDC from Base to Injective over CCTP and IBC behind the scenes)
 * Real-time cross-chain workflow tracking, along with gas + completion timing estimates
-* Protection from common cross-chain UX failures (e.g. bridging to a chain where the end user doesn't have gas)  
+* Protection from common cross-chain UX failures (e.g. bridging to a chain where the end user doesn't have gas)
 ... and much more
 
-Skip Go API includes several different endpoint types which allow developers to choose their level of abstraction and build a wide variety of cross-chain applications. These include: 
+Skip Go API includes several different endpoint types which allow developers to choose their level of abstraction and build a wide variety of cross-chain applications. These include:
 
 * **High-level endpoints** that return fully-formed messages and transactions
 * **Low-level endpoints** that return detailed pathing data about all the "operations" that make up a route
@@ -33,10 +33,10 @@ Skip Go API includes several different endpoint types which allow developers to 
 
 <Info>
  **What does it cost?**
- 
+
  The Skip Go API is free to use and integrate with. For integrators who charge fees on swaps using our affiliate fee functionality, we collect a share of those fees. You can learn more about [pricing and fees in our FAQ](/general/faq#does-the-skip-go-api-cost-anything%3F).
- 
- You will have very limited access if you do not have an API key from us. Please join [our Discord](https://skip.build/discord) and request one.
+
+ You will have very limited access if you do not have an API key from us. Please join [our Discord](https://discord.com/invite/interchain) and request one.
 </Info>
 
 ## 3 Basic Ways to Use the Skip Go API
@@ -48,7 +48,7 @@ There are 3 ways to leverage Skip Go API to build cross-chain swapping & transfe
     Use REST endpoints for low-level control over your interactions.
   </Card>
   <Card title="Client Library — High control, fast integration" icon="code" href="/client/getting-started" >
-    Use the TypeScript library to abstract the complexity of making HTTP calls and access related helper functionality. 
+    Use the TypeScript library to abstract the complexity of making HTTP calls and access related helper functionality.
   </Card>
   <Card title="Widget — Medium control, fastest integration" icon="bolt-lightning" href="/widget/getting-started" >
     Embed the Skip Go Widget in your frontend in a single line of code to launch with no developer effort.
