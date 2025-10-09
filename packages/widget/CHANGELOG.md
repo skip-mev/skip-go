@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.14.13
+
+### Patch Changes
+
+- 229522f: fix broken link, fix dependency security issues
+- Updated dependencies [229522f]
+  - @skip-go/client@1.5.9
+
 ## 3.14.12
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.5.9
+
+### Patch Changes
+
+- 229522f: fix broken link, fix dependency security issues
+
 ## 1.5.8
 
 ### Patch Changes
