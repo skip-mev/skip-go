@@ -14,6 +14,10 @@ export default function SkipGoChainForm() {
   const [slackInfo, setSlackInfo] = React.useState('');
   const [useTelegram, setUseTelegram] = React.useState(false);
   const [telegramHandle, setTelegramHandle] = React.useState('');
+  const [generalInfo, setGeneralInfo] = React.useState('');
+  const [launchDate, setLaunchDate] = React.useState('');
+  const [coingeckoUrl, setCoingeckoUrl] = React.useState('');
+  const [onboardingStrategy, setOnboardingStrategy] = React.useState('');
   const [isValidating, setIsValidating] = React.useState(false);
   const [chainData, setChainData] = React.useState(null);
   const [validationErrors, setValidationErrors] = React.useState({});
@@ -108,6 +112,9 @@ export default function SkipGoChainForm() {
       // Pre-launch validation - only require basic info
       if (!projectName.trim()) errors.projectName = 'Project name is required';
       if (!developmentStage) errors.developmentStage = 'Please select a development stage';
+      if (!generalInfo.trim()) errors.generalInfo = 'General information is required';
+      if (!launchDate.trim()) errors.launchDate = 'Launch date is required';
+      if (!onboardingStrategy.trim()) errors.onboardingStrategy = 'Onboarding/Interop strategy is required';
       if (!contactEmail.trim()) errors.contactEmail = 'Contact email is required';
       // Validate communication preferences if checked
       if (useSlack && !slackInfo.trim()) errors.slackInfo = 'Please provide Slack workspace or channel';
@@ -119,6 +126,9 @@ export default function SkipGoChainForm() {
       if (!validateEndpoint(restEndpoint)) errors.rest = true;
       if (evmEndpoint && !validateEndpoint(evmEndpoint)) errors.evm = true;
       if (!chainData) errors.chainRegistry = 'Please provide a valid chain registry URL';
+      if (!generalInfo.trim()) errors.generalInfo = 'General information is required';
+      if (!launchDate.trim()) errors.launchDate = 'Launch date is required';
+      if (!onboardingStrategy.trim()) errors.onboardingStrategy = 'Onboarding/Interop strategy is required';
       if (!contactEmail.trim()) errors.contactEmail = 'Contact email is required';
       // Validate communication preferences if checked
       if (useSlack && !slackInfo.trim()) errors.slackInfo = 'Please provide Slack workspace or channel';
@@ -144,6 +154,11 @@ Development Stage: ${developmentStage}
 Description: ${projectDescription || 'Not provided'}
 Website: ${projectWebsite || 'Not provided'}
 
+General Info: ${generalInfo || 'Not provided'}
+Launch Date: ${launchDate || 'Not provided'}
+CoinGecko: ${coingeckoUrl || 'Not provided'}
+Onboarding/Interop Strategy: ${onboardingStrategy || 'Not provided'}
+
 Contact: ${contactEmail}
 Communication Preferences:
 ${useSlack && slackInfo ? `- Slack: ${slackInfo}` : ''}
@@ -156,6 +171,11 @@ Chain Integration Request
 Chain Registry: ${chainRegistryUrl}
 Chain Name: ${chainData.pretty_name}
 Chain ID: ${chainData.chain_id}
+
+General Info: ${generalInfo || 'Not provided'}
+Launch Date: ${launchDate || 'Not provided'}
+CoinGecko: ${coingeckoUrl || 'Not provided'}
+Onboarding/Interop Strategy: ${onboardingStrategy || 'Not provided'}
 
 Required Endpoints:
 - RPC: ${rpcEndpoint}
@@ -206,6 +226,10 @@ ${useTelegram && telegramHandle ? `- Telegram: ${telegramHandle}` : ''}
             setSlackInfo('');
             setUseTelegram(false);
             setTelegramHandle('');
+            setGeneralInfo('');
+            setLaunchDate('');
+            setCoingeckoUrl('');
+            setOnboardingStrategy('');
             setChainData(null);
             setIsSubmitting(false);
             setSubmitMessage('Thank you! Your integration request has been submitted. Our Customer Success Engineering team will review it shortly.');
@@ -448,6 +472,44 @@ ${useTelegram && telegramHandle ? `- Telegram: ${telegramHandle}` : ''}
 
             <div style={{ marginBottom: '20px' }}>
               <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                General Information About the Project *
+              </label>
+              <textarea
+                value={generalInfo}
+                onChange={(e) => setGeneralInfo(e.target.value)}
+                placeholder="Tell us about your project, its goals, and what makes it unique..."
+                rows={4}
+                required
+                style={{ ...inputStyle, resize: 'vertical' }}
+              />
+              {validationErrors.generalInfo && (
+                <div style={{ marginTop: '6px', color: '#ef4444', fontSize: '13px' }}>
+                  {validationErrors.generalInfo}
+                </div>
+              )}
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                When Was/Will the Chain Be Launched? *
+              </label>
+              <input
+                type="text"
+                value={launchDate}
+                onChange={(e) => setLaunchDate(e.target.value)}
+                placeholder="e.g., Q2 2024, March 2024, or 'Expected Q3 2025'"
+                required
+                style={inputStyle}
+              />
+              {validationErrors.launchDate && (
+                <div style={{ marginTop: '6px', color: '#ef4444', fontSize: '13px' }}>
+                  {validationErrors.launchDate}
+                </div>
+              )}
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
                 Project Website
               </label>
               <input
@@ -457,6 +519,38 @@ ${useTelegram && telegramHandle ? `- Telegram: ${telegramHandle}` : ''}
                 placeholder="https://yourproject.com"
                 style={inputStyle}
               />
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                CoinGecko Link (if you have a token)
+              </label>
+              <input
+                type="url"
+                value={coingeckoUrl}
+                onChange={(e) => setCoingeckoUrl(e.target.value)}
+                placeholder="https://www.coingecko.com/en/coins/your-token"
+                style={inputStyle}
+              />
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                Onboarding Strategy / Interoperability Strategy *
+              </label>
+              <textarea
+                value={onboardingStrategy}
+                onChange={(e) => setOnboardingStrategy(e.target.value)}
+                placeholder="Describe your strategy for onboarding users, cross-chain interoperability plans, IBC connections, etc..."
+                rows={4}
+                required
+                style={{ ...inputStyle, resize: 'vertical' }}
+              />
+              {validationErrors.onboardingStrategy && (
+                <div style={{ marginTop: '6px', color: '#ef4444', fontSize: '13px' }}>
+                  {validationErrors.onboardingStrategy}
+                </div>
+              )}
             </div>
           </>
         ) : (
@@ -505,6 +599,89 @@ ${useTelegram && telegramHandle ? `- Telegram: ${telegramHandle}` : ''}
               {validationErrors.chainRegistry && (
                 <div style={{ marginTop: '6px', color: '#ef4444', fontSize: '13px' }}>
                   {validationErrors.chainRegistry}
+                </div>
+              )}
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                General Information About the Project *
+              </label>
+              <textarea
+                value={generalInfo}
+                onChange={(e) => setGeneralInfo(e.target.value)}
+                placeholder="Tell us about your project, its goals, and what makes it unique..."
+                rows={4}
+                required
+                style={{ ...inputStyle, resize: 'vertical' }}
+              />
+              {validationErrors.generalInfo && (
+                <div style={{ marginTop: '6px', color: '#ef4444', fontSize: '13px' }}>
+                  {validationErrors.generalInfo}
+                </div>
+              )}
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                Chain Launch Date *
+              </label>
+              <input
+                type="text"
+                value={launchDate}
+                onChange={(e) => setLaunchDate(e.target.value)}
+                placeholder="e.g., Q2 2024, March 2024"
+                required
+                style={inputStyle}
+              />
+              {validationErrors.launchDate && (
+                <div style={{ marginTop: '6px', color: '#ef4444', fontSize: '13px' }}>
+                  {validationErrors.launchDate}
+                </div>
+              )}
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                Project Website
+              </label>
+              <input
+                type="url"
+                value={projectWebsite}
+                onChange={(e) => setProjectWebsite(e.target.value)}
+                placeholder="https://yourproject.com"
+                style={inputStyle}
+              />
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                CoinGecko Link (if you have a token)
+              </label>
+              <input
+                type="url"
+                value={coingeckoUrl}
+                onChange={(e) => setCoingeckoUrl(e.target.value)}
+                placeholder="https://www.coingecko.com/en/coins/your-token"
+                style={inputStyle}
+              />
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                Onboarding Strategy / Interoperability Strategy *
+              </label>
+              <textarea
+                value={onboardingStrategy}
+                onChange={(e) => setOnboardingStrategy(e.target.value)}
+                placeholder="Describe your strategy for onboarding users, cross-chain interoperability plans, IBC connections, etc..."
+                rows={4}
+                required
+                style={{ ...inputStyle, resize: 'vertical' }}
+              />
+              {validationErrors.onboardingStrategy && (
+                <div style={{ marginTop: '6px', color: '#ef4444', fontSize: '13px' }}>
+                  {validationErrors.onboardingStrategy}
                 </div>
               )}
             </div>
