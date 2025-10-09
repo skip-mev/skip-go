@@ -1,0 +1,349 @@
+{
+  "config": {
+    "configFile": "/Users/kiki/Workspace/skip/skip-go/packages/widget/playwright.config.ts",
+    "rootDir": "/Users/kiki/Workspace/skip/skip-go/packages/widget",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/Users/kiki/Workspace/skip/skip-go/packages/widget/__tests__/setup/globalSetup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "__tests__/reports/html"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "__tests__/reports/results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/kiki/Workspace/skip/skip-go/packages/widget/__tests__/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/kiki/Workspace/skip/skip-go/packages/widget",
+        "testIgnore": [],
+        "testMatch": [
+          "**/__tests__/**/*.test.{ts,tsx}"
+        ],
+        "timeout": 1000000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.54.2",
+    "workers": 6,
+    "webServer": {
+      "command": "yarn dev:visual-test",
+      "url": "http://localhost:5173/",
+      "reuseExistingServer": true,
+      "timeout": 120000,
+      "stdout": "pipe",
+      "stderr": "pipe"
+    }
+  },
+  "suites": [
+    {
+      "title": "__tests__/Keplr.test.tsx",
+      "file": "__tests__/Keplr.test.tsx",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Widget tests",
+          "file": "__tests__/Keplr.test.tsx",
+          "line": 44,
+          "column": 15,
+          "specs": [
+            {
+              "title": "Noble USDC -> Cosmoshub ATOM",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 1000000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 49292,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🚀 Starting test: Noble USDC -> Cosmoshub ATOM\n"
+                        },
+                        {
+                          "text": "🔧 Setting up browser context with Keplr extension...\n"
+                        },
+                        {
+                          "text": "📦 Downloading Keplr extension...\n"
+                        },
+                        {
+                          "text": "   Found Keplr version: v0.12.279\n"
+                        },
+                        {
+                          "text": "   ✅ Using cached Keplr extension\n"
+                        },
+                        {
+                          "text": "✅ Keplr extension ready at: /Users/kiki/Workspace/skip/skip-go/packages/widget/__tests__/downloads/v0.12.279\n"
+                        },
+                        {
+                          "text": "🚀 Launching browser with Keplr extension...\n"
+                        },
+                        {
+                          "text": "🔑 Initializing Keplr wallet...\n"
+                        },
+                        {
+                          "text": "🔐 Importing wallet into Keplr...\n"
+                        },
+                        {
+                          "text": "✅ Wallet imported successfully\n"
+                        },
+                        {
+                          "text": "🌐 Navigating to widget...\n"
+                        },
+                        {
+                          "text": "✅ Browser context setup complete\n"
+                        },
+                        {
+                          "text": "📝 Step 1: Selecting source asset USDC on Noble\n"
+                        },
+                        {
+                          "text": "📝 Step 2: Selecting destination asset ATOM on Cosmos Hub\n"
+                        },
+                        {
+                          "text": "✅ Step 3: Verifying asset selection\n"
+                        },
+                        {
+                          "text": "✅ Expectations passed for: usdc-on-noble-to-atom-on-cosmoshub\n"
+                        },
+                        {
+                          "text": "   (Set UPDATE_SCREENSHOTS=true to update expected screenshots)\n"
+                        },
+                        {
+                          "text": "🔗 Step 4: Checking wallet connection\n"
+                        },
+                        {
+                          "text": "   ℹ️ Wallet not connected, connecting now...\n"
+                        },
+                        {
+                          "text": "   🔍 Keplr popup detected, attempting to approve...\n"
+                        },
+                        {
+                          "text": "   ✅ Keplr approval successful\n"
+                        },
+                        {
+                          "text": "✅ Wallet connected successfully\n"
+                        },
+                        {
+                          "text": "💰 Step 5: Entering swap amount\n"
+                        },
+                        {
+                          "text": "🔄 Step 6: Initiating swap\n"
+                        },
+                        {
+                          "text": "🔍 Checking for optional UI elements...\n"
+                        },
+                        {
+                          "text": "   ○ No 'Set intermediary address' button found\n"
+                        },
+                        {
+                          "text": "   ○ No wallet popup found\n"
+                        },
+                        {
+                          "text": "✍️ Step 7: Confirming transaction\n"
+                        },
+                        {
+                          "text": "   🔍 Keplr popup detected, attempting to approve...\n"
+                        },
+                        {
+                          "text": "   ✅ Keplr approval successful\n"
+                        },
+                        {
+                          "text": "✅ Transaction approved in Keplr\n"
+                        },
+                        {
+                          "text": "⏳ Step 8: Waiting for transaction to complete (may take up to 10 minutes)\n"
+                        },
+                        {
+                          "text": "✅ Expectations passed for: noble-usdc-to-atom-cosmoshub-complete\n"
+                        },
+                        {
+                          "text": "   (Set UPDATE_SCREENSHOTS=true to update expected screenshots)\n"
+                        },
+                        {
+                          "text": "✅ Test completed successfully: Noble USDC -> Cosmoshub ATOM\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "   ⏱️ Keplr popup not found within 5000ms timeout\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2025-10-09T03:05:14.687Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a727ec88ae59fba754cb-84a48f45f549fb20a042",
+              "file": "__tests__/Keplr.test.tsx",
+              "line": 77,
+              "column": 3
+            },
+            {
+              "title": "Cosmoshub ATOM -> Noble USDC",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 1000000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 41598,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "🚀 Starting test: Cosmoshub ATOM -> Noble USDC\n"
+                        },
+                        {
+                          "text": "🧹 Cleaning up previous test state\n"
+                        },
+                        {
+                          "text": "📝 Step 1: Selecting source asset ATOM on Cosmos Hub\n"
+                        },
+                        {
+                          "text": "📝 Step 2: Selecting destination asset USDC on Noble\n"
+                        },
+                        {
+                          "text": "✅ Step 3: Verifying asset selection\n"
+                        },
+                        {
+                          "text": "✅ Expectations passed for: atom-on-cosmoshub-to-usdc-on-noble\n"
+                        },
+                        {
+                          "text": "   (Set UPDATE_SCREENSHOTS=true to update expected screenshots)\n"
+                        },
+                        {
+                          "text": "🔗 Step 4: Checking wallet connection\n"
+                        },
+                        {
+                          "text": "✅ Wallet already connected, skipping connection step\n"
+                        },
+                        {
+                          "text": "💰 Step 5: Entering swap amount\n"
+                        },
+                        {
+                          "text": "🔄 Step 6: Initiating swap\n"
+                        },
+                        {
+                          "text": "🔍 Checking for optional UI elements...\n"
+                        },
+                        {
+                          "text": "   ○ No 'Set intermediary address' button found\n"
+                        },
+                        {
+                          "text": "   ○ No wallet popup found\n"
+                        },
+                        {
+                          "text": "✍️ Step 7: Confirming transaction\n"
+                        },
+                        {
+                          "text": "   🔍 Keplr popup detected, attempting to approve...\n"
+                        },
+                        {
+                          "text": "   ✅ Keplr approval successful\n"
+                        },
+                        {
+                          "text": "✅ Transaction approved in Keplr\n"
+                        },
+                        {
+                          "text": "⏳ Step 8: Waiting for transaction to complete (may take up to 10 minutes)\n"
+                        },
+                        {
+                          "text": "✅ Expectations passed for: atom-cosmoshub-to-usdc-noble-complete\n"
+                        },
+                        {
+                          "text": "   (Set UPDATE_SCREENSHOTS=true to update expected screenshots)\n"
+                        },
+                        {
+                          "text": "✅ Test completed successfully: Cosmoshub ATOM -> Noble USDC\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "   ⏱️ Keplr popup not found within 5000ms timeout\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2025-10-09T03:06:04.215Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a727ec88ae59fba754cb-fd1c10415a1bb049c564",
+              "file": "__tests__/Keplr.test.tsx",
+              "line": 181,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-10-09T03:05:10.515Z",
+    "duration": 95598.32400000001,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
