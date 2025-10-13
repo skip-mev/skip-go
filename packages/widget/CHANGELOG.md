@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.14.14
+
+### Patch Changes
+
+- db163fa: Fix formatDisplayAmount bug throwing an error when a number in the billions was passed to it
+
 ## 3.14.13
 
 ### Patch Changes

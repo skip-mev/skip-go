@@ -94,6 +94,7 @@ export const formatDisplayAmount = (
 
   if (abbreviate) {
     const scales = [
+      { value: 1e9, symbol: "B" },
       { value: 1e6, symbol: "M" },
       { value: 1e3, symbol: "K" },
     ];
@@ -104,7 +105,7 @@ export const formatDisplayAmount = (
         const scaled = num / value;
         let formattedNumber = Number(scaled.toFixed(2));
 
-        if (formattedNumber >= 1000) {
+        if (formattedNumber >= 1000 && i > 0) {
           const next = scales[i - 1];
           formattedNumber = Number((num / next.value).toFixed(2));
           return `${formattedNumber
