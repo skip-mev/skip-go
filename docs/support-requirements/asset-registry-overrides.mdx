@@ -16,19 +16,20 @@ While this multi-registry approach ensures broad coverage, it can sometimes lead
 - **Missing or outdated logos** for newer tokens
 - **Conflicting metadata** when different registries provide different information for the same asset
 - **Low-quality or incorrect images** from less-maintained registries
+- **Decimal display issues**
 
 ## The Skip Go Asset Registry
 
-To resolve these issues and give teams control over how their assets appear across all Skip Go, we can override these with the **[Skip Go Asset Registry](https://github.com/skip-mev/skip-go-registry)**.
+To resolve these issues and give teams control over how their assets appear across Skip Go, we can override these with the **[Skip Go Asset Registry](https://github.com/skip-mev/skip-go-registry)**.
 
 This registry allows you to:
 - Override asset metadata from external registries
 - Ensure consistent branding across all Skip Go integrations
 - Provide high-quality logos for both tokens and chains
 - Control how your assets are displayed to users
-- Fix decimals issues with you assets
+- Fix decimals issues with your assets
 
-## When to Submit an Override
+## When to Submit an PR to override
 
 You should submit an override to the Skip Go Asset Registry when:
 
@@ -45,11 +46,11 @@ The Skip Go Registry follows this directory structure:
 
 ```
 chains/
-├── [chain_id]/           # EVM chains use numeric chain IDs (e.g., 1 for Ethereum)
+├── [chain_id]/           # EVM chains use numeric chain IDs (e.g., 42161 for Arbitrum)
 │   ├── chain.json       # Chain configuration
 │   ├── assetlist.json   # Asset definitions
 │   └── images/          # Asset logos (optional)
-└── [chain_name]/        # Cosmos chains use chain names (e.g., osmosis-1)
+└── [chain_name]/        # Cosmos chains use chain names (e.g., cosmoshub-4)
     ├── chain.json       # Chain configuration
     ├── assetlist.json   # Asset definitions
     └── images/          # Asset logos (optional)
@@ -203,7 +204,7 @@ This checks for:
 
 ### Step 6: PR Review and Merge
 
-The Skip Protocol team reviews submissions within **3-5 business days**, checking for:
+The Cosmos team reviews submissions within **1-3 business days**, checking for:
 - Asset quality and format compliance
 - Metadata accuracy
 - Authenticity verification
@@ -289,7 +290,7 @@ After your PR is merged, verify using the Skip Go API:
 
 If you encounter issues:
 
-- **Discord**: [CosmosLabs Discord](https://discord.com/invite/interchain)
+- [CosmosLabs Discord](https://discord.com/invite/interchain)
 - **GitHub Issues**: [Skip Go Registry Issues](https://github.com/skip-mev/skip-go-registry/issues)
 
 ## Related Documentation
