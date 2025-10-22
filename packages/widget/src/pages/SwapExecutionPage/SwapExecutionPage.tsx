@@ -34,6 +34,8 @@ import {
 import { GasOnReceive } from "@/components/GasOnReceive";
 import { useGasRouteAutoSetAddress } from "@/hooks/useGasRouteAutoSetAddress";
 import { useTheme } from "styled-components";
+import { skipChainsAtom } from "@/state/skipClient";
+import { ChainType } from "@skip-go/client";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -59,6 +61,7 @@ export const SwapExecutionPage = () => {
   const currentTransaction = useAtomValue(currentTransactionAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const gasRouteChainAddresses = useAtomValue(gasRouteChainAddressesAtom);
+  const { data: chains } = useAtomValue(skipChainsAtom);
   const { connectRequiredChains, isLoading: isGettingAddressesLoading } = useAutoSetAddress();
   const {
     connectRequiredChains: connectGasRouteRequiredChains,
@@ -157,6 +160,15 @@ export const SwapExecutionPage = () => {
       return undefined;
     }
 
+    // Hide edit button for EVM same-chain swaps - the DEX contract returns tokens to msg.sender
+    const isSameChainSwap = route?.sourceAssetChainId === route?.destAssetChainId;
+    const sourceChain = chains?.find((c) => c.chainId === route?.sourceAssetChainId);
+    const isEvmChain = sourceChain?.chainType === ChainType.Evm;
+
+    if (isSameChainSwap && isEvmChain) {
+      return undefined;
+    }
+
     return () => {
       NiceModal.show(Modals.SetAddressModal, {
         signRequired:
@@ -165,7 +177,7 @@ export const SwapExecutionPage = () => {
         chainAddressIndex: route ? route?.requiredChainAddresses.length - 1 : undefined,
       });
     };
-  }, [swapExecutionState, lastOperation.signRequired, lastOperation.fromChain, route]);
+  }, [swapExecutionState, lastOperation.signRequired, lastOperation.fromChain, route, chains]);
 
   const shouldRenderTrackProgressButton =
     lastTxHash &&
