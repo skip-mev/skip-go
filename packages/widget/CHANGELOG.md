@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.14.15
+
+### Patch Changes
+
+- 92f4c14: Hide edit destination button for EVM same-chain swaps. EVM DEX contracts return tokens to msg.sender, so editing the destination address has no effect on same-chain swaps.
+
 ## 3.14.14
 
 ### Patch Changes
