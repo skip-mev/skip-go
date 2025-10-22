@@ -1,6 +1,6 @@
 ---
 title: "Skip Go Asset Registry & Overrides"
-description: "Learn how to submit custom token logos and metadata to the Skip Go Asset Registry to ensure your assets display correctly across all Skip Go integrations."
+description: "Learn how to submit custom token logos and metadata to the Skip Go Asset Registry to ensure your assets display correctly across Skip Go."
 ---
 
 ## Background
@@ -19,14 +19,14 @@ While this multi-registry approach ensures broad coverage, it can sometimes lead
 
 ## The Skip Go Asset Registry
 
-To resolve these issues and give teams control over how their assets appear across all Skip Go-powered applications (wallets, DEXs, bridges), we maintain the **[Skip Go Asset Registry](https://github.com/skip-mev/skip-go-registry)**.
+To resolve these issues and give teams control over how their assets appear across all Skip Go, we can override these with the **[Skip Go Asset Registry](https://github.com/skip-mev/skip-go-registry)**.
 
 This registry allows you to:
 - Override asset metadata from external registries
 - Ensure consistent branding across all Skip Go integrations
 - Provide high-quality logos for both tokens and chains
 - Control how your assets are displayed to users
-- Add symbol overrides for chain-specific token representations
+- Fix decimals issues with you assets
 
 ## When to Submit an Override
 
@@ -34,7 +34,7 @@ You should submit an override to the Skip Go Asset Registry when:
 
 1. **Logo Mismatch**: Your token logo differs from your chain logo when they should be the same
 2. **Missing Logos**: Your token or chain has no logo in Skip Go integrations
-3. **Incorrect Metadata**: Name, symbol, or other metadata is incorrect or outdated
+3. **Incorrect Metadata**: Name, symbol, denom or other metadata is incorrect or outdated
 4. **Branding Update**: You've updated your brand identity and need to update your assets
 5. **Quality Issues**: Existing logos are low quality, incorrectly formatted, or don't meet design standards
 6. **Symbol Conflicts**: Need to differentiate between token versions on different chains (e.g., `USDC.e`, `aUSD.planq`)
@@ -62,9 +62,9 @@ chains/
 1. Navigate to the [Skip Go Registry](https://github.com/skip-mev/skip-go-registry)
 2. Click "Fork" to create your own copy
 3. Clone your forked repository locally
-4. Create a new branch using the format: `NC/[descriptive-name-of-fix]`
+4. Create a new branch: `[descriptive-name-of-fix]`
    ```bash
-   git checkout -b NC/add-my-token-logo
+   git checkout -b add-my-token-logo
    ```
 
 ### Step 2: Add or Update Assets
@@ -86,7 +86,7 @@ chains/
 
 **ERC-20 Tokens:**
 
-When adding ERC-20 tokens, include only required fields unless specifically instructed:
+For ERC-20 tokens, include only required fields unless other meta data is incorrect e.g demon:
 
 ```json
 {
@@ -114,11 +114,8 @@ Additional fields to add when overriding metadata:
 {
     "asset_type": "cosmos",
     "name": "Osmosis",
-    "symbol": "OSMO",
     "denom": "uosmo",
-    "decimals": 6,
     "logo_uri": "https://raw.githubusercontent.com/...",
-    "coingecko_id": "osmosis"
 }
 ```
 
@@ -146,9 +143,9 @@ Common symbol override patterns:
 
 **Logo Requirements:**
 - **Format**: PNG or SVG (host on GitHub or a permanent CDN)
-- **Size**: Minimum 256x256px for PNG, vector for SVG
+- **Size**: Minimum 250x256px for PNG, vector for SVG
 - **Quality**: High resolution, clear, and professional
-- **URL**: Use permanent URLs (GitHub raw content URLs recommended)
+- **URL**: Use permanent URLs (GitHub raw content URLs)
 
 **Required Fields by Asset Type:**
 
@@ -194,7 +191,7 @@ This checks for:
    ```bash
    git add .
    git commit -m "Add [Token/Chain Name] assets and metadata"
-   git push origin NC/add-my-token-logo
+   git push origin add-my-token-logo
    ```
 
 2. Open a Pull Request to the main Skip Go Registry repository
@@ -269,16 +266,6 @@ After your PR is merged, verify using the Skip Go API:
   }
 }
 ```
-
-## Best Practices
-
-1. **Make minimal changes** - Only add fields specifically needed for your override
-2. **Always include decimals** - Critical for proper token handling
-3. **Use checksummed addresses** for EVM contract addresses
-4. **Verify coingecko_id** matches exactly with CoinGecko's API
-5. **Use existing patterns** - Check similar assets for consistency
-6. **Include logo_uri** when possible for better UX
-7. **Preserve existing entries** - Don't modify unrelated assets
 
 ## Common Issues & Solutions
 
