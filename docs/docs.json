@@ -81,6 +81,7 @@
             "pages": [
               "support-requirements/chain-support-requirements",
               "support-requirements/token-support-requirements",
+              "support-requirements/asset-registry-overrides",
               "support-requirements/swap-venue-requirements",
               "support-requirements/chain-integration-request"
             ]
