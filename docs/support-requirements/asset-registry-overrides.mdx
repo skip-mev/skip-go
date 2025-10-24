@@ -1,6 +1,6 @@
 ---
 title: "Skip Go Asset Registry & Overrides"
-description: "Learn how to submit custom token logos and metadata to the Skip Go Asset Registry to ensure your assets display correctly across Skip Go."
+description: "This document describes how to submit custom token logos and metadata to the Skip Go Asset Registry."
 ---
 
 ## Background
@@ -22,20 +22,13 @@ While this multi-registry approach ensures broad coverage, it can sometimes lead
 
 To resolve these issues and give teams control over how their assets appear across Skip Go, we can override these with the **[Skip Go Asset Registry](https://github.com/skip-mev/skip-go-registry)**.
 
-This registry allows you to:
-- Override asset metadata from external registries
-- Ensure consistent branding across all Skip Go integrations
-- Provide high-quality logos for both tokens and chains
-- Control how your assets are displayed to users
-- Fix decimals issues with your assets
-
 ## When to Submit an PR to override
 
 You should submit an override to the Skip Go Asset Registry when:
 
 1. **Logo Mismatch**: Your token logo differs from your chain logo when they should be the same
 2. **Missing Logos**: Your token or chain has no logo in Skip Go integrations
-3. **Incorrect Metadata**: Name, symbol, denom or other metadata is incorrect or outdated
+3. **Incorrect Metadata**: Name, symbol, decimal or other metadata is incorrect or outdated
 4. **Branding Update**: You've updated your brand identity and need to update your assets
 5. **Quality Issues**: Existing logos are low quality, incorrectly formatted, or don't meet design standards
 6. **Symbol Conflicts**: Need to differentiate between token versions on different chains (e.g., `USDC.e`, `aUSD.planq`)
@@ -60,13 +53,7 @@ chains/
 
 ### Step 1: Fork and Clone the Repository
 
-1. Navigate to the [Skip Go Registry](https://github.com/skip-mev/skip-go-registry)
-2. Click "Fork" to create your own copy
-3. Clone your forked repository locally
-4. Create a new branch: `[descriptive-name-of-fix]`
-   ```bash
-   git checkout -b add-my-token-logo
-   ```
+Fork the [Skip Go Registry](https://github.com/skip-mev/skip-go-registry)
 
 ### Step 2: Add or Update Assets
 
@@ -137,10 +124,6 @@ Common symbol override patterns:
 
 **Required Fields by Asset Type:**
 
-**EVM Native:**
-- `asset_type`, `evm_native_asset_name`, `symbol`, `name`, `decimals`
-- Recommended: `logo_uri`, `coingecko_id`
-
 **ERC-20 Tokens:**
 - `asset_type`, `erc20_contract_address` (checksummed)
 - Optional but recommended: `name`, `symbol`, `decimals`, `logo_uri`, `coingecko_id`
@@ -148,12 +131,6 @@ Common symbol override patterns:
 **Cosmos Assets:**
 - `asset_type`, `name`, `symbol`, `denom`, `decimals`
 - Recommended: `logo_uri`, `coingecko_id`
-
-**Common Decimal Values:**
-- Most EVM native tokens: 18
-- USDC, USDT: 6 (on most chains)
-- Cosmos native tokens: 6 (commonly)
-- WBTC: 8
 
 Always verify decimals with the official token contract or chain documentation.
 
@@ -175,53 +152,18 @@ This checks for:
 
 ### Step 5: Submit a Pull Request
 
-1. Commit your changes:
-   ```bash
-   git add .
-   git commit -m "Add [Token/Chain Name] assets and metadata"
-   git push origin add-my-token-logo
-   ```
-
-2. Open a Pull Request to the main Skip Go Registry repository
-
-3. In your PR description, include:
+  In your PR description, include:
    - **What you're adding/updating**: Token name, chain name, or symbol override
    - **Why the change is needed**: E.g., "Logo mismatch" or "Missing metadata"
    - **Verification**: Link to official project documentation confirming accuracy
 
 ### Step 6: PR Review and Merge
 
-The Cosmos team reviews submissions within **1-3 business days**, checking for:
-- Asset quality and format compliance
-- Metadata accuracy
-- Authenticity verification
-- Consistency with project branding
+The Cosmos Labs team reviews submissions within **1-3 business days**
 
 Once merged, updates appear in Skip Go integrations within **24 hours**.
 
 ## Advanced Features
-
-### Axelar Bridge Support
-
-For assets using Axelar bridge, add these fields to native assets:
-
-```json
-{
-    "axelar_symbol": "WETH",
-    "axelar_name": "weth-wei",
-    "axelar_denom": "weth-wei"
-}
-```
-
-### GoFast Transfers
-
-For assets supporting GoFast transfers:
-
-```json
-{
-    "go_fast_enabled": true
-}
-```
 
 ## Verifying Your Assets
 
