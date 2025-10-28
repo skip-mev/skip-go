@@ -28,9 +28,7 @@ You should submit an override to the Skip Go Asset Registry when:
 1. **Logo Mismatch**: Your token logo differs from your chain logo when they should be the same
 2. **Missing Logos**: Your token or chain has no logo in Skip Go integrations
 3. **Incorrect Metadata**: Name, symbol, decimal or other metadata is incorrect or outdated
-4. **Branding Update**: You've updated your brand identity and need to update your assets
-5. **Quality Issues**: Existing logos are low quality, incorrectly formatted, or don't meet design standards
-6. **Symbol Conflicts**: Need to differentiate between token versions on different chains (e.g., `USDC.e`, `aUSD.planq`)
+4. **Symbol Conflicts**: Need to differentiate between token versions on different chains (e.g., `USDC.e`, `aUSD.planq`)
 
 ## Repository Structure
 
@@ -60,7 +58,7 @@ Fork the [Skip Go Registry](https://github.com/skip-mev/skip-go-registry)
 
 **ERC-20 Tokens:**
 
-For ERC-20 tokens, include only required fields unless other meta data is incorrect e.g demon:
+For ERC-20 tokens, include only required fields unless other meta data is incorrect e.g decimals:
 
 ```json
 {
@@ -118,7 +116,6 @@ Common symbol override patterns:
 **Logo Requirements:**
 - **Format**: PNG or SVG (host on GitHub or a permanent CDN)
 - **Size**: Minimum 250x256px, Maximum: 800x800px for PNG, vector for SVG
-- **Quality**: High resolution, clear, and professional
 - **URL**: Use permanent URLs (GitHub raw content URLs)
 
 **Required Fields by Asset Type:**
