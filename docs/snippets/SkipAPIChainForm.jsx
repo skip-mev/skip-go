@@ -726,7 +726,6 @@ ${useTelegram && telegramHandle ? `- Telegram: ${telegramHandle}` : ''}
           After submitting this form:
         </p>
         <ol style={{ marginLeft: '20px', color: 'var(--text-primary, inherit)' }}>
-          <li>Our team will review your request within 2-3 business days</li>
           <li>We'll validate your endpoints and chain configuration</li>
           <li>If approved, your chain will be added to Skip API</li>
           <li>You'll receive confirmation via the contact email provided</li>
