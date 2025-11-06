@@ -1,0 +1,225 @@
+---
+title: "Skip Go Asset Registry & Overrides"
+---
+
+## Background
+
+The Skip Go API aggregates asset metadata from multiple public registries, including:
+- [Cosmos Chain Registry](https://github.com/cosmos/chain-registry)
+- [Osmosis Assetlists](https://github.com/osmosis-labs/assetlists)
+- [Keplr Chain Registry](https://github.com/chainapsis/keplr-chain-registry)
+- [Astroport Token Lists](https://github.com/astroport-fi/astroport-token-lists)
+
+While this multi-registry approach ensures broad coverage, it can sometimes lead to inconsistencies such as:
+- **Mismatched logos** between token and chain representations
+- **Missing or outdated logos** for newer tokens
+- **Conflicting metadata** when different registries provide different information for the same asset
+- **Low-quality or incorrect images** from less-maintained registries
+- **Decimal display issues**
+
+## The Skip Go Asset Registry
+
+To resolve these issues and give teams control over how their assets appear across Skip Go, we can override these with the **[Skip Go Asset Registry](https://github.com/skip-mev/skip-go-registry)**.
+
+## When to Submit an PR to override
+
+You should submit an override to the Skip Go Asset Registry when:
+
+1. **Logo Mismatch**: Your token logo differs from your chain logo when they should be the same
+2. **Missing Logos**: Your token or chain has no logo in Skip Go integrations
+3. **Incorrect Metadata**: Name, symbol, decimal or other metadata is incorrect or outdated
+4. **Symbol Conflicts**: Need to differentiate between token versions on different chains (e.g., `USDC.e`, `aUSD.planq`)
+
+## Repository Structure
+
+The Skip Go Registry follows this directory structure:
+
+```
+chains/
+├── [chain_id]/           # EVM chains use numeric chain IDs (e.g., 42161 for Arbitrum)
+│   ├── chain.json       # Chain configuration
+│   ├── assetlist.json   # Asset definitions
+│   └── images/          # Asset logos (optional)
+└── [chain_name]/        # Cosmos chains use chain names (e.g., cosmoshub-4)
+    ├── chain.json       # Chain configuration
+    ├── assetlist.json   # Asset definitions
+    └── images/          # Asset logos (optional)
+```
+
+## How to Submit Custom Assets
+
+### Step 1: Fork the Repository
+
+Fork the [Skip Go Registry](https://github.com/skip-mev/skip-go-registry)
+
+### Step 2: Add or Update Assets
+
+#### For EVM Chain Assets
+
+**ERC-20 Tokens:**
+
+For ERC-20 tokens, include only required fields unless other meta data is incorrect e.g decimals:
+
+```json
+{
+    "asset_type": "erc20",
+    "erc20_contract_address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+}
+```
+
+Additional fields to add when overriding metadata:
+```json
+{
+    "asset_type": "erc20",
+    "erc20_contract_address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    "name": "USD Coin",
+    "symbol": "USDC",
+    "decimals": 6,
+    "logo_uri": "https://raw.githubusercontent.com/...",
+    "coingecko_id": "usd-coin"
+}
+```
+
+#### For Cosmos Chain Assets
+
+```json
+{
+    "asset_type": "cosmos",
+    "name": "Osmosis",
+    "denom": "uosmo",
+    "logo_uri": "https://raw.githubusercontent.com/...",
+}
+```
+
+#### Symbol Overrides
+
+Use `recommended_symbol` to set the display symbol in Skip Go. This is useful for chain-specific symbols (e.g., to differentiate bridged versions):
+
+```json
+{
+    "asset_type": "erc20",
+    "name": "aUSD",
+    "symbol": "aUSD",
+    "decimals": 18,
+    "erc20_contract_address": "0xA2871B267a7d888F830251F6B4D9d3DFf184995a",
+    "recommended_symbol": "aUSD.planq"
+}
+```
+
+Common symbol override patterns:
+- `USDT.kava` - Chain suffix with dot notation
+- `USDC.e` - Bridged token designation
+- `TIA.n` - Network-specific versions
+
+### Step 3: Asset Requirements
+
+**Logo Requirements:**
+- **Format**: PNG or SVG (host on GitHub or a permanent CDN)
+- **Size**: Minimum 250x256px, Maximum: 800x800px for PNG, vector for SVG
+- **URL**: Use permanent URLs (GitHub raw content URLs)
+
+**Required Fields by Asset Type:**
+
+**ERC-20 Tokens:**
+- `asset_type`, `erc20_contract_address` (checksummed)
+- Optional but recommended: `name`, `symbol`, `decimals`, `logo_uri`, `coingecko_id`
+
+**Cosmos Assets:**
+- `asset_type`, `name`, `symbol`, `denom`, `decimals`
+- Recommended: `logo_uri`, `coingecko_id`
+
+Always verify decimals with the official token contract or chain documentation.
+
+### Step 4: Validate Your Changes
+
+Run the validation scripts before submitting:
+
+```bash
+cd scripts/config-validator
+npm install
+npm run validate
+```
+
+This checks for:
+- Schema compliance
+- Required fields
+- Valid contract addresses
+- Duplicate assets
+
+### Step 5: Submit a Pull Request
+
+  In your PR description, include:
+   - **What you're adding/updating**: Token name, chain name, or symbol override
+   - **Why the change is needed**: E.g., "Logo mismatch" or "Missing metadata"
+   - **Verification**: Link to official project documentation confirming accuracy
+
+### Step 6: PR Review and Merge
+
+The Cosmos Labs team reviews submissions within **1-3 business days**
+
+Once merged, updates appear in Skip Go integrations within **24 hours**.
+
+## Advanced Features
+
+## Verifying Your Assets
+
+After your PR is merged, verify using the Skip Go API:
+
+**Endpoint:** `https://api.skip.build/v2/fungible/assets`
+
+**Query Parameters:**
+- `chain_ids`: Limit response to specific chains
+- `include_evm_assets=true`: Required to see EVM tokens
+- `include_cw20_assets=true`: Include CW20 tokens
+- `native_only`: Restrict to native assets only
+
+**Example Response:**
+```json
+{
+  "chain_to_assets_map": {
+    "42161": {
+      "assets": [{
+        "denom": "0x816E21c33fa5F8440EBcDF6e01D39314541BEA72",
+        "chain_id": "42161",
+        "symbol": "agETH",
+        "name": "Kelp Gain",
+        "logo_uri": "https://raw.githubusercontent.com/...",
+        "decimals": 18,
+        "coingecko_id": "kelp-gain",
+        "recommended_symbol": "agETH"
+      }]
+    }
+  }
+}
+```
+
+## Common Issues & Solutions
+
+### My token shows a different logo than my chain
+
+**Solution**: Add both token and chain entries to the registry with matching logos.
+
+### My logo isn't updating after PR merge
+
+**Solution**: Wait up to 24 hours for cache invalidation. Check using the API endpoint above.
+
+### My token needs a different symbol on different chains
+
+**Solution**: Use the `recommended_symbol` field (e.g., `"USDC.e"` for bridged USDC).
+
+### EVM assets not appearing in API
+
+**Solution**: Query with `include_evm_assets=true` parameter.
+
+## Support
+
+If you encounter issues:
+
+- [Interchain Discord](https://discord.com/invite/interchain)
+- **GitHub Issues**: [Skip Go Registry Issues](https://github.com/skip-mev/skip-go-registry/issues)
+
+## Related Documentation
+
+- [Token & Route Support Requirements](./token-support-requirements): How to add new tokens to Skip Go
+- [Chain Support Requirements](./chain-support-requirements): How to request chain integration
+- [Skip Go API Reference](/api-reference/prod/fungible/get-v2fungibleassets): View asset metadata via API

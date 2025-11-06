@@ -43,3 +43,4 @@ packages/widget/test-results*
 .workbench
 .claude/settings.local.json
 CLAUDE.md
+nul
