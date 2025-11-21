@@ -222,7 +222,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
                 <TriangleWarningIcon backgroundColor={theme?.error?.text} width={47} height={41} />
               </StyledBlockingWarningIcon>
               <StyledWarningTitle as="p" color={theme?.error?.text}>
-                Risk of funds loss
+                Risk of fund loss
               </StyledWarningTitle>
               <SmallText color={theme?.error?.text} textAlign="center">
                 Do not transfer to centralized exchanges. If the transaction fails, you may receive a
