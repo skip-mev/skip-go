@@ -1,7 +1,7 @@
 import { createModal, ModalProps } from "@/components/Modal";
 import { Row } from "@/components/Layout";
 import { css, styled, useTheme } from "styled-components";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { RightArrowIcon } from "@/icons/ArrowIcon";
 import { RenderWalletList, ManualWalletEntry } from "@/components/RenderWalletList";
 import { Button } from "@/components/Button";
@@ -24,6 +24,7 @@ import { isMobile } from "@/utils/os";
 import { MinimalWallet } from "@/state/wallets";
 import { track } from "@amplitude/analytics-browser";
 import { ChainType } from "@skip-go/client";
+import { TriangleWarningIcon } from "@/icons/TriangleWarningIcon";
 
 export type SetAddressModalProps = ModalProps & {
   chainId: string;
@@ -55,6 +56,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   const chainLogo = chain?.logoUri;
   const [showManualAddressInput, setShowManualAddressInput] = useState(false);
   const [manualWalletAddress, setManualWalletAddress] = useState("");
+  const [hasAcknowledgedWithdrawalWarning, setHasAcknowledgedWithdrawalWarning] = useState(false);
   const _walletList = useWalletList({ chainId, destinationWalletList: true });
   const [_chainAddresses, _setChainAddresses] = useAtom(chainAddressesAtom);
   const [gasRouteChainAddresses, setGasRouteChainAddresses] = useAtom(gasRouteChainAddressesAtom);
@@ -65,6 +67,12 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   // If not same chain transaction, show warning
   const showWithdrawalWarning =
     new Set(Object.values(chainAddresses).map(({ chainId }) => chainId)).size > 1;
+
+  useEffect(() => {
+    if (!showManualAddressInput || !showWithdrawalWarning) {
+      setHasAcknowledgedWithdrawalWarning(false);
+    }
+  }, [showManualAddressInput, showWithdrawalWarning]);
 
   const mobile = isMobile();
 
@@ -114,7 +122,18 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     }
   }, [chain]);
 
+  const requiresWithdrawalWarningAcknowledgement = showManualAddressInput && showWithdrawalWarning;
+  const shouldBlockManualAddressEntry =
+    requiresWithdrawalWarningAcknowledgement && !hasAcknowledgedWithdrawalWarning;
+
+  const canConfirmAddress =
+    addressIsValid === true &&
+    (!requiresWithdrawalWarningAcknowledgement || hasAcknowledgedWithdrawalWarning);
+
   const onConfirmSetManualAddress = () => {
+    if (requiresWithdrawalWarningAcknowledgement && !hasAcknowledgedWithdrawalWarning) {
+      return;
+    }
     track("set address modal: confirm set address", {
       chainId,
     });
@@ -197,39 +216,66 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
               </StyledChainLogoContainerRow>
             }
           />
-          {showWithdrawalWarning && (
-            <SmallText color={theme?.error?.text} textAlign="center">
-              Avoid transfers to centralized exchanges. Your assets may be lost.
-            </SmallText>
+          {shouldBlockManualAddressEntry ? (
+            <StyledBlockingWarning>
+              <StyledBlockingWarningIcon>
+                <TriangleWarningIcon backgroundColor={theme?.error?.text} width={47} height={41} />
+              </StyledBlockingWarningIcon>
+              <StyledWarningTitle as="p" color={theme?.error?.text}>
+                Risk of funds loss
+              </StyledWarningTitle>
+              <SmallText color={theme?.error?.text} textAlign="center">
+                Do not transfer to centralized exchanges. If the transaction fails, you may receive a
+                refund in a different token that exchanges cannot recover.
+              </SmallText>
+              <StyledBlockingWarningButton
+                onClick={() => setHasAcknowledgedWithdrawalWarning(true)}
+                align="center"
+                justify="center"
+              >
+                I understand the risk
+              </StyledBlockingWarningButton>
+            </StyledBlockingWarning>
+          ) : (
+            <>
+              {showWithdrawalWarning && (
+                <StyledWarningCard>
+                  <SmallText color={theme?.error?.text} textAlign="center">
+                    Exchange deposit addresses are not supported. Please use a self-custody wallet
+                    address.
+                  </SmallText>
+                </StyledWarningCard>
+              )}
+              <StyledInputContainer>
+                <StyledInput
+                  placeholder={placeholder}
+                  value={manualWalletAddress}
+                  onChange={handleChangeAddress}
+                  validAddress={addressIsValid}
+                />
+                <StyledAddressValidatorDot validAddress={addressIsValid} />
+              </StyledInputContainer>
+              {addressIsValid === false && (
+                <SmallText color={theme?.error?.text} textAlign="center">
+                  Please enter a valid wallet address for {chainName}
+                </SmallText>
+              )}
+              <StyledBrandButton
+                align="center"
+                justify="center"
+                disabled={!canConfirmAddress}
+                onClick={onConfirmSetManualAddress}
+              >
+                <Text
+                  mainButtonColor={canConfirmAddress ? theme?.brandColor : undefined}
+                  opacity={canConfirmAddress ? 1 : 0.5}
+                  fontSize={24}
+                >
+                  Confirm
+                </Text>
+              </StyledBrandButton>
+            </>
           )}
-          <StyledInputContainer>
-            <StyledInput
-              placeholder={placeholder}
-              value={manualWalletAddress}
-              onChange={handleChangeAddress}
-              validAddress={addressIsValid}
-            />
-            <StyledAddressValidatorDot validAddress={addressIsValid} />
-          </StyledInputContainer>
-          {addressIsValid === false && (
-            <SmallText color={theme?.error?.text} textAlign="center">
-              Please enter a valid wallet address for {chainName}
-            </SmallText>
-          )}
-          <StyledBrandButton
-            align="center"
-            justify="center"
-            disabled={!addressIsValid}
-            onClick={onConfirmSetManualAddress}
-          >
-            <Text
-              mainButtonColor={addressIsValid === true ? theme?.brandColor : undefined}
-              opacity={addressIsValid ? 1 : 0.5}
-              fontSize={24}
-            >
-              Confirm
-            </Text>
-          </StyledBrandButton>
         </StyledModalContainer>
       ) : (
         <RenderWalletList
@@ -308,4 +354,49 @@ export const StyledBrandButton = styled(Button)`
   height: 60px;
   border-radius: 12px;
   ${({ disabled, theme }) => disabled && `background: ${theme.secondary.background.normal}`};
+`;
+
+const StyledWarningCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  border: 1px solid ${({ theme }) => theme.error.text};
+  background: ${({ theme }) => theme.error.background};
+`;
+
+const StyledWarningTitle = styled(Text)`
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+`;
+
+const StyledBlockingWarning = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  text-align: center;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid ${({ theme }) => theme.error.text};
+  background: ${({ theme }) => theme.error.background};
+`;
+
+const StyledBlockingWarningIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StyledBlockingWarningButton = styled(Button)`
+  width: 100%;
+  height: 56px;
+  border-radius: 12px;
+  background: ${({ theme }) => theme.error.text};
+  color: ${({ theme }) => theme.primary.background.normal};
+  font-weight: 600;
+  font-size: 16px;
 `;
