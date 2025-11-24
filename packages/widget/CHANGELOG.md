@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.14.16
+
+### Patch Changes
+
+- 20c9059: Add blocking acknowledgement warning for manual address entry on cross-chain swaps. Users must explicitly acknowledge the risk before entering a manual address when performing cross-chain transactions to prevent accidental fund loss to centralized exchange addresses.
+
 ## 3.14.15
 
 ### Patch Changes
