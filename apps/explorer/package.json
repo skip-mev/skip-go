@@ -14,10 +14,10 @@
     "@uidotdev/usehooks": "^2.4.1",
     "jotai": "^2.13.1",
     "jotai-tanstack-query": "^0.11.0",
-    "next": "15.4.5",
+    "next": "15.4.8",
     "nuqs": "^2.4.3",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.1.2",
+    "react-dom": "19.1.2",
     "react-error-boundary": "^6.0.0"
   },
   "devDependencies": {
