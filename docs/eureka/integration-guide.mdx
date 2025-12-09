@@ -62,13 +62,6 @@ Ensuring Eureka works with your Skip Go integration is the same easy process as 
 
 <Note>
 To get routes involving Eureka assets, you must include `"experimental_features": ["eureka"]` in your `/route` and `/msgs_direct` payload. This requirement applies to all routes involving Eureka assets, including same-chain swaps. Without this flag, Eureka assets will not be included in routing responses.
-
-```json
-{
-  "experimental_features": ["eureka"],
-  // ... rest of route request
-}
-```
 </Note>
 
 Changes are as follows:
