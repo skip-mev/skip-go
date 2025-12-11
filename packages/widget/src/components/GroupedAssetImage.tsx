@@ -3,6 +3,7 @@ import { GroupedAsset } from "@/modals/AssetAndChainSelectorModal/AssetAndChainS
 import { useState } from "react";
 import styled from "styled-components";
 import { CircleSkeletonElement } from "./Skeleton";
+import { ASSET_IMAGE_OVERRIDES } from "@/constants/assetImageOverrides";
 
 const MAX_NUMBER_OF_IMAGES_TO_CHECK = 6;
 
@@ -21,20 +22,25 @@ export const GroupedAssetImage = ({
 }: GroupedAssetImageType) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const allLogoUris = [
-    groupedAsset?.assets.find((asset) => asset.logoUri?.includes("chain-registry"))?.logoUri,
-    ...(groupedAsset?.assets.map((asset) => asset.logoUri) ?? []),
-  ]
-    .filter((uri): uri is string => !!uri)
-    .sort((a, b) => {
-      // Sort images from wormhole at the end to deprioritize them
-      const aHasWormhole = a.toLowerCase().includes("wormhole");
-      const bHasWormhole = b.toLowerCase().includes("wormhole");
+  const recommendedSymbol = groupedAsset?.assets[0]?.recommendedSymbol;
+  const overrideImage = recommendedSymbol ? ASSET_IMAGE_OVERRIDES[recommendedSymbol] : undefined;
 
-      if (aHasWormhole && !bHasWormhole) return 1;
-      if (!aHasWormhole && bHasWormhole) return -1;
-      return 0;
-    });
+  const allLogoUris = overrideImage
+    ? [overrideImage]
+    : [
+        groupedAsset?.assets.find((asset) => asset.logoUri?.includes("chain-registry"))?.logoUri,
+        ...(groupedAsset?.assets.map((asset) => asset.logoUri) ?? []),
+      ]
+        .filter((uri): uri is string => !!uri)
+        .sort((a, b) => {
+          // Sort images from wormhole at the end to deprioritize them
+          const aHasWormhole = a.toLowerCase().includes("wormhole");
+          const bHasWormhole = b.toLowerCase().includes("wormhole");
+
+          if (aHasWormhole && !bHasWormhole) return 1;
+          if (!aHasWormhole && bHasWormhole) return -1;
+          return 0;
+        });
 
   const dedupedLogoUris = Array.from(new Set(allLogoUris));
 
