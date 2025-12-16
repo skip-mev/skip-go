@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.14.17
+
+### Patch Changes
+
+- 69fda94: override asset image
+- Updated dependencies [69fda94]
+  - @skip-go/client@1.5.10
+
 ## 3.14.16
 
 ### Patch Changes
