@@ -1846,10 +1846,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^2.0.120":
-  version: 2.0.120
-  resolution: "@chain-registry/types@npm:2.0.120"
-  checksum: f57aba903b3342f643bee4bc45e954a080d07f178b48a5019b277c2b09ba9bc96c5f4d8e7cfe77b51f9b4dc42ba1c9fafe5cbf12b17fb659a5bc333d1f8dc9a4
+"@chain-registry/types@npm:^2.0.123":
+  version: 2.0.123
+  resolution: "@chain-registry/types@npm:2.0.123"
+  checksum: 08c0e10b48784f50142940691cf08d794a97992576cd56053eca2d0e2b85d0df704b9df29739bc22546a66d60b3e138f08fab98f1546237bb65607f6d2a403d9
   languageName: node
   linkType: hard
 
@@ -5490,17 +5490,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/env@npm:15.0.5":
-  version: 15.0.5
-  resolution: "@next/env@npm:15.0.5"
-  checksum: 8e5fd1fbcb69c52d6003fc3145b456d3ebadecfe35f7ccfd01ea0e19b880ef015bf975fc337bf218b20385bc6e30089bdd08e3963970a953113b478875d58252
+"@next/env@npm:15.0.7":
+  version: 15.0.7
+  resolution: "@next/env@npm:15.0.7"
+  checksum: 75fc28153dd8df514e31ec3196d3f5265ae287688146cbf43b17ea307ff43f6e7971ff570693be28b1fa87175add87eee57dfb606a99d5aeaa47f8e81add5d7f
   languageName: node
   linkType: hard
 
-"@next/env@npm:15.4.8":
-  version: 15.4.8
-  resolution: "@next/env@npm:15.4.8"
-  checksum: 6e77946eeb18f8dc31471a3b2c74875be519a1295c3d905f5e47a49ea97e4e6e89d9d2dcc8816a2415a5fc354a8a288b8883f11747d7faabee16add5a39a205e
+"@next/env@npm:15.4.10":
+  version: 15.4.10
+  resolution: "@next/env@npm:15.4.10"
+  checksum: b89dd1279a53c69d86630b63cb550cbacaed28b8e423f73c492581a17cb4c1bda4429ab3c19b3ec24c2a65f06e55d954b553c6553ee94eb2867c628a3d291e04
   languageName: node
   linkType: hard
 
@@ -7755,7 +7755,7 @@ __metadata:
     "@types/keccak": 3.0.4
     bech32: ^2.0.0
     bignumber.js: ^9.1.2
-    chain-registry: ^2.0.120
+    chain-registry: ^2.0.123
     cosmjs-types: ^0.9.0
     eslint-plugin-esm: ^0.8.1
     eslint-plugin-import: ^2.31.0
@@ -7832,7 +7832,7 @@ __metadata:
     bech32: ^2.0.0
     bignumber.js: ^9.1.2
     buffer: ^6.0.3
-    chain-registry: ^2.0.120
+    chain-registry: ^2.0.123
     download: ^8.0.0
     eslint: ^9.9.0
     eslint-config-prettier: ^9.1.0
@@ -14889,12 +14889,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^2.0.120":
-  version: 2.0.120
-  resolution: "chain-registry@npm:2.0.120"
+"chain-registry@npm:^2.0.123":
+  version: 2.0.123
+  resolution: "chain-registry@npm:2.0.123"
   dependencies:
-    "@chain-registry/types": ^2.0.120
-  checksum: 7458b3c0738f45104e06a1f2a594030a46fb2f3595607d7e1e72685b4f91e5a13518c9eac958b637884b8a01f6a95ffb0734d05bfe1602058a6d0d1297dbd036
+    "@chain-registry/types": ^2.0.123
+  checksum: 163c9a8514030b88538e847accc6e7e53e4f7d0756061fafa10f59e1e04fbf9ed6ade4b990af7a12ad94869668549cd080e949c00ee983be313fc3df899f8079
   languageName: node
   linkType: hard
 
@@ -18567,7 +18567,7 @@ __metadata:
     eslint-config-next: 15.4.5
     jotai: ^2.13.1
     jotai-tanstack-query: ^0.11.0
-    next: 15.4.8
+    next: 15.4.10
     next-transpile-modules: ^10.0.1
     nuqs: ^2.4.3
     react: 19.1.2
@@ -23853,11 +23853,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:15.0.5":
-  version: 15.0.5
-  resolution: "next@npm:15.0.5"
+"next@npm:15.0.7":
+  version: 15.0.7
+  resolution: "next@npm:15.0.7"
   dependencies:
-    "@next/env": 15.0.5
+    "@next/env": 15.0.7
     "@next/swc-darwin-arm64": 15.0.5
     "@next/swc-darwin-x64": 15.0.5
     "@next/swc-linux-arm64-gnu": 15.0.5
@@ -23910,15 +23910,15 @@ __metadata:
       optional: true
   bin:
     next: dist/bin/next
-  checksum: 646d55225d81b3f827db59372b18cec98d35fd7b9ab3947c3d8ab071148d6d9f5515ab0f8d17d49d9f465ed1e95a64ce64ef0dc58331d66282f7049a98b23cf6
+  checksum: 1fccb2f8259d6f3c1669ef06967c58082d5c3267281365527147de38261f5a3fa69d72d1ad84e943b98acaa984fc2215e61b72a5c2ae5a805fa179581dc4a4d3
   languageName: node
   linkType: hard
 
-"next@npm:15.4.8":
-  version: 15.4.8
-  resolution: "next@npm:15.4.8"
+"next@npm:15.4.10":
+  version: 15.4.10
+  resolution: "next@npm:15.4.10"
   dependencies:
-    "@next/env": 15.4.8
+    "@next/env": 15.4.10
     "@next/swc-darwin-arm64": 15.4.8
     "@next/swc-darwin-x64": 15.4.8
     "@next/swc-linux-arm64-gnu": 15.4.8
@@ -23969,7 +23969,7 @@ __metadata:
       optional: true
   bin:
     next: dist/bin/next
-  checksum: 9e0acac942310a9fbc8dd76aa05a30d457c0c3521683d6285e581bcecb53ee9efdef1a7a1df694d71fd0653b5397138745cd095265da3963de6115d2358a99fa
+  checksum: 11f76f5de9f0e734dd3925a48821e29291d82191a099d2e35695d51acbcbd4ee965d2842748e4a95cfdf55f38e3edb2180fd3be4adbe36b01936a7130ad60a11
   languageName: node
   linkType: hard
 
@@ -23983,7 +23983,7 @@ __metadata:
     "@types/react": ^18
     "@types/react-dom": ^18
     eruda: ^3.4.1
-    next: 15.0.5
+    next: 15.0.7
     react: ^18.2.0
     react-dom: ^18.2.0
     typescript: ^5
