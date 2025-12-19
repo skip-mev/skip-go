@@ -34,15 +34,19 @@ export const accountParser: AccountParser = (acc) => {
         const { address, pubKey, accountNumber, sequence } = BaseAccount.decode(
           acc.value,
         );
-        if (pubKey?.typeUrl === "/initia.crypto.v1beta1.ethsecp256k1.PubKey") {
-          const { key } = PubKey.decode(pubKey.value);
-          const pk = encodeSecp256k1Pubkey(key);
-          return {
-            address,
-            pubkey: pk,
-            accountNumber: Number(accountNumber),
-            sequence: Number(sequence),
-          };
+        switch (pubKey?.typeUrl) {
+          case "/initia.crypto.v1beta1.ethsecp256k1.PubKey":
+          case "/ethermint.crypto.v1.ethsecp256k1.PubKey":
+          case "/cosmos.evm.crypto.v1.ethsecp256k1.PubKey": {
+            const { key } = PubKey.decode(pubKey.value);
+            const pk = encodeSecp256k1Pubkey(key);
+            return {
+              address,
+              pubkey: pk,
+              accountNumber: Number(accountNumber),
+              sequence: Number(sequence),
+            };
+          }
         }
       }
       return accountFromAny(acc);
