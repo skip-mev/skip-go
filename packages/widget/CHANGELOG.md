@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.14.18
+
+### Patch Changes
+
+- ae6abc9: update deps and support cosmos mevm
+- Updated dependencies [ae6abc9]
+  - @skip-go/client@1.5.11
+
 ## 3.14.17
 
 ### Patch Changes

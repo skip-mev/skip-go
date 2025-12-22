@@ -1,5 +1,13 @@
 # nextjs
 
+## 0.1.131
+
+### Patch Changes
+
+- ae6abc9: update deps and support cosmos mevm
+- Updated dependencies [ae6abc9]
+  - @skip-go/widget@3.14.18
+
 ## 0.1.130
 
 ### Patch Changes
