@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.14.19
+
+### Patch Changes
+
+- 6aafa55: fix webcomponent
+
 ## 3.14.18
 
 ### Patch Changes
