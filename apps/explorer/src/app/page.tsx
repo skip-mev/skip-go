@@ -437,8 +437,12 @@ export default function Home() {
       !errorDetails &&
       !transactionStatusResponse;
 
-    return hasQueryParams && hasNoData;
-  }, [txHashes, chainIds, data, transactionDetailsFromUrlParams, transfersToShow.length, errorDetails, transactionStatusResponse]);
+    const isStateSubmittedWithEmptyTransfers =
+      transactionStatusResponse?.state === "STATE_SUBMITTED" &&
+      transferEvents.length === 0;
+
+    return (hasQueryParams && hasNoData) || isStateSubmittedWithEmptyTransfers;
+  }, [txHashes, chainIds, data, transactionDetailsFromUrlParams, transfersToShow.length, errorDetails, transactionStatusResponse, transferEvents.length]);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
