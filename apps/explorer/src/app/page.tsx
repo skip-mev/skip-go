@@ -95,6 +95,7 @@ export default function Home() {
   const [cancelStatusPolling, setCancelStatusPolling] = useState<{promise: Promise<TxStatusResponse>, cancel: () => void}[]>([]);
   const contentContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollbar, setShowScrollbar] = useState(false);
+  const [showLoadingTimeout, setShowLoadingTimeout] = useState(false);
 
   useEffect(() => {
     let scrollTimeout: NodeJS.Timeout;
@@ -439,11 +440,41 @@ export default function Home() {
     return hasQueryParams && hasNoData;
   }, [txHashes, chainIds, data, transactionDetailsFromUrlParams, transfersToShow.length, errorDetails, transactionStatusResponse]);
 
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    if (isLoading) {
+      setShowLoadingTimeout(false);
+      timeoutId = setTimeout(() => {
+        setShowLoadingTimeout(true);
+      }, 30000); // 30 seconds
+    } else {
+      setShowLoadingTimeout(false);
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [isLoading]);
+
   const txNotFound = useMemo(() => {
     return errorDetails?.errorMessage === ErrorMessages.TRANSACTION_NOT_FOUND;
   }, [errorDetails?.errorMessage]);
 
   const renderPageContent = useMemo(() => {
+    if (isLoading && showLoadingTimeout) {
+      return (
+        <StyledColumns align="flex-end" gap={10}>
+          <ErrorCard
+            errorTitle="Loading Timeout"
+            errorMessage="The transaction is taking longer than expected to load. Please try again or check if the transaction hash and chain ID are correct."
+            onRetry={() => onSearch()}
+          />
+        </StyledColumns>
+      );
+    }
     if (isLoading) {
       return <LoadingState />;
     }
@@ -604,7 +635,7 @@ export default function Home() {
       return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
     }
     return;
-  }, [isLoading, transfersToShow, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, txNotFound, transactionStatuses, onSearch, onReindex, sourceAsset?.chainId, operations, destAsset?.chainId]);
+  }, [isLoading, showLoadingTimeout, transfersToShow, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, txNotFound, transactionStatuses, onSearch, onReindex, sourceAsset?.chainId, operations, destAsset?.chainId]);
 
   return (
     <Column width="100%" align="center">
