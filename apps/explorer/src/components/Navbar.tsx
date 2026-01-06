@@ -24,16 +24,17 @@ export type NavbarProps = {
   resetState: () => void;
   setTxHash: (txHash: string) => void;
   setChainId: (chainId: string) => void;
+  isLoading?: boolean;
 }
 
-export const Navbar = ({ isSearchAModal, isTop, txHash, chainId, onSearch, resetState, setTxHash, setChainId }: NavbarProps) => {
+export const Navbar = ({ isSearchAModal, isTop, txHash, chainId, onSearch, resetState, setTxHash, setChainId, isLoading }: NavbarProps) => {
   const chains = useAtomValue(skipChainsAtom);
-  
+
   const selectedChain = useMemo(() => {
     if (!chainId) return null;
     return chains.data?.find((chain) => chain.chainId === chainId) || null;
   }, [chains.data, chainId]);
-  
+
   return (
     <StyledNavbarContainer width="100%" align="center" justify="space-between">
       <Logo onClick={() => resetState()} />
@@ -82,11 +83,11 @@ export const Navbar = ({ isSearchAModal, isTop, txHash, chainId, onSearch, reset
             }}
             selectedChain={selectedChain}
           />
-          <SearchButton size={isTop ? "small" : "normal"} onClick={() => onSearch()} isSearchable={!!txHash && !!chainId} />
+          <SearchButton size={isTop ? "small" : "normal"} onClick={() => onSearch()} isSearchable={!!txHash && !!chainId} isLoading={isLoading} />
         </SearchWrapper>
       ) : (
         <SearchTopRight>
-          <SearchButton size="small" iconOnly onClick={() => NiceModal.show(ExplorerModals.SearchModal, {
+          <SearchButton size="small" iconOnly isLoading={isLoading} onClick={() => NiceModal.show(ExplorerModals.SearchModal, {
             txHash,
             chainId,
             onSearch,
