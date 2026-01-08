@@ -1,5 +1,17 @@
 # @skip-go/client
 
+## 1.5.11
+
+### Patch Changes
+
+- ae6abc9: update deps and support cosmos mevm
+
+## 1.5.10
+
+### Patch Changes
+
+- 69fda94: override asset image
+
 ## 1.5.9
 
 ### Patch Changes

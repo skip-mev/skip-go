@@ -42,6 +42,7 @@ import { SuccessfulTransactionCard } from "../components/SuccessfulTransactionCa
 import { chainIdsSortedToTopAtom } from "@/state/chainIdsSortedToTop";
 import { CHAIN_IDS_SORTED_TO_TOP } from "../constants/chainIdsSortedToTop";
 import { isMac } from "@/utils/os";
+import { LoadingState } from "../components/LoadingState";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
@@ -69,9 +70,9 @@ export default function Home() {
   const [data, setData] = useQueryState("data");
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
     []
-  );  
+  );
   const trackedTxHashes = useRef<string[]>([]);
-  
+
   const setChainIdsSortedToTop = useSetAtom(chainIdsSortedToTopAtom);
 
   const [transactionStatusResponse, setTransactionStatusResponse] =
@@ -94,21 +95,22 @@ export default function Home() {
   const [cancelStatusPolling, setCancelStatusPolling] = useState<{promise: Promise<TxStatusResponse>, cancel: () => void}[]>([]);
   const contentContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollbar, setShowScrollbar] = useState(false);
+  const [showLoadingTimeout, setShowLoadingTimeout] = useState(false);
 
   useEffect(() => {
     let scrollTimeout: NodeJS.Timeout;
-  
+
     const handleWheel = (event: WheelEvent) => {
       if (contentContainerRef.current) {
         event.preventDefault();
-  
+
         requestAnimationFrame(() => {
           if (contentContainerRef.current) {
             const scrollAmount = event.deltaY;
             contentContainerRef.current.scrollTop += scrollAmount;
           }
         });
-  
+
         setShowScrollbar(true);
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
@@ -116,7 +118,7 @@ export default function Home() {
         }, 400);
       }
     };
-  
+
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => window.removeEventListener('wheel', handleWheel);
   }, []);
@@ -125,9 +127,9 @@ export default function Home() {
     const transfers: TransferEventCardProps[] = [];
 
     const transferAssetReleaseChainId = transactionStatusResponse?.transferAssetRelease?.chainId;
-    const transferAssetReleaseIndex = 
-      transferEvents.findLastIndex(event => 
-        event.fromChainId === transferAssetReleaseChainId || 
+    const transferAssetReleaseIndex =
+      transferEvents.findLastIndex(event =>
+        event.fromChainId === transferAssetReleaseChainId ||
         event.toChainId === transferAssetReleaseChainId
       );
 
@@ -170,7 +172,7 @@ export default function Home() {
           });
         }
       };
-      
+
       if (index === 0) {
         addChain(event.fromChainId, event.fromExplorerLink, "from");
       }
@@ -298,12 +300,12 @@ export default function Home() {
   const resetState = useCallback(() => {
     cancelStatusPolling.forEach(response => response.cancel());
     setCancelStatusPolling([]);
-    
+
     setTxHashes(null);
     setChainIds(null);
     setTxHash("");
     setChainId("");
-    
+
     setTransactionStatuses([]);
     setTransferEvents([]);
     setErrorDetails(undefined);
@@ -360,7 +362,7 @@ export default function Home() {
             txHash,
             chainId: nextChainId,
           });
-          
+
           transactionDetails.push({ txHash, chainId: nextChainId });
           nextChainId = response?.transferAssetRelease?.chainId || "";
         }
@@ -424,7 +426,62 @@ export default function Home() {
     return Boolean(isTop && isLessThan1300);
   }, [isTop, isLessThan1300]);
 
+  const isLoading = useMemo(() => {
+    const hasQueryParams = Boolean(
+      (txHashes && txHashes.length > 0 && chainIds && chainIds.length > 0) ||
+      data ||
+      transactionDetailsFromUrlParams
+    );
+    const hasNoData =
+      transfersToShow.length === 0 &&
+      !errorDetails &&
+      !transactionStatusResponse;
+
+    const isStateSubmittedWithEmptyTransfers =
+      transactionStatusResponse?.state === "STATE_SUBMITTED" &&
+      transferEvents.length === 0;
+
+    return (hasQueryParams && hasNoData) || isStateSubmittedWithEmptyTransfers;
+  }, [txHashes, chainIds, data, transactionDetailsFromUrlParams, transfersToShow.length, errorDetails, transactionStatusResponse, transferEvents.length]);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    if (isLoading) {
+      setShowLoadingTimeout(false);
+      timeoutId = setTimeout(() => {
+        setShowLoadingTimeout(true);
+      }, 30000); // 30 seconds
+    } else {
+      setShowLoadingTimeout(false);
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [isLoading]);
+
+  const txNotFound = useMemo(() => {
+    return errorDetails?.errorMessage === ErrorMessages.TRANSACTION_NOT_FOUND;
+  }, [errorDetails?.errorMessage]);
+
   const renderPageContent = useMemo(() => {
+    if (isLoading && showLoadingTimeout) {
+      return (
+        <StyledColumns align="flex-end" gap={10}>
+          <ErrorCard
+            errorTitle="Loading Timeout"
+            errorMessage="The transaction is taking longer than expected to load. Please try again or check if the transaction hash and chain ID are correct."
+            onRetry={() => onSearch()}
+          />
+        </StyledColumns>
+      );
+    }
+    if (isLoading) {
+      return <LoadingState />;
+    }
     if (transfersToShow.length > 0) {
       return (
         <StyledContentContainer
@@ -442,7 +499,7 @@ export default function Home() {
                 justify="center"
                 onClick={() => setShowTokenDetails(!showTokenDetails)}
                 style={{
-                  visibility: transactionStatusResponse?.transferAssetRelease?.released || transactionDetailsFromUrlParams 
+                  visibility: transactionStatusResponse?.transferAssetRelease?.released || transactionDetailsFromUrlParams
                     ? "visible"
                     : "hidden",
                 }}
@@ -507,7 +564,7 @@ export default function Home() {
             View raw data <HamburgerIcon />
           </GhostButton>
           <ErrorCard
-            errorTitle={ErrorMessages.TRANSACTION_ERROR}
+            errorTitle={txNotFound ? ErrorMessages.TRANSACTION_NOT_FOUND : ErrorMessages.TRANSACTION_ERROR}
             errorMessage={transactionStatuses.map(status => status.error?.message).join("")}
             onRetry={() => onSearch()}
           />
@@ -582,7 +639,7 @@ export default function Home() {
       return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
     }
     return;
-  }, [transfersToShow, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, transactionStatuses, onSearch, onReindex, sourceAsset?.chainId, operations, destAsset?.chainId]);
+  }, [isLoading, showLoadingTimeout, transfersToShow, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, txNotFound, transactionStatuses, onSearch, onReindex, sourceAsset?.chainId, operations, destAsset?.chainId]);
 
   return (
     <Column width="100%" align="center">
@@ -595,8 +652,9 @@ export default function Home() {
         resetState={resetState}
         setTxHash={setTxHash}
         setChainId={setChainId}
+        isLoading={isLoading}
       />
-      
+
       { renderPageContent }
     </Column>
   );
