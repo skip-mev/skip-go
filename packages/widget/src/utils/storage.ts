@@ -32,7 +32,7 @@ type IndexedDBStorageOptions = {
   storeName: string;
 };
 
-type CachedData<T> = {
+export type CachedData<T> = {
   data: T;
   timestamp: number;
 };
@@ -81,10 +81,10 @@ async function getIndexedDB(dbName: string, storeName: string): Promise<IDBDatab
   });
 }
 
-export async function getIndexedDBItem<T>(
+export async function getIndexedDBEntry<T>(
   key: string,
   options: IndexedDBStorageOptions,
-): Promise<T | null> {
+): Promise<CachedData<T> | null> {
   try {
     const dbName = options.dbName;
     const storeName = options.storeName;
@@ -104,13 +104,21 @@ export async function getIndexedDBItem<T>(
           return;
         }
 
-        resolve(result.data);
+        resolve({ data: result.data, timestamp: result.timestamp });
       };
     });
   } catch (error) {
     console.warn("IndexedDB getItem failed:", error);
     return null;
   }
+}
+
+export async function getIndexedDBItem<T>(
+  key: string,
+  options: IndexedDBStorageOptions,
+): Promise<T | null> {
+  const entry = await getIndexedDBEntry<T>(key, options);
+  return entry?.data ?? null;
 }
 
 export async function setIndexedDBItem<T>(
@@ -189,6 +197,7 @@ export async function clearIndexedDB(options: IndexedDBStorageOptions): Promise<
 export function createIndexedDBStorage(options: IndexedDBStorageOptions) {
   return {
     getItem: <T>(key: string) => getIndexedDBItem<T>(key, options),
+    getItemWithMetadata: <T>(key: string) => getIndexedDBEntry<T>(key, options),
     setItem: <T>(key: string, value: T) => setIndexedDBItem(key, value, options),
     removeItem: (key: string) => removeIndexedDBItem(key, options),
     clear: () => clearIndexedDB(options),

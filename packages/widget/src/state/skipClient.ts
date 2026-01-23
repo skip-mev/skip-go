@@ -46,38 +46,50 @@ const flattenData = (data: Record<string, Asset[]>, chains?: Chain[]) => {
 
 export const onlyTestnetsAtom = atom<boolean | undefined>(undefined);
 
-const { getItem, setItem } = createIndexedDBStorage({
+const { getItemWithMetadata, setItem } = createIndexedDBStorage({
   dbName: "skip-go-widget",
   storeName: "data-cache",
 });
+
+const DEFAULT_CACHE_DURATION_MS = 60 * 60 * 1000;
 
 const getCachedDataWhileQuerying = <T>({
   queryKey,
   cacheKey,
   queryFn,
+  cacheDurationMs,
   options = {},
 }: {
   queryKey: (string | object | boolean | undefined)[];
   cacheKey: string;
   queryFn: () => Promise<T>;
+  cacheDurationMs?: number;
   options?: { enabled?: boolean; staleTime?: number; gcTime?: number };
 }) => {
   return {
     queryKey: queryKey,
     queryFn: async () => {
-      const cachedData = await getItem<T>(cacheKey);
+      const cachedEntry = await getItemWithMetadata<T>(cacheKey);
+      const resolvedCacheDurationMs = cacheDurationMs ?? DEFAULT_CACHE_DURATION_MS;
+      const shouldUseCache =
+        cachedEntry &&
+        resolvedCacheDurationMs > 0 &&
+        Date.now() - cachedEntry.timestamp < resolvedCacheDurationMs;
 
-      if (cachedData !== null) {
-        queryFn().then(async (newData) => {
-          await setItem(cacheKey, newData);
-        });
-
-        return cachedData;
+      if (shouldUseCache) {
+        return cachedEntry.data;
       }
 
-      const newData = await queryFn();
-      await setItem(cacheKey, newData);
-      return newData;
+      try {
+        const newData = await queryFn();
+        await setItem(cacheKey, newData);
+        return newData;
+      } catch (error) {
+        if (cachedEntry) {
+          return cachedEntry.data;
+        }
+        throw error;
+      }
     },
     enabled: options?.enabled ?? true,
   };
@@ -99,6 +111,7 @@ export const skipChainsAtom = atomWithQuery((get) => {
       });
       return response;
     },
+    cacheDurationMs,
     options: { enabled: onlyTestnets !== undefined && apiUrl !== undefined },
   });
 });
@@ -122,6 +135,7 @@ export const skipAssetsAtom = atomWithQuery((get) => {
 
       return flattenData(response as Record<string, Asset[]>, chains.data);
     },
+    cacheDurationMs,
     options: { enabled: onlyTestnets !== undefined && apiUrl !== undefined },
   });
 });
@@ -135,6 +149,7 @@ export const skipBridgesAtom = atomWithQuery((get) => {
     queryFn: async () => {
       return await bridges();
     },
+    cacheDurationMs,
   });
 });
 
@@ -150,6 +165,7 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
         onlyTestnets,
       });
     },
+    cacheDurationMs,
     options: { enabled: onlyTestnets !== undefined && apiUrl !== undefined },
   });
 });
