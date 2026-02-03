@@ -92,6 +92,7 @@
               "eureka/eureka-overview",
               "eureka/eureka-tech-overview",
               "eureka/integration-guide",
+              "eureka/evm-devnet-setup",
               "eureka/custom-erc20-integration",
               "eureka/security-properties",
               "eureka/contract-addresses"

@@ -1,0 +1,88 @@
+---
+title: "EVM Devnet & Testnet Setup"
+id: eureka-evm-devnet-setup
+description: "How to run IBC Eureka locally or on an EVM testnet"
+---
+
+# EVM Devnet & Testnet Setup
+
+This page is for developers who want to run Eureka locally (Anvil + local Cosmos chain) or on an EVM testnet for experimentation.
+
+If your goal is a **production** or **public testnet** deployment, note that canonical Eureka deployments currently use **permissioned relayers** and require coordination with the team. The fastest path for Cosmos chains to access Eureka assets today is a standard IBC connection to the Cosmos Hub (see the [Integration Guide](/eureka/integration-guide)).
+
+## Self-serve local/testnet setup
+
+The reference flow mirrors the `E2ETestDeploy.s.sol` script in the
+[`solidity-ibc-eureka` repo](https://github.com/cosmos/solidity-ibc-eureka/blob/solidity-v2.0.0/scripts/E2ETestDeploy.s.sol).
+
+### 1) Spin up chains
+
+- Start a local Cosmos chain with IBC enabled (gaia/localnet or your chain).
+- Start an EVM chain (Anvil or a testnet RPC).
+
+### 2) Deploy Eureka contracts on EVM
+
+Use `E2ETestDeploy.s.sol` or your own deployment script. The reference deploys:
+
+- `ICS26Router` (proxy)
+- `ICS20Transfer` (proxy)
+- `IBCERC20` and `Escrow` logic
+- SP1 verifier contracts used by the light client in tests
+- Registers the `transfer` port with the router
+
+<Note>
+If you write your own deployment, make sure the ICS20 app is registered with the router.
+The reference script does this with `addIBCApp(ICS20Lib.DEFAULT_PORT_ID, address(ics20Transfer))`.
+</Note>
+
+### 3) Configure roles for your relayer
+
+The router gates several actions behind roles:
+
+- `RELAYER_ROLE`: required for `updateClient`, `recvPacket`, `ackPacket`, and `timeoutPacket`.
+- `CLIENT_ID_CUSTOMIZER_ROLE`: required if your relayer submits a **custom client ID**.
+- `PORT_CUSTOMIZER_ROLE`: required if you register a **custom port ID**.
+
+Ensure your relayer EOA has the roles it needs via `grantRole`.
+
+<Note>
+The reference E2E script initializes `publicRelayers` to `address(0)`.
+Replace this with your relayer address or grant `RELAYER_ROLE` after deployment.
+</Note>
+
+### 4) Create light clients (both directions)
+
+You must create a light client for each chain on the other side:
+
+- On EVM: create a Tendermint light client for the Cosmos chain via the router (`addClient`).
+- On Cosmos: create the EVM light client supported by your chain.
+
+### 5) Create a connection and ICS20 channel
+
+Use your relayer (or Hermes/Relayer if supported) to:
+
+- Create the IBC connection.
+- Open a channel using the `transfer` port on both sides.
+
+### 6) Run the relayer and test ICS20
+
+With clients active and a channel open, run the relayer and send a small ICS20 transfer.
+
+## Troubleshooting
+
+- **CreateClient fails with access control**: If the relayer sets a custom client ID,
+  it needs `CLIENT_ID_CUSTOMIZER_ROLE`. Use the non-custom `addClient` or grant the role.
+- **Packet handling fails with `onlyRelayer`**: Grant `RELAYER_ROLE` to the relayer address.
+- **Channel handshake fails with “IBC app not found” / invalid port**: Ensure
+  `ICS20Transfer` is registered on the router for the `transfer` port.
+- **Packets time out on Anvil**: Confirm your relayer is running and that timeout
+  timestamps are reasonable for local block times.
+
+## Need help?
+
+Open a support ticket in Discord with:
+
+- EVM chain id + RPC
+- Contract addresses (ICS26 router + ICS20 transfer)
+- Relayer address
+- The exact error message and transaction hash
