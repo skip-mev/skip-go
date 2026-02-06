@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.14.21
+
+### Patch Changes
+
+- 45bef4c: remove omniflix-1 from initial chain id
+
 ## 3.14.20
 
 ### Patch Changes
