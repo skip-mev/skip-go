@@ -1,5 +1,19 @@
 ## 0.0.15
 
+## 3.14.22
+
+### Patch Changes
+
+- 5a3481d: bump deps
+- Updated dependencies [5a3481d]
+  - @skip-go/client@1.5.12
+
+## 3.14.21
+
+### Patch Changes
+
+- 45bef4c: remove omniflix-1 from initial chain id
+
 ## 3.14.20
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.5.12
+
+### Patch Changes
+
+- 5a3481d: bump deps
+
 ## 1.5.11
 
 ### Patch Changes
