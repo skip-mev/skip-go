@@ -1,5 +1,14 @@
 ## 0.0.15
 
+## 3.14.23
+
+### Patch Changes
+
+- eae59fc: Remove Pryzm from keplr wallet connect
+- aae70c0: update dependencies
+- Updated dependencies [aae70c0]
+  - @skip-go/client@1.5.13
+
 ## 3.14.22
 
 ### Patch Changes

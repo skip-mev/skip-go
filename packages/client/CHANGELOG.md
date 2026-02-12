@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.5.13
+
+### Patch Changes
+
+- aae70c0: update dependencies
+
 ## 1.5.12
 
 ### Patch Changes
