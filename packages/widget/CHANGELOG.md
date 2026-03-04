@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.14.24
+
+### Patch Changes
+
+- 5b941f3: updated registries
+- Updated dependencies [5b941f3]
+  - @skip-go/client@1.5.14
+
 ## 3.14.23
 
 ### Patch Changes
