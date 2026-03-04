@@ -1846,10 +1846,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^2.0.152":
-  version: 2.0.152
-  resolution: "@chain-registry/types@npm:2.0.152"
-  checksum: b1347c736a8a39aff97332761ec97cb28ec24ddccca70a91283920be0032762b1e2d012b4bafe5bafef9573d2a986a9507f811eb4cd80f7cafd1e656028a9891
+"@chain-registry/types@npm:^2.0.164":
+  version: 2.0.164
+  resolution: "@chain-registry/types@npm:2.0.164"
+  checksum: b86bf6c8f049b0f9e9fa1035277c01adc0fe31d9c4a11801bb399d5ee63af114504de31af8881a6d10f027c853d48658f1fc49b46f02bacbe9226a97b2b57564
   languageName: node
   linkType: hard
 
@@ -7764,7 +7764,7 @@ __metadata:
     "@types/keccak": 3.0.4
     bech32: ^2.0.0
     bignumber.js: ^9.1.2
-    chain-registry: ^2.0.152
+    chain-registry: ^2.0.164
     cosmjs-types: ^0.9.0
     eslint-plugin-esm: ^0.8.1
     eslint-plugin-import: ^2.31.0
@@ -7841,7 +7841,7 @@ __metadata:
     bech32: ^2.0.0
     bignumber.js: ^9.1.2
     buffer: ^6.0.3
-    chain-registry: ^2.0.152
+    chain-registry: ^2.0.164
     download: ^8.0.0
     eslint: ^9.9.0
     eslint-config-prettier: ^9.1.0
@@ -14889,12 +14889,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^2.0.152":
-  version: 2.0.152
-  resolution: "chain-registry@npm:2.0.152"
+"chain-registry@npm:^2.0.164":
+  version: 2.0.164
+  resolution: "chain-registry@npm:2.0.164"
   dependencies:
-    "@chain-registry/types": ^2.0.152
-  checksum: cd2afe1c561d7638606ac8ba7197b2faee032a27d2ef1396990e2085eaf2b042c5676b946f05e391a23d96ef1218b4f323582574f5a650283fc7cdd525bea487
+    "@chain-registry/types": ^2.0.164
+  checksum: b9ed36b0cb20bf9038933ef4ab45f14ee6b50edb1d73dbc95f3f1973f3a195c3ca21fd4ba09e44dfc4308d465b3b4f302dcc05e0d9cb4e744028822a339d24a6
   languageName: node
   linkType: hard
 
