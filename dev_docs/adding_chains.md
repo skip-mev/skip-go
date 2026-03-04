@@ -30,12 +30,10 @@ Most Cosmos chains are already present in the [chain-registry](https://github.co
 1. **Update the registry packages** (from repo root):
 
    ```bash
-   # Updates both chain-registry and @initia/initia-registry to latest
-   cd packages/client && yarn update-registries
-   cd packages/widget && yarn update-registries
+   yarn update-registries
    ```
 
-   This runs `yarn up @initia/initia-registry chain-registry` in each package.
+   This updates `@initia/initia-registry` and `chain-registry` to latest in both `packages/client` and `packages/widget`, then runs a build.
 
 2. **Regenerate client chain data:**
 
