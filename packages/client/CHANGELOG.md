@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.5.14
+
+### Patch Changes
+
+- 5b941f3: updated registries
+
 ## 1.5.13
 
 ### Patch Changes
