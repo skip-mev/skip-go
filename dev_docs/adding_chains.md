@@ -35,19 +35,7 @@ Most Cosmos chains are already present in the [chain-registry](https://github.co
 
    This updates `@initia/initia-registry` and `chain-registry` to latest in both `packages/client` and `packages/widget`, then runs a build.
 
-2. **Regenerate client chain data:**
-
-   ```bash
-   cd packages/client
-   yarn codegen
-   ```
-
-   This runs `scripts/codegen.cjs`, which:
-   - Reads `chain-registry` and `@initia/initia-registry` from `node_modules`
-   - Extracts `chainId`, `fees`, `apis.rpc`, `keyAlgos`, and `extraCodecs`
-   - Writes `src/codegen/chains.json`
-
-3. **Build and publish** — see [Release Process](#release-process) below.
+2. **Build and publish** — see [Release Process](#release-process) below.
 
 ### Case 2: Chain does NOT exist in any registry
 
