@@ -6,11 +6,13 @@ This repo uses a two-branch workflow (`staging` → `main`) with [Changesets](ht
 
 ## Overview
 
-```
-Feature branch ──PR──► staging ──sync PR──► main ──auto PR──► merge ──► npm publish
-                  ▲                                                          │
-            add changeset                                                    ▼
-                                                                  Consumer apps bump version
+```mermaid
+flowchart LR
+    A[Feature branch] -->|PR + changeset| B[staging]
+    B -->|sync PR| C[main]
+    C -->|auto PR| D[merge]
+    D --> E[npm publish]
+    E --> F[Consumer apps bump version]
 ```
 
 ---

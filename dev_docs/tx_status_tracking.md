@@ -65,12 +65,13 @@ The response (`TxStatusResponse`) contains:
 
 #### Transaction States
 
-```
-STATE_SUBMITTED ──→ STATE_PENDING ──→ STATE_COMPLETED_SUCCESS
-                         │
-                         ├──→ STATE_COMPLETED_ERROR
-                         ├──→ STATE_PENDING_ERROR
-                         └──→ STATE_ABANDONED
+```mermaid
+flowchart LR
+    A[STATE_SUBMITTED] --> B[STATE_PENDING]
+    B --> C[STATE_COMPLETED_SUCCESS]
+    B --> D[STATE_COMPLETED_ERROR]
+    B --> E[STATE_PENDING_ERROR]
+    B --> F[STATE_ABANDONED]
 ```
 
 | State | Meaning |
@@ -117,15 +118,17 @@ Loops with a fixed 1-second interval until a terminal state is reached. Supports
 
 Terminal states: `STATE_COMPLETED_SUCCESS`, `STATE_COMPLETED_ERROR`, `STATE_ABANDONED`
 
-```
-waitForTransaction
-├── trackTransaction (registers tx if no explorerLink)
-└── loop every 1s:
-    ├── transactionStatus()
-    ├── onStatusUpdated callback
-    ├── if success → return
-    ├── if error/abandoned → throw
-    └── wait 1000ms
+```mermaid
+flowchart TD
+    A[waitForTransaction] --> B[trackTransaction - registers tx if no explorerLink]
+    A --> C[Loop every 1s]
+    C --> D["transactionStatus()"]
+    D --> E[onStatusUpdated callback]
+    E --> F{Result?}
+    F -- success --> G[Return]
+    F -- error/abandoned --> H[Throw]
+    F -- pending --> I[Wait 1000ms]
+    I --> D
 ```
 
 #### `subscribeToRouteStatus` — Route-level tracking
@@ -183,14 +186,18 @@ type RouteDetails = {
 
 The computation logic in `updateRouteDetails`:
 
-```
-if explicitly set status → use it
-if some tx succeeded but not all started → "incomplete"
-if all settled:
-  if none failed → "completed"
-  if some succeeded + some failed → "incomplete"
-  if all failed → "failed"
-otherwise → keep current status
+```mermaid
+flowchart TD
+    A{Explicitly set status?} -- Yes --> B[Use it]
+    A -- No --> C{Some tx succeeded but not all started?}
+    C -- Yes --> D["incomplete"]
+    C -- No --> E{All settled?}
+    E -- Yes --> F{None failed?}
+    F -- Yes --> G["completed"]
+    F -- No --> H{Some succeeded + some failed?}
+    H -- Yes --> I["incomplete"]
+    H -- No --> J["failed"]
+    E -- No --> K[Keep current status]
 ```
 
 #### Transfer Events
@@ -250,14 +257,17 @@ flowchart TD
 
 `useTxHistory` subscribes to status updates for a transaction and its related routes:
 
-```
-useTxHistory({ txHistoryItem })
-├── subscribeToRouteStatus(mainRoute)
-│   └── onRouteStatusUpdated → setTransactionHistoryAtom
-├── subscribeToRouteStatus(relatedRoute[0])
-├── subscribeToRouteStatus(relatedRoute[1])
-└── ...
-    cleanup: unsubscribe all on unmount
+```mermaid
+flowchart TD
+    A["useTxHistory({ txHistoryItem })"] --> B["subscribeToRouteStatus(mainRoute)"]
+    A --> C["subscribeToRouteStatus(relatedRoute[0])"]
+    A --> D["subscribeToRouteStatus(relatedRoute[1])"]
+    A --> E[...]
+    B --> F[onRouteStatusUpdated → setTransactionHistoryAtom]
+    C --> F
+    D --> F
+    E --> F
+    F --> G[cleanup: unsubscribe all on unmount]
 ```
 
 Each route (main + related) gets its own independent polling subscription. Deduplication is handled via a `subscribedIdsRef` set.

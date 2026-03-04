@@ -42,11 +42,12 @@ This is shown via `WarningPageTradeAdditionalSigningRequired` when `route.txsReq
 
 Transactions are executed **sequentially** — each transaction is signed, broadcast, and confirmed on-chain before the next one starts. The orchestration loop in `subscribeToRouteStatus.ts` drives this:
 
-```
-for each transaction in transactionDetails:
-  1. Sign and broadcast (executeTransaction)
-  2. Poll for on-chain confirmation
-  3. Move to next transaction
+```mermaid
+flowchart TD
+    A[For each transaction in transactionDetails] --> B["1. Sign and broadcast (executeTransaction)"]
+    B --> C[2. Poll for on-chain confirmation]
+    C --> D[3. Move to next transaction]
+    D --> A
 ```
 
 Whether a signature happens upfront or mid-flow depends on the chain type:

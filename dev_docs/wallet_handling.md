@@ -10,23 +10,23 @@ The wallet system is built on three pillars:
 2. **Hooks** — create a unified `MinimalWallet` abstraction from each chain library
 3. **State** — Jotai atoms that track which wallets are connected and their metadata
 
-```
-┌──────────────────────────────────────────────────────────┐
-│                      Widget.tsx                           │
-│                                                          │
-│  EVMProvider (wagmi)                                     │
-│    └─ CosmosProvider (graz)                              │
-│         └─ SolanaProvider (@solana/wallet-adapter)       │
-│              └─ App                                      │
-│                   ├─ useCreateEvmWallets ──┐             │
-│                   ├─ useCreateCosmosWallets ┼─► MinimalWallet[]  │
-│                   └─ useCreateSolanaWallets ┘             │
-│                                                          │
-│              Jotai atoms                                 │
-│              ├─ evmWalletAtom                            │
-│              ├─ cosmosWalletAtom                         │
-│              └─ svmWalletAtom                            │
-└──────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    W[Widget.tsx] --> EVM[EVMProvider - wagmi]
+    EVM --> Cosmos[CosmosProvider - graz]
+    Cosmos --> Sol["SolanaProvider - @solana/wallet-adapter"]
+    Sol --> App
+
+    App --> H1[useCreateEvmWallets]
+    App --> H2[useCreateCosmosWallets]
+    App --> H3[useCreateSolanaWallets]
+    H1 --> MW["MinimalWallet[]"]
+    H2 --> MW
+    H3 --> MW
+
+    App --> A1[evmWalletAtom]
+    App --> A2[cosmosWalletAtom]
+    App --> A3[svmWalletAtom]
 ```
 
 ## The MinimalWallet Abstraction
@@ -81,13 +81,13 @@ Each chain ecosystem has a dedicated provider that wraps the widget tree.
 
 In `Widget.tsx`, the providers are nested as:
 
-```
-EVMProvider
-  └─ QueryClientProvider
-       └─ CosmosProvider
-            └─ SolanaProvider
-                 └─ NiceModal.Provider
-                      └─ App
+```mermaid
+graph TD
+    EVMProvider --> QueryClientProvider
+    QueryClientProvider --> CosmosProvider
+    CosmosProvider --> SolanaProvider
+    SolanaProvider --> NiceModal.Provider
+    NiceModal.Provider --> App
 ```
 
 `QueryClientProvider` wraps Cosmos and Solana because the Solana provider uses React Query for dynamic wallet loading.
@@ -127,10 +127,11 @@ Each chain ecosystem has a `useCreate*Wallets` hook that discovers available wal
 
 Three atoms track which wallet is connected for each ecosystem:
 
-```
-evmWalletAtom    → { id, walletName, chainType, logo }
-cosmosWalletAtom → { id, walletName, chainType, logo }
-svmWalletAtom    → { id, walletName, chainType, logo }
+```mermaid
+graph LR
+    evmWalletAtom["evmWalletAtom"] --> D["{id, walletName, chainType, logo}"]
+    cosmosWalletAtom["cosmosWalletAtom"] --> D
+    svmWalletAtom["svmWalletAtom"] --> D
 ```
 
 These are aggregated by the read-only `walletsAtom`:
@@ -238,41 +239,29 @@ These are fired from inside each `useCreate*Wallets` hook whenever a wallet conn
 
 Here is the full lifecycle of a wallet connection:
 
-```
-User clicks "Connect Wallet"
-  │
-  ├─ Source asset has chainId?
-  │    Yes → Open WalletSelectorModal for that chain
-  │    No  → Open ConnectedWalletModal (pick ecosystem first)
-  │
-  ▼
-WalletSelectorModal
-  │ Shows MinimalWallet[] from useWalletList(chainId)
-  │
-  ▼
-User picks a wallet
-  │ RenderWalletList calls wallet.connect(chainId)
-  │
-  ├─ Chain library handles the actual connection
-  │   (graz / wagmi / @solana/wallet-adapter)
-  │
-  ├─ useKeepWalletStateSynced detects the change
-  │   → Updates cosmosWalletAtom / evmWalletAtom / svmWalletAtom
-  │
-  ├─ useCreate*Wallets fires onWalletConnected callback
-  │
-  ├─ useGetAccount can now resolve addresses for connected chains
-  │
-  └─ Modal closes
-       │
-       ▼
-  Swap route computed → useAutoSetAddress runs
-       │
-       ├─ For each requiredChainAddress:
-       │    Find matching MinimalWallet → call getAddress()
-       │    Store in chainAddressesAtom
-       │
-       └─ If address can't be resolved → open SetAddressModal
+```mermaid
+flowchart TD
+    A["User clicks Connect Wallet"] --> B{Source asset has chainId?}
+    B -- Yes --> C[Open WalletSelectorModal for that chain]
+    B -- No --> D[Open ConnectedWalletModal - pick ecosystem first]
+
+    C --> E["WalletSelectorModal shows MinimalWallet[] from useWalletList(chainId)"]
+    D --> E
+
+    E --> F[User picks a wallet]
+    F --> G["RenderWalletList calls wallet.connect(chainId)"]
+    G --> H["Chain library handles connection (graz / wagmi / @solana/wallet-adapter)"]
+    H --> I["useKeepWalletStateSynced updates wallet atoms"]
+    I --> J["useCreate*Wallets fires onWalletConnected callback"]
+    J --> K[useGetAccount can now resolve addresses]
+    K --> L[Modal closes]
+
+    L --> M[Swap route computed - useAutoSetAddress runs]
+    M --> N{For each requiredChainAddress}
+    N --> O["Find matching MinimalWallet → call getAddress()"]
+    O --> P[Store in chainAddressesAtom]
+    N --> Q{Address can't be resolved?}
+    Q -- Yes --> R[Open SetAddressModal]
 ```
 
 ## Sei Special Case

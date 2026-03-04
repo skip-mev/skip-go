@@ -6,24 +6,13 @@ This guide covers the full process for adding new Cosmos and EVM chains to the S
 
 Chain data flows through several layers:
 
-```
-chain-registry / initia-registry (npm packages)
-        │
-        ▼
-┌──────────────────────────────────────┐
-│  packages/client (codegen script)    │  ← RPC endpoints, fee tokens, key algos
-│  packages/widget (generate-chains)   │  ← Keplr-compatible ChainInfo for wallets
-└──────────────────────────────────────┘
-        │
-        ▼
-┌──────────────────────────────────────┐
-│  Skip API  (v2/info/chains)          │  ← Routing, assets, chain metadata
-└──────────────────────────────────────┘
-        │
-        ▼
-┌──────────────────────────────────────┐
-│  Widget UI / Consumer apps           │  ← Uses all of the above
-└──────────────────────────────────────┘
+```mermaid
+flowchart TD
+    A["chain-registry / initia-registry (npm packages)"] --> B["packages/client (codegen script)\nRPC endpoints, fee tokens, key algos"]
+    A --> C["packages/widget (generate-chains)\nKeplr-compatible ChainInfo for wallets"]
+    B --> D["Skip API (v2/info/chains)\nRouting, assets, chain metadata"]
+    C --> D
+    D --> E["Widget UI / Consumer apps"]
 ```
 
 **Key principle**: The Skip API (`v2/info/chains`) is the source of truth for which chains are available for routing. The local chain data in `packages/client` and `packages/widget` provides wallet-level configuration (RPC endpoints, fee tokens, signing parameters) that the API does not supply.
