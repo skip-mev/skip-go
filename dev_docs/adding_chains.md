@@ -47,19 +47,7 @@ Most Cosmos chains are already present in the [chain-registry](https://github.co
    - Extracts `chainId`, `fees`, `apis.rpc`, `keyAlgos`, and `extraCodecs`
    - Writes `src/codegen/chains.json`
 
-3. **Regenerate widget chain data:**
-
-   ```bash
-   cd packages/widget
-   yarn generate-chains
-   ```
-
-   This runs `scripts/generate-chains.cjs`, which:
-   - Reads the same registries
-   - Extracts Keplr-compatible `ChainInfo` (currencies, fee currencies, bech32 config, RPC/REST endpoints)
-   - Writes `src/constants/cosmosChains/mainnet.json`, `testnet.json`, and `explorers.json`
-
-4. **Build and publish** — see [Release Process](#release-process) below.
+3. **Build and publish** — see [Release Process](#release-process) below.
 
 ### Case 2: Chain does NOT exist in any registry
 
