@@ -135,7 +135,7 @@ skip-go/
 
 **File:** `packages/widget/src/devMode/loadWidget.tsx`
 
-When running `yarn dev` in the widget package, a dev mode UI is mounted with:
+When running `yarn dev` in the widget package, a dev mode UI is served at `http://localhost:5173/`. This is the primary URL used during day-to-day development. The dev UI is mounted with:
 
 - Theme toggle (dark/light)
 - API URL switcher (prod/dev)
