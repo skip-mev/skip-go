@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.14.25
+
+### Patch Changes
+
+- 3f92c12: remove neutron-1 from initial connect chain ids
+
 ## 3.14.24
 
 ### Patch Changes
