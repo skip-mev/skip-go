@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.14.26
+
+### Patch Changes
+
+- ec52456: remove umee-1
+- Updated dependencies [ec52456]
+  - @skip-go/client@1.5.15
+
 ## 3.14.25
 
 ### Patch Changes
