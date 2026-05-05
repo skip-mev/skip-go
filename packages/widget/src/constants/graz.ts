@@ -40,7 +40,6 @@ export const keplrMainnetChainIdsInitialConnect = [
   "ssc-1",
   "stargaze-1",
   "stride-1",
-  "umee-1",
 ];
 
 // other wallets not the keplr wallet
