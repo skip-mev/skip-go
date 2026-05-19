@@ -303,6 +303,7 @@ export default function Home() {
 
     setTxHashes(null);
     setChainIds(null);
+    setData(null);
     setTxHash("");
     setChainId("");
 
@@ -310,8 +311,10 @@ export default function Home() {
     setTransferEvents([]);
     setErrorDetails(undefined);
     setTransactionStatusResponse(undefined);
+    setDestinationNodeFailed(false);
+    trackedTxHashes.current = [];
 
-  }, [cancelStatusPolling, setTxHashes, setChainIds]);
+  }, [cancelStatusPolling, setTxHashes, setChainIds, setData]);
 
   const onSearch = useCallback((_txhash?: string, _chainId?:string) => {
     setTransactionStatuses([]);
