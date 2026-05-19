@@ -171,7 +171,6 @@ export const useCreateEvmWallets = () => {
         if (isSei) {
           const isMultiChainWallet =
             connector.name.toLowerCase().includes("keplr") ||
-            connector.name.toLowerCase().includes("leap") ||
             connector.name.toLowerCase().includes("cosmostation");
           minimalWallet.walletPrettyName = `${connector.name} ${isMultiChainWallet ? "(EVM)" : ""}`;
           minimalWallet.getAddress = async () => {

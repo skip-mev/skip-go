@@ -331,7 +331,6 @@ const getAvailableWallets = () => {
 
   const browserWallets = [
     WalletType.KEPLR,
-    WalletType.LEAP,
     WalletType.COSMOSTATION,
     WalletType.XDEFI,
     WalletType.STATION,
