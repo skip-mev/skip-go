@@ -27,7 +27,6 @@ export const keplrMainnetChainIdsInitialConnect = [
   "juno-1",
   "kava_2222-10",
   "kyve-1",
-  "neutron-1",
   "noble-1",
   "osmosis-1",
   "passage-2",
@@ -41,7 +40,6 @@ export const keplrMainnetChainIdsInitialConnect = [
   "ssc-1",
   "stargaze-1",
   "stride-1",
-  "umee-1",
 ];
 
 // other wallets not the keplr wallet
@@ -51,7 +49,6 @@ export const walletMainnetChainIdsInitialConnect = [
   "pacific-1",
   "noble-1",
   "osmosis-1",
-  "neutron-1",
   "pryzm-1",
   "axelar-dojo-1",
   "chihuahua-1",
@@ -61,7 +58,6 @@ export const walletConnectMainnetChainIdsInitialConnect = [
   "cosmoshub-4",
   "noble-1",
   "osmosis-1",
-  "neutron-1",
   "pryzm-1",
   "axelar-dojo-1",
   "chihuahua-1",
@@ -81,7 +77,6 @@ export const keplrMainnetWithoutEthermintChainIdsInitialConnect = [
   "kava_2222-10",
   "kyve-1",
   "lava-mainnet-1",
-  "neutron-1",
   "noble-1",
   "osmosis-1",
   "passage-2",
@@ -95,7 +90,6 @@ export const keplrMainnetWithoutEthermintChainIdsInitialConnect = [
   "ssc-1",
   "stargaze-1",
   "stride-1",
-  "umee-1",
   "wormchain",
 ];
 

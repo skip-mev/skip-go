@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.5.15
+
+### Patch Changes
+
+- ec52456: remove umee-1
+
 ## 1.5.14
 
 ### Patch Changes
