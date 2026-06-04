@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.15.0
+
+### Minor Changes
+
+- bf90f8e: Remove Leap wallet support from the widget following Leap's service shutdown. This removes the Cosmos browser extension (`WalletType.LEAP`), mobile WalletConnect entry (`WalletType.WC_LEAP_MOBILE`), and MetaMask Snap variant (`WalletType.METAMASK_SNAP_LEAP`) from the wallet selector, along with the Sei EVM multi-chain label branch for Leap.
+
 ## 3.14.26
 
 ### Patch Changes
