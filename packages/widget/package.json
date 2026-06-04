@@ -43,7 +43,7 @@
     "@eslint/js": "^9.9.0",
     "@initia/initia-registry": "^1.0.6",
     "@keplr-wallet/types": "^0.12.125",
-    "@playwright/test": "^1.51.1",
+    "@playwright/test": "^1.60.0",
     "@storybook/addon-essentials": "^8.2.6",
     "@storybook/addon-interactions": "^8.2.6",
     "@storybook/addon-links": "^8.2.6",
