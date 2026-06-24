@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.5.16
+
+### Patch Changes
+
+- 9482db5: remove stargaze-1
+
 ## 1.5.15
 
 ### Patch Changes
