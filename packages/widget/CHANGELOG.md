@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.15.1
+
+### Patch Changes
+
+- 9482db5: remove stargaze-1
+- Updated dependencies [9482db5]
+  - @skip-go/client@1.5.16
+
 ## 3.15.0
 
 ### Minor Changes
