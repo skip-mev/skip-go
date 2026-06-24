@@ -4,6 +4,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   sync-branches:
     runs-on: ubuntu-latest
@@ -19,7 +23,7 @@ jobs:
         id: pull
         uses: tretuna/sync-branches@1.4.0
         with:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           FROM_BRANCH: 'main'
           TO_BRANCH: 'staging'
           CONTENT_COMPARISON: true
