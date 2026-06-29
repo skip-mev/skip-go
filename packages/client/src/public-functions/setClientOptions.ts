@@ -3,6 +3,7 @@ import { createDefaultAminoConverters, defaultRegistryTypes } from "@cosmjs/star
 import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
 import { circleAminoConverters, circleProtoRegistry } from "src/codegen/circle/client";
 import { evmosAminoConverters, evmosProtoRegistry } from "src/codegen/evmos/client";
+import { ethermintAminoConverters, ethermintProtoRegistry } from "src/codegen/ethermint/client";
 import { initiaAminoConverters } from "src/codegen/initia/client"
 import { opinitAminoConverters } from "src/codegen/opinit/client"
 import { Registry } from "@cosmjs/proto-signing";
@@ -22,6 +23,7 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
     ...createWasmAminoConverters(),
     ...circleAminoConverters,
     ...evmosAminoConverters,
+    ...ethermintAminoConverters,
     ...initiaAminoConverters,
     ...opinitAminoConverters,
     ...(options.aminoTypes ?? {}),
@@ -34,6 +36,7 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
     ["/opinit.ophost.v1.MsgInitiateTokenDeposit", MsgInitiateTokenDeposit],
     ...circleProtoRegistry,
     ...evmosProtoRegistry,
+    ...ethermintProtoRegistry,
     ...(options.registryTypes ?? []),
   ]);
 

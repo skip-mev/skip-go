@@ -9,6 +9,7 @@ import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
 import { ClawbackVestingAccount } from "src/codegen/evmos/vesting/v2/vesting";
 import { MsgDepositForBurn, MsgDepositForBurnWithCaller } from "src/codegen/circle/cctp/v1/tx";
 import { MsgExecute } from "src/codegen/initia/move/v1/tx";
+import { MsgEthereumTx, LegacyTx } from "src/codegen/ethermint/evm/v1/tx";
 
 export function getEncodeObjectFromCosmosMessage(message: CosmosMsg): EncodeObject {
   const msgJson = JSON.parse(message.msg ?? "");
@@ -87,6 +88,31 @@ export function getEncodeObjectFromCosmosMessage(message: CosmosMsg): EncodeObje
         to: msgJson.to,
         amount: msgJson.amount,
         bridgeId: msgJson.bridge_id,
+      }),
+    };
+  }
+
+  if (message.msgTypeUrl === "/ethermint.evm.v1.MsgEthereumTx") {
+    const innerData = msgJson.data;
+    let anyData: { typeUrl: string; value: Uint8Array } | undefined;
+
+    if (innerData) {
+      const typeUrl = innerData["@type"] as string;
+      const { "@type": _omit, ...dataFields } = innerData;
+
+      if (typeUrl === "/ethermint.evm.v1.LegacyTx") {
+        const legacyTx = LegacyTx.fromAmino(dataFields);
+        anyData = { typeUrl, value: LegacyTx.encode(legacyTx).finish() };
+      }
+    }
+
+    return {
+      typeUrl: message.msgTypeUrl,
+      value: MsgEthereumTx.fromPartial({
+        data: anyData,
+        from: msgJson.from,
+        size: 0,
+        hash: "",
       }),
     };
   }
