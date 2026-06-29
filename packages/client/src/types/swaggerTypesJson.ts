@@ -199,6 +199,7 @@ export enum BridgeTypeJson {
   STARGATE = "STARGATE",
   LAYER_ZERO = "LAYER_ZERO",
   EUREKA = "EUREKA",
+  CCTP_V2 = "CCTP_V2",
 }
 
 /**

@@ -199,6 +199,7 @@ export enum BridgeType {
   STARGATE = "STARGATE",
   LAYER_ZERO = "LAYER_ZERO",
   EUREKA = "EUREKA",
+  CCTP_V2 = "CCTP_V2",
 }
 
 /**
@@ -517,6 +518,25 @@ export interface CCTPTransferTxs {
 export interface CCTPTransferWrapper {
   /** A transfer facilitated by the CCTP bridge */
   cctpTransfer?: CCTPTransfer;
+}
+
+export interface CCTPTransferV2 {
+  fromChainId?: string;
+  toChainId?: string;
+  burnToken?: string;
+  denomIn?: string;
+  denomOut?: string;
+  bridgeId?: BridgeType;
+  smartRelay?: boolean;
+  smartRelayFeeQuote?: SmartRelayFeeQuote;
+  destinationDomain?: number;
+  finalityThreshold?: number;
+  maxFee?: string;
+}
+
+export interface CCTPTransferV2Wrapper {
+  /** A transfer facilitated by the CCTP V2 bridge */
+  cctpTransferV2?: CCTPTransferV2;
 }
 
 /** A transfer facilitated by the Stargate bridge */
@@ -1010,6 +1030,7 @@ export type Operation = (
   | AxelarTransferWrapper
   | BankSendWrapper
   | CCTPTransferWrapper
+  | CCTPTransferV2Wrapper
   | HyperlaneTransferWrapper
   | EvmSwapWrapper
   | OPInitTransferWrapper

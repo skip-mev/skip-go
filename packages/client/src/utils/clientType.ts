@@ -7,6 +7,7 @@ import type {
   CCTPTransfer,
   CCTPTransferInfo,
   CCTPTransferState,
+  CCTPTransferV2,
   ContractCallWithTokenTxs,
   EurekaTransfer,
   EurekaTransferInfo,
@@ -47,6 +48,7 @@ export enum OperationType {
   transfer = "transfer",
   axelarTransfer = "axelarTransfer",
   cctpTransfer = "cctpTransfer",
+  cctpTransferV2 = "cctpTransferV2",
   hyperlaneTransfer = "hyperlaneTransfer",
   opInitTransfer = "opInitTransfer",
   bankSend = "bankSend",
@@ -65,6 +67,7 @@ type CombinedOperation = {
   swap?: Swap;
   axelarTransfer?: AxelarTransfer;
   cctpTransfer?: CCTPTransfer;
+  cctpTransferV2?: CCTPTransferV2;
   hyperlaneTransfer?: HyperlaneTransfer;
   evmSwap?: EvmSwap;
   opInitTransfer?: OPInitTransfer;
@@ -80,6 +83,7 @@ type OperationDetails = CombineObjectTypes<
     Swap &
     AxelarTransfer &
     CCTPTransfer &
+    CCTPTransferV2 &
     HyperlaneTransfer &
     EvmSwap &
     StargateTransfer &
