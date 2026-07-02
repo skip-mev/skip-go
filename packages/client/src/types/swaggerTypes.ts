@@ -1700,6 +1700,8 @@ export interface RouteRequest {
   allowSwaps?: boolean;
   /** Whether to enable Go Fast routes */
   goFast?: boolean;
+  /** Whether to enable fast transfer routes */
+  fastTransfer?: boolean;
 }
 
 export interface MsgsRequest {
