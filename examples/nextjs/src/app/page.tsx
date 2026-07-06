@@ -56,6 +56,7 @@ export default function Home() {
     if (otherParams !== undefined) {
       const { api, testnet, shadowDom, theme } = otherParams;
       if (testnet !== undefined) setTestnet(testnet);
+      if (apiUrl !== undefined) setApiUrl(apiUrl)
       if (shadowDom !== undefined) setDisableShadowDom(!shadowDom);
       if (theme !== undefined) setTheme(theme);
     }

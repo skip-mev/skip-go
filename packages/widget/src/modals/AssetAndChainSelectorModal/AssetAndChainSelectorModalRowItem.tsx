@@ -13,6 +13,7 @@ import { useFilteredChains } from "./useFilteredChains";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
+import { getTruncatedAddress } from "@/utils/crypto";
 
 export const isGroupedAsset = (
   item: GroupedAsset | ClientAsset | ChainWithAsset,
@@ -126,7 +127,11 @@ const ChainWithAssetRow = ({ item, eureka }: { item: ChainWithAsset; eureka?: bo
         )
       }
       mainText={item.prettyName}
-      subText={<SmallText>{item.chainId}</SmallText>}
+      subText={
+        <SmallText>
+          {item.chainId} {getTruncatedAddress(item.asset.denom, true)}
+        </SmallText>
+      }
       eureka={eureka}
     />
   );

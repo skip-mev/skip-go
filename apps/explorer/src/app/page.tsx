@@ -10,6 +10,7 @@ import {
   transactionStatus,
   TransactionState,
   trackTransaction,
+  setApiOptions,
 } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
 import {
@@ -49,6 +50,12 @@ type ErrorWithCodeAndDetails = Error & {
   details: string;
 };
 
+const API_URLS: Record<string, string> = {
+  prod: "https://go.skip.build/api/skip",
+  dev: "https://dev.go.skip.build/api/skip",
+  local: "http://localhost:8080",
+};
+
 export default function Home() {
   const [txHash, setTxHash] = useState<string>();
   const [chainId, setChainId] = useState<string>();
@@ -66,6 +73,12 @@ export default function Home() {
     "is_testnet",
     parseAsBoolean.withDefault(false)
   );
+
+  const [apiUrlParam] = useQueryState(
+    "api_url",
+    parseAsString.withDefault("prod")
+  );
+  const apiUrl = API_URLS[apiUrlParam] ?? API_URLS.prod;
 
   const [data, setData] = useQueryState("data");
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
@@ -198,14 +211,15 @@ export default function Home() {
   }, [destAsset, destinationNodeFailed, operations, transactionStatusResponse?.transferAssetRelease, transferEvents]);
 
   useEffect(() => {
-    setSkipClientConfig(defaultSkipClientConfig);
+    setApiOptions({ apiUrl, allowOptionsUpdateAfterApiCall: true });
+    setSkipClientConfig({ ...defaultSkipClientConfig, apiUrl });
     setOnlyTestnets(isTestnet);
     setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP)
-  }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop, isTestnet]);
+  }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop, isTestnet, apiUrl]);
 
   const onReindex = useCallback(async (_txHash?: string, _chainId?: string) => {
     try {
-      await fetch('https://api.skip.build/v2/tx/retry_track', {
+      await fetch(`${apiUrl}/v2/tx/retry_track`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -218,7 +232,7 @@ export default function Home() {
     } catch (error) {
       console.error(error);
     }
-  }, [txHash, chainId]);
+  }, [txHash, chainId, apiUrl]);
 
   const getTxStatus = useCallback(
     async (transactionDetails: TransactionDetailsType[] = []) => {

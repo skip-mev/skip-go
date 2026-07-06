@@ -58,6 +58,49 @@ export const formaTestnet = defineChain({
   testnet: true,
 });
 
+export const injectiveEvm = defineChain({
+  id: 1776,
+  name: "Injective EVM",
+  nativeCurrency: {
+    name: "INJ",
+    symbol: "INJ",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://sentry.evm-rpc.injective.network"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Injective Explorer",
+      url: "https://blockscout.injective.network",
+    },
+  },
+});
+
+export const injectiveEvmTestnet = defineChain({
+  id: 1439,
+  name: "Injective EVM Testnet",
+  nativeCurrency: {
+    name: "INJ",
+    symbol: "INJ",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://injectiveevm-testnet-rpc.polkachu.com"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Injective Testnet Explorer",
+      url: "https://testnet.blockscout.injective.network",
+    },
+  },
+  testnet: true,
+});
+
 export const config: Config = createConfig({
   chains: [
     arbitrum,
@@ -90,6 +133,8 @@ export const config: Config = createConfig({
     kavaTestnet,
     lineaSepolia,
     mantaSepoliaTestnet,
+    injectiveEvm,
+    injectiveEvmTestnet,
   ],
   transports: {
     [arbitrum.id]: http(),
@@ -122,6 +167,8 @@ export const config: Config = createConfig({
     [kavaTestnet.id]: http(),
     [lineaSepolia.id]: http(),
     [mantaSepoliaTestnet.id]: http(),
+    [injectiveEvm.id]: http(),
+    [injectiveEvmTestnet.id]: http(),
   },
   ssr: false,
   storage: createStorage({

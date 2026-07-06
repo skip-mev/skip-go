@@ -54,6 +54,49 @@ export const formaTestnet = defineChain({
   testnet: true,
 });
 
+export const injectiveEvm = defineChain({
+  id: 1776,
+  name: "Injective EVM",
+  nativeCurrency: {
+    name: "INJ",
+    symbol: "INJ",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://sentry.evm-rpc.injective.network"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Injective Explorer",
+      url: "https://blockscout.injective.network",
+    },
+  },
+});
+
+export const injectiveEvmTestnet = defineChain({
+  id: 1439,
+  name: "Injective EVM Testnet",
+  nativeCurrency: {
+    name: "INJ",
+    symbol: "INJ",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://injectiveevm-testnet-rpc.polkachu.com"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Injective Testnet Explorer",
+      url: "https://testnet.blockscout.injective.network",
+    },
+  },
+  testnet: true,
+});
+
 export const evmChains = [
   arbitrum,
   avalanche,
@@ -85,4 +128,6 @@ export const evmChains = [
   kavaTestnet,
   lineaSepolia,
   mantaSepoliaTestnet,
+  injectiveEvm,
+  injectiveEvmTestnet,
 ];

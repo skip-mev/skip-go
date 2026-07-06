@@ -8,9 +8,22 @@ import { resetWidget, setAsset } from "@/state/swapPage";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { Widget, WidgetProps } from "@/widget/Widget";
 
+type ApiUrlOption = "prod" | "dev" | "local";
+
+const getInitialApiUrl = (): ApiUrlOption => {
+  const param = new URLSearchParams(window.location.search).get("apiUrl");
+  return param === "dev" || param === "local" ? param : "prod";
+};
+
+const API_URLS: Record<ApiUrlOption, string> = {
+  prod: "https://go.skip.build/api/skip",
+  dev: "https://dev.go.skip.build/api/skip",
+  local: "http://localhost:8080",
+};
+
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [apiUrl, setApiUrl] = useState<"prod" | "dev">("prod");
+  const [apiUrl, setApiUrl] = useState<ApiUrlOption>(getInitialApiUrl);
   const [testnet, setTestnet] = useState<boolean>(false);
   const [disableShadowDom, setDisableShadowDom] = useState(true);
   const [renderWebComponent, setRenderWebComponent] = useState(false);
@@ -41,8 +54,7 @@ const DevMode = () => {
       enableAmplitudeAnalytics: true,
       disableShadowDom,
       onlyTestnet: testnet,
-      apiUrl:
-        apiUrl === "prod" ? "https://go.skip.build/api/skip" : "https://dev.go.skip.build/api/skip",
+      apiUrl: API_URLS[apiUrl],
       assetSymbolsSortedToTop: [
         "LBTC",
         "ATOM",
@@ -133,8 +145,10 @@ const DevMode = () => {
           set destination asset to INIT on Initia
         </button>
         <button onClick={() => setTestnet(!testnet)}>{testnet ? "testnet" : "mainnet"}</button>
-        <button onClick={() => setApiUrl((v) => (v === "prod" ? "dev" : "prod"))}>
-          {apiUrl === "prod" ? "prod" : "dev"}
+        <button
+          onClick={() => setApiUrl((v) => (v === "prod" ? "dev" : v === "dev" ? "local" : "prod"))}
+        >
+          {apiUrl}
         </button>
         <button onClick={() => setRenderWebComponent((v) => !v)}>
           web-component: {renderWebComponent.toString()}
