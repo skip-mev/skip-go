@@ -15,6 +15,8 @@ import {
   fantomTestnet,
   filecoin,
   forma,
+  injective,
+  injectiveTestnet,
   kava,
   kavaTestnet,
   linea,
@@ -85,4 +87,6 @@ export const evmChains = [
   kavaTestnet,
   lineaSepolia,
   mantaSepoliaTestnet,
+  injective,
+  injectiveTestnet,
 ];

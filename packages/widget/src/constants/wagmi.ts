@@ -15,6 +15,8 @@ import {
   fantom,
   fantomTestnet,
   filecoin,
+  injective,
+  injectiveTestnet,
   kava,
   kavaTestnet,
   linea,
@@ -90,6 +92,8 @@ export const config: Config = createConfig({
     kavaTestnet,
     lineaSepolia,
     mantaSepoliaTestnet,
+    injective,
+    injectiveTestnet,
   ],
   transports: {
     [arbitrum.id]: http(),
@@ -122,6 +126,8 @@ export const config: Config = createConfig({
     [kavaTestnet.id]: http(),
     [lineaSepolia.id]: http(),
     [mantaSepoliaTestnet.id]: http(),
+    [injective.id]: http(),
+    [injectiveTestnet.id]: http(),
   },
   ssr: false,
   storage: createStorage({

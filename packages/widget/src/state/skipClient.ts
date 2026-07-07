@@ -95,7 +95,6 @@ export const skipChainsAtom = atomWithQuery((get) => {
         includeEvm: true,
         includeSvm: true,
         onlyTestnets,
-        abortDuplicateRequests: true,
       });
       return response;
     },
@@ -117,7 +116,6 @@ export const skipAssetsAtom = atomWithQuery((get) => {
         includeCw20Assets: true,
         includeSvmAssets: true,
         onlyTestnets,
-        abortDuplicateRequests: true,
       });
 
       return flattenData(response as Record<string, Asset[]>, chains.data);

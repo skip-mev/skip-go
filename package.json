@@ -88,9 +88,12 @@
     "tsx": "^4.12.0",
     "typescript": "5.2.x",
     "typescript-plugin-styled-components": "3.0.0",
-    "viem": "^2.21.55",
+    "viem": "^2.38.1",
     "vitest": "^1.2.2",
     "wagmi": "^2.14.1"
+  },
+  "resolutions": {
+    "viem": "2.38.6"
   },
   "packageManager": "yarn@3.2.0",
   "dependencies": {
