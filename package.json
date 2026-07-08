@@ -29,7 +29,7 @@
     "submodule": "yarn run submodule:init && yarn run submodule:update",
     "submodule:init": "git submodule deinit -f --all",
     "submodule:update": "git submodule update --init --recursive",
-    "release": "yarn run build && yarn workspace @skip-go/widget run pre && changeset publish",
+    "release": "yarn run build && yarn workspace @skip-go/widget run prepack && changeset publish",
     "swagger": "npx open-swagger-ui --open docs/swagger.yml",
     "postinstall": "yarn run submodule && yarn playwright install",
     "update-registries": "yarn workspace @skip-go/client run update-registries && yarn workspace @skip-go/widget run update-registries && yarn run build"
