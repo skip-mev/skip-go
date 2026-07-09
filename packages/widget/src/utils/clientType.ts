@@ -42,7 +42,7 @@ type CombinedOperation = {
   swap?: Swap;
   axelarTransfer?: AxelarTransfer;
   cctpTransfer?: CCTPTransfer;
-  cctpTransferV2?: CCTPTransfer;
+  cctpTransferV2?: CCTPTransferV2;
   hyperlaneTransfer?: HyperlaneTransfer;
   evmSwap?: EvmSwap;
   opInitTransfer?: OPInitTransfer;
