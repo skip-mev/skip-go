@@ -65,7 +65,7 @@ export const createSkipExplorerLink = (
   const initialTxChainId = transactionDetails?.[0]?.chainId;
 
   if (base64ExplorerData) {
-    return `${explorerUrl}/?data=${base64ExplorerData}`;
+    return `${explorerUrl}/?data=${base64ExplorerData}${isTestnet ? "&is_testnet=true" : ""}`;
   }
 
   return `${explorerUrl}/?tx_hash=${txHashCommaSeperatedList}&chain_id=${initialTxChainId}${isTestnet ? "&is_testnet=true" : ""}`;
