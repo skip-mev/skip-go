@@ -41,8 +41,8 @@ const DevMode = () => {
       enableAmplitudeAnalytics: true,
       disableShadowDom,
       onlyTestnet: testnet,
-      skipExplorerUrl: "https://testnet-dev-skip-explorer.vercel.app",
-      apiUrl: "https://dev.go.skip.build/api/skip",
+      apiUrl:
+        apiUrl === "prod" ? "https://go.skip.build/api/skip" : "https://dev.go.skip.build/api/skip",
       assetSymbolsSortedToTop: [
         "LBTC",
         "ATOM",
