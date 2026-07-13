@@ -3,6 +3,7 @@ import { config } from "@/constants/wagmi";
 import { ChainType, RouteDetails, TransactionDetails } from "@skip-go/client";
 import { jotaiStore } from "@/widget/Widget";
 import { onlyTestnetsAtom } from "@/state/skipClient";
+import { skipExplorerUrlAtom } from "@/state/skipExplorerUrl";
 
 export const getBase64ExplorerData = (historyItem?: RouteDetails) => {
   const jsonString = JSON.stringify({
@@ -60,11 +61,12 @@ export const createSkipExplorerLink = (
     ?.join(",");
 
   const isTestnet = get(onlyTestnetsAtom);
+  const explorerUrl = get(skipExplorerUrlAtom);
   const initialTxChainId = transactionDetails?.[0]?.chainId;
 
   if (base64ExplorerData) {
-    return `https://explorer.skip.build/?data=${base64ExplorerData}`;
+    return `${explorerUrl}/?data=${base64ExplorerData}`;
   }
 
-  return `https://explorer.skip.build/?tx_hash=${txHashCommaSeperatedList}&chain_id=${initialTxChainId}${isTestnet ? "&is_testnet=true" : ""}`;
+  return `${explorerUrl}/?tx_hash=${txHashCommaSeperatedList}&chain_id=${initialTxChainId}${isTestnet ? "&is_testnet=true" : ""}`;
 };

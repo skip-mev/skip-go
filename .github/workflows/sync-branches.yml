@@ -1,4 +1,4 @@
-name: Sync (Staging)
+name: Syncing branches
 on:
   push:
     branches:
@@ -7,7 +7,11 @@ on:
 jobs:
   sync-branches:
     runs-on: ubuntu-latest
-    name: Syncing branches
+    name: Syncing branches (${{ matrix.to_branch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        to_branch: [staging, dev, testnet-dev]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -21,5 +25,5 @@ jobs:
         with:
           GITHUB_TOKEN: ${{secrets.PERSONAL_TOKEN}}
           FROM_BRANCH: 'main'
-          TO_BRANCH: 'staging'
+          TO_BRANCH: ${{ matrix.to_branch }}
           CONTENT_COMPARISON: true

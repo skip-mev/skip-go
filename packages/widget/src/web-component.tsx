@@ -31,6 +31,7 @@ const widgetPropTypes: Required<PropDescriptors> = {
   ibcEurekaHighlightedAssets: "any",
   assetSymbolsSortedToTop: "any",
   hideAssetsUnlessWalletTypeConnected: "any",
+  skipExplorerUrl: "any",
   apiUrl: "any",
   apiKey: "any",
   apiHeaders: "any",
