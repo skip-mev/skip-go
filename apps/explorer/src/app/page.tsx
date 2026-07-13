@@ -43,6 +43,8 @@ import { chainIdsSortedToTopAtom } from "@/state/chainIdsSortedToTop";
 import { CHAIN_IDS_SORTED_TO_TOP } from "../constants/chainIdsSortedToTop";
 import { isMac } from "@/utils/os";
 import { LoadingState } from "../components/LoadingState";
+// Importing this also configures the skip client (setApiOptions) at module load.
+import { SKIP_API_URL, IS_TESTNET } from "../utils/skipClientConfig";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
@@ -62,10 +64,8 @@ export default function Home() {
     parseAsArrayOf(parseAsString, ",")
   );
 
-  const [isTestnet] = useQueryState(
-    "is_testnet",
-    parseAsBoolean.withDefault(false)
-  );
+  // No default: null means "not in the URL", so NEXT_PUBLIC_IS_TESTNET can take over.
+  const [isTestnet] = useQueryState("is_testnet", parseAsBoolean);
 
   const [data, setData] = useQueryState("data");
   const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
@@ -198,14 +198,14 @@ export default function Home() {
   }, [destAsset, destinationNodeFailed, operations, transactionStatusResponse?.transferAssetRelease, transferEvents]);
 
   useEffect(() => {
-    setSkipClientConfig(defaultSkipClientConfig);
-    setOnlyTestnets(isTestnet);
+    setSkipClientConfig({ ...defaultSkipClientConfig, apiUrl: SKIP_API_URL });
+    setOnlyTestnets(isTestnet ?? IS_TESTNET);
     setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP)
   }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop, isTestnet]);
 
   const onReindex = useCallback(async (_txHash?: string, _chainId?: string) => {
     try {
-      await fetch('https://api.skip.build/v2/tx/retry_track', {
+      await fetch(`${SKIP_API_URL}/v2/tx/retry_track`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

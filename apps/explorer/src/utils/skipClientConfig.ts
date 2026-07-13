@@ -1,12 +1,9 @@
 import { setApiOptions } from "@skip-go/client";
+import { defaultSkipClientConfig } from "@/state/skipClient";
 
-// Initialize the Skip client with proper configuration
-export function initializeSkipClient() {
-  setApiOptions({
-    apiUrl: "https://api.skip.build", // Default Skip API endpoint
-    // apiKey: process.env.NEXT_PUBLIC_SKIP_API_KEY, // Uncomment if you have an API key
-  });
-}
+export const SKIP_API_URL =
+  process.env.NEXT_PUBLIC_API_URL || defaultSkipClientConfig.apiUrl;
 
-// Call this function when your app initializes
-initializeSkipClient();
+export const IS_TESTNET = process.env.NEXT_PUBLIC_IS_TESTNET === "true";
+
+setApiOptions({ apiUrl: SKIP_API_URL });
