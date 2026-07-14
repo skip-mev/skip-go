@@ -43,6 +43,7 @@ import { chainIdsSortedToTopAtom } from "@/state/chainIdsSortedToTop";
 import { CHAIN_IDS_SORTED_TO_TOP } from "../constants/chainIdsSortedToTop";
 import { isMac } from "@/utils/os";
 import { LoadingState } from "../components/LoadingState";
+import { SKIP_API_URL } from "../utils/skipClientConfig";
 
 type ErrorWithCodeAndDetails = Error & {
   code: number;
@@ -198,14 +199,14 @@ export default function Home() {
   }, [destAsset, destinationNodeFailed, operations, transactionStatusResponse?.transferAssetRelease, transferEvents]);
 
   useEffect(() => {
-    setSkipClientConfig(defaultSkipClientConfig);
+    setSkipClientConfig({ ...defaultSkipClientConfig, apiUrl: SKIP_API_URL });
     setOnlyTestnets(isTestnet);
     setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP)
   }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop, isTestnet]);
 
   const onReindex = useCallback(async (_txHash?: string, _chainId?: string) => {
     try {
-      await fetch('https://api.skip.build/v2/tx/retry_track', {
+      await fetch(`${SKIP_API_URL}/v2/tx/retry_track`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
