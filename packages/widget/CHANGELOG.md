@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.16.0
+
+### Minor Changes
+
+- 7fe1489: Add an optional `skipExplorerUrl` prop to point transaction history links at a different Skip explorer. Defaults to `https://explorer.skip.build`, so existing behaviour is unchanged.
+
 ## 3.15.1
 
 ### Patch Changes

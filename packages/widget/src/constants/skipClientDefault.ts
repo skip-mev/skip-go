@@ -10,3 +10,5 @@ export const endpointOptions = {
 };
 
 export const prodApiUrl = `${appUrl}/api/skip`;
+
+export const skipExplorerUrl = "https://explorer.skip.build";
