@@ -87,6 +87,11 @@ export type WidgetProps = {
   hideAssetsUnlessWalletTypeConnected?: boolean;
   batchSignTxs?: boolean;
   /**
+   * Base URL of the Skip explorer that transaction history links point to.
+   * @default "https://explorer.skip.build"
+   */
+  skipExplorerUrl?: string;
+  /**
    * Custom z-index for modals. If not provided, defaults to 10
    * @default 10
    */
