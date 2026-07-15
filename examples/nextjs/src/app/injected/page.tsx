@@ -4,7 +4,10 @@ import React, { useState } from "react";
 import { Widget } from "@skip-go/widget";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
 import { createWalletClient, custom, Account } from "viem";
-import { mainnet, optimism, polygon, base, arbitrum, avalanche } from 'viem/chains';
+import {
+  mainnet, optimism, polygon, base, arbitrum, avalanche,
+  sepolia, optimismSepolia, polygonAmoy, baseSepolia, arbitrumSepolia, avalancheFuji,
+} from 'viem/chains';
 
 type ChainId = string;
 type Address = string;
@@ -99,12 +102,28 @@ export default function Home() {
     "8453": base,
     "42161": arbitrum,
     "43114": avalanche,
+    // testnets
+    "11155111": sepolia,
+    "11155420": optimismSepolia,
+    "80002": polygonAmoy,
+    "84532": baseSepolia,
+    "421614": arbitrumSepolia,
+    "43113": avalancheFuji,
   };
 
-  const getEvmSigner = async () => {
+  // skip-go calls getEvmSigner(chainId) with the chain the tx is actually for
+  // (see executeEvmTransaction.ts) — it must not be inferred from whatever
+  // network the wallet currently happens to be connected to, since that can
+  // differ from the requested chain for multi-chain routes.
+  const getEvmSigner = async (chainId: string) => {
     const ethereum = window.ethereum;
     if (!ethereum) {
       throw new Error("MetaMask not installed");
+    }
+
+    const selectedChain = chainConfigMap[chainId];
+    if (!selectedChain) {
+      throw new Error(`getEvmSigner: no viem chain configured for chainId ${chainId}`);
     }
 
     // Request accounts
@@ -117,11 +136,16 @@ export default function Home() {
       throw new Error("No EVM accounts found");
     }
 
-    // Get the currently selected chain ID
+    // Make sure the wallet's active network actually matches the requested
+    // chain before returning the client, so the tx isn't signed/sent against
+    // the wrong network.
     const chainIdHex = (await ethereum.request({ method: 'eth_chainId' })) as string;
-    const chainId = parseInt(chainIdHex, 16).toString();
-
-    const selectedChain = chainConfigMap[chainId] ?? mainnet;
+    if (parseInt(chainIdHex, 16).toString() !== chainId) {
+      await ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: `0x${Number(chainId).toString(16)}` }],
+      });
+    }
 
     const client = createWalletClient({
       account: evmAddress,

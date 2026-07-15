@@ -1,4 +1,13 @@
 "use client";
+
+import {
+  Bridge,
+  BridgeType,
+  SwapVenue,
+  bridges as _bridges,
+  setApiOptions,
+  venues,
+} from "@skip-go/client";
 import {
   Widget,
   openAssetAndChainSelectorModal,
@@ -6,16 +15,10 @@ import {
   setAsset,
 } from "@skip-go/widget";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { useQueryParams } from "@/hooks/useURLQueryParams";
-import {
-  venues,
-  bridges as _bridges,
-  setApiOptions,
-  SwapVenue,
-  Bridge,
-  BridgeType,
-} from "@skip-go/client";
+
 import { useQuery } from "@tanstack/react-query";
+import { useQueryParams } from "@/hooks/useURLQueryParams";
+
 type ApiUrlOption = "prod" | "dev" | "local";
 
 export default function Home() {
@@ -26,7 +29,7 @@ export default function Home() {
   // optional theme, widget will be dark mode be default
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [disableShadowDom, setDisableShadowDom] = useState(false);
-  const [apiUrl, setApiUrl] = useState<ApiUrlOption>("prod");
+  const [apiUrl, setApiUrl] = useState<ApiUrlOption>("local");
   const [testnet, setTestnet] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string | undefined>();
 
@@ -34,18 +37,9 @@ export default function Home() {
   const [bridges, setBridges] = useState<Bridge[]>();
   
  const computedApiUrl = useMemo(() => {
-    if (apiUrl === "local") {
-      return "http://localhost:8080";
-    }
-    const isProd = apiUrl === "prod";
-    if (apiKey) {
-      return isProd
-        ? "https://api.skip.build"
-        : "https://api.dev.skip.build";
-    }
-    return isProd
-      ? "https://go.skip.build/api/skip"
-      : "https://dev.go.skip.build/api/skip";
+
+    // return "http://localhost:8080";
+    return "https://api.skip-dev.cosmoslabs.kr";
   }, [apiUrl, apiKey]);
 
   useEffect(() => {
@@ -94,7 +88,8 @@ export default function Home() {
     initEruda();
     loadRemoteDebuggingScript();
     setApiOptions({
-      apiUrl: "https://go.skip.build/api/skip",
+      // apiUrl: "http://localhost:8080",
+      apiUrl: "https://api.skip-dev.cosmoslabs.kr",
     });
   }, []);
 

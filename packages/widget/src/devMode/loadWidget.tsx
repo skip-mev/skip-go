@@ -1,12 +1,14 @@
+import "../web-component";
+import "./global.css";
+
+import { Column, Row } from "@/components/Layout";
 /* eslint-disable no-console */
 import { StrictMode, useEffect, useMemo, useState } from "react";
-import { createRoot } from "react-dom/client";
-import "../web-component";
-import { Column, Row } from "@/components/Layout";
-import "./global.css";
-import { resetWidget, setAsset } from "@/state/swapPage";
-import { defaultTheme, lightTheme } from "@/widget/theme";
 import { Widget, WidgetProps } from "@/widget/Widget";
+import { defaultTheme, lightTheme } from "@/widget/theme";
+import { resetWidget, setAsset } from "@/state/swapPage";
+
+import { createRoot } from "react-dom/client";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -41,8 +43,8 @@ const DevMode = () => {
       enableAmplitudeAnalytics: true,
       disableShadowDom,
       onlyTestnet: testnet,
-      apiUrl:
-        apiUrl === "prod" ? "https://go.skip.build/api/skip" : "https://dev.go.skip.build/api/skip",
+      // apiUrl: "http://localhost:8080",
+      apiUrl: "https://api.skip-dev.cosmoslabs.kr",
       assetSymbolsSortedToTop: [
         "LBTC",
         "ATOM",
