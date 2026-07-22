@@ -259,6 +259,8 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     combinedTransferEvent?.axelarTransfer as AxelarTransferInfo;
   const ibcTransfer = combinedTransferEvent?.ibcTransfer as IBCTransferInfo;
   const cctpTransfer = combinedTransferEvent?.cctpTransfer as CCTPTransferInfo;
+  const cctpTransferV2 =
+    combinedTransferEvent?.cctpTransferV2 as CCTPTransferInfo;
   const hyperlaneTransfer =
     combinedTransferEvent?.hyperlaneTransfer as HyperlaneTransferInfo;
   const opInitTransfer =
@@ -279,6 +281,8 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     transferType = TransferType.ibcTransfer;
   } else if (cctpTransfer) {
     transferType = TransferType.cctpTransfer;
+  } else if (cctpTransferV2) {
+    transferType = TransferType.cctpTransferV2;
   } else if (hyperlaneTransfer) {
     transferType = TransferType.hyperlaneTransfer;
   } else if (opInitTransfer) {
@@ -424,6 +428,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     ...ibcTransfer,
     ...axelarTransfer,
     ...cctpTransfer,
+    ...cctpTransferV2,
     ...hyperlaneTransfer,
     ...stargateTransfer,
     ...hyperlaneTransfer,
@@ -516,6 +521,7 @@ type CombinedTransferEvent = {
   [TransferType.ibcTransfer]: IBCTransferInfo;
   [TransferType.axelarTransfer]: AxelarTransferInfo;
   [TransferType.cctpTransfer]: CCTPTransferInfo;
+  [TransferType.cctpTransferV2]: CCTPTransferInfo;
   [TransferType.hyperlaneTransfer]: HyperlaneTransferInfo;
   [TransferType.opInitTransfer]: OPInitTransferInfo;
   [TransferType.goFastTransfer]: GoFastTransferInfo;
@@ -528,6 +534,7 @@ export enum TransferType {
   ibcTransfer = "ibcTransfer",
   axelarTransfer = "axelarTransfer",
   cctpTransfer = "cctpTransfer",
+  cctpTransferV2 = "cctpTransferV2",
   hyperlaneTransfer = "hyperlaneTransfer",
   opInitTransfer = "opInitTransfer",
   goFastTransfer = "goFastTransfer",
