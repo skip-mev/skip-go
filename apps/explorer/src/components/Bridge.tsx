@@ -15,6 +15,8 @@ export const getTransferTypeLabel = (transferType: TransferType | OperationType 
       return "Axelar";
     case TransferType.cctpTransfer:
       return "CCTP";
+    case TransferType.cctpTransferV2:
+      return "CCTP v2";
     case TransferType.hyperlaneTransfer:
       return "Hyperlane";
     case TransferType.opInitTransfer:
