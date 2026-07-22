@@ -1377,6 +1377,8 @@ export interface TransferEvent {
   ibcTransfer?: IBCTransferInfo;
   axelarTransfer?: AxelarTransferInfo;
   cctpTransfer?: CCTPTransferInfo;
+  /** Status of a transfer facilitated by the CCTP V2 bridge, which is reported in the same shape as CCTP V1 */
+  cctpTransferV2?: CCTPTransferInfo;
   hyperlaneTransfer?: HyperlaneTransferInfo;
   opInitTransfer?: OPInitTransferInfo;
   stargateTransfer?: StargateTransferInfo;
