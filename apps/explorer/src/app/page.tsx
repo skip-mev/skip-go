@@ -127,12 +127,19 @@ export default function Home() {
   const transfersToShow = useMemo(() => {
     const transfers: TransferEventCardProps[] = [];
 
-    const transferAssetReleaseChainId = transactionStatusResponse?.transferAssetRelease?.chainId;
-    const transferAssetReleaseIndex =
-      transferEvents.findLastIndex(event =>
-        event.fromChainId === transferAssetReleaseChainId ||
-        event.toChainId === transferAssetReleaseChainId
-      );
+    const stoppedTxIndex = transactionStatuses.findLastIndex(
+      (status, i) =>
+        status?.transferAssetRelease?.released === true &&
+        transactionStatuses[i + 1]?.transferAssetRelease?.released !== true,
+    );
+    const stoppedRelease =
+      stoppedTxIndex >= 0 ? transactionStatuses[stoppedTxIndex]?.transferAssetRelease : undefined;
+    const stoppedEventIndex =
+      stoppedTxIndex >= 0
+        ? transactionStatuses
+            .slice(0, stoppedTxIndex + 1)
+            .reduce((sum, status) => sum + (status?.transferSequence?.length ?? 0), 0) - 1
+        : -1;
 
     const getStep = (index: number, fromOrTo: "from" | "to") => {
       if (index === 0 && fromOrTo === "from") return "Origin";
@@ -147,16 +154,17 @@ export default function Home() {
         explorerLink: string | undefined,
         fromOrTo: "from" | "to"
       ) => {
-
-        const assetMatches = operations[index]?.denom === transactionStatusResponse?.transferAssetRelease?.denom && operations[index]?.chainId === transactionStatusResponse?.transferAssetRelease?.chainId;
+        const assetMatches =
+          operations[index]?.denom === stoppedRelease?.denom &&
+          operations[index]?.chainId === stoppedRelease?.chainId;
 
         const getTransferAssetRelease = () => {
-          if (!transactionStatusResponse?.transferAssetRelease?.released) return;
+          if (!stoppedRelease?.released) return;
           if (assetMatches) {
-            return transactionStatusResponse?.transferAssetRelease;
+            return stoppedRelease;
           }
-          if (transferAssetReleaseIndex === index && transferAssetReleaseChainId === chainId) {
-            return transactionStatusResponse?.transferAssetRelease;
+          if (index === stoppedEventIndex && fromOrTo === "to") {
+            return stoppedRelease;
           }
         }
 
@@ -196,7 +204,7 @@ export default function Home() {
     }
 
     return transfers;
-  }, [destAsset, destinationNodeFailed, operations, transactionStatusResponse?.transferAssetRelease, transferEvents]);
+  }, [destAsset, destinationNodeFailed, operations, transferEvents, transactionStatuses]);
 
   useEffect(() => {
     setSkipClientConfig({ ...defaultSkipClientConfig, apiUrl: SKIP_API_URL });
