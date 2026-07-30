@@ -127,10 +127,9 @@ export default function Home() {
   const transfersToShow = useMemo(() => {
     const transfers: TransferEventCardProps[] = [];
 
-    const stoppedTxIndex = transactionStatuses.findLastIndex(
-      (status, i) =>
-        status?.transferAssetRelease?.released === true &&
-        transactionStatuses[i + 1]?.transferAssetRelease?.released !== true,
+    const stoppedTxIndex = transactionStatuses.findLastIndex((status, i) =>
+      status?.transferAssetRelease?.released === true &&
+      transactionStatuses[i + 1]?.transferAssetRelease?.released !== true
     );
     const stoppedRelease =
       stoppedTxIndex >= 0 ? transactionStatuses[stoppedTxIndex]?.transferAssetRelease : undefined;
@@ -154,9 +153,7 @@ export default function Home() {
         explorerLink: string | undefined,
         fromOrTo: "from" | "to"
       ) => {
-        const assetMatches =
-          operations[index]?.denom === stoppedRelease?.denom &&
-          operations[index]?.chainId === stoppedRelease?.chainId;
+        const assetMatches = operations[index]?.denom === stoppedRelease?.denom && operations[index]?.chainId === stoppedRelease?.chainId;
 
         const getTransferAssetRelease = () => {
           if (!stoppedRelease?.released) return;
