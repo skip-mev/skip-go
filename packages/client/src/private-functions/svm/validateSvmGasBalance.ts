@@ -1,9 +1,14 @@
-import {
-  Connection,
-  LAMPORTS_PER_SOL,
+import { Connection, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import type {
+  SimulatedTransactionResponse,
   Transaction,
+  VersionedTransaction,
 } from "@solana/web3.js";
-import type { SimulatedTransactionResponse } from "@solana/web3.js";
+import {
+  deserializeSvmTransaction,
+  isVersionedTransaction,
+} from "./deserializeSvmTransaction";
+
 import type { SvmTx } from "../../types/swaggerTypes";
 import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
@@ -42,9 +47,9 @@ export const validateSvmGasBalance = async ({
 
   const txBuffer = Buffer.from(tx.tx, "base64");
 
-  let transaction: Transaction;
+  let transaction: Transaction | VersionedTransaction;
   try {
-    transaction = Transaction.from(txBuffer);
+    transaction = deserializeSvmTransaction(txBuffer);
   } catch (decodeError) {
     return {
       success: false,
@@ -54,7 +59,9 @@ export const validateSvmGasBalance = async ({
     };
   }
 
-  const simulation = await connection.simulateTransaction(transaction);
+  const simulation = isVersionedTransaction(transaction)
+    ? await connection.simulateTransaction(transaction)
+    : await connection.simulateTransaction(transaction);
 
   if (simulation.value.err) {
     const logs = simulation.value.logs ?? [];
