@@ -3,6 +3,7 @@ import React, { useCallback, useRef } from "react";
 import { Column, Row, Spacer } from "@/components/Layout";
 import {
   getTransferEventsFromTxStatusResponse,
+  getSimpleOverallStatus,
   ClientTransferEvent,
   TxStatusResponse,
   TransactionDetails as TransactionDetailsType,
@@ -126,19 +127,38 @@ export default function Home() {
 
   const transfersToShow = useMemo(() => {
     const transfers: TransferEventCardProps[] = [];
+    const eventProvenance = transactionStatuses.flatMap((status, txIndex) => {
+      const seq = status?.transferSequence ?? [];
+      return seq.map((_, i) => ({
+        txIndex,
+        isLastOfTx: i === seq.length - 1,
+        release: status?.transferAssetRelease,
+      }));
+    });
 
-    const stoppedTxIndex = transactionStatuses.findLastIndex((status, i) =>
-      status?.transferAssetRelease?.released === true &&
-      transactionStatuses[i + 1]?.transferAssetRelease?.released !== true
+    const releasedTxIndex = eventProvenance.reduce(
+      (furthest, p) => (p.release?.released === true ? Math.max(furthest, p.txIndex) : furthest),
+      -1
     );
-    const stoppedRelease =
-      stoppedTxIndex >= 0 ? transactionStatuses[stoppedTxIndex]?.transferAssetRelease : undefined;
-    const stoppedEventIndex =
-      stoppedTxIndex >= 0
-        ? transactionStatuses
-            .slice(0, stoppedTxIndex + 1)
-            .reduce((sum, status) => sum + (status?.transferSequence?.length ?? 0), 0) - 1
-        : -1;
+
+    const activeRelease =
+      releasedTxIndex >= 0
+        ? eventProvenance.find((p) => p.txIndex === releasedTxIndex)?.release
+        : undefined;
+
+    const releaseStuck =
+      releasedTxIndex >= 0 &&
+      transactionStatuses
+        .slice(releasedTxIndex)
+        .some((status) => status?.state && getSimpleOverallStatus(status.state) === "failed");
+
+    const releaseChainRendered =
+      activeRelease?.released === true &&
+      transferEvents.some((event, i) => {
+        if (eventProvenance[i]?.txIndex !== releasedTxIndex) return false;
+        if (event.toChainId === activeRelease?.chainId) return true;
+        return i === 0 && event.fromChainId === activeRelease?.chainId;
+      });
 
     const getStep = (index: number, fromOrTo: "from" | "to") => {
       if (index === 0 && fromOrTo === "from") return "Origin";
@@ -153,15 +173,14 @@ export default function Home() {
         explorerLink: string | undefined,
         fromOrTo: "from" | "to"
       ) => {
-        const assetMatches = operations[index]?.denom === stoppedRelease?.denom && operations[index]?.chainId === stoppedRelease?.chainId;
-
         const getTransferAssetRelease = () => {
-          if (!stoppedRelease?.released) return;
-          if (assetMatches) {
-            return stoppedRelease;
-          }
-          if (index === stoppedEventIndex && fromOrTo === "to") {
-            return stoppedRelease;
+          if (!activeRelease?.released) return;
+          if (eventProvenance[index]?.txIndex !== releasedTxIndex) return;
+          if (getStep(index, fromOrTo) !== "Destination" && !releaseStuck) return;
+          if (releaseChainRendered) {
+            if (chainId === activeRelease.chainId) return activeRelease;
+          } else if (eventProvenance[index]?.isLastOfTx && fromOrTo === "to") {
+            return activeRelease;
           }
         }
 
@@ -201,7 +220,7 @@ export default function Home() {
     }
 
     return transfers;
-  }, [destAsset, destinationNodeFailed, operations, transferEvents, transactionStatuses]);
+  }, [destAsset, destinationNodeFailed, transferEvents, transactionStatuses]);
 
   useEffect(() => {
     setSkipClientConfig({ ...defaultSkipClientConfig, apiUrl: SKIP_API_URL });

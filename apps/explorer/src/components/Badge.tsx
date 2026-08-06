@@ -15,6 +15,7 @@ export const Badge = styled.div<BadgeProps & FlexProps>`
   font-family: "ABCDiatype", sans-serif;
   font-size: 13px;
   display: flex;
+  white-space: nowrap;
   width: fit-content;
   height: ${({ height }) => (height ? convertToPxValue(height) : "fit-content")};
   border-radius: 100px;
