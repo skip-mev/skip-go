@@ -6,7 +6,7 @@ import type {
 } from "@solana/web3.js";
 import {
   deserializeSvmTransaction,
-  isVersionedTransaction,
+  simulateSvmTransaction,
 } from "./deserializeSvmTransaction";
 
 import type { SvmTx } from "../../types/swaggerTypes";
@@ -59,9 +59,7 @@ export const validateSvmGasBalance = async ({
     };
   }
 
-  const simulation = isVersionedTransaction(transaction)
-    ? await connection.simulateTransaction(transaction)
-    : await connection.simulateTransaction(transaction);
+  const simulation = await simulateSvmTransaction(connection, transaction);
 
   if (simulation.value.err) {
     const logs = simulation.value.logs ?? [];

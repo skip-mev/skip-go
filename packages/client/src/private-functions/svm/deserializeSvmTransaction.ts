@@ -1,4 +1,5 @@
 import { Transaction, VersionedTransaction } from "@solana/web3.js";
+import type { Connection } from "@solana/web3.js";
 
 export function deserializeSvmTransaction(
   txBuffer: Buffer,
@@ -10,8 +11,23 @@ export function deserializeSvmTransaction(
   return probe;
 }
 
-export function isVersionedTransaction(
+function isVersionedTransaction(
   tx: Transaction | VersionedTransaction,
 ): tx is VersionedTransaction {
   return "version" in tx;
+}
+
+export function serializeSvmMessage(
+  tx: Transaction | VersionedTransaction,
+): Uint8Array {
+  return isVersionedTransaction(tx) ? tx.message.serialize() : tx.serializeMessage();
+}
+
+export function simulateSvmTransaction(
+  connection: Connection,
+  tx: Transaction | VersionedTransaction,
+) {
+  return isVersionedTransaction(tx)
+    ? connection.simulateTransaction(tx)
+    : connection.simulateTransaction(tx);
 }

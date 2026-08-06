@@ -2,7 +2,7 @@ import type { SvmTx } from "src/types/swaggerTypes";
 import { PublicKey } from "@solana/web3.js";
 import {
   deserializeSvmTransaction,
-  isVersionedTransaction,
+  serializeSvmMessage,
 } from "./deserializeSvmTransaction";
 
 import { ClientState } from "src/state/clientState";
@@ -51,10 +51,7 @@ export const signSvmTransaction = async ({
   const transaction = deserializeSvmTransaction(txBuffer);
 
   if (options.svmFeePayer) {
-    const message = isVersionedTransaction(transaction)
-      ? transaction.message.serialize()
-      : transaction.serializeMessage();
-    
+    const message = serializeSvmMessage(transaction);
     const resSignTx = await options.svmFeePayer.signTransaction(
       Buffer.from(message)
     );
