@@ -127,23 +127,33 @@ export default function Home() {
 
   const transfersToShow = useMemo(() => {
     const transfers: TransferEventCardProps[] = [];
-    const eventProvenance = transactionStatuses.flatMap((status, txIndex) => {
+    const eventsWithProvenance = transactionStatuses.flatMap((status, txIndex) => {
       const seq = status?.transferSequence ?? [];
-      return seq.map((_, i) => ({
-        txIndex,
-        isLastOfTx: i === seq.length - 1,
-        release: status?.transferAssetRelease,
-      }));
+      const offset = transactionStatuses
+        .slice(0, txIndex)
+        .reduce((total, s) => total + (s?.transferSequence?.length ?? 0), 0);
+      return seq
+        .map((_, i) => {
+          const event = transferEvents[offset + i];
+          if (!event) return null;
+          return {
+            event,
+            txIndex,
+            isLastOfTx: i === seq.length - 1,
+            release: status?.transferAssetRelease,
+          };
+        })
+        .filter((e): e is NonNullable<typeof e> => e !== null);
     });
 
-    const releasedTxIndex = eventProvenance.reduce(
-      (furthest, p) => (p.release?.released === true ? Math.max(furthest, p.txIndex) : furthest),
+    const releasedTxIndex = eventsWithProvenance.reduce(
+      (furthest, e) => (e.release?.released === true ? Math.max(furthest, e.txIndex) : furthest),
       -1
     );
 
     const activeRelease =
       releasedTxIndex >= 0
-        ? eventProvenance.find((p) => p.txIndex === releasedTxIndex)?.release
+        ? eventsWithProvenance.find((e) => e.txIndex === releasedTxIndex)?.release
         : undefined;
 
     const releaseStuck =
@@ -153,36 +163,37 @@ export default function Home() {
         .some((status) => status?.state && getSimpleOverallStatus(status.state) === "failed");
 
     const releaseChainRendered =
-      activeRelease?.released === true &&
-      transferEvents.some((event, i) => {
-        if (eventProvenance[i]?.txIndex !== releasedTxIndex) return false;
-        if (event.toChainId === activeRelease?.chainId) return true;
-        return i === 0 && event.fromChainId === activeRelease?.chainId;
+      !!activeRelease &&
+      eventsWithProvenance.some((e, i) => {
+        if (e.txIndex !== releasedTxIndex) return false;
+        if (e.event.toChainId === activeRelease.chainId) return true;
+        return i === 0 && e.event.fromChainId === activeRelease.chainId;
       });
 
     const getStep = (index: number, fromOrTo: "from" | "to") => {
       if (index === 0 && fromOrTo === "from") return "Origin";
-      if (index === transferEvents.length - 1 && fromOrTo === "to")
-        return "Destination";
+      if (index === eventsWithProvenance.length - 1 && fromOrTo === "to") return "Destination";
       return "Routed";
     };
 
-    transferEvents.forEach((event, index) => {
+    eventsWithProvenance.forEach(({ event, txIndex, isLastOfTx }, index) => {
       const addChain = (
         chainId: string | undefined,
         explorerLink: string | undefined,
         fromOrTo: "from" | "to"
       ) => {
+        const step = getStep(index, fromOrTo);
+
         const getTransferAssetRelease = () => {
-          if (!activeRelease?.released) return;
-          if (eventProvenance[index]?.txIndex !== releasedTxIndex) return;
-          if (getStep(index, fromOrTo) !== "Destination" && !releaseStuck) return;
+          if (!activeRelease) return;
+          if (txIndex !== releasedTxIndex) return;
+          if (step !== "Destination" && !releaseStuck) return;
           if (releaseChainRendered) {
             if (chainId === activeRelease.chainId) return activeRelease;
-          } else if (eventProvenance[index]?.isLastOfTx && fromOrTo === "to") {
+          } else if (isLastOfTx && fromOrTo === "to") {
             return activeRelease;
           }
-        }
+        };
 
         if (chainId) {
           transfers.push({
@@ -190,7 +201,7 @@ export default function Home() {
             explorerLink: explorerLink ?? "",
             transferType: event.transferType ?? "",
             status: event.status,
-            step: getStep(index, fromOrTo),
+            step,
             durationInMs: event.durationInMs ?? 0,
             index,
             transferAssetRelease: getTransferAssetRelease(),
@@ -214,7 +225,7 @@ export default function Home() {
         transferType: "N/A",
         status: "failed",
         step: "Destination",
-        index: transferEvents.length,
+        index: eventsWithProvenance.length,
         explorerLink: "",
       });
     }
