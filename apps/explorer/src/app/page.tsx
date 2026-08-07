@@ -259,25 +259,25 @@ export default function Home() {
             if (notFound || abandoned) {
               if (tx.txHash && !trackedTxHashes.current.includes(tx.txHash)) {
                 trackedTxHashes.current.push(tx.txHash);
-                try {
-                  if (notFound) {
+                if (notFound) {
+                  try {
                     await trackTransaction({
                       txHash: tx.txHash,
                       chainId: tx.chainId,
                       maxRetries: 1,
                     });
-                  } else if (abandoned) {
-                    await onReindex(tx.txHash, tx.chainId);
+                  } catch (trackError) {
+                    if (index !== 0 && destAsset) {
+                      setDestinationNodeFailed(true);
+                    }
+                    setErrorDetails({
+                      errorMessage: ErrorMessages.TRANSACTION_NOT_FOUND,
+                      error: trackError as ErrorWithCodeAndDetails,
+                    });
+                    return;
                   }
-                } catch (trackError) {
-                  if (index !== 0 && destAsset) {
-                    setDestinationNodeFailed(true);
-                  }
-                  setErrorDetails({
-                    errorMessage: ErrorMessages.TRANSACTION_NOT_FOUND,
-                    error: trackError as ErrorWithCodeAndDetails,
-                  });
-                  return;
+                } else if (abandoned) {
+                  await onReindex(tx.txHash, tx.chainId);
                 }
                 setErrorDetails(undefined);
                 setTransactionStatusResponse(undefined);
