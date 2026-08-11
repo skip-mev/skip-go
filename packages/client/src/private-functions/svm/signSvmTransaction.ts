@@ -1,5 +1,10 @@
 import type { SvmTx } from "src/types/swaggerTypes";
-import { PublicKey, Transaction } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
+import {
+  deserializeSvmTransaction,
+  serializeSvmMessage,
+} from "./deserializeSvmTransaction";
+
 import { ClientState } from "src/state/clientState";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 import { updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
@@ -43,10 +48,13 @@ export const signSvmTransaction = async ({
   }
 
   const txBuffer = Buffer.from(svmTx.tx ?? "", "base64");
-  const transaction = Transaction.from(txBuffer);
+  const transaction = deserializeSvmTransaction(txBuffer);
+
   if (options.svmFeePayer) {
-    const message = transaction.serializeMessage();
-    const resSignTx = await options.svmFeePayer.signTransaction(message);
+    const message = serializeSvmMessage(transaction);
+    const resSignTx = await options.svmFeePayer.signTransaction(
+      Buffer.from(message)
+    );
     transaction.addSignature(
       new PublicKey(options.svmFeePayer.address),
       Buffer.from(resSignTx)
@@ -76,6 +84,6 @@ export const signSvmTransaction = async ({
     options
   });
 
-  const serializedTx = signedTx.serialize();
+  const serializedTx = Buffer.from(signedTx.serialize());
   return serializedTx;
 };
