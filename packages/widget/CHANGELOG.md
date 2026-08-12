@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.16.2
+
+### Patch Changes
+
+- bec6ef1: Consolidate SVM transaction version handling into boundary helpers (`serializeSvmMessage`, `simulateSvmTransaction`) so call sites no longer branch on `isVersionedTransaction`. Internal refactor with no public API or behavior change; widget is rebuilt to pick up the updated client.
+- Updated dependencies [bec6ef1]
+  - @skip-go/client@1.5.18
+
 ## 3.16.1
 
 ### Patch Changes
