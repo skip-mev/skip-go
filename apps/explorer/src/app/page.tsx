@@ -295,10 +295,22 @@ export default function Home() {
               if (tx.txHash && !trackedTxHashes.current.includes(tx.txHash)) {
                 trackedTxHashes.current.push(tx.txHash);
                 if (notFound) {
-                  await trackTransaction({
-                    txHash: tx.txHash,
-                    chainId: tx.chainId,
-                  });
+                  try {
+                    await trackTransaction({
+                      txHash: tx.txHash,
+                      chainId: tx.chainId,
+                      maxRetries: 1,
+                    });
+                  } catch (trackError) {
+                    if (index !== 0 && destAsset) {
+                      setDestinationNodeFailed(true);
+                    }
+                    setErrorDetails({
+                      errorMessage: ErrorMessages.TRANSACTION_NOT_FOUND,
+                      error: trackError as ErrorWithCodeAndDetails,
+                    });
+                    return;
+                  }
                 } else if (abandoned) {
                   await onReindex(tx.txHash, tx.chainId);
                 }
