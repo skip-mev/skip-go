@@ -127,7 +127,7 @@ export default function Home() {
 
   const transfersToShow = useMemo(() => {
     const transfers: TransferEventCardProps[] = [];
-    const eventsWithProvenance = transactionStatuses.flatMap((status, txIndex) => {
+    const eventsWithTxInfo = transactionStatuses.flatMap((status, txIndex) => {
       const seq = status?.transferSequence ?? [];
       const offset = transactionStatuses
         .slice(0, txIndex)
@@ -146,14 +146,14 @@ export default function Home() {
         .filter((e): e is NonNullable<typeof e> => e !== null);
     });
 
-    const releasedTxIndex = eventsWithProvenance.reduce(
+    const releasedTxIndex = eventsWithTxInfo.reduce(
       (furthest, e) => (e.release?.released === true ? Math.max(furthest, e.txIndex) : furthest),
       -1
     );
 
     const activeRelease =
       releasedTxIndex >= 0
-        ? eventsWithProvenance.find((e) => e.txIndex === releasedTxIndex)?.release
+        ? eventsWithTxInfo.find((e) => e.txIndex === releasedTxIndex)?.release
         : undefined;
 
     const releaseStuck =
@@ -164,7 +164,7 @@ export default function Home() {
 
     const releaseChainRendered =
       !!activeRelease &&
-      eventsWithProvenance.some((e, i) => {
+      eventsWithTxInfo.some((e, i) => {
         if (e.txIndex !== releasedTxIndex) return false;
         if (e.event.toChainId === activeRelease.chainId) return true;
         return i === 0 && e.event.fromChainId === activeRelease.chainId;
@@ -172,11 +172,11 @@ export default function Home() {
 
     const getStep = (index: number, fromOrTo: "from" | "to") => {
       if (index === 0 && fromOrTo === "from") return "Origin";
-      if (index === eventsWithProvenance.length - 1 && fromOrTo === "to") return "Destination";
+      if (index === eventsWithTxInfo.length - 1 && fromOrTo === "to") return "Destination";
       return "Routed";
     };
 
-    eventsWithProvenance.forEach(({ event, txIndex, isLastOfTx }, index) => {
+    eventsWithTxInfo.forEach(({ event, txIndex, isLastOfTx }, index) => {
       const addChain = (
         chainId: string | undefined,
         explorerLink: string | undefined,
@@ -225,7 +225,7 @@ export default function Home() {
         transferType: "N/A",
         status: "failed",
         step: "Destination",
-        index: eventsWithProvenance.length,
+        index: eventsWithTxInfo.length,
         explorerLink: "",
       });
     }
