@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.16.3
+
+### Patch Changes
+
+- c76eda7: Remove Lombard Ledger mainnet and testnet chain configuration.
+- Updated dependencies [c76eda7]
+  - @skip-go/client@1.5.19
+
 ## 3.16.2
 
 ### Patch Changes

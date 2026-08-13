@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.5.19
+
+### Patch Changes
+
+- c76eda7: Remove Lombard Ledger mainnet and testnet chain configuration.
+
 ## 1.5.18
 
 ### Patch Changes
