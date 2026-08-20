@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/client",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "1.5.18",
+  "version": "1.6.0",
   "repository": "https://github.com/skip-mev/skip-go",
   "type": "module",
   "main": "./dist/cjs/index.cjs",
@@ -67,7 +67,7 @@
   },
   "peerDependencies": {
     "@solana/web3.js": "^1.95.8",
-    "viem": "2.x"
+    "viem": ">=2.39.0"
   },
   "dependencies": {
     "@cosmjs/amino": "0.33.1",

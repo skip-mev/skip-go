@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.16.2",
+  "version": "3.17.0",
   "repository": {
     "url": "https://github.com/skip-mev/skip-go",
     "directory": "packages/widget"
@@ -95,7 +95,7 @@
     "@tanstack/react-query": "^5.51.21",
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0",
-    "viem": "^2.21.55",
+    "viem": "^2.39.0",
     "wagmi": "^2.14.1"
   },
   "dependencies": {
