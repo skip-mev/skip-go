@@ -37,6 +37,7 @@ const BRIDGE_ID_TO_LABEL_MAP: Record<BridgeType, string> = {
   [BridgeType.EUREKA]: "IBC Eureka",
   [BridgeType.STARGATE]: "Stargate",
   [BridgeType.LAYER_ZERO]: "Layer Zero",
+  [BridgeType.CCTP_V2]: "CCTP V2",
 };
 
 export function getFeeList(route: RouteResponse): LabeledFee[] {

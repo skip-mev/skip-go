@@ -199,6 +199,7 @@ export enum BridgeTypeJson {
   STARGATE = "STARGATE",
   LAYER_ZERO = "LAYER_ZERO",
   EUREKA = "EUREKA",
+  CCTP_V2 = "CCTP_V2",
 }
 
 /**
@@ -1692,6 +1693,8 @@ export interface RouteRequestJson {
   allow_swaps?: boolean;
   /** Whether to enable Go Fast routes */
   go_fast?: boolean;
+  /** Whether to enable fast transfer routes */
+  fast_transfer?: boolean;
 }
 
 export interface MsgsRequestJson {
