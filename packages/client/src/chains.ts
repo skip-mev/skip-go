@@ -1,6 +1,15 @@
 import type { Chain } from "@chain-registry/types";
 import chainRegistryChains from "./codegen/chains.json";
 
+const retiredChainIds = new Set([
+  "ledger-mainnet-1",
+  "ledger-testnet-1",
+]);
+
+const activeChainRegistryChains = chainRegistryChains.filter(
+  (chain) => !retiredChainIds.has(chain.chainId),
+);
+
 const SOLANA_CHAIN: Chain = {
   chainName: "solana",
   chainId: "solana",
@@ -50,88 +59,16 @@ const SOLANA_CHAIN: Chain = {
   chainType: "solana"
 };
 
-const lombardTestnet: Chain = {
-  chainId: "ledger-testnet-1",
-  apis: {
-    rpc: [
-      {
-        address: "https://rpc-gastald.lb-mgt.com:443",
-      },
-    ],
-    rest: [
-      {
-        address: "https://rpc-gastald.lb-mgt.com/ipc",
-      },
-    ],
-    grpc: [
-      {
-        address: "https://grpc-gastald.lb-mgt.com:443",
-      },
-    ],
-  },
-  fees: {
-    feeTokens: [
-      {
-        denom: "ulom",
-        fixedMinGasPrice: 1,
-        lowGasPrice: 1,
-        averageGasPrice: 1,
-        highGasPrice: 1,
-      },
-    ],
-  },
-  chainName: "Ledger",
-  chainType: "cosmos",
-};
-
-const lombardMainnet: Chain = {
-  chainId: "ledger-mainnet-1",
-  apis: {
-    rpc: [
-      {
-        address: "https://rpc-mainnet.lb-mgt.com:443",
-      },
-    ],
-    rest: [
-      {
-        address: "http://rpc-mainnet.lb-mgt.com:1317",
-      },
-    ],
-    grpc: [
-      {
-        address: "https://grpc-mainnet.lb-mgt.com:443",
-      },
-    ],
-  },
-  fees: {
-    feeTokens: [
-      {
-        denom: "ulom",
-        fixedMinGasPrice: 100,
-        lowGasPrice: 100,
-        averageGasPrice: 100,
-        highGasPrice: 100,
-      },
-    ],
-  },
-  chainName: "Ledger",
-  chainType: "cosmos",
-};
-
-const additionalChains = [
-  SOLANA_CHAIN,
-  lombardTestnet,
-  lombardMainnet,
-] as Chain[];
+const additionalChains = [SOLANA_CHAIN] as Chain[];
 const existingChainIds = new Set(
-  chainRegistryChains.map((chain) => chain.chainId),
+  activeChainRegistryChains.map((chain) => chain.chainId),
 );
 const newChains = additionalChains.filter(
   (chain) => !existingChainIds.has(chain.chainId),
 );
 
 export function chains(): Chain[] {
-  return [...(chainRegistryChains as Chain[]), ...newChains];
+  return [...(activeChainRegistryChains as Chain[]), ...newChains];
 }
 
 export const getIsEthermint = (chainId: string) => {

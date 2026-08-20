@@ -1,5 +1,17 @@
 # @skip-go/client
 
+## 1.5.18
+
+### Patch Changes
+
+- bec6ef1: Consolidate SVM transaction version handling into boundary helpers (`serializeSvmMessage`, `simulateSvmTransaction`) so call sites no longer branch on `isVersionedTransaction`. Internal refactor with no public API or behavior change; widget is rebuilt to pick up the updated client.
+
+## 1.5.17
+
+### Patch Changes
+
+- 90d1ef5: Handle `cctp_transfer_v2` entries in transaction status responses. They previously fell through the transfer type checks, leaving the event without a type, chain ids or explorer links, and reporting a `failed` status while the transfer was still pending.
+
 ## 1.5.16
 
 ### Patch Changes
