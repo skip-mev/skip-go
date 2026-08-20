@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.17.1
+
+### Patch Changes
+
+- 2519c56: Update viem
+- Updated dependencies [2519c56]
+  - @skip-go/client@1.6.1
+
 ## 3.17.0
 
 ### Minor Changes
