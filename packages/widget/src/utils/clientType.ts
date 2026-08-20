@@ -2,6 +2,7 @@ import {
   AxelarTransfer,
   BankSend,
   CCTPTransfer,
+  CCTPTransferV2,
   EurekaTransfer,
   EvmSwap,
   GoFastTransfer,
@@ -22,6 +23,7 @@ export enum OperationType {
   transfer = "transfer",
   axelarTransfer = "axelarTransfer",
   cctpTransfer = "cctpTransfer",
+  cctpTransferV2 = "cctpTransferV2",
   hyperlaneTransfer = "hyperlaneTransfer",
   opInitTransfer = "opInitTransfer",
   bankSend = "bankSend",
@@ -40,6 +42,7 @@ type CombinedOperation = {
   swap?: Swap;
   axelarTransfer?: AxelarTransfer;
   cctpTransfer?: CCTPTransfer;
+  cctpTransferV2?: CCTPTransferV2;
   hyperlaneTransfer?: HyperlaneTransfer;
   evmSwap?: EvmSwap;
   opInitTransfer?: OPInitTransfer;
@@ -55,6 +58,7 @@ type OperationDetails = CombineObjectTypes<
     Swap &
     AxelarTransfer &
     CCTPTransfer &
+    CCTPTransferV2 &
     HyperlaneTransfer &
     EvmSwap &
     StargateTransfer &

@@ -137,6 +137,7 @@ export const _skipRouteAtom: ReturnType<
           smartRelay: true,
           ...routeConfig,
           goFast: swapSettings.routePreference === RoutePreference.FASTEST,
+          fastTransfer: swapSettings.routePreference === RoutePreference.FASTEST,
           abortDuplicateRequests: true,
         });
         return response;
