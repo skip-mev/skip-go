@@ -1,5 +1,19 @@
 ## 0.0.15
 
+## 3.17.0
+
+### Minor Changes
+
+- ebd55ca: Support cctp v2
+
+### Patch Changes
+
+- c76eda7: Remove Lombard Ledger mainnet and testnet chain configuration.
+- Updated dependencies [3c38d2b]
+- Updated dependencies [ebd55ca]
+- Updated dependencies [c76eda7]
+  - @skip-go/client@1.6.0
+
 ## 3.16.2
 
 ### Patch Changes
