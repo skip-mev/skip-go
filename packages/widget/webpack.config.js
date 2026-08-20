@@ -104,6 +104,7 @@ export default {
 
   optimization: {
     minimize: true,
+    concatenateModules: false,
   },
 
   experiments: {

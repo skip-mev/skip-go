@@ -32,7 +32,7 @@ export async function getCosmosGasAmountForMessage(
     if (messages?.find((i) => i.msgTypeUrl === "/cosmwasm.wasm.v1.MsgExecuteContract")) {
       return "2400000";
     }
-    return "280000";
+    return "300000";
   }
 
   const estimatedGas = await client.simulate(signerAddress, encodedMsgs, "");

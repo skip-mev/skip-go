@@ -44,3 +44,6 @@ packages/widget/test-results*
 .claude/settings.local.json
 CLAUDE.md
 nul
+
+# graphify knowledge-graph output (local only)
+graphify-out/
