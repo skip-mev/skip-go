@@ -1,5 +1,16 @@
 # @skip-go/client
 
+## 1.6.0
+
+### Minor Changes
+
+- ebd55ca: Support cctp v2
+
+### Patch Changes
+
+- 3c38d2b: Handle `cctp_transfer_v2` entries in transaction status responses. They previously fell through the transfer type checks, leaving the event without a type, chain ids or explorer links, and reporting a `failed` status while the transfer was still pending.
+- c76eda7: Remove Lombard Ledger mainnet and testnet chain configuration.
+
 ## 1.5.18
 
 ### Patch Changes
