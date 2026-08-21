@@ -1,5 +1,19 @@
 ## 0.0.15
 
+## 3.17.2
+
+### Patch Changes
+
+- 1d5cfd3: Fix broken explorer link when txs aren't broadcast yet: skip `transactionDetails` entries without a `txHash` (was leaking a trailing comma / empty URL), and hide the "View on explorer" / "Route explorer" link when no tx has broadcast.
+
+## 3.17.1
+
+### Patch Changes
+
+- 2519c56: Update viem
+- Updated dependencies [2519c56]
+  - @skip-go/client@1.6.1
+
 ## 3.17.0
 
 ### Minor Changes
