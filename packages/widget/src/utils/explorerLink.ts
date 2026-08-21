@@ -55,18 +55,19 @@ export const createSkipExplorerLink = (
 ) => {
   if (!transactionDetails) return "";
   const { get } = jotaiStore;
-
-  const txHashCommaSeperatedList = transactionDetails
-    ?.map((txDetails) => txDetails.txHash)
-    ?.join(",");
-
   const isTestnet = get(onlyTestnetsAtom);
   const explorerUrl = get(skipExplorerUrlAtom);
-  const initialTxChainId = transactionDetails?.[0]?.chainId;
 
   if (base64ExplorerData) {
     return `${explorerUrl}/?data=${base64ExplorerData}${isTestnet ? "&is_testnet=true" : ""}`;
   }
+
+  const broadcastedTxs = transactionDetails.filter((txDetails) => txDetails.txHash);
+
+  if (broadcastedTxs.length === 0) return "";
+
+  const txHashCommaSeperatedList = broadcastedTxs.map((txDetails) => txDetails.txHash).join(",");
+  const initialTxChainId = broadcastedTxs[0]?.chainId;
 
   return `${explorerUrl}/?tx_hash=${txHashCommaSeperatedList}&chain_id=${initialTxChainId}${isTestnet ? "&is_testnet=true" : ""}`;
 };
