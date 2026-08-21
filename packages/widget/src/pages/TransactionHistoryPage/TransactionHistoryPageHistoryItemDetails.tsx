@@ -124,26 +124,24 @@ export const TransactionHistoryPageHistoryItemDetails = ({
         </Row>
       </StyledHistoryItemDetailRow>
 
-      {skipExplorerLink && (
-        <StyledHistoryItemDetailRow align="center">
-          <StyledDetailsLabel>Route explorer</StyledDetailsLabel>
-          <Link
-            href={skipExplorerLink}
-            target="_blank"
-            gap={5}
-            onClick={() => {
-              track("transaction history page: view route explorer - clicked", {
-                txHash: initialTxHash,
-              });
-            }}
-          >
-            <SmallText normalTextColor>{getTruncatedAddress(initialTxHash)}</SmallText>
-            <SmallText>
-              <ChainIcon />
-            </SmallText>
-          </Link>
-        </StyledHistoryItemDetailRow>
-      )}
+      <StyledHistoryItemDetailRow align="center">
+        <StyledDetailsLabel>Route explorer</StyledDetailsLabel>
+        <Link
+          href={skipExplorerLink}
+          target="_blank"
+          gap={5}
+          onClick={() => {
+            track("transaction history page: view route explorer - clicked", {
+              txHash: initialTxHash,
+            });
+          }}
+        >
+          <SmallText normalTextColor>{getTruncatedAddress(initialTxHash)}</SmallText>
+          <SmallText>
+            <ChainIcon />
+          </SmallText>
+        </Link>
+      </StyledHistoryItemDetailRow>
 
       {senderAddress && (
         <StyledHistoryItemDetailRow align="center">
