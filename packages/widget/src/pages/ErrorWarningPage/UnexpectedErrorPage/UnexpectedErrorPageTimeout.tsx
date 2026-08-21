@@ -75,6 +75,7 @@ export const UnexpectedErrorPageTimeout = ({
               align="center"
               as={SmallTextButton}
               onClick={() => {
+                if (!explorerLink) return;
                 track("unexpected error page: transaction timeover - view on explorer clicked");
                 window.open(explorerLink, "_blank");
               }}
