@@ -55,7 +55,7 @@
             ]
           },
           {
-            "group": "Skip:Go App",
+            "group": "Skip Go App",
             "pages": [
               "app/usdc-n-manual-migration"
             ]
