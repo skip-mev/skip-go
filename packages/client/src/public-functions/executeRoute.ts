@@ -16,6 +16,7 @@ import type {
 import { ApiState } from "src/state/apiState";
 import { executeAndSubscribeToRouteStatus, updateRouteDetails } from "./subscribeToRouteStatus";
 import { createValidAddressList } from "src/utils/address";
+import { routeRequiresSequentialSigning } from "src/utils/clientType";
 
 /** Execute Route Options */
 export type ExecuteRouteOptions = SignerGetters &
@@ -80,7 +81,18 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     })
   }
 
-  const { transactionDetails, executeTransaction } = await executeTransactions({ ...options, routeId, txs: response?.txs });
+  // CCTP V2 migration routes must sign one tx at a time, in execution order -
+  // see routeRequiresSequentialSigning for why batch/upfront signing is unsafe here.
+  const batchSignTxs = routeRequiresSequentialSigning(route?.operations)
+    ? false
+    : options.batchSignTxs;
+
+  const { transactionDetails, executeTransaction } = await executeTransactions({
+    ...options,
+    batchSignTxs,
+    routeId,
+    txs: response?.txs,
+  });
 
   await executeAndSubscribeToRouteStatus({
     transactionDetails,

@@ -200,6 +200,10 @@ export enum BridgeType {
   LAYER_ZERO = "LAYER_ZERO",
   EUREKA = "EUREKA",
   CCTP_V2 = "CCTP_V2",
+  // TODO: added ahead of backend codegen - remove this comment once
+  // solve/proto/api/shared.proto ships CCTP_V2_MIGRATION and this file is
+  // regenerated from the updated swagger spec (should be a no-op diff then).
+  CCTP_V2_MIGRATION = "CCTP_V2_MIGRATION",
 }
 
 /**
