@@ -1,189 +1,202 @@
 ---
-title: "USDC.n Manual Migration"
-description: "Migrate USDC.n to USDC.inj manually with Skip:Go, before the one-step migration."
+title: 'Migrate your USDC.n to USDC.inj'
+description: 'Migrate USDC.n to USDC.inj manually with Skip:Go, before the one-step migration.'
 ---
 
 Use this guide to migrate **USDC.n to USDC.inj** with [Skip:Go](https://go.skip.build/).
 
-This guide applies to USDC.n held directly on **dYdX, Babylon, Cosmos Hub, Osmosis, Terra, Neutron, and ZIGChain**.
+## Why this migration is needed
 
-Your migration starts and ends on the **same source chain**:
+<Frame>
+  <img src="/images/usdc-migration-001.png" alt="USDC.n is being deprecated in favor of USDC.inj" />
+</Frame>
 
-**USDC.n on your source chain → USDC.inj on the same chain**
+**USDC.n is being deprecated** and will no longer be the supported version of USDC on the chains covered by this guide. If you hold USDC.n, you should migrate it to **USDC.inj**, the version that will be supported going forward.
 
-<Note>
-  **Manual migration**
+### What are the differences between USDC.n and USDC.inj?
 
-  - Available from **August 28, 2026**
-  - **2 stages**
-  - **3 wallet signatures**
-  - Requires gas on the source chain, selected EVM network, and Injective
-
-  A simpler **one-step migration is planned for September 11, 2026**. The planned flow reduces the process to **1 stage and 2 wallet signatures**, without requiring separate gas preparation on each network.
-</Note>
-
-<Warning>
-  **dYdX users:** This guide applies only to USDC.n held directly on dYdX Chain. If your USDC is used as a trading balance on dydx.trade, wait for official dYdX migration instructions.
-</Warning>
-
-## Why do I need to migrate if both are USDC?
-
-**USDC.n and USDC.inj are both USDC, but they originate from different chains.**
+Both are USDC, but they originate from different chains and are treated as separate assets on Cosmos chains.
 
 - **USDC.n:** USDC originating from Noble
 - **USDC.inj:** USDC originating from Injective
 
-Because they originate from different chains, **USDC.n and USDC.inj are recognized as separate assets on Cosmos chains**.
+---
 
-Noble plans to place its existing Cosmos chain into maintenance mode over the long term. Circle launched native USDC on Injective in May 2026, and Skip:Go is transitioning its integrations from Noble-origin USDC to Injective-origin USDC.
-
-As part of this transition, existing **USDC.n should be migrated to USDC.inj** to use Injective-origin USDC going forward.
-
-<Note>
-  **This migration does not exchange USDC for a different asset.**
-
-  It moves your balance from Noble-origin USDC (`USDC.n`) to Injective-origin USDC (`USDC.inj`).
-</Note>
+## What happens when you migrate
 
 <Frame>
-  <img src="/images/usdc-migration-1.png" alt="USDC.n to USDC.inj is a migration between two USDC denominations, not a swap" />
+  <img
+    src="/images/usdc-migration-002.png"
+    alt="Two-stage overview of the USDC.n to USDC.inj migration"
+  />
 </Frame>
 
+After the migration, you will have **USDC.inj on the same chain where you started**.
+
+For example:
+
+`dYdX USDC.n → dYdX USDC.inj`
+
+Skip:Go routes the migration through Injective. You do not need to send your funds to Injective manually.
+
+---
+
+## Who this guide applies to
+
+This guide applies to USDC.n held on:
+
+- dYdX, Cosmos Hub, Osmosis, Terra, Neutron, ZIGChain
+
+If your USDC.n is on a chain not listed above, check whether **Skip:Go provides a route to transfer it to one of the supported chains listed above**. If a route is available, transfer your USDC.n to that chain first, then follow this migration guide.
+
+If no supported route is available, contact the team responsible for your chain.
+
+**For chain teams:** See [What if my USDC.n is on a chain not listed above?](#what-if-my-usdc-n-is-on-a-chain-not-listed-above) in the FAQ below for the requirements and process to add support.
+
 <Warning>
-  **This is a migration, not a swap.**
+  **dYdX users**
 
-  Skip:Go may display **Swap** in parts of the interface because the same interface also supports swaps and cross-chain transfers.
+This guide applies only to USDC.n held in your **dYdX Chain wallet**.
 
-  Converting USDC.n to another asset, such as DYDX, AVAX, or INJ, is a separate swap.
+It does not apply to USDC in a **dydx.trade trading subaccount**. Follow the official dYdX migration instructions for that balance when they become available.
+
 </Warning>
 
-## Manual migration vs. one-step migration
+---
 
-|  | Manual migration | One-step migration |
-| --- | --- | --- |
-| Availability | **From August 28, 2026** | **Planned for September 11, 2026** |
-| Start | USDC.n on your chain | USDC.n on your chain |
-| End | USDC.inj on the same chain | USDC.inj on the same chain |
-| Migration steps | **2** | **1 planned** |
-| Wallet signatures | **3** | **2 planned** |
-| Gas preparation | May be required | Not required in the planned flow |
+## What to do
 
-**Want to migrate manually?** Follow the manual migration guide below starting August 28, 2026.
+Manual migration will be available starting **August 28, 2026**.
 
-**Prefer fewer steps?** You can wait for the one-step migration planned for September 11, 2026.
+A simpler one-step migration is planned for **September 11, 2026**.
+
+| Details                             | Manual migration                                  | One-step migration                 |
+| ----------------------------------- | ------------------------------------------------- | ---------------------------------- |
+| Availability                        | **From August 28, 2026**                          | **Planned for September 11, 2026** |
+| Migration stages                    | 2                                                 | 1                                  |
+| Wallet signatures                   | 3                                                 | 2                                  |
+| Networks requiring transaction fees | Source chain, selected EVM network, and Injective | Source chain only                  |
 
 <Note>
-  The three wallet signatures above are part of the manual migration itself. If you need to obtain a gas token first, additional transactions may be required.
+  The signature counts above only cover the migration itself and exclude any transactions needed to
+  obtain fee tokens.
 </Note>
+
+---
 
 ## Before you start
 
-The manual migration has two stages.
+The manual migration has **two stages**:
 
-**Stage 1: USDC.n on your Cosmos chain → USDC on an EVM network**
+**Stage 1:** USDC.n on your source chain → USDC on an EVM network
 
-**Stage 2: EVM USDC → Injective-origin USDC → USDC.inj on your original Cosmos chain**
+**Stage 2:** EVM USDC → Injective → USDC.inj on the chain where you started
 
-<Frame>
-  <img src="/images/usdc-migration-2.png" alt="Two-stage overview of the manual USDC.n to USDC.inj migration" />
-</Frame>
+This guide uses **dYdX** as the source chain and **Avalanche** as the EVM network.
 
-This guide uses **dYdX as the source chain** and **Avalanche as the EVM network**.
+If your USDC.n is on another supported source chain, select that chain instead. The overall migration flow is the same.
 
-If your USDC.n is on Babylon, Cosmos Hub, Osmosis, Terra, Neutron, or ZIGChain, select that chain instead. The process is the same.
+<Warning>
+  **Stay safe**
 
-Skip:Go handles the intermediate cross-chain route. You do not need to manually configure CCTP, IBC, or individual bridge connections. Skip:Go can route across multiple interoperability protocols behind the scenes.
+Use only the official Skip:Go site at **go.skip.build**. Never share your seed or recovery phrase.
+
+</Warning>
 
 ### 1. Prepare gas
 
-The manual migration requires transactions on **three networks**:
+<Frame>
+  <img
+    src="/images/usdc-migration-003.png"
+    alt="Preparing gas on the source chain, EVM network, and Injective"
+  />
+</Frame>
+
+The manual migration requires transaction fees on **three networks**:
 
 1. Your **source chain**
 2. Your selected **EVM network**
 3. **Injective**
 
-Make sure you have enough gas on all three before starting.
+Make sure you have the required fee tokens on all three networks before starting.
 
 #### Source chain
 
 Keep approximately **$0.10 worth of a supported fee token** on the chain where your USDC.n is held.
 
 | Source chain | Common fee token |
-| --- | --- |
-| dYdX | DYDX |
-| Babylon | BABY |
-| Cosmos Hub | ATOM |
-| Osmosis | OSMO |
-| Terra | LUNA |
-| Neutron | NTRN |
-| ZIGChain | ZIG |
+| ------------ | ---------------- |
+| dYdX         | DYDX             |
+| Cosmos Hub   | ATOM             |
+| Osmosis      | OSMO             |
+| Terra        | LUNA             |
+| Neutron      | NTRN             |
+| ZIGChain     | ZIG              |
 
 #### EVM network
 
-Stage 2 requires gas on the EVM network you select.
+You also need gas on the EVM network used for the migration.
 
-This guide uses **Avalanche** as the EVM network.
+| EVM network   | Gas token | Approx. fee per transaction | Recommended gas balance |
+| ------------- | --------- | --------------------------- | ----------------------- |
+| **Avalanche** | AVAX      | **~$0.01**                  | **~$0.10**              |
+| Optimism      | ETH       | ~$0.10                      | **~$0.50**              |
+| Base          | ETH       | ~$0.23                      | **~$1.00**              |
+| Arbitrum      | ETH       | ~$0.37                      | **~$1.00**              |
+| Polygon       | POL       | ~$0.43                      | **~$1.00**              |
+| Ethereum      | ETH       | ~$0.70                      | **~$3.00**              |
 
-| EVM network | Gas token | Approx. fee per transaction | Recommended gas balance |
-| --- | --- | --- | --- |
-| **Avalanche** | AVAX | **~$0.01** | **~$0.10** |
-| Optimism | ETH | ~$0.10 | **~$0.50** |
-| Base | ETH | ~$0.23 | **~$1.00** |
-| Arbitrum | ETH | ~$0.37 | **~$1.00** |
-| Polygon | POL | ~$0.43 | **~$1.00** |
-| Ethereum | ETH | ~$0.70 | **~$3.00** |
-
-You can use another supported EVM network if you already have gas there or prefer to use it.
+You can use another supported EVM network if you prefer or already have gas there.
 
 #### Injective
 
-Stage 2 also requires INJ for gas.
+You need **INJ** to pay the Injective transaction fee in Stage 2.
 
 | Gas token | Approx. fee per transaction | Recommended gas balance |
-| --- | --- | --- |
-| INJ | \~0.0025 INJ (\~$0.01) | **~$0.10 worth of INJ** |
+| --------- | --------------------------- | ----------------------- |
+| INJ       | ~0.0025 INJ (~$0.01)        | **~$0.10 worth of INJ** |
 
 <Note>
-  Fees are estimates and may vary depending on network conditions. Recommended gas balances include additional buffer.
+  Fees are estimates and may vary with network conditions. Recommended balances include extra
+  buffer.
 </Note>
-
-If you do not have one of the required gas tokens, use Skip:Go to obtain it before starting the migration.
-
-<Frame>
-  <img src="/images/usdc-migration-3.png" alt="Preparing gas on the source chain, EVM network, and Injective" />
-</Frame>
 
 ### 2. Check your wallets and addresses
 
-Before starting, confirm that:
+Before starting, make sure you can access:
 
-- You control the wallet holding your USDC.n.
-- You control the destination wallet on your selected EVM network.
-- You control the final destination wallet on your original source chain.
+- The wallet holding your **USDC.n**
+- A wallet on your selected **EVM network**
+- An **Injective address with INJ** for gas
+- An address on your original source chain to receive **USDC.inj**
 
-This guide uses **Keplr** for the dYdX examples. For the EVM network, use a wallet supported by Skip:Go.
+Your source and destination addresses may be in the same wallet, and the same wallet may support more than one of these networks.
+
+This guide uses **Keplr** for dYdX and Injective. For the EVM network, use a wallet supported by Skip:Go.
 
 <Warning>
-  Always select the destination address directly from a wallet that supports that network. Do not manually derive a Cosmos address from an EVM address or vice versa.
+  Select each address from a wallet that supports that network. Do not manually convert one address
+  format into another.
 </Warning>
 
+---
+
 ## Stage 1: Move USDC.n to an EVM network
-
-Stage 1 moves USDC.n from your source chain to USDC on the selected EVM network.
-
-This guide uses:
 
 **dYdX USDC.n → Avalanche USDC**
 
 - **Wallet signatures:** 1
-- **Estimated time:** Under 2 minutes on Avalanche; up to about 6 minutes on other supported EVM routes
-
-<Note>
-  The screenshots use **dYdX** and **Avalanche**. If you use another supported source chain or EVM network, select your source chain and chosen EVM network instead. The steps are the same.
-</Note>
+- **Estimated time:** Up to 6 minutes
 
 <Steps>
   <Step title="Select USDC.n and enter the amount">
+    <Frame>
+      <img
+        src="/images/usdc-migration-004.png"
+        alt="Selecting USDC.n as the source asset and entering the migration amount"
+      />
+    </Frame>
+
     Open [Skip:Go](https://go.skip.build/) and connect the wallet holding your USDC.n.
 
     Select:
@@ -193,77 +206,75 @@ This guide uses:
 
     Enter the amount you want to migrate.
 
+    Select **Swap** to continue.
+
     <Note>
-      Noble-origin USDC may appear as **USDC** rather than **USDC.n** in some Skip:Go screens.
+      Skip:Go uses its standard **Swap** interface here, even though this step is part of the USDC.n migration.
     </Note>
+
   </Step>
 
-  <Step title="Set the destination address">
-    Select **Set destination address**.
-
-    Confirm that the destination network is **Avalanche**, then select the wallet that will receive the USDC.
-  </Step>
+<Step title="Set the destination address">Select **Set destination address**.</Step>
 
   <Step title="Connect the destination wallet">
-    Connect the wallet that controls your Avalanche address.
+    Select the wallet that controls your Avalanche address.
 
-    <Frame>
-      <img src="/images/usdc-migration-4.png" alt="Connecting the destination wallet on Avalanche" />
-    </Frame>
+    Confirm the destination address before continuing.
+
   </Step>
 
   <Step title="Review and sign">
-    Before signing, confirm:
+    <Frame>
+      <img src="/images/usdc-migration-005.png" alt="Reviewing the Stage 1 transaction before signing" />
+    </Frame>
+
+    Check:
 
     - **From:** dYdX / USDC.n
     - **To:** Avalanche / USDC
-    - **Amount:** Correct
-    - **Destination address:** Correct
+    - **Amount**
+    - **Destination address**
 
     Approve the transaction in your source wallet.
 
     **Signature 1 of 3**
+
   </Step>
 
   <Step title="Wait for the transfer">
     Skip:Go will track the transfer automatically.
 
-    Keep the page open until the transfer is complete.
+    **Keep this page open** while the transfer is in progress.
+
   </Step>
 
-  <Step title="Confirm completion">
+  <Step title="Complete Stage 1">
     When Skip:Go displays **Go again**, Stage 1 is complete.
 
-    Confirm that **USDC is available on Avalanche** before continuing.
+    Your USDC is now on Avalanche.
 
-    <Frame>
-      <img src="/images/usdc-migration-5.png" alt="Stage 1 complete, USDC available on Avalanche" />
-    </Frame>
+    Continue to **Stage 2** to migrate it to **USDC.inj on your original source chain**.
+
   </Step>
 </Steps>
 
-**Stage 1 complete.** Continue to Stage 2 to migrate your Avalanche USDC to **USDC.inj on your original source chain**.
+---
 
-## Stage 2: Move EVM USDC back to your source chain as USDC.inj
-
-Stage 2 moves your EVM USDC back to the **same source chain where the migration started**, this time as USDC.inj.
-
-This guide uses:
+## Stage 2: Move EVM USDC to USDC.inj on your source chain
 
 **Avalanche USDC → Injective → dYdX USDC.inj**
 
-Injective is an intermediate part of the route. Skip:Go handles this routing automatically.
-
 - **Wallet signatures:** 2
 
-Before continuing, confirm that:
-
-- You have AVAX for the Avalanche transaction.
-- You have INJ for the Injective transaction.
-- You control the destination address on dYdX.
-
 <Steps>
-  <Step title="Select Avalanche USDC and dYdX USDC.inj">
+  <Step title="Select USDC and USDC.inj">
+    <Frame>
+      <img
+        src="/images/usdc-migration-006.png"
+        alt="Selecting Avalanche USDC as the source and dYdX USDC.inj as the destination"
+      />
+    </Frame>
+
     In Skip:Go, select:
 
     - **From:** Avalanche / USDC
@@ -271,51 +282,55 @@ Before continuing, confirm that:
 
     Enter the amount you want to migrate.
 
-    <Note>
-      If your migration started on another supported source chain, select that **same chain** as the destination and choose **USDC.inj**.
-    </Note>
+    If your migration started on another supported source chain, select that **same chain** as the destination.
+
+    <Warning>
+      Make sure the destination asset is **USDC.inj**, not USDC.n.
+    </Warning>
+
   </Step>
 
   <Step title="Review and confirm">
-    Verify:
+    Check:
 
     - **From:** Avalanche / USDC
     - **To:** dYdX / USDC.inj
-    - **Amount:** Correct
-    - **Destination address:** Correct
+    - **Amount**
+    - **Destination address**
 
     Select **Confirm**.
 
-    <Warning>
-      **Make sure the destination asset is USDC.inj, not USDC.n.**
-    </Warning>
   </Step>
 
   <Step title="Continue to signing">
-    Skip:Go will notify you that **2 signatures are required**.
+    Skip:Go will display **2 signatures required**.
 
-    This is expected. Select **Continue** and keep the window open until both signatures are complete.
+    Select **Continue** and keep the window open until both signatures are complete.
 
-    <Frame>
-      <img src="/images/usdc-migration-6.png" alt="Skip:Go notifying that two signatures are required for Stage 2" />
-    </Frame>
   </Step>
 
   <Step title="Complete both signatures">
+    <Frame>
+      <img
+        src="/images/usdc-migration-007.png"
+        alt="Approving both required signatures to complete Stage 2"
+      />
+    </Frame>
+
     Approve both transactions when prompted:
 
-    1. **Injective transaction** → uses INJ for gas
-    2. **Avalanche transaction** → uses AVAX for gas
+    1. **Injective transaction** → uses INJ for the transaction fee
+    2. **Avalanche transaction** → uses AVAX for the transaction fee
 
     Review each transaction before approving it.
+
   </Step>
 
   <Step title="Wait for the migration">
-    After both signatures are complete, Skip:Go will process the migration.
+    After both transactions are approved, Skip:Go will process the migration.
 
-    Keep the page open until the migration is complete.
+    **Keep this page open** while the migration is in progress.
 
-    Do not start another migration while the current route is still processing.
   </Step>
 
   <Step title="Confirm completion">
@@ -323,112 +338,81 @@ Before continuing, confirm that:
 
     Confirm that **USDC.inj is available on dYdX**.
 
-    <Frame>
-      <img src="/images/usdc-migration-7.png" alt="Migration complete, USDC.inj available on dYdX" />
-    </Frame>
+    **Migration complete:**
+
+    `dYdX USDC.n → dYdX USDC.inj`
+
   </Step>
 </Steps>
 
-Your balance is now **USDC.inj on dYdX**.
+---
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="I use dydx.trade. Do I need to migrate my USDC with Skip:Go?">
-    **No.**
+  <Accordion title="I use dydx.trade. Should I use this guide?">
+    Only if you also hold **USDC.n directly in your dYdX Chain wallet**.
 
-    If your USDC is used as a trading balance on [dydx.trade](https://dydx.trade/), **do not use this manual migration guide for that balance**.
+    Do not use this guide for USDC in a **dydx.trade trading subaccount**. Follow the official dYdX migration instructions for that balance when they become available.
 
-    Follow official dYdX migration instructions when they become available.
-
-    If you separately hold **USDC.n directly on dYdX Chain**, outside your dydx.trade trading balance, you can use this Skip:Go migration guide.
-
-    | Where your USDC is held | What to do |
-    | --- | --- |
-    | **Trading balance on dydx.trade** | Follow official dYdX migration instructions |
-    | **USDC.n held directly on dYdX Chain** | Use this Skip:Go migration guide |
-
-    If you are unsure which balance you have, do not migrate it manually until you confirm.
   </Accordion>
 
-  <Accordion title="What if my USDC.n is on a different supported chain?">
-    This guide applies to USDC.n held directly on **dYdX, Babylon, Cosmos Hub, Osmosis, Terra, Neutron, and ZIGChain**.
+  <Accordion title="What if I stop during the manual migration?">
+    You can resume the migration later.
 
-    In **Stage 1**, select the chain where your USDC.n is held.
+    - **After Stage 1:** Your USDC remains on the EVM network you selected. You can start Stage 2 later using that USDC.
+    - **During Stage 2 signing:** Both signatures are required before Stage 2 proceeds. If you stop before completing both signatures, your USDC remains on the EVM network. You can start Stage 2 again when you are ready.
 
-    In **Stage 2**, select that **same chain** as the destination and choose **USDC.inj**.
+    For example, if you use Avalanche, your USDC remains on **Avalanche** until Stage 2 proceeds.
 
-    For example:
-
-    **Osmosis USDC.n → EVM USDC → Osmosis USDC.inj**
-
-    For dYdX, this applies only to USDC.n held directly on dYdX Chain, not your dydx.trade trading balance.
-  </Accordion>
-
-  <Accordion title="Why do I need to migrate if USDC.n and USDC.inj are both USDC?">
-    Both are USDC, but they originate from different chains:
-
-    - **USDC.n:** Noble-origin USDC
-    - **USDC.inj:** Injective-origin USDC
-
-    The migration moves your balance from the Noble-origin denomination to the Injective-origin denomination that will be used going forward.
   </Accordion>
 
   <Accordion title="Is USDC.n → USDC.inj a swap?">
-    No.
+    This guide is specifically for migrating your balance from **USDC.n to USDC.inj**.
 
-    The complete `USDC.n → USDC.inj` process is a **migration between two USDC denominations**.
+    Skip:Go may display **Swap** in parts of the interface because the same interface is also used for swaps and cross-chain transfers.
 
-    Converting a small amount of USDC.n to a gas token such as DYDX, AVAX, or INJ is a separate swap used only to prepare transaction fees.
+    Swapping USDC.n for another token, such as DYDX, AVAX, or INJ, is a separate transaction and is not part of this migration.
+
   </Accordion>
 
   <Accordion title="Do I need to migrate before September 11?">
-    No.
+    No. **September 11 is the planned launch date for the one-step migration, not a migration deadline.**
 
-    You can use the manual migration from **August 28, 2026**, or wait for the simpler one-step migration planned for **September 11, 2026**.
+    Manual migration will be available starting **August 28, 2026**. You can use the manual flow or wait for the one-step migration planned for September 11.
 
-    If your USDC is a trading balance on dydx.trade, follow official dYdX migration instructions instead.
-  </Accordion>
-
-  <Accordion title="What changes with the planned one-step migration?">
-    |  | Manual migration | One-step migration (planned) |
-    | --- | --- | --- |
-    | Stages | 2 | 1 |
-    | Wallet signatures | 3 | 2 |
-    | Separate gas preparation | Required if needed | Not required |
-
-    Both methods have the same result:
-
-    **USDC.n on your source chain → USDC.inj on the same chain**
   </Accordion>
 
   <Accordion title="Do I have to use Avalanche?">
     No.
 
-    Avalanche is used in this guide because it had the lowest fee and fastest completion time in our testing.
+    This guide uses Avalanche as an example; you can use any supported EVM network.
 
-    You can use another supported EVM network if you already use it or prefer it. Make sure you have enough gas on the selected network before starting.
+    If you choose another network, make sure you have the required gas token before you start.
+
   </Accordion>
 
-  <Accordion title="Why do I need gas on three networks?">
-    The manual migration requires transactions on:
+<div id="what-if-my-usdc-n-is-on-a-chain-not-listed-above" />
 
-    1. Your source chain
-    2. Your selected EVM network
-    3. Injective
+  <Accordion title="What if my USDC.n is on a chain not listed above?">
+    If your USDC.n is on a chain not listed above, check whether **Skip:Go provides a route to transfer your USDC.n to one of the supported chains listed above**. If a route is available, transfer your USDC.n to that supported chain first, then follow this migration guide.
 
-    Each network requires gas to process its transaction.
+    If no supported route is available, contact the team responsible for your chain.
 
-    If any required gas token is missing, prepare it before starting the migration.
+    **For chain teams:** A direct IBC path with Injective is required to support your chain as a USDC.inj destination, including **IBC light clients, an ICS-20 transfer channel, and at least one reliable relayer**.
+
+    If you need help meeting these requirements and already have a Skip contact, work with them for guidance and assistance.
+
+    Once the IBC connection and relaying are operational, use your existing contact with Skip or submit a **Chain Integration Request** to request support for your chain as a USDC.inj destination on Skip:Go.
+
   </Accordion>
 </AccordionGroup>
 
 ## Official references
 
-- [dYdX: Accounts and Subaccounts](https://docs.dydx.xyz/concepts/trading/accounts) — How dYdX separates on-chain accounts from subaccounts used for trading.
-- [dYdX: Deposits and Withdrawals](https://docs.dydx.xyz/interaction/deposits-withdrawals/overview) — Official dYdX deposit and withdrawal documentation.
-- [Circle: USDC and CCTP on Injective](https://www.circle.com/blog/now-available-native-usdc-cctp-on-injective) — Circle's announcement of USDC and CCTP support on Injective.
-- [Injective: USDC Coming to Cosmos Hub and dYdX](https://injective.com/blog/inj-usdc-coming-soon-cosmos-dydx) — Background on the transition to Injective-origin USDC and Skip:Go's adoption of Injective USDC.
+- [Circle: Now Available: USDC and CCTP on Injective](https://www.circle.com/blog/now-available-native-usdc-cctp-on-injective) — Circle's announcement of USDC and CCTP support on Injective.
+- [Injective: Injective USDC will be Adopted by Cosmos and dYdX as the Canonical Stablecoin Standard](https://injective.com/blog/inj-usdc-coming-soon-cosmos-dydx) — Background on the transition to Injective-origin USDC and Skip:Go's adoption of Injective USDC.
 - [Noble: A New Noble World](https://noble.xyz/blog/a-new-noble-world) — Noble's long-term plan for its existing Cosmos SDK chain.
-- [Skip:Go: Supported Ecosystems](https://docs.skip.build/go/general/supported-ecosystems-and-bridges) — Supported ecosystems and cross-chain routing information.
+- [dYdX: Accounts and Subaccounts](https://docs.dydx.xyz/concepts/trading/accounts) — How dYdX separates on-chain accounts from subaccounts used for trading.
+- [Skip:Go: Supported Ecosystems and Bridges](https://docs.skip.build/go/general/supported-ecosystems-and-bridges) — Supported ecosystems and cross-chain routing information.
 - [Skip:Go: Getting Fee Info](https://docs.skip.build/go/general/fee-info) — Skip:Go fee types and fee information.
