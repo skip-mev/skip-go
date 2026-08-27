@@ -230,16 +230,18 @@ export function getClientOperations(operations?: Operation[]): ClientOperation[]
 }
 
 /**
- * CCTP V2 migration legs must be broadcast strictly in order: the batch/upfront
- * signing mode (see `batchSignTxs` in `executeTransactions`) pre-signs cosmos/svm
- * txs before earlier evm legs have even executed, which can race the migration.
- * Routes containing a `CCTP_V2_MIGRATION` operation are therefore always forced
- * to sign sequentially, regardless of what the caller passed for `batchSignTxs`.
+ * Routes that migrate from CCTP v1 to CCTP v2 (i.e. use both bridges in the
+ * same route) must be broadcast strictly in order: the batch/upfront signing
+ * mode (see `batchSignTxs` in `executeTransactions`) pre-signs cosmos/svm txs
+ * before earlier evm legs have even executed, which can race the migration.
+ * Such routes are therefore always forced to sign sequentially, regardless of
+ * what the caller passed for `batchSignTxs`.
  */
 export function routeRequiresSequentialSigning(operations?: Operation[]): boolean {
-  return getClientOperations(operations).some(
-    (operation) => operation.bridgeId === BridgeType.CCTP_V2_MIGRATION,
+  const bridgeIds = new Set(
+    getClientOperations(operations).map((operation) => operation.bridgeId)
   );
+  return bridgeIds.has(BridgeType.CCTP) && bridgeIds.has(BridgeType.CCTP_V2);
 }
 
 function filterNeutronSwapFee(operations: Operation[]) {

@@ -38,7 +38,6 @@ const BRIDGE_ID_TO_LABEL_MAP: Record<BridgeType, string> = {
   [BridgeType.STARGATE]: 'Stargate',
   [BridgeType.LAYER_ZERO]: 'Layer Zero',
   [BridgeType.CCTP_V2]: 'CCTP V2',
-  [BridgeType.CCTP_V2_MIGRATION]: 'CCTP V2 Migration',
 };
 
 export function getFeeList(route: RouteResponse): LabeledFee[] {
