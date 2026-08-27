@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.6.2
+
+### Patch Changes
+
+- add84ba: Support cctp relayed flow
+
 ## 1.6.1
 
 ### Patch Changes
