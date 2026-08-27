@@ -229,8 +229,7 @@ export function getClientOperations(operations?: Operation[]): ClientOperation[]
 }
 
 /**
- * TODO: temporary - remove once CCTP v1->v2 migration is done. These routes
- * land on Injective before the final IBC hop; skip its gas preflight.
+ * TODO: temporary - remove once CCTP v1->v2 migration is done.
  */
 export function routeRequiresSequentialSigning(operations?: Operation[]): boolean {
   const bridgeIds = new Set(getClientOperations(operations).map((operation) => operation.bridgeId));

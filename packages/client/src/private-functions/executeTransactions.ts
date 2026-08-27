@@ -13,7 +13,6 @@ import { updateRouteDetails } from "src/public-functions/subscribeToRouteStatus"
 import { submitTransaction } from "src/api/postSubmitTransaction";
 import { getAccountNumberAndSequence } from "./getAccountNumberAndSequence";
 import { getChainIdsFromTxs } from "./getChainIdsFromTxs";
-import { routeRequiresSequentialSigning } from "src/utils/clientType";
 
 export const executeTransactions = async (
   options: ExecuteRouteOptions & {
@@ -76,11 +75,7 @@ export const executeTransactions = async (
     getEvmSigner,
     onValidateGasBalance,
     simulate: simulate,
-    // TODO: temporary - remove once CCTP v1->v2 migration is done. These routes
-    // land on Injective before the final IBC hop; skip its gas preflight.
-    disabledChainIds: routeRequiresSequentialSigning(options.route?.operations)
-      ? [...validateChainIds, "injective-1"]
-      : validateChainIds,
+    disabledChainIds: validateChainIds,
     getCosmosPriorityFeeDenom: options.getCosmosPriorityFeeDenom,
     options,
     routeId,
