@@ -1,4 +1,5 @@
 import type { TxStatusResponse } from "../api/postTransactionStatus";
+import { BridgeType } from "../types/swaggerTypes";
 import type {
   AxelarTransfer,
   AxelarTransferInfo,
@@ -7,6 +8,7 @@ import type {
   CCTPTransfer,
   CCTPTransferInfo,
   CCTPTransferState,
+  CCTPTransferV2,
   ContractCallWithTokenTxs,
   EurekaTransfer,
   EurekaTransferInfo,
@@ -36,7 +38,6 @@ import type {
   Transfer,
   TransferEvent,
   TransferState,
-  TransferStatus,
 } from "../types/swaggerTypes";
 
 export type OverallStatus = "pending" | "success" | "failed";
@@ -47,6 +48,7 @@ export enum OperationType {
   transfer = "transfer",
   axelarTransfer = "axelarTransfer",
   cctpTransfer = "cctpTransfer",
+  cctpTransferV2 = "cctpTransferV2",
   hyperlaneTransfer = "hyperlaneTransfer",
   opInitTransfer = "opInitTransfer",
   bankSend = "bankSend",
@@ -65,6 +67,7 @@ type CombinedOperation = {
   swap?: Swap;
   axelarTransfer?: AxelarTransfer;
   cctpTransfer?: CCTPTransfer;
+  cctpTransferV2?: CCTPTransferV2;
   hyperlaneTransfer?: HyperlaneTransfer;
   evmSwap?: EvmSwap;
   opInitTransfer?: OPInitTransfer;
@@ -80,6 +83,7 @@ type OperationDetails = CombineObjectTypes<
     Swap &
     AxelarTransfer &
     CCTPTransfer &
+    CCTPTransferV2 &
     HyperlaneTransfer &
     EvmSwap &
     StargateTransfer &
@@ -191,9 +195,7 @@ export function getClientOperation(operation: Operation) {
   } as ClientOperation;
 }
 
-export function getClientOperations(
-  operations?: Operation[]
-): ClientOperation[] {
+export function getClientOperations(operations?: Operation[]): ClientOperation[] {
   if (!operations) return [];
   let transferIndex = 0;
   const filteredOperations = filterNeutronSwapFee(operations);
@@ -212,8 +214,7 @@ export function getClientOperations(
     })();
     const clientOperation = getClientOperation(operation);
     const isSwap =
-      clientOperation.type === OperationType.swap ||
-      clientOperation.type === OperationType.evmSwap;
+      clientOperation.type === OperationType.swap || clientOperation.type === OperationType.evmSwap;
     const result = {
       ...clientOperation,
       transferIndex,
@@ -225,6 +226,19 @@ export function getClientOperations(
     }
     return result;
   });
+}
+
+/**
+ * Routes that migrate from CCTP v1 to CCTP v2 (i.e. use both bridges in the
+ * same route) must be broadcast strictly in order: the batch/upfront signing
+ * mode (see `batchSignTxs` in `executeTransactions`) pre-signs cosmos/svm txs
+ * before earlier evm legs have even executed, which can race the migration.
+ * Such routes are therefore always forced to sign sequentially, regardless of
+ * what the caller passed for `batchSignTxs`.
+ */
+export function routeRequiresSequentialSigning(operations?: Operation[]): boolean {
+  const bridgeIds = new Set(getClientOperations(operations).map((operation) => operation.bridgeId));
+  return bridgeIds.has(BridgeType.CCTP) && bridgeIds.has(BridgeType.CCTP_V2);
 }
 
 function filterNeutronSwapFee(operations: Operation[]) {
@@ -255,24 +269,16 @@ function filterNeutronSwapFee(operations: Operation[]) {
 function getClientTransferEvent(transferEvent: TransferEvent) {
   const combinedTransferEvent = transferEvent as CombinedTransferEvent;
 
-  const axelarTransfer =
-    combinedTransferEvent?.axelarTransfer as AxelarTransferInfo;
+  const axelarTransfer = combinedTransferEvent?.axelarTransfer as AxelarTransferInfo;
   const ibcTransfer = combinedTransferEvent?.ibcTransfer as IBCTransferInfo;
   const cctpTransfer = combinedTransferEvent?.cctpTransfer as CCTPTransferInfo;
-  const cctpTransferV2 =
-    combinedTransferEvent?.cctpTransferV2 as CCTPTransferInfo;
-  const hyperlaneTransfer =
-    combinedTransferEvent?.hyperlaneTransfer as HyperlaneTransferInfo;
-  const opInitTransfer =
-    combinedTransferEvent?.opInitTransfer as OPInitTransferInfo;
-  const goFastTransfer =
-    combinedTransferEvent?.goFastTransfer as GoFastTransferInfo;
-  const stargateTransfer =
-    combinedTransferEvent?.stargateTransfer as StargateTransferInfo;
-  const eurekaTransfer =
-    combinedTransferEvent?.eurekaTransfer as EurekaTransferInfo;
-  const layerZeroTransfer =
-    combinedTransferEvent?.layerZeroTransfer as LayerZeroTransferInfo;
+  const cctpTransferV2 = combinedTransferEvent?.cctpTransferV2 as CCTPTransferInfo;
+  const hyperlaneTransfer = combinedTransferEvent?.hyperlaneTransfer as HyperlaneTransferInfo;
+  const opInitTransfer = combinedTransferEvent?.opInitTransfer as OPInitTransferInfo;
+  const goFastTransfer = combinedTransferEvent?.goFastTransfer as GoFastTransferInfo;
+  const stargateTransfer = combinedTransferEvent?.stargateTransfer as StargateTransferInfo;
+  const eurekaTransfer = combinedTransferEvent?.eurekaTransfer as EurekaTransferInfo;
+  const layerZeroTransfer = combinedTransferEvent?.layerZeroTransfer as LayerZeroTransferInfo;
 
   let transferType = "" as TransferType;
   if (axelarTransfer) {
@@ -304,49 +310,62 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           return {
             explorerLink: ibcTransfer.packetTxs.sendTx?.explorerLink,
             txHash: ibcTransfer.packetTxs.sendTx?.txHash,
-          }
+          };
         }
         return {
-          explorerLink: ibcTransfer.packetTxs.receiveTx?.explorerLink ?? ibcTransfer.packetTxs.timeoutTx?.explorerLink,
+          explorerLink:
+            ibcTransfer.packetTxs.receiveTx?.explorerLink ??
+            ibcTransfer.packetTxs.timeoutTx?.explorerLink,
           txHash: ibcTransfer.packetTxs.receiveTx?.txHash,
-        }
+        };
       case TransferType.eurekaTransfer:
         if (type === "send") {
           return {
             explorerLink: eurekaTransfer.packetTxs.sendTx?.explorerLink,
             txHash: eurekaTransfer.packetTxs.sendTx?.txHash,
-          }
+          };
         }
         return {
-          explorerLink: eurekaTransfer.packetTxs.receiveTx?.explorerLink ?? eurekaTransfer.packetTxs.timeoutTx?.explorerLink,
+          explorerLink:
+            eurekaTransfer.packetTxs.receiveTx?.explorerLink ??
+            eurekaTransfer.packetTxs.timeoutTx?.explorerLink,
           txHash: eurekaTransfer.packetTxs.receiveTx?.txHash,
-        }
+        };
       case TransferType.goFastTransfer:
         if (type === "send") {
           return {
             explorerLink: goFastTransfer.txs.orderSubmittedTx?.explorerLink,
             txHash: goFastTransfer.txs.orderSubmittedTx?.txHash,
-          }
+          };
         }
         return {
-          explorerLink: goFastTransfer.txs.orderFilledTx?.explorerLink ?? goFastTransfer.txs.orderTimeoutTx?.explorerLink ?? goFastTransfer.txs.orderRefundedTx?.explorerLink,
+          explorerLink:
+            goFastTransfer.txs.orderFilledTx?.explorerLink ??
+            goFastTransfer.txs.orderTimeoutTx?.explorerLink ??
+            goFastTransfer.txs.orderRefundedTx?.explorerLink,
           txHash: goFastTransfer.txs.orderFilledTx?.txHash,
-        }
-      case TransferType.axelarTransfer:
+        };
+      case TransferType.axelarTransfer: {
         const sendTokenTxs = axelarTransfer.txs as SendTokenTxs | undefined;
-        const contractCallWithTokenTxs = (axelarTransfer.txs as {
-          contractCallWithTokenTxs?: ContractCallWithTokenTxs;
-      })?.contractCallWithTokenTxs;
+        const contractCallWithTokenTxs = (
+          axelarTransfer.txs as {
+            contractCallWithTokenTxs?: ContractCallWithTokenTxs;
+          }
+        )?.contractCallWithTokenTxs;
         if (type === "send") {
           return {
-            explorerLink: sendTokenTxs?.sendTx?.explorerLink ?? contractCallWithTokenTxs?.sendTx?.explorerLink,
+            explorerLink:
+              sendTokenTxs?.sendTx?.explorerLink ?? contractCallWithTokenTxs?.sendTx?.explorerLink,
             txHash: sendTokenTxs?.sendTx?.txHash ?? contractCallWithTokenTxs?.sendTx?.txHash,
-          }
+          };
         }
         return {
-          explorerLink: sendTokenTxs?.executeTx?.explorerLink ?? contractCallWithTokenTxs?.executeTx?.explorerLink,
+          explorerLink:
+            sendTokenTxs?.executeTx?.explorerLink ??
+            contractCallWithTokenTxs?.executeTx?.explorerLink,
           txHash: sendTokenTxs?.executeTx?.txHash ?? contractCallWithTokenTxs?.executeTx?.txHash,
-        }
+        };
+      }
       default:
         type RemainingTransferTypes =
           | CCTPTransferInfo
@@ -357,18 +376,18 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
 
         if (type === "send") {
           return {
-            explorerLink: (combinedTransferEvent[transferType] as RemainingTransferTypes)
-              ?.txs?.sendTx?.explorerLink,
-            txHash: (combinedTransferEvent[transferType] as RemainingTransferTypes)
-              ?.txs?.sendTx?.txHash,
-          }
+            explorerLink: (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs
+              ?.sendTx?.explorerLink,
+            txHash: (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs?.sendTx
+              ?.txHash,
+          };
         }
         return {
-          explorerLink: (combinedTransferEvent[transferType] as RemainingTransferTypes)
-            ?.txs?.receiveTx?.explorerLink,
-          txHash: (combinedTransferEvent[transferType] as RemainingTransferTypes)
-            ?.txs?.receiveTx?.txHash,
-        }
+          explorerLink: (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs
+            ?.receiveTx?.explorerLink,
+          txHash: (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs?.receiveTx
+            ?.txHash,
+        };
     }
   };
 
@@ -380,33 +399,37 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
         if (!sendTime || !receiveTime) return;
         return new Date(receiveTime).getTime() - new Date(sendTime).getTime();
       }
-      
+
       case TransferType.eurekaTransfer: {
         const sendTime = eurekaTransfer.packetTxs.sendTx?.onChainAt;
         const receiveTime = eurekaTransfer.packetTxs.receiveTx?.onChainAt;
         if (!sendTime || !receiveTime) return;
         return new Date(receiveTime).getTime() - new Date(sendTime).getTime();
       }
-      
+
       case TransferType.goFastTransfer: {
         const submitTime = goFastTransfer.txs.orderSubmittedTx?.onChainAt;
         const filledTime = goFastTransfer.txs.orderFilledTx?.onChainAt;
         if (!submitTime || !filledTime) return;
         return new Date(filledTime).getTime() - new Date(submitTime).getTime();
       }
-      
+
       case TransferType.axelarTransfer: {
         const sendTokenTxs = axelarTransfer.txs as SendTokenTxs | undefined;
-        const contractCallWithTokenTxs = (axelarTransfer.txs as {
-          contractCallWithTokenTxs?: ContractCallWithTokenTxs;
-      })?.contractCallWithTokenTxs;
+        const contractCallWithTokenTxs = (
+          axelarTransfer.txs as {
+            contractCallWithTokenTxs?: ContractCallWithTokenTxs;
+          }
+        )?.contractCallWithTokenTxs;
 
-        const sendTime = sendTokenTxs?.sendTx?.onChainAt ?? contractCallWithTokenTxs?.sendTx?.onChainAt;
-        const confirmTime = sendTokenTxs?.confirmTx?.onChainAt ?? contractCallWithTokenTxs?.confirmTx?.onChainAt;
+        const sendTime =
+          sendTokenTxs?.sendTx?.onChainAt ?? contractCallWithTokenTxs?.sendTx?.onChainAt;
+        const confirmTime =
+          sendTokenTxs?.confirmTx?.onChainAt ?? contractCallWithTokenTxs?.confirmTx?.onChainAt;
         if (!sendTime || !confirmTime) return;
         return new Date(confirmTime).getTime() - new Date(sendTime).getTime();
       }
-      
+
       default: {
         type RemainingTransferTypes =
           | CCTPTransferInfo
@@ -414,7 +437,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           | OPInitTransferInfo
           | StargateTransferInfo
           | LayerZeroTransferInfo;
-  
+
         const remainingTransfer = combinedTransferEvent[transferType] as RemainingTransferTypes;
         const sendTime = remainingTransfer?.txs?.sendTx?.onChainAt;
         const receiveTime = remainingTransfer?.txs?.receiveTx?.onChainAt;
@@ -422,7 +445,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
         return new Date(receiveTime).getTime() - new Date(sendTime).getTime();
       }
     }
-  }
+  };
 
   const _result = {
     ...ibcTransfer,
@@ -452,9 +475,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
   return result;
 }
 
-export function getTransferEventsFromTxStatusResponse(
-  txStatusResponse?: TxStatusResponse[]
-) {
+export function getTransferEventsFromTxStatusResponse(txStatusResponse?: TxStatusResponse[]) {
   if (!txStatusResponse) return [];
   return txStatusResponse?.flatMap((txStatus) => {
     return (txStatus?.transferSequence ?? []).map((transferEvent) => {
@@ -486,7 +507,7 @@ export function getSimpleStatus(
     | OPInitTransferState
     | GoFastTransferState
     | StargateTransferState
-    | LayerZeroTransferState
+    | LayerZeroTransferState,
 ): TransferEventStatus {
   switch (state) {
     case "TRANSFER_PENDING":
