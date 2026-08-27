@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.17.3
+
+### Patch Changes
+
+- add84ba: Support cctp relayed flow
+- Updated dependencies [add84ba]
+  - @skip-go/client@1.6.2
+
 ## 3.17.2
 
 ### Patch Changes
