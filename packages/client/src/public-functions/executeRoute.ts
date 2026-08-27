@@ -72,11 +72,13 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     });
   }
 
+  // TODO: temporary - remove once CCTP v1->v2 migration is done (see routeRequiresSequentialSigning).
+  const isSequentialRoute = routeRequiresSequentialSigning(route?.operations);
+
   const { transactionDetails, executeTransaction } = await executeTransactions({
     ...options,
-    // TODO: temporary - remove once CCTP v1->v2 migration is done. These routes
-    // must sign one tx at a time, in execution order (see routeRequiresSequentialSigning).
-    batchSignTxs: routeRequiresSequentialSigning(route?.operations) ? false : options.batchSignTxs,
+    batchSignTxs: isSequentialRoute ? false : options.batchSignTxs,
+    batchSimulate: isSequentialRoute ? false : options.batchSimulate,
     routeId,
     txs: response?.txs,
   });
