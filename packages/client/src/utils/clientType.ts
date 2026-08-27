@@ -1,5 +1,5 @@
-import type { TxStatusResponse } from '../api/postTransactionStatus';
-import { BridgeType } from '../types/swaggerTypes';
+import type { TxStatusResponse } from "../api/postTransactionStatus";
+import { BridgeType } from "../types/swaggerTypes";
 import type {
   AxelarTransfer,
   AxelarTransferInfo,
@@ -38,25 +38,24 @@ import type {
   Transfer,
   TransferEvent,
   TransferState,
-  TransferStatus,
-} from '../types/swaggerTypes';
+} from "../types/swaggerTypes";
 
-export type OverallStatus = 'pending' | 'success' | 'failed';
+export type OverallStatus = "pending" | "success" | "failed";
 
 export enum OperationType {
-  swap = 'swap',
-  evmSwap = 'evmSwap',
-  transfer = 'transfer',
-  axelarTransfer = 'axelarTransfer',
-  cctpTransfer = 'cctpTransfer',
-  cctpTransferV2 = 'cctpTransferV2',
-  hyperlaneTransfer = 'hyperlaneTransfer',
-  opInitTransfer = 'opInitTransfer',
-  bankSend = 'bankSend',
-  goFastTransfer = 'goFastTransfer',
-  stargateTransfer = 'stargateTransfer',
-  eurekaTransfer = 'eurekaTransfer',
-  layerZeroTransfer = 'layerZeroTransfer',
+  swap = "swap",
+  evmSwap = "evmSwap",
+  transfer = "transfer",
+  axelarTransfer = "axelarTransfer",
+  cctpTransfer = "cctpTransfer",
+  cctpTransferV2 = "cctpTransferV2",
+  hyperlaneTransfer = "hyperlaneTransfer",
+  opInitTransfer = "opInitTransfer",
+  bankSend = "bankSend",
+  goFastTransfer = "goFastTransfer",
+  stargateTransfer = "stargateTransfer",
+  eurekaTransfer = "eurekaTransfer",
+  layerZeroTransfer = "layerZeroTransfer",
 }
 
 type CombinedOperation = {
@@ -238,9 +237,7 @@ export function getClientOperations(operations?: Operation[]): ClientOperation[]
  * what the caller passed for `batchSignTxs`.
  */
 export function routeRequiresSequentialSigning(operations?: Operation[]): boolean {
-  const bridgeIds = new Set(
-    getClientOperations(operations).map((operation) => operation.bridgeId)
-  );
+  const bridgeIds = new Set(getClientOperations(operations).map((operation) => operation.bridgeId));
   return bridgeIds.has(BridgeType.CCTP) && bridgeIds.has(BridgeType.CCTP_V2);
 }
 
@@ -249,17 +246,17 @@ function filterNeutronSwapFee(operations: Operation[]) {
     const clientOperation = getClientOperation(op);
     if (
       clientOperation.type === OperationType.swap &&
-      clientOperation.chainId === 'neutron-1' &&
-      clientOperation.denomOut === 'untrn' &&
-      clientOperation.fromChainId === 'neutron-1' &&
-      clientOperation.swapOut?.swapAmountOut === '200000'
+      clientOperation.chainId === "neutron-1" &&
+      clientOperation.denomOut === "untrn" &&
+      clientOperation.fromChainId === "neutron-1" &&
+      clientOperation.swapOut?.swapAmountOut === "200000"
     ) {
       const nextOperation = operations[i + 1];
       if (nextOperation) {
         const nextClientOperation = getClientOperation(nextOperation);
         if (
           nextClientOperation.type === OperationType.swap &&
-          nextClientOperation.chainId === 'neutron-1'
+          nextClientOperation.chainId === "neutron-1"
         ) {
           return false;
         }
@@ -283,7 +280,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
   const eurekaTransfer = combinedTransferEvent?.eurekaTransfer as EurekaTransferInfo;
   const layerZeroTransfer = combinedTransferEvent?.layerZeroTransfer as LayerZeroTransferInfo;
 
-  let transferType = '' as TransferType;
+  let transferType = "" as TransferType;
   if (axelarTransfer) {
     transferType = TransferType.axelarTransfer;
   } else if (ibcTransfer) {
@@ -306,10 +303,10 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     transferType = TransferType.layerZeroTransfer;
   }
 
-  const getTxHashAndExplorerLink = (type: 'send' | 'receive') => {
+  const getTxHashAndExplorerLink = (type: "send" | "receive") => {
     switch (transferType) {
       case TransferType.ibcTransfer:
-        if (type === 'send') {
+        if (type === "send") {
           return {
             explorerLink: ibcTransfer.packetTxs.sendTx?.explorerLink,
             txHash: ibcTransfer.packetTxs.sendTx?.txHash,
@@ -322,7 +319,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           txHash: ibcTransfer.packetTxs.receiveTx?.txHash,
         };
       case TransferType.eurekaTransfer:
-        if (type === 'send') {
+        if (type === "send") {
           return {
             explorerLink: eurekaTransfer.packetTxs.sendTx?.explorerLink,
             txHash: eurekaTransfer.packetTxs.sendTx?.txHash,
@@ -335,7 +332,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           txHash: eurekaTransfer.packetTxs.receiveTx?.txHash,
         };
       case TransferType.goFastTransfer:
-        if (type === 'send') {
+        if (type === "send") {
           return {
             explorerLink: goFastTransfer.txs.orderSubmittedTx?.explorerLink,
             txHash: goFastTransfer.txs.orderSubmittedTx?.txHash,
@@ -348,14 +345,14 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
             goFastTransfer.txs.orderRefundedTx?.explorerLink,
           txHash: goFastTransfer.txs.orderFilledTx?.txHash,
         };
-      case TransferType.axelarTransfer:
+      case TransferType.axelarTransfer: {
         const sendTokenTxs = axelarTransfer.txs as SendTokenTxs | undefined;
         const contractCallWithTokenTxs = (
           axelarTransfer.txs as {
             contractCallWithTokenTxs?: ContractCallWithTokenTxs;
           }
         )?.contractCallWithTokenTxs;
-        if (type === 'send') {
+        if (type === "send") {
           return {
             explorerLink:
               sendTokenTxs?.sendTx?.explorerLink ?? contractCallWithTokenTxs?.sendTx?.explorerLink,
@@ -368,6 +365,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
             contractCallWithTokenTxs?.executeTx?.explorerLink,
           txHash: sendTokenTxs?.executeTx?.txHash ?? contractCallWithTokenTxs?.executeTx?.txHash,
         };
+      }
       default:
         type RemainingTransferTypes =
           | CCTPTransferInfo
@@ -376,7 +374,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           | StargateTransferInfo
           | LayerZeroTransferInfo;
 
-        if (type === 'send') {
+        if (type === "send") {
           return {
             explorerLink: (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs
               ?.sendTx?.explorerLink,
@@ -463,10 +461,10 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     ...eurekaTransfer,
     ...layerZeroTransfer,
     transferType,
-    fromExplorerLink: getTxHashAndExplorerLink('send')?.explorerLink,
-    toExplorerLink: getTxHashAndExplorerLink('receive')?.explorerLink,
-    fromTxHash: getTxHashAndExplorerLink('send')?.txHash,
-    toTxHash: getTxHashAndExplorerLink('receive')?.txHash,
+    fromExplorerLink: getTxHashAndExplorerLink("send")?.explorerLink,
+    toExplorerLink: getTxHashAndExplorerLink("receive")?.explorerLink,
+    fromTxHash: getTxHashAndExplorerLink("send")?.txHash,
+    toTxHash: getTxHashAndExplorerLink("receive")?.txHash,
     durationInMs: getDuration(),
   } as ClientTransferEvent;
   const status = getSimpleStatus(_result.state);
@@ -488,15 +486,15 @@ export function getTransferEventsFromTxStatusResponse(txStatusResponse?: TxStatu
 
 export function getSimpleOverallStatus(state: TransactionState): OverallStatus {
   switch (state) {
-    case 'STATE_SUBMITTED':
-    case 'STATE_PENDING':
-      return 'pending';
-    case 'STATE_COMPLETED_SUCCESS':
-      return 'success';
-    case 'STATE_COMPLETED_ERROR':
-    case 'STATE_PENDING_ERROR':
+    case "STATE_SUBMITTED":
+    case "STATE_PENDING":
+      return "pending";
+    case "STATE_COMPLETED_SUCCESS":
+      return "success";
+    case "STATE_COMPLETED_ERROR":
+    case "STATE_PENDING_ERROR":
     default:
-      return 'failed';
+      return "failed";
   }
 }
 
@@ -512,31 +510,31 @@ export function getSimpleStatus(
     | LayerZeroTransferState,
 ): TransferEventStatus {
   switch (state) {
-    case 'TRANSFER_PENDING':
-    case 'TRANSFER_RECEIVED':
-    case 'AXELAR_TRANSFER_PENDING_CONFIRMATION':
-    case 'AXELAR_TRANSFER_PENDING_RECEIPT':
-    case 'CCTP_TRANSFER_SENT':
-    case 'CCTP_TRANSFER_PENDING_CONFIRMATION':
-    case 'CCTP_TRANSFER_CONFIRMED':
-    case 'HYPERLANE_TRANSFER_SENT':
-    case 'OPINIT_TRANSFER_SENT':
-    case 'GO_FAST_TRANSFER_SENT':
-    case 'STARGATE_TRANSFER_SENT':
-    case 'LAYER_ZERO_TRANSFER_SENT':
-    case 'LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE':
-      return 'pending';
-    case 'TRANSFER_SUCCESS':
-    case 'AXELAR_TRANSFER_SUCCESS':
-    case 'CCTP_TRANSFER_RECEIVED':
-    case 'HYPERLANE_TRANSFER_RECEIVED':
-    case 'OPINIT_TRANSFER_RECEIVED':
-    case 'STARGATE_TRANSFER_RECEIVED':
-    case 'GO_FAST_TRANSFER_FILLED':
-    case 'LAYER_ZERO_TRANSFER_RECEIVED':
-      return 'completed';
+    case "TRANSFER_PENDING":
+    case "TRANSFER_RECEIVED":
+    case "AXELAR_TRANSFER_PENDING_CONFIRMATION":
+    case "AXELAR_TRANSFER_PENDING_RECEIPT":
+    case "CCTP_TRANSFER_SENT":
+    case "CCTP_TRANSFER_PENDING_CONFIRMATION":
+    case "CCTP_TRANSFER_CONFIRMED":
+    case "HYPERLANE_TRANSFER_SENT":
+    case "OPINIT_TRANSFER_SENT":
+    case "GO_FAST_TRANSFER_SENT":
+    case "STARGATE_TRANSFER_SENT":
+    case "LAYER_ZERO_TRANSFER_SENT":
+    case "LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE":
+      return "pending";
+    case "TRANSFER_SUCCESS":
+    case "AXELAR_TRANSFER_SUCCESS":
+    case "CCTP_TRANSFER_RECEIVED":
+    case "HYPERLANE_TRANSFER_RECEIVED":
+    case "OPINIT_TRANSFER_RECEIVED":
+    case "STARGATE_TRANSFER_RECEIVED":
+    case "GO_FAST_TRANSFER_FILLED":
+    case "LAYER_ZERO_TRANSFER_RECEIVED":
+      return "completed";
     default:
-      return 'failed';
+      return "failed";
   }
 }
 
@@ -554,26 +552,26 @@ type CombinedTransferEvent = {
 };
 
 export enum TransferType {
-  ibcTransfer = 'ibcTransfer',
-  axelarTransfer = 'axelarTransfer',
-  cctpTransfer = 'cctpTransfer',
-  cctpTransferV2 = 'cctpTransferV2',
-  hyperlaneTransfer = 'hyperlaneTransfer',
-  opInitTransfer = 'opInitTransfer',
-  goFastTransfer = 'goFastTransfer',
-  stargateTransfer = 'stargateTransfer',
-  eurekaTransfer = 'eurekaTransfer',
-  layerZeroTransfer = 'layerZeroTransfer',
+  ibcTransfer = "ibcTransfer",
+  axelarTransfer = "axelarTransfer",
+  cctpTransfer = "cctpTransfer",
+  cctpTransferV2 = "cctpTransferV2",
+  hyperlaneTransfer = "hyperlaneTransfer",
+  opInitTransfer = "opInitTransfer",
+  goFastTransfer = "goFastTransfer",
+  stargateTransfer = "stargateTransfer",
+  eurekaTransfer = "eurekaTransfer",
+  layerZeroTransfer = "layerZeroTransfer",
 }
 
 export type TransferEventStatus =
-  | 'unconfirmed'
-  | 'signing'
-  | 'pending'
-  | 'completed'
-  | 'failed'
-  | 'approving'
-  | 'incomplete';
+  | "unconfirmed"
+  | "signing"
+  | "pending"
+  | "completed"
+  | "failed"
+  | "approving"
+  | "incomplete";
 
 export type ClientTransferEvent = {
   fromChainId: string;

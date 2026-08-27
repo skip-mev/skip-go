@@ -1,7 +1,7 @@
-import { formatUSD } from '@/utils/intl';
-import { convertTokenAmountToHumanReadableAmount } from './crypto';
-import { FeeType, Fee, RouteResponse, BridgeType } from '@skip-go/client';
-import { formatDisplayAmount } from './number';
+import { formatUSD } from "@/utils/intl";
+import { convertTokenAmountToHumanReadableAmount } from "./crypto";
+import { FeeType, Fee, RouteResponse, BridgeType } from "@skip-go/client";
+import { formatDisplayAmount } from "./number";
 
 export type FeeDetail = {
   assetAmount: number;
@@ -28,16 +28,16 @@ const getFeeDetail = (estimatedFee: Fee): FeeDetail => {
 };
 
 const BRIDGE_ID_TO_LABEL_MAP: Record<BridgeType, string> = {
-  [BridgeType.IBC]: 'IBC',
-  [BridgeType.AXELAR]: 'Axelar',
-  [BridgeType.HYPERLANE]: 'Hyperlane',
-  [BridgeType.GO_FAST]: 'Go-Fast',
-  [BridgeType.OPINIT]: 'OpInit',
-  [BridgeType.CCTP]: 'CCTP',
-  [BridgeType.EUREKA]: 'IBC Eureka',
-  [BridgeType.STARGATE]: 'Stargate',
-  [BridgeType.LAYER_ZERO]: 'Layer Zero',
-  [BridgeType.CCTP_V2]: 'CCTP V2',
+  [BridgeType.IBC]: "IBC",
+  [BridgeType.AXELAR]: "Axelar",
+  [BridgeType.HYPERLANE]: "Hyperlane",
+  [BridgeType.GO_FAST]: "Go-Fast",
+  [BridgeType.OPINIT]: "OpInit",
+  [BridgeType.CCTP]: "CCTP",
+  [BridgeType.EUREKA]: "IBC Eureka",
+  [BridgeType.STARGATE]: "Stargate",
+  [BridgeType.LAYER_ZERO]: "Layer Zero",
+  [BridgeType.CCTP_V2]: "CCTP V2",
 };
 
 export function getFeeList(route: RouteResponse): LabeledFee[] {
@@ -48,14 +48,14 @@ export function getFeeList(route: RouteResponse): LabeledFee[] {
   return route.estimatedFees.map((fee) => {
     if (fee.feeType === FeeType.SMART_RELAY) {
       return {
-        label: 'Smart Relay Fee',
+        label: "Smart Relay Fee",
         fee: getFeeDetail(fee),
       };
     }
 
     const label = fee.bridgeId
       ? `${BRIDGE_ID_TO_LABEL_MAP[fee.bridgeId]} Bridging Fee`
-      : 'Bridging Fee';
+      : "Bridging Fee";
     const feeDetail = getFeeDetail(fee);
 
     return {
@@ -71,10 +71,10 @@ export function getTotalFees(fees: LabeledFee[]): FeeDetail | undefined {
   const totalAsset = fees.reduce((s, { fee }) => s + fee.assetAmount, 0);
   const totalUsd = fees.reduce(
     (s, { fee }) =>
-      s + (fee.formattedUsdAmount ? Number(fee.formattedUsdAmount.replace(/[^0-9.-]/g, '')) : 0),
+      s + (fee.formattedUsdAmount ? Number(fee.formattedUsdAmount.replace(/[^0-9.-]/g, "")) : 0),
     0,
   );
-  const symbol = fees[0].fee.formattedAssetAmount.split(' ')[1];
+  const symbol = fees[0].fee.formattedAssetAmount.split(" ")[1];
 
   return {
     assetAmount: totalAsset,

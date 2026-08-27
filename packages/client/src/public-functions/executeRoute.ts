@@ -1,18 +1,9 @@
 import type { TransactionCallbacks } from "../types/callbacks";
-import type {
-  CosmosMsg,
-  RouteResponse,
-  PostHandler,
-} from "../types/swaggerTypes";
+import type { CosmosMsg, RouteResponse, PostHandler } from "../types/swaggerTypes";
 import type { ApiRequest } from "../utils/generateApi";
 import { executeTransactions } from "../private-functions/executeTransactions";
 import { messages } from "../api/postMessages";
-import type {
-  SignerGetters,
-  GasOptions,
-  UserAddress,
-  BaseSettings,
-} from "src/types/client-types";
+import type { SignerGetters, GasOptions, UserAddress, BaseSettings } from "src/types/client-types";
 import { ApiState } from "src/state/apiState";
 import { executeAndSubscribeToRouteStatus, updateRouteDetails } from "./subscribeToRouteStatus";
 import { createValidAddressList } from "src/utils/address";
@@ -32,7 +23,7 @@ export type ExecuteRouteOptions = SignerGetters &
     /**
      * If `appendCosmosMsgs` is provided, it will append the specified Cosmos messages to the transactions.
      */
-    appendCosmosMsgs?: Record<string, CosmosMsg[]>
+    appendCosmosMsgs?: Record<string, CosmosMsg[]>;
     /**
      * Specify actions to perform after the route is completed
      */
@@ -71,14 +62,14 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
   if (appendCosmosMsgs) {
     Object.entries(appendCosmosMsgs).forEach(([chainId, msgs]) => {
       const txIndex = response?.txs?.findIndex(
-        (tx) => "cosmosTx" in tx && tx.cosmosTx.chainId === chainId
+        (tx) => "cosmosTx" in tx && tx.cosmosTx.chainId === chainId,
       );
-      if (txIndex === undefined || txIndex === -1) return
+      if (txIndex === undefined || txIndex === -1) return;
       const tx = response?.txs?.[txIndex];
       if (tx && "cosmosTx" in tx) {
         tx.cosmosTx.msgs?.unshift(...msgs);
       }
-    })
+    });
   }
 
   // CCTP V2 migration routes must sign one tx at a time, in execution order -
