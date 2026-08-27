@@ -13,13 +13,14 @@ import { updateRouteDetails } from "src/public-functions/subscribeToRouteStatus"
 import { submitTransaction } from "src/api/postSubmitTransaction";
 import { getAccountNumberAndSequence } from "./getAccountNumberAndSequence";
 import { getChainIdsFromTxs } from "./getChainIdsFromTxs";
+import { routeRequiresSequentialSigning } from "src/utils/clientType";
 
 export const executeTransactions = async (
   options: ExecuteRouteOptions & {
     txs?: Tx[];
     routeId: string;
     isMultiRoutes?: boolean;
-  }
+  },
 ) => {
   const {
     txs,
@@ -37,9 +38,7 @@ export const executeTransactions = async (
   } = options;
 
   if (txs === undefined) {
-    throw new Error(
-      "executeTransactions error: txs is undefined in executeTransactions"
-    );
+    throw new Error("executeTransactions error: txs is undefined in executeTransactions");
   }
 
   const chainIds = getChainIdsFromTxs(txs);
@@ -68,9 +67,7 @@ export const executeTransactions = async (
   });
 
   ClientState.validateGasResults = undefined;
-  const validateChainIds = !batchSimulate
-    ? chainIds.map((x) => x?.chainId ?? "")
-    : [];
+  const validateChainIds = !batchSimulate ? chainIds.map((x) => x?.chainId ?? "") : [];
 
   await validateGasBalances({
     txs,
@@ -79,7 +76,11 @@ export const executeTransactions = async (
     getEvmSigner,
     onValidateGasBalance,
     simulate: simulate,
-    disabledChainIds: validateChainIds,
+    // TODO: temporary - remove once CCTP v1->v2 migration is done. These routes
+    // land on Injective before the final IBC hop; skip its gas preflight.
+    disabledChainIds: routeRequiresSequentialSigning(options.route?.operations)
+      ? [...validateChainIds, "injective-1"]
+      : validateChainIds,
     getCosmosPriorityFeeDenom: options.getCosmosPriorityFeeDenom,
     options,
     routeId,
@@ -103,7 +104,7 @@ export const executeTransactions = async (
   };
 
   // variable to store signed transactions
-  let signedTxs: {
+  const signedTxs: {
     index: number;
     chainId: string;
     tx: string;
@@ -122,14 +123,14 @@ export const executeTransactions = async (
         const isAllowedToBatchSignTxsUpfront = await (async () => {
           try {
             const currentUserAddress = options.userAddresses.find(
-              (x) => x.chainId === tx.cosmosTx?.chainId
+              (x) => x.chainId === tx.cosmosTx?.chainId,
             )?.address;
             if (!currentUserAddress) {
               return false;
             }
             const { accountNumber } = await getAccountNumberAndSequence(
               currentUserAddress,
-              tx.cosmosTx?.chainId
+              tx.cosmosTx?.chainId,
             );
             if (accountNumber) {
               return true;
@@ -166,7 +167,7 @@ export const executeTransactions = async (
           routeId,
         });
         if (!signedTx) {
-          throw new Error(`executeRoute error: signedTx is undefined`);
+          throw new Error("executeRoute error: signedTx is undefined");
         }
         signedTxs.push({
           index: i,
@@ -211,12 +212,7 @@ export const executeTransactions = async (
         });
       } else if ("evmTx" in tx) {
         await validateEnabledChainIds(tx.evmTx?.chainId ?? "");
-        const txResponse = await executeEvmTransaction(
-          tx,
-          options,
-          index,
-          routeId
-        );
+        const txResponse = await executeEvmTransaction(tx, options, index, routeId);
         txResult = {
           chainId: tx?.evmTx?.chainId ?? "",
           txHash: txResponse.transactionHash,
@@ -250,7 +246,7 @@ const COSMOS_GAS_AMOUNT = {
 
 const getDefaultFallbackGasAmount = async (
   chainId: string,
-  chainType: ChainType
+  chainType: ChainType,
 ): Promise<number | undefined> => {
   if (chainType === ChainType.Evm) {
     return EVM_GAS_AMOUNT;
@@ -259,12 +255,10 @@ const getDefaultFallbackGasAmount = async (
 
   const venuesResult = await venues();
   const isSwapChain =
-    venuesResult?.some(
-      (venue: { chainId?: string }) => venue.chainId === chainId
-    ) ?? false;
+    venuesResult?.some((venue: { chainId?: string }) => venue.chainId === chainId) ?? false;
 
   const defaultGasAmount = Math.ceil(
-    isSwapChain ? COSMOS_GAS_AMOUNT.SWAP : COSMOS_GAS_AMOUNT.DEFAULT
+    isSwapChain ? COSMOS_GAS_AMOUNT.SWAP : COSMOS_GAS_AMOUNT.DEFAULT,
   );
 
   // Special case for carbon-1

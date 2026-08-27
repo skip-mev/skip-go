@@ -72,15 +72,11 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     });
   }
 
-  // CCTP V2 migration routes must sign one tx at a time, in execution order -
-  // see routeRequiresSequentialSigning for why batch/upfront signing is unsafe here.
-  const batchSignTxs = routeRequiresSequentialSigning(route?.operations)
-    ? false
-    : options.batchSignTxs;
-
   const { transactionDetails, executeTransaction } = await executeTransactions({
     ...options,
-    batchSignTxs,
+    // TODO: temporary - remove once CCTP v1->v2 migration is done. These routes
+    // must sign one tx at a time, in execution order (see routeRequiresSequentialSigning).
+    batchSignTxs: routeRequiresSequentialSigning(route?.operations) ? false : options.batchSignTxs,
     routeId,
     txs: response?.txs,
   });
