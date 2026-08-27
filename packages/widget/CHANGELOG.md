@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.17.5
+
+### Patch Changes
+
+- aeb8ac5: Support CCTP relayed flow
+- Updated dependencies [aeb8ac5]
+  - @skip-go/client@1.6.4
+
 ## 3.17.4
 
 ### Patch Changes
