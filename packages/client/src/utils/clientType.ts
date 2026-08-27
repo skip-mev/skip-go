@@ -229,12 +229,8 @@ export function getClientOperations(operations?: Operation[]): ClientOperation[]
 }
 
 /**
- * Routes that migrate from CCTP v1 to CCTP v2 (i.e. use both bridges in the
- * same route) must be broadcast strictly in order: the batch/upfront signing
- * mode (see `batchSignTxs` in `executeTransactions`) pre-signs cosmos/svm txs
- * before earlier evm legs have even executed, which can race the migration.
- * Such routes are therefore always forced to sign sequentially, regardless of
- * what the caller passed for `batchSignTxs`.
+ * TODO: temporary - remove once CCTP v1->v2 migration is done. These routes
+ * land on Injective before the final IBC hop; skip its gas preflight.
  */
 export function routeRequiresSequentialSigning(operations?: Operation[]): boolean {
   const bridgeIds = new Set(getClientOperations(operations).map((operation) => operation.bridgeId));
