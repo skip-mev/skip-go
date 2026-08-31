@@ -56,19 +56,6 @@ const DevMode = () => {
         "NTRN",
         "INJ",
       ],
-      assetAnnotations: {
-        "USDC.n": {
-          variant: "info",
-          swapInput: {
-            label: "Migration required",
-          },
-          selector: {
-            label: "Convert to USDC",
-            description: "Convert to USDC before support ends",
-            pinToTop: true,
-          },
-        },
-      },
       filterOut: {
         destination: {
           "pacific-1": [
