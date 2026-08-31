@@ -30,6 +30,7 @@ const widgetPropTypes: Required<PropDescriptors> = {
   disableShadowDom: "any",
   ibcEurekaHighlightedAssets: "any",
   assetSymbolsSortedToTop: "any",
+  assetAnnotations: "any",
   hideAssetsUnlessWalletTypeConnected: "any",
   skipExplorerUrl: "any",
   apiUrl: "any",

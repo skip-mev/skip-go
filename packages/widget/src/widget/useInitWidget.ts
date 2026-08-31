@@ -27,6 +27,7 @@ import { initAmplitude } from "./initAmplitude";
 import { disableShadowDomAtom } from "./ShadowDomAndProviders";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
 import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
+import { assetAnnotationsAtom } from "@/state/assetAnnotations";
 import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
 import { skipExplorerUrlAtom } from "@/state/skipExplorerUrl";
 import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
@@ -56,6 +57,7 @@ export const useInitWidget = (props: WidgetProps = {}) => {
   const setDisableShadowDom = useSetAtom(disableShadowDomAtom);
   const setIbcEurekaHighlightedAssets = useSetAtom(ibcEurekaHighlightedAssetsAtom);
   const setAssetSymbolsSortedToTop = useSetAtom(assetSymbolsSortedToTopAtom);
+  const setAssetAnnotations = useSetAtom(assetAnnotationsAtom);
   const setHideAssetsUnlessWalletTypeConnected = useSetAtom(
     hideAssetsUnlessWalletTypeConnectedAtom,
   );
@@ -171,6 +173,10 @@ export const useInitWidget = (props: WidgetProps = {}) => {
       setAssetSymbolsSortedToTop(props.assetSymbolsSortedToTop);
     }
 
+    if (props.assetAnnotations) {
+      setAssetAnnotations(props.assetAnnotations);
+    }
+
     if (props.hideAssetsUnlessWalletTypeConnected) {
       setHideAssetsUnlessWalletTypeConnected(props.hideAssetsUnlessWalletTypeConnected);
     }
@@ -221,6 +227,8 @@ export const useInitWidget = (props: WidgetProps = {}) => {
     setIbcEurekaHighlightedAssets,
     props.assetSymbolsSortedToTop,
     setAssetSymbolsSortedToTop,
+    props.assetAnnotations,
+    setAssetAnnotations,
     props.skipExplorerUrl,
     setSkipExplorerUrl,
     props.filterOut,
