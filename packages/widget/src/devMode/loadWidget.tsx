@@ -42,7 +42,9 @@ const DevMode = () => {
       disableShadowDom,
       onlyTestnet: testnet,
       apiUrl:
-        apiUrl === "prod" ? "https://go.skip.build/api/skip" : "https://dev.go.skip.build/api/skip",
+        apiUrl === "prod"
+          ? "https://go.skip.build/api/skip"
+          : "https://dev.go.skip.build/api/skip",
       assetSymbolsSortedToTop: [
         "LBTC",
         "ATOM",
@@ -54,9 +56,24 @@ const DevMode = () => {
         "NTRN",
         "INJ",
       ],
+      assetAnnotations: {
+        "USDC.n": {
+          variant: "info",
+          swapInput: {
+            label: "Migration required",
+          },
+          selector: {
+            label: "Convert to USDC",
+            description: "Convert to USDC before support ends",
+            pinToTop: true,
+          },
+        },
+      },
       filterOut: {
         destination: {
-          "pacific-1": ["ibc/6C00E4AA0CC7618370F81F7378638AE6C48EFF8C9203CE1C2357012B440EBDB7"],
+          "pacific-1": [
+            "ibc/6C00E4AA0CC7618370F81F7378638AE6C48EFF8C9203CE1C2357012B440EBDB7",
+          ],
           "1329": ["0xB75D0B03c06A926e488e2659DF1A861F860bD3d1"],
           "1": ["0xbf45a5029d081333407cc52a84be5ed40e181c46"],
         },
@@ -108,9 +125,14 @@ const DevMode = () => {
     <Column align="flex-end">
       <Column
         gap={5}
-        style={{ width: 200, display: process.env.VISUAL_TEST === "true" ? "none" : "flex" }}
+        style={{
+          width: 200,
+          display: process.env.VISUAL_TEST === "true" ? "none" : "flex",
+        }}
       >
-        <button onClick={() => toggleTheme()}>Toggle theme (current theme: {theme})</button>
+        <button onClick={() => toggleTheme()}>
+          Toggle theme (current theme: {theme})
+        </button>
         <button onClick={() => setDisableShadowDom((prev) => !prev)}>
           shadow dom:{(!disableShadowDom).toString()}
         </button>
@@ -120,20 +142,34 @@ const DevMode = () => {
         </button>
         <button
           onClick={() =>
-            setAsset({ type: "source", chainId: "osmosis-1", denom: "uosmo", amount: 1 })
+            setAsset({
+              type: "source",
+              chainId: "osmosis-1",
+              denom: "uosmo",
+              amount: 1,
+            })
           }
         >
           set source asset to OSMO on Osmosis
         </button>
         <button
           onClick={() =>
-            setAsset({ type: "destination", chainId: "interwoven-1", denom: "uinit", amount: 1 })
+            setAsset({
+              type: "destination",
+              chainId: "interwoven-1",
+              denom: "uinit",
+              amount: 1,
+            })
           }
         >
           set destination asset to INIT on Initia
         </button>
-        <button onClick={() => setTestnet(!testnet)}>{testnet ? "testnet" : "mainnet"}</button>
-        <button onClick={() => setApiUrl((v) => (v === "prod" ? "dev" : "prod"))}>
+        <button onClick={() => setTestnet(!testnet)}>
+          {testnet ? "testnet" : "mainnet"}
+        </button>
+        <button
+          onClick={() => setApiUrl((v) => (v === "prod" ? "dev" : "prod"))}
+        >
           {apiUrl === "prod" ? "prod" : "dev"}
         </button>
         <button onClick={() => setRenderWebComponent((v) => !v)}>

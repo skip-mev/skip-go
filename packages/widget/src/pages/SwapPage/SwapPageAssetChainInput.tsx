@@ -21,6 +21,11 @@ import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelect
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { transition } from "@/utils/transitions";
 import { convertToPxValue } from "@/utils/style";
+import { useAtomValue } from "jotai";
+import { assetAnnotationsAtom } from "@/state/assetAnnotations";
+import { AssetAnnotationBadge } from "@/components/AssetAnnotationBadge";
+import { AssetAnnotationIcon } from "@/components/AssetAnnotationIcon";
+import { getAnnotationColors } from "@/utils/assetAnnotationColors";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -52,10 +57,12 @@ export const SwapPageAssetChainInput = ({
   feeWarning,
 }: AssetChainInputProps) => {
   const theme = useTheme();
-  const [_showPriceChangePercentage, setShowPriceChangePercentage] = useState(false);
+  const [_showPriceChangePercentage, setShowPriceChangePercentage] =
+    useState(false);
   const isMobileScreenSize = useIsMobileScreenSize();
 
-  const showPriceChangePercentage = _showPriceChangePercentage || badPriceWarning;
+  const showPriceChangePercentage =
+    _showPriceChangePercentage || badPriceWarning;
   const assetDetails = useGetAssetDetails({
     assetDenom: selectedAsset?.denom,
     amount: value,
@@ -66,6 +73,16 @@ export const SwapPageAssetChainInput = ({
   const groupedAsset = groupedAssetsByRecommendedSymbol?.find(
     (group) => group.id === assetDetails.asset?.recommendedSymbol,
   );
+
+  const assetAnnotations = useAtomValue(assetAnnotationsAtom);
+  const annotation = assetDetails.asset?.recommendedSymbol
+    ? assetAnnotations?.[assetDetails.asset.recommendedSymbol]
+    : undefined;
+  const swapInputAnnotation = annotation?.swapInput;
+  const annotationAccent = getAnnotationColors(
+    theme,
+    annotation?.variant,
+  ).accent;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!onChangeValue) return;
@@ -90,7 +107,9 @@ export const SwapPageAssetChainInput = ({
 
     const formattedValue = formatNumberWithoutCommas(latest);
 
-    onChangeValue?.(limitDecimalsDisplayed(formattedValue, assetDetails?.decimals));
+    onChangeValue?.(
+      limitDecimalsDisplayed(formattedValue, assetDetails?.decimals),
+    );
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -100,14 +119,19 @@ export const SwapPageAssetChainInput = ({
 
     switch (event.key) {
       case "Escape":
-        if (event.currentTarget.selectionStart === event.currentTarget.selectionEnd) {
+        if (
+          event.currentTarget.selectionStart ===
+          event.currentTarget.selectionEnd
+        ) {
           event.currentTarget.select();
         }
         return;
 
       case "ArrowUp":
         event.preventDefault();
-        value = new BigNumber(formatNumberWithoutCommas(event.currentTarget.value) || "0");
+        value = new BigNumber(
+          formatNumberWithoutCommas(event.currentTarget.value) || "0",
+        );
 
         if (event.shiftKey) {
           value = value.plus(10);
@@ -126,7 +150,9 @@ export const SwapPageAssetChainInput = ({
 
       case "ArrowDown":
         event.preventDefault();
-        value = new BigNumber(formatNumberWithoutCommas(event.currentTarget.value) || "0");
+        value = new BigNumber(
+          formatNumberWithoutCommas(event.currentTarget.value) || "0",
+        );
 
         if (event.shiftKey) {
           value = value.minus(10);
@@ -156,9 +182,16 @@ export const SwapPageAssetChainInput = ({
       return theme.success.text;
     }
     return theme.error.text;
-  }, [priceChangePercentage, theme.error.text, theme.primary.text.normal, theme.success.text]);
+  }, [
+    priceChangePercentage,
+    theme.error.text,
+    theme.primary.text.normal,
+    theme.success.text,
+  ]);
 
-  const feeColor = feeWarning ? theme.error.text : theme.primary.text.lowContrast;
+  const feeColor = feeWarning
+    ? theme.error.text
+    : theme.primary.text.lowContrast;
 
   const displayedValue = formatNumberWithCommas(value || "");
   const isLargeNumber = shouldReduceFontSize(value);
@@ -189,8 +222,15 @@ export const SwapPageAssetChainInput = ({
         >
           {assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
-              <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
+              <GroupedAssetImage
+                height={23}
+                width={23}
+                groupedAsset={groupedAsset}
+              />
               <Text useWindowsTextHack>{assetDetails.symbol}</Text>
+              {swapInputAnnotation && (
+                <AssetAnnotationIcon size={16} color={annotationAccent} />
+              )}
               {isMobileScreenSize && (
                 <ChevronIcon
                   width="13px"
@@ -244,7 +284,9 @@ export const SwapPageAssetChainInput = ({
               />
 
               {showPriceChangePercentage && (
-                <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
+                <SmallText color={priceChangeColor}>
+                  {priceChangePercentage}%
+                </SmallText>
               )}
             </Row>
           ) : (
@@ -252,20 +294,32 @@ export const SwapPageAssetChainInput = ({
           )}
           {usdValue && feeLabel && (
             <Row style={{ color: feeColor }} align="center" gap={4}>
-              {typeof feeLabel === "string" ? <SmallText>{feeLabel}</SmallText> : feeLabel}
+              {typeof feeLabel === "string" ? (
+                <SmallText>{feeLabel}</SmallText>
+              ) : (
+                feeLabel
+              )}
             </Row>
           )}
         </Row>
         {assetDetails?.chainName ? (
-          <StyledOnChainGhostButton
-            disabled={disabled}
-            onClick={handleChangeChain}
-            align="center"
-            secondary
-            gap={4}
-          >
-            <SmallText>on {assetDetails?.chainName}</SmallText>
-          </StyledOnChainGhostButton>
+          <Row align="center" gap={6}>
+            {swapInputAnnotation && (
+              <AssetAnnotationBadge
+                label={swapInputAnnotation.label}
+                variant={annotation?.variant}
+              />
+            )}
+            <StyledOnChainGhostButton
+              disabled={disabled}
+              onClick={handleChangeChain}
+              align="center"
+              secondary
+              gap={4}
+            >
+              <SmallText>on {assetDetails?.chainName}</SmallText>
+            </StyledOnChainGhostButton>
+          </Row>
         ) : (
           <Spacer />
         )}
@@ -351,7 +405,8 @@ export const StyledAssetLabel = styled(Row).attrs({
   padding: 8,
 })`
   height: 40px;
-  border-radius: ${(props) => convertToPxValue(props.theme.borderRadius?.selectionButton)};
+  border-radius: ${(props) =>
+    convertToPxValue(props.theme.borderRadius?.selectionButton)};
   white-space: nowrap;
   position: relative;
 
@@ -367,7 +422,8 @@ export const StyledAssetLabel = styled(Row).attrs({
     height: 100%;
     background-color: rgba(255, 255, 255, 0);
     pointer-events: none;
-    border-radius: ${(props) => convertToPxValue(props.theme.borderRadius?.selectionButton)};
+    border-radius: ${(props) =>
+      convertToPxValue(props.theme.borderRadius?.selectionButton)};
     ${transition(["background-color"], "fast", "easeOut")};
     z-index: 0;
   }

@@ -10,6 +10,7 @@ export type ModalRowItemProps = {
   onClick?: () => void;
   style?: React.CSSProperties;
   eureka?: boolean;
+  highlightColor?: string;
 };
 
 export const ModalRowItem = ({
@@ -18,6 +19,7 @@ export const ModalRowItem = ({
   onClick,
   style,
   eureka,
+  highlightColor,
 }: ModalRowItemProps) => {
   return (
     <StyledModalRowItemContainer
@@ -28,18 +30,32 @@ export const ModalRowItem = ({
       gap={16}
       style={style}
       eureka={eureka}
+      highlightColor={highlightColor}
     >
-      {typeof leftContent === "string" ? <Text fontSize={20}>{leftContent}</Text> : leftContent}
-      {typeof rightContent === "string" ? <Text fontSize={20}>{rightContent}</Text> : rightContent}
+      {typeof leftContent === "string" ? (
+        <Text fontSize={20}>{leftContent}</Text>
+      ) : (
+        leftContent
+      )}
+      {typeof rightContent === "string" ? (
+        <Text fontSize={20}>{rightContent}</Text>
+      ) : (
+        rightContent
+      )}
     </StyledModalRowItemContainer>
   );
 };
 
-const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void; eureka?: boolean }>`
+const StyledModalRowItemContainer = styled(Row)<{
+  onClick?: () => void;
+  eureka?: boolean;
+  highlightColor?: string;
+}>`
   ${removeButtonStyles};
   position: relative;
   height: 60px;
-  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.rowItem)};
+  border-radius: ${({ theme }) =>
+    convertToPxValue(theme.borderRadius?.rowItem)};
   width: 100%;
   padding: 12px 15px;
   margin-top: 5px;
@@ -93,4 +109,10 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void; eureka?:
         `
       : "";
   }}
+
+  ${({ highlightColor }) =>
+    highlightColor &&
+    css`
+      box-shadow: inset 0 0 0 1.5px ${highlightColor};
+    `}
 `;
