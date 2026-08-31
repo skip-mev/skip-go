@@ -135,10 +135,7 @@ export const AssetAndChainSelectorModal = createModal(
       groupedAssetsByRecommendedSymbol,
     ]);
 
-    const filteredAssets = useFilteredAssets({
-      groupedAssetsByRecommendedSymbol,
-      searchQuery,
-    });
+    const filteredAssets = useFilteredAssets({ groupedAssetsByRecommendedSymbol, searchQuery });
     const filteredChains = useFilteredChains({
       selectedGroup,
       searchQuery,

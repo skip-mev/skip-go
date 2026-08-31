@@ -38,11 +38,7 @@ export const ModalRowItem = ({
   );
 };
 
-const StyledModalRowItemContainer = styled(Row)<{
-  onClick?: () => void;
-  eureka?: boolean;
-  highlightColor?: string;
-}>`
+const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void; eureka?: boolean; highlightColor?: string }>`
   ${removeButtonStyles};
   position: relative;
   height: 60px;

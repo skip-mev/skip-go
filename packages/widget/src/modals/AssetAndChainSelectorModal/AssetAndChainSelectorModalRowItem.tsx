@@ -4,7 +4,6 @@ import { SmallText, Text } from "@/components/Typography";
 import { ClientAsset, skipChainsAtom } from "@/state/skipClient";
 import { CircleSkeletonElement, SkeletonElement } from "@/components/Skeleton";
 import { styled, useTheme } from "styled-components";
-import { AssetAnnotationIcon } from "@/components/AssetAnnotationIcon";
 import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { formatDisplayAmount } from "@/utils/number";
@@ -14,6 +13,7 @@ import { useFilteredChains } from "./useFilteredChains";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
+import { AssetAnnotationIcon } from "@/components/AssetAnnotationIcon";
 import type { AssetAnnotation } from "@/state/assetAnnotations";
 import { AssetAnnotationBadge } from "@/components/AssetAnnotationBadge";
 import { getAnnotationColors } from "@/utils/assetAnnotationColors";
@@ -64,15 +64,7 @@ export const AssetAndChainSelectorModalRowItem = ({
       <ModalRowItem
         key={`${index}${item.id}`}
         onClick={() => onSelect(item)}
-        leftContent={
-          <GroupedAssetRow
-            item={item}
-            context={context}
-            eureka={eureka}
-            annotation={annotation}
-            accentColor={accentColor}
-          />
-        }
+        leftContent={<GroupedAssetRow item={item} context={context} eureka={eureka} annotation={annotation} accentColor={accentColor} />}
         eureka={eureka}
         highlightColor={accentColor}
         rightContent={
@@ -101,14 +93,7 @@ export const AssetAndChainSelectorModalRowItem = ({
       eureka={eureka}
       highlightColor={accentColor}
       onClick={() => onSelect(item.asset)}
-      leftContent={
-        <ChainWithAssetRow
-          item={item}
-          eureka={eureka}
-          annotation={annotation}
-          accentColor={accentColor}
-        />
-      }
+      leftContent={<ChainWithAssetRow item={item} eureka={eureka} annotation={annotation} accentColor={accentColor} />}
       rightContent={
         (selectorAnnotation || (balance && Number(balance.amount) > 0)) && (
           <Row align="center" gap={12}>
@@ -203,14 +188,7 @@ type RowLayoutProps = {
   accentColor?: string;
 };
 
-const RowLayout = ({
-  image,
-  mainText,
-  subText,
-  eureka,
-  annotation,
-  accentColor,
-}: RowLayoutProps) => {
+const RowLayout = ({ image, mainText, subText, eureka, annotation, accentColor }: RowLayoutProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
 
   return (

@@ -272,10 +272,7 @@ export const SwapPageAssetChainInput = ({
         {assetDetails?.chainName ? (
           <Row align="center" gap={6}>
             {swapInputAnnotation && (
-              <AssetAnnotationBadge
-                label={swapInputAnnotation.label}
-                variant={annotation?.variant}
-              />
+              <AssetAnnotationBadge label={swapInputAnnotation.label} variant={annotation?.variant} />
             )}
             <StyledOnChainGhostButton
               disabled={disabled}
