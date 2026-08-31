@@ -1,11 +1,7 @@
 import { createModal, ModalProps } from "@/components/Modal";
 import { Column } from "@/components/Layout";
 import { useAtomValue } from "jotai";
-import {
-  ClientAsset,
-  skipAssetsAtom,
-  skipChainsAtom,
-} from "@/state/skipClient";
+import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useListHeight, VirtualList } from "@/components/VirtualList";
 import {
@@ -72,20 +68,16 @@ export const AssetAndChainSelectorModal = createModal(
       isFetching: isFetchingAssets,
       isPending: isPendingAssets,
     } = useAtomValue(skipAssetsAtom);
-    const ibcEurekaHighlightedAssets = useAtomValue(
-      ibcEurekaHighlightedAssetsAtom,
-    );
+    const ibcEurekaHighlightedAssets = useAtomValue(ibcEurekaHighlightedAssetsAtom);
     const assetAnnotations = useAtomValue(assetAnnotationsAtom);
     const { isFetching: isFetchingChains, isPending: isPendingChains } =
       useAtomValue(skipChainsAtom);
     const isLoading =
-      (isFetchingAssets && isPendingAssets) ||
-      (isFetchingChains && isPendingChains);
+      (isFetchingAssets && isPendingAssets) || (isFetchingChains && isPendingChains);
 
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
-    const [groupedAssetSelected, setGroupedAssetSelected] =
-      useState<GroupedAsset | null>(null);
+    const [groupedAssetSelected, setGroupedAssetSelected] = useState<GroupedAsset | null>(null);
 
     const listHeight = useListHeight(ITEM_HEIGHT);
 
@@ -123,9 +115,7 @@ export const AssetAndChainSelectorModal = createModal(
       [_onSelect],
     );
 
-    const groupedAssetsByRecommendedSymbol = useGroupedAssetByRecommendedSymbol(
-      { context },
-    );
+    const groupedAssetsByRecommendedSymbol = useGroupedAssetByRecommendedSymbol({ context });
 
     const selectedGroup = useMemo(() => {
       if (onlySelectChain)
@@ -180,30 +170,20 @@ export const AssetAndChainSelectorModal = createModal(
         const highlightedSymbol =
           ibcEurekaHighlightedAssets && Object.keys(ibcEurekaHighlightedAssets);
 
-        const groupedAssetContainsEurekaAsset = highlightedSymbol?.includes(
-          groupedAsset.id,
-        );
+        const groupedAssetContainsEurekaAsset = highlightedSymbol?.includes(groupedAsset.id);
 
-        const chainWithAssetContainsEurekaAsset = chainWithAsset?.asset
-          ?.recommendedSymbol
+        const chainWithAssetContainsEurekaAsset = chainWithAsset?.asset?.recommendedSymbol
           ? ibcEurekaHighlightedAssets &&
-            highlightedSymbol.includes(
-              chainWithAsset.asset.recommendedSymbol,
-            ) &&
-            ibcEurekaHighlightedAssets?.[
-              chainWithAsset.asset.recommendedSymbol
-            ] === undefined
+            highlightedSymbol.includes(chainWithAsset.asset.recommendedSymbol) &&
+            ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] === undefined
             ? true
-            : ibcEurekaHighlightedAssets?.[
-                chainWithAsset.asset.recommendedSymbol
-              ] &&
-              ibcEurekaHighlightedAssets?.[
-                chainWithAsset.asset.recommendedSymbol
-              ]?.includes(chainWithAsset?.chainId)
+            : ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] &&
+              ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol]?.includes(
+                chainWithAsset?.chainId,
+              )
           : false;
 
-        const eurekaMatch =
-          groupedAssetContainsEurekaAsset || chainWithAssetContainsEurekaAsset;
+        const eurekaMatch = groupedAssetContainsEurekaAsset || chainWithAssetContainsEurekaAsset;
 
         // annotation applies to the grouped asset only (asset view), not per-chain rows
         const annotation = assetAnnotations?.[groupedAsset.id];
@@ -249,11 +229,7 @@ export const AssetAndChainSelectorModal = createModal(
       const firstAssetOrChain = listOfAssetsOrChains?.[0] ?? null;
       const asset = (firstAssetOrChain as ChainWithAsset)?.asset;
       const groupedAsset = firstAssetOrChain as GroupedAsset;
-      if (
-        event.key === "Backspace" &&
-        groupedAssetSelected !== null &&
-        searchQuery === ""
-      ) {
+      if (event.key === "Backspace" && groupedAssetSelected !== null && searchQuery === "") {
         setGroupedAssetSelected(null);
       }
       if (event.key === "Enter" && listOfAssetsOrChains?.length === 1) {
@@ -283,9 +259,7 @@ export const AssetAndChainSelectorModal = createModal(
             listItems={listOfAssetsOrChains ?? []}
             itemHeight={ITEM_HEIGHT}
             itemKey={(item) =>
-              isGroupedAsset(item)
-                ? item.id
-                : `${item.chainId}-${item.asset.denom}`
+              isGroupedAsset(item) ? item.id : `${item.chainId}-${item.asset.denom}`
             }
             renderItem={renderItem}
             empty={{

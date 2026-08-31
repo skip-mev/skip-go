@@ -9,11 +9,7 @@ import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { formatDisplayAmount } from "@/utils/number";
 import { formatUSD } from "@/utils/intl";
-import {
-  ChainWithAsset,
-  GroupedAsset,
-  SelectorContext,
-} from "./AssetAndChainSelectorModal";
+import { ChainWithAsset, GroupedAsset, SelectorContext } from "./AssetAndChainSelectorModal";
 import { useFilteredChains } from "./useFilteredChains";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
@@ -60,11 +56,7 @@ export const AssetAndChainSelectorModalRowItem = ({
     : undefined;
 
   const annotationBadge = selectorAnnotation && (
-    <AssetAnnotationBadge
-      label={selectorAnnotation.label}
-      variant={annotation.variant}
-      outlined
-    />
+    <AssetAnnotationBadge label={selectorAnnotation.label} variant={annotation.variant} outlined />
   );
 
   if (isGroupedAsset(item)) {
@@ -92,9 +84,7 @@ export const AssetAndChainSelectorModalRowItem = ({
                   <SmallText normalTextColor>
                     {formatDisplayAmount(item.formattedTotalAmount)}
                   </SmallText>
-                  {Number(item.totalUsd) > 0 && (
-                    <SmallText>{formatUSD(item.totalUsd)}</SmallText>
-                  )}
+                  {Number(item.totalUsd) > 0 && <SmallText>{formatUSD(item.totalUsd)}</SmallText>}
                 </Column>
               )}
             </Row>
@@ -153,8 +143,7 @@ const GroupedAssetRow = ({
   annotation?: AssetAnnotation;
   accentColor?: string;
 }) => {
-  const filteredChains =
-    useFilteredChains({ selectedGroup: item, context }) ?? [];
+  const filteredChains = useFilteredChains({ selectedGroup: item, context }) ?? [];
 
   const subText =
     filteredChains.length > 1 ? (
@@ -191,12 +180,7 @@ const ChainWithAssetRow = ({
     <RowLayout
       image={
         chainImage ? (
-          <StyledChainImage
-            height={35}
-            width={35}
-            src={chainImage}
-            alt={`${item.chainId} logo`}
-          />
+          <StyledChainImage height={35} width={35} src={chainImage} alt={`${item.chainId} logo`} />
         ) : (
           <CircleSkeletonElement height={35} width={35} />
         )
@@ -247,9 +231,7 @@ const RowLayout = ({
         {annotation?.selector?.description && accentColor && (
           <Row align="center" gap={4}>
             <AssetAnnotationIcon size={14} color={accentColor} />
-            <SmallText color={accentColor}>
-              {annotation.selector.description}
-            </SmallText>
+            <SmallText color={accentColor}>{annotation.selector.description}</SmallText>
           </Row>
         )}
       </Column>

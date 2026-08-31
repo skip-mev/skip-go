@@ -51,12 +51,8 @@ export const useFilteredAssets = ({
         if (exactB && !exactA) return 1;
 
         // Assets with a selector annotation opting into pinToTop float above balances
-        const pinnedA = Boolean(
-          assetAnnotations?.[assetA.id]?.selector?.pinToTop,
-        );
-        const pinnedB = Boolean(
-          assetAnnotations?.[assetB.id]?.selector?.pinToTop,
-        );
+        const pinnedA = Boolean(assetAnnotations?.[assetA.id]?.selector?.pinToTop);
+        const pinnedB = Boolean(assetAnnotations?.[assetB.id]?.selector?.pinToTop);
         if (pinnedA && !pinnedB) return -1;
         if (pinnedB && !pinnedA) return 1;
 
@@ -82,12 +78,7 @@ export const useFilteredAssets = ({
 
         return 0;
       });
-  }, [
-    assetSymbolsSortedToTop,
-    assetAnnotations,
-    groupedAssetsByRecommendedSymbol,
-    searchQuery,
-  ]);
+  }, [assetSymbolsSortedToTop, assetAnnotations, groupedAssetsByRecommendedSymbol, searchQuery]);
 
   return filteredAssets;
 };

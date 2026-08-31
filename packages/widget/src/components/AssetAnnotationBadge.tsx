@@ -12,10 +12,7 @@ export const AssetAnnotationBadge = ({
   outlined?: boolean;
 }) => {
   const theme = useTheme();
-  const { accent, filledBackground, filledText } = getAnnotationColors(
-    theme,
-    variant,
-  );
+  const { accent, filledBackground, filledText } = getAnnotationColors(theme, variant);
 
   return (
     <StyledBadge

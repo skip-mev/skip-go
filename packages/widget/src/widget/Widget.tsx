@@ -29,8 +29,7 @@ import { EVMProvider } from "@/providers/EVMProvider";
 import { CosmosProvider } from "@/providers/CosmosProvider";
 import { SolanaProvider } from "@/providers/SolanaProvider";
 
-export type WidgetRouteConfig = RouteRequest &
-  Pick<MessagesRequest, "timeoutSeconds">;
+export type WidgetRouteConfig = RouteRequest & Pick<MessagesRequest, "timeoutSeconds">;
 
 export type WidgetProps = {
   /**

@@ -32,16 +32,8 @@ export const ModalRowItem = ({
       eureka={eureka}
       highlightColor={highlightColor}
     >
-      {typeof leftContent === "string" ? (
-        <Text fontSize={20}>{leftContent}</Text>
-      ) : (
-        leftContent
-      )}
-      {typeof rightContent === "string" ? (
-        <Text fontSize={20}>{rightContent}</Text>
-      ) : (
-        rightContent
-      )}
+      {typeof leftContent === "string" ? <Text fontSize={20}>{leftContent}</Text> : leftContent}
+      {typeof rightContent === "string" ? <Text fontSize={20}>{rightContent}</Text> : rightContent}
     </StyledModalRowItemContainer>
   );
 };
@@ -54,8 +46,7 @@ const StyledModalRowItemContainer = styled(Row)<{
   ${removeButtonStyles};
   position: relative;
   height: 60px;
-  border-radius: ${({ theme }) =>
-    convertToPxValue(theme.borderRadius?.rowItem)};
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.rowItem)};
   width: 100%;
   padding: 12px 15px;
   margin-top: 5px;
