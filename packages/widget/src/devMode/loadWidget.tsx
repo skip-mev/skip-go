@@ -54,14 +54,6 @@ const DevMode = () => {
         "NTRN",
         "INJ",
       ],
-      assetAnnotations: {
-        // 1. info — swapPage 라벨+느낌표, selector 설명줄+고정
-        "USDC.n": {
-          variant: "info",
-          swapPage: { label: "Migration required" },
-          selector: { description: "Convert to USDC before support ends", pinToTop: true },
-        },
-      },
       filterOut: {
         destination: {
           "pacific-1": ["ibc/6C00E4AA0CC7618370F81F7378638AE6C48EFF8C9203CE1C2357012B440EBDB7"],
