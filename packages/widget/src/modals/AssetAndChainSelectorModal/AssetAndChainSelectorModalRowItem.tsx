@@ -175,32 +175,52 @@ const RowLayout = ({ image, mainText, subText, annotation, accentColor }: RowLay
   const description = annotation?.selector?.description;
 
   return (
-    <Row align="center" gap={8}>
+    <StyledRowLayout align="center" gap={8}>
       {image}
-      <Column gap={2}>
+      <StyledInfoColumn gap={2}>
         <Row
           align="baseline"
-          flexDirection={isMobileScreenSize ? "column" : "row"}
-          gap={isMobileScreenSize ? undefined : 8}
+          flexDirection={isMobileScreenSize && !description ? "column" : "row"}
+          gap={isMobileScreenSize && !description ? undefined : 8}
         >
           <Text useWindowsTextHack>{mainText}</Text>
           {subText}
         </Row>
         {description && accentColor && (
-          <Row align="center" gap={4}>
+          <StyledDescriptionRow align="center" gap={4}>
             <StyledDescriptionIcon>
               <AssetAnnotationIcon size={14} color={accentColor} />
             </StyledDescriptionIcon>
-            <SmallText color={accentColor}>{description}</SmallText>
-          </Row>
+            <StyledDescriptionText color={accentColor}>{description}</StyledDescriptionText>
+          </StyledDescriptionRow>
         )}
-      </Column>
-    </Row>
+      </StyledInfoColumn>
+    </StyledRowLayout>
   );
 };
 
+const StyledRowLayout = styled(Row)`
+  flex: 1;
+  min-width: 0;
+`;
+
+const StyledInfoColumn = styled(Column)`
+  min-width: 0;
+`;
+
+const StyledDescriptionRow = styled(Row)`
+  min-width: 0;
+`;
+
+const StyledDescriptionText = styled(SmallText)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
 const StyledDescriptionIcon = styled.span`
   display: inline-flex;
+  flex-shrink: 0;
   margin-top: -2px;
 `;
 
