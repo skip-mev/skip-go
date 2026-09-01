@@ -1,6 +1,6 @@
 import { useId } from "react";
 
-// Circular badge filled with `color`, with the exclamation mark knocked out (transparent).
+// Circle filled with `color`, with the exclamation mark knocked out (transparent).
 export const AssetAnnotationIcon = ({ size = 16, color }: { size?: number; color: string }) => {
   const maskId = useId();
 

@@ -3,16 +3,18 @@ import { atom } from "jotai";
 export type AssetAnnotationVariant = "info" | "warning" | "error";
 
 export type AssetAnnotation = {
+  // color of the badge / icon / border; defaults to "info"
   variant?: AssetAnnotationVariant;
-  // Rendered on the swap page asset rows (source and destination) for the selected asset.
+  // shown on the swap page asset rows (source and destination) for the selected asset.
+  // when `label` is set, a badge and a warning icon (right of the name) are rendered.
   swapPage?: {
     label: string;
   };
-  // Rendered on the asset's row in the token selector.
+  // shown on the asset's row in the token selector.
   selector?: {
-    label: string;
+    // detail line under the asset name, rendered with a warning icon on its left
     description?: string;
-    // Pin this asset to the very top of the token selector, above balances.
+    // pin this asset to the very top of the token selector, above balances
     pinToTop?: boolean;
   };
 };

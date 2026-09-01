@@ -272,7 +272,10 @@ export const SwapPageAssetChainInput = ({
         {assetDetails?.chainName ? (
           <Row align="center" gap={6}>
             {swapPageAnnotation && (
-              <AssetAnnotationBadge label={swapPageAnnotation.label} variant={annotation?.variant} />
+              <AssetAnnotationBadge
+                label={swapPageAnnotation.label}
+                variant={annotation?.variant}
+              />
             )}
             <StyledOnChainGhostButton
               disabled={disabled}
@@ -293,8 +296,9 @@ export const SwapPageAssetChainInput = ({
 };
 
 const StyledOnChainGhostButton = styled(GhostButton)`
+  padding: 4px 8px;
   @media (max-width: 767px) {
-    padding: 0 5px;
+    padding: 2px 6px;
     height: 25px;
   }
   ${({ disabled }) => disabled && "cursor: not-allowed"};
@@ -392,6 +396,11 @@ export const StyledAssetLabel = styled(Row).attrs({
 
   img,
   p {
+    z-index: 1;
+  }
+
+  svg {
+    position: relative;
     z-index: 1;
   }
 `;

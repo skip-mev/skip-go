@@ -15,7 +15,6 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
 import { AssetAnnotationIcon } from "@/components/AssetAnnotationIcon";
 import type { AssetAnnotation } from "@/state/assetAnnotations";
-import { AssetAnnotationBadge } from "@/components/AssetAnnotationBadge";
 import { getAnnotationColors } from "@/utils/assetAnnotationColors";
 
 export const isGroupedAsset = (
@@ -54,32 +53,33 @@ export const AssetAndChainSelectorModalRowItem = ({
   const accentColor = selectorAnnotation
     ? getAnnotationColors(theme, annotation.variant).accent
     : undefined;
-
-  const annotationBadge = selectorAnnotation && (
-    <AssetAnnotationBadge label={selectorAnnotation.label} variant={annotation.variant} outlined />
-  );
+  // softened border so the highlight doesn't look harsh
+  const borderColor = accentColor ? `${accentColor}80` : undefined;
 
   if (isGroupedAsset(item)) {
     return (
       <ModalRowItem
         key={`${index}${item.id}`}
         onClick={() => onSelect(item)}
-        leftContent={<GroupedAssetRow item={item} context={context} eureka={eureka} annotation={annotation} accentColor={accentColor} />}
+        leftContent={
+          <GroupedAssetRow
+            item={item}
+            context={context}
+            eureka={eureka}
+            annotation={annotation}
+            accentColor={accentColor}
+          />
+        }
         eureka={eureka}
-        highlightColor={accentColor}
+        highlightColor={borderColor}
         rightContent={
-          (selectorAnnotation || Number(item.totalAmount) > 0) && (
-            <Row align="center" gap={12}>
-              {annotationBadge}
-              {Number(item.totalAmount) > 0 && (
-                <Column align="flex-end">
-                  <SmallText normalTextColor>
-                    {formatDisplayAmount(item.formattedTotalAmount)}
-                  </SmallText>
-                  {Number(item.totalUsd) > 0 && <SmallText>{formatUSD(item.totalUsd)}</SmallText>}
-                </Column>
-              )}
-            </Row>
+          Number(item.totalAmount) > 0 && (
+            <Column align="flex-end">
+              <SmallText normalTextColor>
+                {formatDisplayAmount(item.formattedTotalAmount)}
+              </SmallText>
+              {Number(item.totalUsd) > 0 && <SmallText>{formatUSD(item.totalUsd)}</SmallText>}
+            </Column>
           )
         }
       />
@@ -91,24 +91,25 @@ export const AssetAndChainSelectorModalRowItem = ({
     <ModalRowItem
       key={item.chainId}
       eureka={eureka}
-      highlightColor={accentColor}
+      highlightColor={borderColor}
       onClick={() => onSelect(item.asset)}
-      leftContent={<ChainWithAssetRow item={item} eureka={eureka} annotation={annotation} accentColor={accentColor} />}
+      leftContent={
+        <ChainWithAssetRow
+          item={item}
+          eureka={eureka}
+          annotation={annotation}
+          accentColor={accentColor}
+        />
+      }
       rightContent={
-        (selectorAnnotation || (balance && Number(balance.amount) > 0)) && (
-          <Row align="center" gap={12}>
-            {annotationBadge}
-            {balance && Number(balance.amount) > 0 && (
-              <Column align="flex-end">
-                <SmallText normalTextColor>
-                  {formatDisplayAmount(balance.formattedAmount)}
-                </SmallText>
-                {balance.valueUsd && Number(balance.valueUsd) > 0 && (
-                  <SmallText>{formatUSD(balance.valueUsd)}</SmallText>
-                )}
-              </Column>
+        balance &&
+        Number(balance.amount) > 0 && (
+          <Column align="flex-end">
+            <SmallText normalTextColor>{formatDisplayAmount(balance.formattedAmount)}</SmallText>
+            {balance.valueUsd && Number(balance.valueUsd) > 0 && (
+              <SmallText>{formatUSD(balance.valueUsd)}</SmallText>
             )}
-          </Row>
+          </Column>
         )
       }
     />
@@ -188,8 +189,16 @@ type RowLayoutProps = {
   accentColor?: string;
 };
 
-const RowLayout = ({ image, mainText, subText, eureka, annotation, accentColor }: RowLayoutProps) => {
+const RowLayout = ({
+  image,
+  mainText,
+  subText,
+  eureka,
+  annotation,
+  accentColor,
+}: RowLayoutProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
+  const description = annotation?.selector?.description;
 
   return (
     <Row align="center" gap={8}>
@@ -206,16 +215,23 @@ const RowLayout = ({ image, mainText, subText, eureka, annotation, accentColor }
             {eureka && <SmallText normalTextColor> IBC Eureka </SmallText>}
           </Row>
         </Row>
-        {annotation?.selector?.description && accentColor && (
+        {description && accentColor && (
           <Row align="center" gap={4}>
-            <AssetAnnotationIcon size={14} color={accentColor} />
-            <SmallText color={accentColor}>{annotation.selector.description}</SmallText>
+            <StyledDescriptionIcon>
+              <AssetAnnotationIcon size={14} color={accentColor} />
+            </StyledDescriptionIcon>
+            <SmallText color={accentColor}>{description}</SmallText>
           </Row>
         )}
       </Column>
     </Row>
   );
 };
+
+const StyledDescriptionIcon = styled.span`
+  display: inline-flex;
+  margin-top: -2px;
+`;
 
 const StyledChainImage = styled.img`
   border-radius: 50%;
