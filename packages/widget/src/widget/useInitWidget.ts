@@ -25,7 +25,6 @@ import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 import { batchSignTxsAtom, simulateTxAtom } from "@/state/swapExecutionPage";
 import { initAmplitude } from "./initAmplitude";
 import { disableShadowDomAtom } from "./ShadowDomAndProviders";
-import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
 import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
 import { assetAnnotationsAtom } from "@/state/assetAnnotations";
 import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
@@ -55,7 +54,6 @@ export const useInitWidget = (props: WidgetProps = {}) => {
   const setSimulateTx = useSetAtom(simulateTxAtom);
   const setBatchSignTxs = useSetAtom(batchSignTxsAtom);
   const setDisableShadowDom = useSetAtom(disableShadowDomAtom);
-  const setIbcEurekaHighlightedAssets = useSetAtom(ibcEurekaHighlightedAssetsAtom);
   const setAssetSymbolsSortedToTop = useSetAtom(assetSymbolsSortedToTopAtom);
   const setAssetAnnotations = useSetAtom(assetAnnotationsAtom);
   const setHideAssetsUnlessWalletTypeConnected = useSetAtom(
@@ -165,10 +163,6 @@ export const useInitWidget = (props: WidgetProps = {}) => {
       setDisableShadowDom(props.disableShadowDom);
     }
 
-    if (props.ibcEurekaHighlightedAssets) {
-      setIbcEurekaHighlightedAssets(props.ibcEurekaHighlightedAssets);
-    }
-
     if (props.assetSymbolsSortedToTop) {
       setAssetSymbolsSortedToTop(props.assetSymbolsSortedToTop);
     }
@@ -223,8 +217,6 @@ export const useInitWidget = (props: WidgetProps = {}) => {
     props.onRouteUpdated,
     props.disableShadowDom,
     setDisableShadowDom,
-    props.ibcEurekaHighlightedAssets,
-    setIbcEurekaHighlightedAssets,
     props.assetSymbolsSortedToTop,
     setAssetSymbolsSortedToTop,
     props.assetAnnotations,

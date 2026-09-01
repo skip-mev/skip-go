@@ -21,7 +21,6 @@ import { createStore, Provider, useAtomValue, useSetAtom } from "jotai";
 import { settingsDrawerAtom } from "@/state/settingsDrawer";
 import { rootIdAtom } from "@/state/skipClient";
 import packageJson from "../../package.json";
-import { IbcEurekaHighlightedAssets } from "@/state/ibcEurekaHighlightedAssets";
 import type { AssetAnnotations } from "@/state/assetAnnotations";
 import { ChainFilter } from "@/state/filters";
 import { migrateOldLocalStorageValues } from "@/utils/migrateOldLocalStorageValues";
@@ -83,7 +82,6 @@ export type WidgetProps = {
    */
   simulate?: boolean;
   disableShadowDom?: boolean;
-  ibcEurekaHighlightedAssets?: IbcEurekaHighlightedAssets;
   assetSymbolsSortedToTop?: string[];
   /**
    * Render an annotation (badge / warning) on the given assets, keyed by recommended symbol.

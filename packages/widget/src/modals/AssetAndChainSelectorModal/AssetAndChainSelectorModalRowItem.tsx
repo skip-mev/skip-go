@@ -29,7 +29,6 @@ export type AssetAndChainSelectorModalRowItemProps = {
   skeleton: React.ReactElement;
   onSelect: (token: ClientAsset | GroupedAsset | null) => void;
   context: SelectorContext;
-  eureka?: boolean;
   annotation?: AssetAnnotation;
 };
 
@@ -39,7 +38,6 @@ export const AssetAndChainSelectorModalRowItem = ({
   skeleton,
   onSelect,
   context,
-  eureka,
   annotation,
 }: AssetAndChainSelectorModalRowItemProps) => {
   const { isFetching, isPending } = useAtomValue(skipChainsAtom);
@@ -65,12 +63,10 @@ export const AssetAndChainSelectorModalRowItem = ({
           <GroupedAssetRow
             item={item}
             context={context}
-            eureka={eureka}
             annotation={annotation}
             accentColor={accentColor}
           />
         }
-        eureka={eureka}
         highlightColor={borderColor}
         rightContent={
           Number(item.totalAmount) > 0 && (
@@ -90,17 +86,9 @@ export const AssetAndChainSelectorModalRowItem = ({
   return (
     <ModalRowItem
       key={item.chainId}
-      eureka={eureka}
       highlightColor={borderColor}
       onClick={() => onSelect(item.asset)}
-      leftContent={
-        <ChainWithAssetRow
-          item={item}
-          eureka={eureka}
-          annotation={annotation}
-          accentColor={accentColor}
-        />
-      }
+      leftContent={<ChainWithAssetRow item={item} annotation={annotation} accentColor={accentColor} />}
       rightContent={
         balance &&
         Number(balance.amount) > 0 && (
@@ -119,13 +107,11 @@ export const AssetAndChainSelectorModalRowItem = ({
 const GroupedAssetRow = ({
   item,
   context,
-  eureka,
   annotation,
   accentColor,
 }: {
   item: GroupedAsset;
   context: SelectorContext;
-  eureka?: boolean;
   annotation?: AssetAnnotation;
   accentColor?: string;
 }) => {
@@ -143,7 +129,6 @@ const GroupedAssetRow = ({
       image={<GroupedAssetImage height={35} width={35} groupedAsset={item} />}
       mainText={item.assets[0].recommendedSymbol}
       subText={subText}
-      eureka={eureka}
       annotation={annotation}
       accentColor={accentColor}
     />
@@ -152,12 +137,10 @@ const GroupedAssetRow = ({
 
 const ChainWithAssetRow = ({
   item,
-  eureka,
   annotation,
   accentColor,
 }: {
   item: ChainWithAsset;
-  eureka?: boolean;
   annotation?: AssetAnnotation;
   accentColor?: string;
 }) => {
@@ -173,7 +156,6 @@ const ChainWithAssetRow = ({
       }
       mainText={item.prettyName}
       subText={<SmallText>{item.chainId}</SmallText>}
-      eureka={eureka}
       annotation={annotation}
       accentColor={accentColor}
     />
@@ -184,19 +166,11 @@ type RowLayoutProps = {
   image: React.ReactNode;
   mainText?: React.ReactNode;
   subText?: React.ReactNode;
-  eureka?: boolean;
   annotation?: AssetAnnotation;
   accentColor?: string;
 };
 
-const RowLayout = ({
-  image,
-  mainText,
-  subText,
-  eureka,
-  annotation,
-  accentColor,
-}: RowLayoutProps) => {
+const RowLayout = ({ image, mainText, subText, annotation, accentColor }: RowLayoutProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
   const description = annotation?.selector?.description;
 
@@ -210,10 +184,7 @@ const RowLayout = ({
           gap={isMobileScreenSize ? undefined : 8}
         >
           <Text useWindowsTextHack>{mainText}</Text>
-          <Row align="center" gap={6}>
-            {subText}
-            {eureka && <SmallText normalTextColor> IBC Eureka </SmallText>}
-          </Row>
+          {subText}
         </Row>
         {description && accentColor && (
           <Row align="center" gap={4}>

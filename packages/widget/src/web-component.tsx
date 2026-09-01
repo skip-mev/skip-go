@@ -28,7 +28,6 @@ const widgetPropTypes: Required<PropDescriptors> = {
   connectedAddresses: "any",
   simulate: "any",
   disableShadowDom: "any",
-  ibcEurekaHighlightedAssets: "any",
   assetSymbolsSortedToTop: "any",
   assetAnnotations: "any",
   hideAssetsUnlessWalletTypeConnected: "any",

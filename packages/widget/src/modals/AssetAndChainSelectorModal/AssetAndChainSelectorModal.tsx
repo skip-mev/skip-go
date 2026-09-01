@@ -18,7 +18,6 @@ import { Modals } from "../registerModals";
 import { StyledModalContainer } from "@/components/Modal";
 import styled from "styled-components";
 import { track } from "@amplitude/analytics-browser";
-import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
 import { assetAnnotationsAtom } from "@/state/assetAnnotations";
 import { Chain } from "@skip-go/client";
 
@@ -68,7 +67,6 @@ export const AssetAndChainSelectorModal = createModal(
       isFetching: isFetchingAssets,
       isPending: isPendingAssets,
     } = useAtomValue(skipAssetsAtom);
-    const ibcEurekaHighlightedAssets = useAtomValue(ibcEurekaHighlightedAssetsAtom);
     const assetAnnotations = useAtomValue(assetAnnotationsAtom);
     const { isFetching: isFetchingChains, isPending: isPendingChains } =
       useAtomValue(skipChainsAtom);
@@ -162,33 +160,9 @@ export const AssetAndChainSelectorModal = createModal(
     const renderItem = useCallback(
       (item: GroupedAsset | ChainWithAsset, index: number) => {
         const groupedAsset = item as GroupedAsset;
-        const chainWithAsset = item as ChainWithAsset;
-
-        const highlightedSymbol =
-          ibcEurekaHighlightedAssets && Object.keys(ibcEurekaHighlightedAssets);
-
-        const groupedAssetContainsEurekaAsset = highlightedSymbol?.includes(groupedAsset.id);
-
-        const chainWithAssetContainsEurekaAsset = chainWithAsset?.asset?.recommendedSymbol
-          ? ibcEurekaHighlightedAssets &&
-            highlightedSymbol.includes(chainWithAsset.asset.recommendedSymbol) &&
-            ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] === undefined
-            ? true
-            : ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] &&
-              ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol]?.includes(
-                chainWithAsset?.chainId,
-              )
-          : false;
-
-        const eurekaMatch = groupedAssetContainsEurekaAsset || chainWithAssetContainsEurekaAsset;
 
         // annotation applies to the grouped asset only (asset view), not per-chain rows
         const annotation = assetAnnotations?.[groupedAsset.id];
-
-        // If an asset has both, the selector annotation wins: eureka highlight
-        // (border + "IBC Eureka" label) is suppressed so only one treatment renders.
-        // In practice they never overlap.
-        const eureka = eurekaMatch && !annotation?.selector;
 
         return (
           <AssetAndChainSelectorModalRowItem
@@ -197,12 +171,11 @@ export const AssetAndChainSelectorModal = createModal(
             onSelect={onSelect}
             skeleton={<Skeleton />}
             context={context}
-            eureka={eureka}
             annotation={annotation}
           />
         );
       },
-      [context, ibcEurekaHighlightedAssets, assetAnnotations, onSelect],
+      [context, assetAnnotations, onSelect],
     );
 
     const listOfAssetsOrChains = useMemo(() => {
