@@ -7,23 +7,11 @@ export const getAnnotationColors = (
 ) => {
   switch (variant) {
     case "warning":
-      return {
-        accent: theme.warning.text,
-        filledBackground: theme.warning.background,
-        filledText: theme.warning.text,
-      };
+      return { accent: theme.warning.text };
     case "error":
-      return {
-        accent: theme.error.text,
-        filledBackground: theme.error.background,
-        filledText: theme.error.text,
-      };
+      return { accent: theme.error.text };
     case "info":
     default:
-      return {
-        accent: theme.brandColor,
-        filledBackground: theme.brandColor,
-        filledText: theme.brandTextColor,
-      };
+      return { accent: theme.brandColor };
   }
 };

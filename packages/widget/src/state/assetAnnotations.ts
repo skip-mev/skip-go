@@ -19,7 +19,9 @@ export type AssetAnnotation = {
   };
 };
 
-// keyed by recommended symbol, e.g. { "USDC.n": { variant: "info", swapPage: {...}, selector: {...} } }
+// Keyed by the grouped asset's recommended symbol (same key the selector groups by:
+// GroupedAsset.id resolves to recommendedSymbol for annotation targets), e.g.
+// { "USDC.n": { variant: "info", swapPage: {...}, selector: {...} } }
 export type AssetAnnotations = Record<string, AssetAnnotation | undefined>;
 
 export const assetAnnotationsAtom = atom<AssetAnnotations>({});
