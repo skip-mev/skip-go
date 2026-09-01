@@ -76,7 +76,7 @@ export const SwapPageAssetChainInput = ({
   const annotation = assetDetails.asset?.recommendedSymbol
     ? assetAnnotations?.[assetDetails.asset.recommendedSymbol]
     : undefined;
-  const swapInputAnnotation = annotation?.swapInput;
+  const swapPageAnnotation = annotation?.swapPage;
   const annotationAccent = getAnnotationColors(theme, annotation?.variant).accent;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -203,7 +203,7 @@ export const SwapPageAssetChainInput = ({
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
               <Text useWindowsTextHack>{assetDetails.symbol}</Text>
-              {swapInputAnnotation && <AssetAnnotationIcon size={16} color={annotationAccent} />}
+              {swapPageAnnotation && <AssetAnnotationIcon size={16} color={annotationAccent} />}
               {isMobileScreenSize && (
                 <ChevronIcon
                   width="13px"
@@ -271,8 +271,8 @@ export const SwapPageAssetChainInput = ({
         </Row>
         {assetDetails?.chainName ? (
           <Row align="center" gap={6}>
-            {swapInputAnnotation && (
-              <AssetAnnotationBadge label={swapInputAnnotation.label} variant={annotation?.variant} />
+            {swapPageAnnotation && (
+              <AssetAnnotationBadge label={swapPageAnnotation.label} variant={annotation?.variant} />
             )}
             <StyledOnChainGhostButton
               disabled={disabled}

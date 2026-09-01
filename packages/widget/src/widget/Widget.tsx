@@ -87,7 +87,7 @@ export type WidgetProps = {
   assetSymbolsSortedToTop?: string[];
   /**
    * Render an annotation (badge / warning) on the given assets, keyed by recommended symbol.
-   * - `swapInput`: badge + warning icon on the swap input for the selected asset
+   * - `swapPage`: badge + warning icon on the swap page asset rows for the selected asset
    * - `selector`: badge, border highlight, detail line, and optional pinToTop in the token selector
    * `variant` ("info" | "warning" | "error") determines color and icon.
    *
@@ -95,7 +95,7 @@ export type WidgetProps = {
    * assetAnnotations={{
    *   "USDC.n": {
    *     variant: "info",
-   *     swapInput: { label: "Migration required" },
+   *     swapPage: { label: "Migration required" },
    *     selector: {
    *       label: "Convert to USDC",
    *       description: "Convert to USDC before support ends",

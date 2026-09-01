@@ -4,8 +4,8 @@ export type AssetAnnotationVariant = "info" | "warning" | "error";
 
 export type AssetAnnotation = {
   variant?: AssetAnnotationVariant;
-  // Rendered on the swap input for the selected asset (badge + warning icon).
-  swapInput?: {
+  // Rendered on the swap page asset rows (source and destination) for the selected asset.
+  swapPage?: {
     label: string;
   };
   // Rendered on the asset's row in the token selector.
@@ -17,7 +17,7 @@ export type AssetAnnotation = {
   };
 };
 
-// keyed by recommended symbol, e.g. { "USDC.n": { variant: "info", swapInput: {...}, selector: {...} } }
+// keyed by recommended symbol, e.g. { "USDC.n": { variant: "info", swapPage: {...}, selector: {...} } }
 export type AssetAnnotations = Record<string, AssetAnnotation | undefined>;
 
 export const assetAnnotationsAtom = atom<AssetAnnotations>({});
