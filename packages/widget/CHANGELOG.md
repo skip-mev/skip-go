@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.18.1
+
+### Patch Changes
+
+- f9ec9dd: Keep `pinToTop`-annotated assets at the top of the token selector even while the user is searching.
+
 ## 3.18.0
 
 ### Minor Changes
