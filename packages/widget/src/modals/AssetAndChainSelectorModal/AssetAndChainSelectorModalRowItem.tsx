@@ -3,7 +3,7 @@ import { ModalRowItem } from "@/components/ModalRowItem";
 import { SmallText, Text } from "@/components/Typography";
 import { ClientAsset, skipChainsAtom } from "@/state/skipClient";
 import { CircleSkeletonElement, SkeletonElement } from "@/components/Skeleton";
-import { styled } from "styled-components";
+import { styled, useTheme } from "styled-components";
 import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { formatDisplayAmount } from "@/utils/number";
@@ -13,6 +13,9 @@ import { useFilteredChains } from "./useFilteredChains";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
+import { AssetAnnotationIcon } from "@/components/AssetAnnotationIcon";
+import type { AssetAnnotation } from "@/state/assetAnnotations";
+import { getAnnotationColors } from "@/utils/assetAnnotationColors";
 
 export const isGroupedAsset = (
   item: GroupedAsset | ClientAsset | ChainWithAsset,
@@ -26,7 +29,7 @@ export type AssetAndChainSelectorModalRowItemProps = {
   skeleton: React.ReactElement;
   onSelect: (token: ClientAsset | GroupedAsset | null) => void;
   context: SelectorContext;
-  eureka?: boolean;
+  annotation?: AssetAnnotation;
 };
 
 export const AssetAndChainSelectorModalRowItem = ({
@@ -35,21 +38,36 @@ export const AssetAndChainSelectorModalRowItem = ({
   skeleton,
   onSelect,
   context,
-  eureka,
+  annotation,
 }: AssetAndChainSelectorModalRowItemProps) => {
   const { isFetching, isPending } = useAtomValue(skipChainsAtom);
   const isChainsLoading = isFetching && isPending;
   const getBalance = useGetBalance();
+  const theme = useTheme();
 
   if (!item || isChainsLoading) return skeleton;
+
+  const selectorAnnotation = annotation?.selector;
+  const accentColor = selectorAnnotation
+    ? getAnnotationColors(theme, annotation.variant).accent
+    : undefined;
+  // softened border so the highlight doesn't look harsh
+  const borderColor = accentColor ? `${accentColor}80` : undefined;
 
   if (isGroupedAsset(item)) {
     return (
       <ModalRowItem
         key={`${index}${item.id}`}
         onClick={() => onSelect(item)}
-        leftContent={<GroupedAssetRow item={item} context={context} eureka={eureka} />}
-        eureka={eureka}
+        leftContent={
+          <GroupedAssetRow
+            item={item}
+            context={context}
+            annotation={annotation}
+            accentColor={accentColor}
+          />
+        }
+        highlightColor={borderColor}
         rightContent={
           Number(item.totalAmount) > 0 && (
             <Column align="flex-end">
@@ -68,9 +86,9 @@ export const AssetAndChainSelectorModalRowItem = ({
   return (
     <ModalRowItem
       key={item.chainId}
-      eureka={eureka}
+      highlightColor={borderColor}
       onClick={() => onSelect(item.asset)}
-      leftContent={<ChainWithAssetRow item={item} eureka={eureka} />}
+      leftContent={<ChainWithAssetRow item={item} annotation={annotation} accentColor={accentColor} />}
       rightContent={
         balance &&
         Number(balance.amount) > 0 && (
@@ -89,11 +107,13 @@ export const AssetAndChainSelectorModalRowItem = ({
 const GroupedAssetRow = ({
   item,
   context,
-  eureka,
+  annotation,
+  accentColor,
 }: {
   item: GroupedAsset;
   context: SelectorContext;
-  eureka?: boolean;
+  annotation?: AssetAnnotation;
+  accentColor?: string;
 }) => {
   const filteredChains = useFilteredChains({ selectedGroup: item, context }) ?? [];
 
@@ -109,12 +129,21 @@ const GroupedAssetRow = ({
       image={<GroupedAssetImage height={35} width={35} groupedAsset={item} />}
       mainText={item.assets[0].recommendedSymbol}
       subText={subText}
-      eureka={eureka}
+      annotation={annotation}
+      accentColor={accentColor}
     />
   );
 };
 
-const ChainWithAssetRow = ({ item, eureka }: { item: ChainWithAsset; eureka?: boolean }) => {
+const ChainWithAssetRow = ({
+  item,
+  annotation,
+  accentColor,
+}: {
+  item: ChainWithAsset;
+  annotation?: AssetAnnotation;
+  accentColor?: string;
+}) => {
   const chainImage = useCroppedImage(item?.logoUri);
   return (
     <RowLayout
@@ -127,7 +156,8 @@ const ChainWithAssetRow = ({ item, eureka }: { item: ChainWithAsset; eureka?: bo
       }
       mainText={item.prettyName}
       subText={<SmallText>{item.chainId}</SmallText>}
-      eureka={eureka}
+      annotation={annotation}
+      accentColor={accentColor}
     />
   );
 };
@@ -136,29 +166,63 @@ type RowLayoutProps = {
   image: React.ReactNode;
   mainText?: React.ReactNode;
   subText?: React.ReactNode;
-  eureka?: boolean;
+  annotation?: AssetAnnotation;
+  accentColor?: string;
 };
 
-const RowLayout = ({ image, mainText, subText, eureka }: RowLayoutProps) => {
+const RowLayout = ({ image, mainText, subText, annotation, accentColor }: RowLayoutProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
+  const description = annotation?.selector?.description;
 
   return (
-    <Row align="center" gap={8}>
+    <StyledRowLayout align="center" gap={8}>
       {image}
-      <Row
-        align="baseline"
-        flexDirection={isMobileScreenSize ? "column" : "row"}
-        gap={isMobileScreenSize ? undefined : 8}
-      >
-        <Text useWindowsTextHack>{mainText}</Text>
-        <Row align="center" gap={6}>
+      <StyledInfoColumn gap={2}>
+        <Row
+          align="baseline"
+          flexDirection={isMobileScreenSize && !description ? "column" : "row"}
+          gap={isMobileScreenSize && !description ? undefined : 8}
+        >
+          <Text useWindowsTextHack>{mainText}</Text>
           {subText}
-          {eureka && <SmallText normalTextColor> IBC Eureka </SmallText>}
         </Row>
-      </Row>
-    </Row>
+        {description && accentColor && (
+          <StyledDescriptionRow align="center" gap={4}>
+            <StyledDescriptionIcon>
+              <AssetAnnotationIcon size={14} color={accentColor} />
+            </StyledDescriptionIcon>
+            <StyledDescriptionText color={accentColor}>{description}</StyledDescriptionText>
+          </StyledDescriptionRow>
+        )}
+      </StyledInfoColumn>
+    </StyledRowLayout>
   );
 };
+
+const StyledRowLayout = styled(Row)`
+  flex: 1;
+  min-width: 0;
+`;
+
+const StyledInfoColumn = styled(Column)`
+  min-width: 0;
+`;
+
+const StyledDescriptionRow = styled(Row)`
+  min-width: 0;
+`;
+
+const StyledDescriptionText = styled(SmallText)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const StyledDescriptionIcon = styled.span`
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-top: -2px;
+`;
 
 const StyledChainImage = styled.img`
   border-radius: 50%;
