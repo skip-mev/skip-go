@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { GroupedAsset } from "./AssetAndChainSelectorModal";
 import { useAtomValue } from "jotai";
 import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
+import { assetAnnotationsAtom } from "@/state/assetAnnotations";
 
 export type useFilteredAssetsProps = {
   groupedAssetsByRecommendedSymbol: GroupedAsset[] | undefined;
@@ -18,6 +19,7 @@ export const useFilteredAssets = ({
   searchQuery,
 }: useFilteredAssetsProps) => {
   const assetSymbolsSortedToTop = useAtomValue(assetSymbolsSortedToTopAtom);
+  const assetAnnotations = useAtomValue(assetAnnotationsAtom);
 
   const filteredAssets = useMemo(() => {
     if (!groupedAssetsByRecommendedSymbol) return;
@@ -48,6 +50,12 @@ export const useFilteredAssets = ({
         if (exactA && !exactB) return -1;
         if (exactB && !exactA) return 1;
 
+        // Assets with a selector annotation opting into pinToTop float above balances
+        const pinnedA = Boolean(assetAnnotations?.[assetA.id]?.selector?.pinToTop);
+        const pinnedB = Boolean(assetAnnotations?.[assetB.id]?.selector?.pinToTop);
+        if (pinnedA && !pinnedB) return -1;
+        if (pinnedB && !pinnedA) return 1;
+
         // 1. Sort by totalUsd descending
         if (assetA.totalUsd !== assetB.totalUsd) {
           return assetB.totalUsd - assetA.totalUsd;
@@ -70,7 +78,7 @@ export const useFilteredAssets = ({
 
         return 0;
       });
-  }, [assetSymbolsSortedToTop, groupedAssetsByRecommendedSymbol, searchQuery]);
+  }, [assetSymbolsSortedToTop, assetAnnotations, groupedAssetsByRecommendedSymbol, searchQuery]);
 
   return filteredAssets;
 };

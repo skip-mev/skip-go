@@ -1,34 +1,34 @@
-import { ShadowDomAndProviders } from './ShadowDomAndProviders';
-import NiceModal from '@ebay/nice-modal-react';
-import { styled } from 'styled-components';
-import React, { ReactElement, ReactNode, useEffect } from 'react';
-import { PartialTheme } from './theme';
-import { Router } from './Router';
+import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
+import NiceModal from "@ebay/nice-modal-react";
+import { styled } from "styled-components";
+import React, { ReactElement, ReactNode, useEffect } from "react";
+import { PartialTheme } from "./theme";
+import { Router } from "./Router";
 import {
   MessagesRequest,
   RouteRequest,
   SetApiOptionsProps,
   SignerGetters,
   SkipClientOptions,
-} from '@skip-go/client';
-import { DefaultRouteConfig } from './useInitDefaultRoute';
-import { registerModals } from '@/modals/registerModals';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useInitWidget } from './useInitWidget';
-import { WalletConnect } from '@/state/wallets';
-import { Callbacks } from '@/state/callbacks';
-import { createStore, Provider, useAtomValue, useSetAtom } from 'jotai';
-import { settingsDrawerAtom } from '@/state/settingsDrawer';
-import { rootIdAtom } from '@/state/skipClient';
-import packageJson from '../../package.json';
-import { IbcEurekaHighlightedAssets } from '@/state/ibcEurekaHighlightedAssets';
-import { ChainFilter } from '@/state/filters';
-import { migrateOldLocalStorageValues } from '@/utils/migrateOldLocalStorageValues';
-import { EVMProvider } from '@/providers/EVMProvider';
-import { CosmosProvider } from '@/providers/CosmosProvider';
-import { SolanaProvider } from '@/providers/SolanaProvider';
+} from "@skip-go/client";
+import { DefaultRouteConfig } from "./useInitDefaultRoute";
+import { registerModals } from "@/modals/registerModals";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useInitWidget } from "./useInitWidget";
+import { WalletConnect } from "@/state/wallets";
+import { Callbacks } from "@/state/callbacks";
+import { createStore, Provider, useAtomValue, useSetAtom } from "jotai";
+import { settingsDrawerAtom } from "@/state/settingsDrawer";
+import { rootIdAtom } from "@/state/skipClient";
+import packageJson from "../../package.json";
+import type { AssetAnnotations } from "@/state/assetAnnotations";
+import { ChainFilter } from "@/state/filters";
+import { migrateOldLocalStorageValues } from "@/utils/migrateOldLocalStorageValues";
+import { EVMProvider } from "@/providers/EVMProvider";
+import { CosmosProvider } from "@/providers/CosmosProvider";
+import { SolanaProvider } from "@/providers/SolanaProvider";
 
-export type WidgetRouteConfig = RouteRequest & Pick<MessagesRequest, 'timeoutSeconds'>;
+export type WidgetRouteConfig = RouteRequest & Pick<MessagesRequest, "timeoutSeconds">;
 
 export type WidgetProps = {
   /**
@@ -36,7 +36,7 @@ export type WidgetProps = {
    * This can be used to style or document.querySelector specific parts of the widget.
    */
   rootId?: string;
-  theme?: PartialTheme | 'light' | 'dark';
+  theme?: PartialTheme | "light" | "dark";
   brandColor?: string;
   /**
    * Customize the corner roundness of widget components
@@ -82,8 +82,27 @@ export type WidgetProps = {
    */
   simulate?: boolean;
   disableShadowDom?: boolean;
-  ibcEurekaHighlightedAssets?: IbcEurekaHighlightedAssets;
   assetSymbolsSortedToTop?: string[];
+  /**
+   * Render an annotation (badge / warning) on the given assets, keyed by recommended symbol.
+   * - `swapPage.label`: badge + warning icon (right of the name) on the swap page asset rows
+   * - `selector.description`: detail line with a warning icon (left) in the token selector
+   * - `selector.pinToTop`: pin the asset to the top of the token selector, above balances
+   * `variant` ("info" | "warning" | "error") determines the color.
+   *
+   * @example
+   * assetAnnotations={{
+   *   "USDC.n": {
+   *     variant: "info",
+   *     swapPage: { label: "Migration required" },
+   *     selector: {
+   *       description: "Convert to USDC before support ends",
+   *       pinToTop: true,
+   *     },
+   *   },
+   * }}
+   */
+  assetAnnotations?: AssetAnnotations;
   hideAssetsUnlessWalletTypeConnected?: boolean;
   batchSignTxs?: boolean;
   /**
@@ -127,7 +146,7 @@ export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
   return (
     <ShadowDomAndProviders theme={theme}>
       <EVMProvider>
-        <QueryClientProvider client={queryClient} key={'skip-widget'}>
+        <QueryClientProvider client={queryClient} key={"skip-widget"}>
           <CosmosProvider>
             <SolanaProvider>
               <NiceModal.Provider>
@@ -175,7 +194,7 @@ const WidgetContainer = styled.div`
   }
 
   * {
-    font-family: 'ABCDiatype', sans-serif;
+    font-family: "ABCDiatype", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
