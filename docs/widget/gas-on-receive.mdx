@@ -126,14 +126,14 @@ await executeMultipleRoutes({
     mainRoute: "1",
     gasRoute: "10",
   },
-  // Required signing functions
-  getCosmosSigningClient: async (chainId) => {
-    // Return your cosmos signing client for the chain
-    return yourCosmosWallet.getSigningClient(chainId);
+  // Required signer getters
+  getCosmosSigner: async (chainId) => {
+    // Return an OfflineSigner for the chain
+    return yourCosmosWallet.getOfflineSigner(chainId);
   },
-  getEVMSigningClient: async (chainId) => {
-    // Return your EVM signing client for the chain
-    return yourEvmWallet.getSigningClient(chainId);
+  getEvmSigner: async (chainId) => {
+    // Return a viem WalletClient for the chain
+    return yourEvmWallet.getWalletClient(chainId);
   },
   onRouteStatusUpdated: (status) => console.log(status)
 });

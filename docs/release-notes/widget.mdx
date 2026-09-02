@@ -3,6 +3,52 @@ title: "Widget"
 description: "Selected updates and improvements to the `@skip-go/widget` [npm package](https://www.npmjs.com/package/@skip-go/widget)."
 ---
 
+## September 2026
+
+### Per-Asset Annotations (v3.18.0)
+
+*   **`assetAnnotations` prop:** Attach a per-asset notice (keyed by recommended symbol) to guide users. On the swap page it shows a badge and a warning icon next to the asset; in the token selector it shows a border highlight and a detail line, and can pin the asset to the top of the list. Supports `info` / `warning` / `error` variants. [See configuration](/widget/configuration#assetannotations).
+*   **Breaking — `ibcEurekaHighlightedAssets` prop removed:** Use `assetAnnotations` for per-asset highlighting instead (`selector.description` + highlight, optionally `pinToTop`). The IBC Eureka transfer/protocol handling is unaffected — only the selector-highlighting prop was removed.
+*   **(v3.18.1)** Pinned (`pinToTop`) assets now stay at the top of the token selector even while searching.
+
+## August 2026
+
+### CCTP v2 Support (v3.16.1–v3.17.5)
+
+*   Added support for CCTP v2 transfers, including the CCTP relayed flow, and correct handling of `cctp_transfer_v2` entries in transaction status responses (previously these could show as `failed` while still pending and produce broken explorer links).
+
+## July 2026
+
+### Custom Explorer URL (v3.16.0)
+
+*   **`skipExplorerUrl` prop:** Point transaction history links at a different Skip explorer. Defaults to `https://explorer.skip.build`, so existing behavior is unchanged.
+
+## May 2026
+
+### Wallet Support Change
+
+*   **Leap wallet support removed** following Leap's service shutdown. This removes the Cosmos browser extension (`WalletType.LEAP`), the mobile WalletConnect entry (`WalletType.WC_LEAP_MOBILE`), and the MetaMask Snap variant (`WalletType.METAMASK_SNAP_LEAP`) from the wallet selector.
+
+## November 2025
+
+### Manual Address Safety
+
+*   **Cross-chain manual address warning:** Users must now explicitly acknowledge the risk before entering a manual destination address on cross-chain swaps, to prevent accidental fund loss to centralized-exchange addresses.
+
+## October 2025
+
+### Swap UX
+
+*   **EVM same-chain swaps:** The edit-destination button is now hidden for EVM same-chain swaps, since EVM DEX contracts return tokens to `msg.sender` and editing the destination has no effect.
+
+## September 2025
+
+### New Props & Performance
+
+*   **`modalZIndex` prop:** Specify a custom `z-index` for all modals.
+*   **Faster page loads:** Assets, chains, bridges, and venues are now cached for faster subsequent loads on slower connections.
+*   **Cleanup:** Removed the legacy gas-station logic, and the route-preference selector is no longer shown when `goFast: false` is passed.
+
 ## August 2025
 
 ### Gas on Receive Feature

@@ -20,16 +20,16 @@ The balance query is currently compatible with all Skip Go-supported assets, exc
 ```ts TypeScript (Client)
 const balances = await balances({
   chains: {
-  "noble-1": {
-    address: noble.address, // noblef8js...
-    denoms: ["uusdc"]
-  },
-  "osmosis-1": {
-    address: osmosis.address, // osmois8fo...
-    denoms: [] // Fetch all denoms for address
+    "noble-1": {
+      address: noble.address, // noblef8js...
+      denoms: ["uusdc"]
+    },
+    "osmosis-1": {
+      address: osmosis.address, // osmois8fo...
+      denoms: [] // Fetch all denoms for address
+    }
   },
   apiUrl: "https://api.skip.build"
-}
 });
 ```
 ```JSON JSON (REST API)
@@ -69,7 +69,7 @@ These functions are useful for getting information about our default gas and fee
 This returns the gas price (i.e. the price of a single unit of gas) the API recommends you use for transactions on a particular chain.
 
 ```ts
-async getRecommendedGasPrice({chainId, apiUrl, apiKey}: {chainId: string, apiUrl?:string, apiKey?: string}) -> GasPrice
+async getRecommendedGasPrice({chainId, apiUrl, apiKey}: {chainId: string, apiUrl?:string, apiKey?: string}) -> GasPrice | undefined
 ```
 
 `GasPrice` is a [cosmjs](https://cosmos.github.io/cosmjs/latest/stargate/classes/GasPrice.html) type giving the recommended fee denom and recommend price amount (fee/gas):
