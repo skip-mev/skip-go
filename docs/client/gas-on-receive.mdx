@@ -91,11 +91,11 @@ async function swapWithGasOnReceive() {
         mainRoute: "1",
         feeRoute: "10" // Higher tolerance for gas route
       },
-      getCosmosSigningClient: async (chainId) => {
-        return yourCosmosWallet.getSigningClient(chainId);
+      getCosmosSigner: async (chainId) => {
+        return yourCosmosWallet.getOfflineSigner(chainId);
       },
-      getEVMSigningClient: async (chainId) => {
-        return yourEvmWallet.getSigningClient(chainId);
+      getEvmSigner: async (chainId) => {
+        return yourEvmWallet.getWalletClient(chainId);
       },
       onRouteStatusUpdated: (status) => {
         console.log("Route status:", status);
@@ -116,11 +116,11 @@ async function swapWithGasOnReceive() {
       route: originalRoute,
       userAddresses: mainRouteAddresses,
       slippageTolerancePercent: "1",
-      getCosmosSigningClient: async (chainId) => {
-        return yourCosmosWallet.getSigningClient(chainId);
+      getCosmosSigner: async (chainId) => {
+        return yourCosmosWallet.getOfflineSigner(chainId);
       },
-      getEVMSigningClient: async (chainId) => {
-        return yourEvmWallet.getSigningClient(chainId);
+      getEvmSigner: async (chainId) => {
+        return yourEvmWallet.getWalletClient(chainId);
       }
     });
   } catch (error) {
@@ -291,8 +291,8 @@ async function executeSwapWithGasOnReceive(
   gasRoute: RouteResponse | null,
   userAddresses: UserAddress[],
   signers: {
-    getCosmosSigningClient: (chainId: string) => Promise<any>;
-    getEVMSigningClient: (chainId: string) => Promise<any>;
+    getCosmosSigner: (chainId: string) => Promise<any>;
+    getEvmSigner: (chainId: string) => Promise<any>;
   }
 ) {
   // Build routes object with consistent naming
@@ -315,8 +315,8 @@ async function executeSwapWithGasOnReceive(
     route: routes,
     userAddresses: addresses,
     slippageTolerancePercent: slippage,
-    getCosmosSigningClient: signers.getCosmosSigningClient,
-    getEVMSigningClient: signers.getEVMSigningClient,
+    getCosmosSigner: signers.getCosmosSigner,
+    getEvmSigner: signers.getEvmSigner,
     onRouteStatusUpdated: (status) => {
       // Handle route status updates
       console.log("Route status:", status);
@@ -341,10 +341,12 @@ Here's a full example combining all the concepts:
 ```typescript
 import { 
   route, 
+  executeRoute,
   executeMultipleRoutes, 
   balances,
   assets,
-  getRouteWithGasOnReceive
+  getRouteWithGasOnReceive,
+  type RouteStatus
 } from "@skip-go/client";
 
 class GasOnReceiveManager {

@@ -25,7 +25,7 @@ async executeRoute(options: ExecuteRouteOptions): Promise<void>
 
 ```getEvmSigner``` Function that takes a chainId and returns a ```Promise<WalletClient>```
 
-```getSvmSigner``` Function that returns a ```Promise<OfflineSigner>```
+```getSvmSigner``` Function that returns a ```Promise<Adapter>``` (Solana wallet-adapter)
 
 ## Optional fields
 ```slippageTolerancePercent``` Set the maximum slippage tolerance for the route (defaults to "1").
@@ -36,7 +36,7 @@ async executeRoute(options: ExecuteRouteOptions): Promise<void>
 
 ```batchSignTxs``` If true, all transactions in a multi-transaction route will be signed upfront before broadcasting; if false, each transaction will be signed individually just before broadcasting. (defaults to true).
 
-```beforeMsg / afterMsg``` Optional Cosmos messages to inject at the beginning or end of the route execution.
+```appendCosmosMsgs``` Optional Cosmos messages to append, keyed by chain ID (`Record<chainId, CosmosMsg[]>`). Each `CosmosMsg` is `{ msgTypeUrl, msg }`, where `msg` is the JSON-encoded message body.
 
 ```useUnlimitedApproval``` If true, sets Evm token allowances to MAX_UINT256. (defaults to false).
 
@@ -50,7 +50,7 @@ async executeRoute(options: ExecuteRouteOptions): Promise<void>
 
 ```gasAmountMultiplier``` Overrides the default simulation multiplier (default is 1.5).
 
-```getCosmosPriorityFeeDenom``` function that takes a chainId and returns a ```Promise<string>``` for the priority fee denom to use for Cosmos transactions.
+```getCosmosPriorityFeeDenom``` function that takes a chainId and returns a ```Promise<string | undefined>``` for the priority fee denom to use for Cosmos transactions.
 
 example:
 ```ts
@@ -79,7 +79,7 @@ You can optionally provide the following callbacks:
 
 ```onValidateGasBalance``` Called while the transaction is calculating the gas and balance validation
 
-```onApproveAllownace``` Called when the allowance tx is being executed (only in evm txs).
+```onApproveAllowance``` Called when the allowance tx is being executed (only in evm txs).
 
 ```ts
 await executeRoute({
@@ -91,8 +91,9 @@ await executeRoute({
   simulate: true,
   batchSignTxs: true,
   slippageTolerancePercent: "0.5",
-  beforeMsg: cosmosMsg1,
-  afterMsg: cosmosMsg2,
+  appendCosmosMsgs: {
+    "osmosis-1": [{ msgTypeUrl: "/cosmos.bank.v1beta1.MsgSend", msg: cosmosMsgJson }],
+  },
   getCosmosSigner: (chainId) => {},
   getEvmSigner: (chainId) => {},
   getSvmSigner: () => {},

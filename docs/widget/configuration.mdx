@@ -39,10 +39,10 @@ Customizes enabled route types.
 
 ```ts
 routeConfig?: {
-  experimentalFeatures?: ['hyperlane', 'cctp', 'stargate', 'eureka'];
+  experimentalFeatures?: string[]; // e.g. ['stargate', 'eureka']
   allowMultiTx?: boolean;
   allowUnsafe?: boolean;
-  bridges?: ('IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'GO_FAST')[];
+  bridges?: ('IBC' | 'AXELAR' | 'CCTP' | 'CCTP_V2' | 'HYPERLANE' | 'OPINIT' | 'GO_FAST' | 'STARGATE' | 'LAYER_ZERO' | 'EUREKA')[];
   swapVenues?: {
     name: string;
     chainId: string;
@@ -146,14 +146,13 @@ Sets defaults for user-customizable settings.
 
 ```ts
 settings?: {
-  customGasAmount?: number;
   slippage?: number;
   useUnlimitedApproval?: boolean; // Set allowance amount to max if EVM transaction requires allowance approval
 };
 ```
 
-- `customGasAmount`: Gas amount for CosmosSDK chain transactions. Default: `300_000`.
 - `slippage`: Default slippage percentage (0-100) for CosmosSDK chain swaps. Default: `1`.
+- `useUnlimitedApproval`: Set the EVM allowance to the max amount when an approval is required. Default: `false`.
 
 ### `onlyTestnet`
 
@@ -181,7 +180,7 @@ Customizes the main highlight color of the widget
 
 ### `borderRadius`
 
-Controls the corner roundness of cards and buttons in the widget
+Controls the corner roundness of cards and buttons in the widget. This is not a top-level prop — set it under [`theme`](#theme) via `theme.borderRadius`.
 
 ### `theme`
 
@@ -277,6 +276,119 @@ Default: false. (shadow dom is enabled by default to avoid styling conflicts/iss
 ### `hideAssetsUnlessWalletTypeConnected`
 
 Filters assets based on connected wallet types (currently only supports Sei Cosmos/EVM). Added in v3.7.3. Default: false.
+
+### `assetSymbolsSortedToTop`
+
+List of asset symbols to pin to the top of the token selector.
+
+```ts
+assetSymbolsSortedToTop?: string[];
+```
+
+### `assetAnnotations`
+
+Render a per-asset annotation (badge / warning icon / highlight / pin-to-top), keyed by recommended symbol.
+
+```ts
+assetAnnotations?: Record<string, {
+  variant?: "info" | "warning" | "error"; // color; defaults to "info"
+  swapPage?: {
+    label: string;                         // badge + warning icon on the swap page asset rows
+  };
+  selector?: {
+    description?: string;                   // detail line under the asset name in the token selector
+    pinToTop?: boolean;                     // pin the asset to the top of the selector, above balances
+  };
+}>;
+```
+
+- `variant`: color of the badge / icon / highlight. `info` uses the brand color, `warning` and `error` use the theme's warning/error colors.
+- `swapPage.label`: renders a badge and a warning icon next to the asset name on the swap page (source and destination rows).
+- `selector.description`: detail line with a warning icon under the asset name in the token selector.
+- `selector.pinToTop`: pins the asset to the very top of the token selector (above balances, and above search matches).
+
+Example:
+
+```ts
+assetAnnotations={{
+  "USDC.n": {
+    variant: "info",
+    swapPage: { label: "Migration required" },
+    selector: {
+      description: "Convert to USDC before support ends",
+      pinToTop: true,
+    },
+  },
+}}
+```
+
+### `filterOutUnlessUserHasBalance`
+
+Like `filterOut`, but the assets/chains are only hidden unless the user holds a balance of them.
+
+```ts
+filterOutUnlessUserHasBalance?: {
+  source?: Record<string, string[] | undefined>;
+  destination?: Record<string, string[] | undefined>;
+};
+```
+
+### `walletConnect`
+
+WalletConnect configuration used for wallet connections.
+
+```ts
+walletConnect?: {
+  options: {
+    projectId?: string;
+    name?: string;
+  } | null;
+  walletConnectModal?: {
+    themeVariables?: Record<string, string>;
+    themeMode?: "light" | "dark";
+    privacyPolicyUrl?: string;
+    termsOfServiceUrl?: string;
+  } | null;
+};
+```
+
+### `simulate`
+
+Whether the widget simulates transactions before executing the route to validate gas and balances.
+
+```ts
+simulate?: boolean;
+```
+
+- **Default:** `true`
+
+### `rootId`
+
+If specified, adds a `data-root-id` attribute to all root elements of the widget (including portals), useful for `document.querySelector` or scoped styling.
+
+```ts
+rootId?: string;
+```
+
+### `modalZIndex`
+
+Custom `z-index` for the widget's modals.
+
+```ts
+modalZIndex?: number;
+```
+
+- **Default:** `10`
+
+### `skipExplorerUrl`
+
+Base URL of the Skip explorer that transaction history links point to.
+
+```ts
+skipExplorerUrl?: string;
+```
+
+- **Default:** `https://explorer.skip.build`
 
 ### `callbacks`
 

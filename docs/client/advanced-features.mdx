@@ -3,9 +3,9 @@ title: 'Advanced Features'
 description: 'This page details advanced features and utilities in the Skip Go client library.'
 ---
 
-## Adding custom messages before or after route execution
+## Appending custom Cosmos messages to route execution
 
-The `executeRoute` method now accepts `beforeMsg` and `afterMsg`  parameter to allow for the execution of custom Cosmos messages before and/or after the route is executed. This is useful for executing custom messages that are not part of the route definition.
+The `executeRoute` method accepts an `appendCosmosMsgs` parameter to append custom Cosmos messages to the route's transactions, keyed by chain ID (`Record<chainId, CosmosMsg[]>`). This is useful for executing custom messages that are not part of the route definition.
 
 
 ```typescript
@@ -21,7 +21,9 @@ const msg = JSON.stringify({
 await executeRoute({
   route,
   userAddresses,
-  beforeMsg: { msg, msgTypeUrl: '/cosmos.bank.v1beta1.MsgSend' }
+  appendCosmosMsgs: {
+    'cosmoshub-4': [{ msgTypeUrl: '/cosmos.bank.v1beta1.MsgSend', msg }]
+  }
 });
 ```
 ## Use the Go Fast Transfer system
