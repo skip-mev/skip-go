@@ -44,17 +44,18 @@ export const useFilteredAssets = ({
     return sanitizedAssets
       .filter((asset) => asset.id?.toLowerCase()?.includes(searchLower))
       .sort((assetA, assetB) => {
+        // Assets with a selector annotation opting into pinToTop stay at the very top,
+        // above balances and even an exact search match
+        const pinnedA = Boolean(assetAnnotations?.[assetA.id]?.selector?.pinToTop);
+        const pinnedB = Boolean(assetAnnotations?.[assetB.id]?.selector?.pinToTop);
+        if (pinnedA && !pinnedB) return -1;
+        if (pinnedB && !pinnedA) return 1;
+
         const exactA = assetA.id.toLowerCase() === searchLower;
         const exactB = assetB.id.toLowerCase() === searchLower;
 
         if (exactA && !exactB) return -1;
         if (exactB && !exactA) return 1;
-
-        // Assets with a selector annotation opting into pinToTop float above balances
-        const pinnedA = Boolean(assetAnnotations?.[assetA.id]?.selector?.pinToTop);
-        const pinnedB = Boolean(assetAnnotations?.[assetB.id]?.selector?.pinToTop);
-        if (pinnedA && !pinnedB) return -1;
-        if (pinnedB && !pinnedA) return 1;
 
         // 1. Sort by totalUsd descending
         if (assetA.totalUsd !== assetB.totalUsd) {
