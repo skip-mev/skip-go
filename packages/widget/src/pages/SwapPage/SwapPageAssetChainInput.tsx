@@ -24,8 +24,6 @@ import { convertToPxValue } from "@/utils/style";
 import { useAtomValue } from "jotai";
 import { assetAnnotationsAtom } from "@/state/assetAnnotations";
 import { AssetAnnotationBadge } from "@/components/AssetAnnotationBadge";
-import { AssetAnnotationIcon } from "@/components/AssetAnnotationIcon";
-import { getAnnotationColors } from "@/utils/assetAnnotationColors";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -77,7 +75,6 @@ export const SwapPageAssetChainInput = ({
     ? assetAnnotations?.[assetDetails.asset.recommendedSymbol]
     : undefined;
   const swapPageAnnotation = annotation?.swapPage;
-  const annotationAccent = getAnnotationColors(theme, annotation?.variant).accent;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!onChangeValue) return;
@@ -203,7 +200,6 @@ export const SwapPageAssetChainInput = ({
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
               <Text useWindowsTextHack>{assetDetails.symbol}</Text>
-              {swapPageAnnotation && <AssetAnnotationIcon size={16} color={annotationAccent} />}
               {isMobileScreenSize && (
                 <ChevronIcon
                   width="13px"
@@ -396,11 +392,6 @@ export const StyledAssetLabel = styled(Row).attrs({
 
   img,
   p {
-    z-index: 1;
-  }
-
-  svg {
-    position: relative;
     z-index: 1;
   }
 `;
