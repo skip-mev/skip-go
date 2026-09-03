@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.18.2
+
+### Patch Changes
+
+- 9479788: Remove the warning icon from asset annotations. The swap page now shows only the `assetAnnotations` badge (no icon), and the token selector shows only the description line and border highlight. Badge/border/description colors and `selector.pinToTop` are unchanged.
+
 ## 3.18.1
 
 ### Patch Changes
