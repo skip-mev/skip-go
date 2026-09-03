@@ -85,8 +85,8 @@ export type WidgetProps = {
   assetSymbolsSortedToTop?: string[];
   /**
    * Render an annotation (badge / warning) on the given assets, keyed by recommended symbol.
-   * - `swapPage.label`: badge + warning icon (right of the name) on the swap page asset rows
-   * - `selector.description`: detail line with a warning icon (left) in the token selector
+   * - `swapPage.label`: badge on the swap page asset rows
+   * - `selector.description`: detail line under the asset name in the token selector
    * - `selector.pinToTop`: pin the asset to the top of the token selector, above balances
    * `variant` ("info" | "warning" | "error") determines the color.
    *

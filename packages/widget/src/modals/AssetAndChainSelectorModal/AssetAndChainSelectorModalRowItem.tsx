@@ -13,7 +13,6 @@ import { useFilteredChains } from "./useFilteredChains";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
-import { AssetAnnotationIcon } from "@/components/AssetAnnotationIcon";
 import type { AssetAnnotation } from "@/state/assetAnnotations";
 import { getAnnotationColors } from "@/utils/assetAnnotationColors";
 
@@ -188,9 +187,6 @@ const RowLayout = ({ image, mainText, subText, annotation, accentColor }: RowLay
         </Row>
         {description && accentColor && (
           <StyledDescriptionRow align="center" gap={4}>
-            <StyledDescriptionIcon>
-              <AssetAnnotationIcon size={14} color={accentColor} />
-            </StyledDescriptionIcon>
             <StyledDescriptionText color={accentColor}>{description}</StyledDescriptionText>
           </StyledDescriptionRow>
         )}
@@ -216,12 +212,6 @@ const StyledDescriptionText = styled(SmallText)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-
-const StyledDescriptionIcon = styled.span`
-  display: inline-flex;
-  flex-shrink: 0;
-  margin-top: -2px;
 `;
 
 const StyledChainImage = styled.img`
