@@ -4,7 +4,7 @@ import { Column, Row } from "@/components/Layout";
 import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "@/jotai";
 import { Text, SmallText, SmallTextButton } from "@/components/Typography";
-import { TransactionState, TransferAssetRelease, TransferEventStatus, TransferType } from "@skip-go/client";
+import type { TransferEventStatus } from "@skip-go/client";
 import Image from "next/image";
 import { formatDisplayAmount } from "@/utils/number";
 import { styled, useTheme } from "@/styled-components";
@@ -19,21 +19,22 @@ import { CoinsIcon } from "../icons/CoinsIcon";
 import { Tooltip } from "@/components/Tooltip";
 import { useClipboard } from "@/hooks/useClipboard";
 import { useGetTransferAssetReleaseAsset } from "../hooks/useGetTransferAssetReleaseAsset";
+import type { TimelineCard, TransactionPhase } from "../utils/routeTimeline";
 
-export type Step = "Origin" | "Routed" | "Destination";
-
-export type TransferEventCardProps = {
-  chainId: string;
-  explorerLink: string;
-  transferType: TransferType | string;
-  status?: TransferEventStatus;
-  state?: TransactionState;
-  step: Step;
-  durationInMs?: number;
-  index: number;
+export type TransferEventCardProps = Omit<TimelineCard, "id" | "txIndex" | "timeline"> & {
+  timeline?: TimelineCard["timeline"];
   onReindex?: () => void;
-  transferAssetRelease?: TransferAssetRelease;
-}
+};
+
+const phaseLabels: Record<TransactionPhase, string> = {
+  planned: "Planned",
+  loading: "Loading",
+  waiting: "Status unavailable",
+  pending: "Transaction pending",
+  completed: "Successful",
+  failed: "Transaction failed",
+  abandoned: "Abandoned",
+};
 
 const routedStatusMap: Record<TransferEventStatus, string> = {
   unconfirmed: "Unconfirmed",
@@ -45,26 +46,28 @@ const routedStatusMap: Record<TransferEventStatus, string> = {
   incomplete: "Incomplete",
 }
 
-export const TransferEventCard = ({ chainId, explorerLink, transferType, status, state, step, index, onReindex, transferAssetRelease }: TransferEventCardProps) => {
+export const TransferEventCard = ({ chainId, explorerLink, transferType, status, state, step, onReindex, transferAssetRelease, timeline }: TransferEventCardProps) => {
   const theme = useTheme();
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
-  const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses, operations } = useTransactionHistoryItemFromUrlParams();
+  const { sourceAsset, sourceAmount, destAsset, destAmount, userAddresses } = useTransactionHistoryItemFromUrlParams();
   const { saveToClipboard: saveUserAddressToClipboard, isCopied: isUserAddressCopied } = useClipboard();
 
   const statusLabelAndColor = useOverallStatusLabelAndColor({ status });
   const stateLabelAndColor = useOverallStatusLabelAndColor({ state });
-  const stateAbandoned = state === "STATE_ABANDONED" && step === "Destination";
+  const stateAbandoned = state === "STATE_ABANDONED" && (timeline?.isTransactionEnd ?? step === "Destination");
 
   const chain = skipChains?.data?.find((chain) => chain.chainId === chainId);
 
   const userAddress = userAddresses?.find((address) => address.chainId === chainId)?.address;
 
-  const showTransferAssetRelease = transferAssetRelease && step !== "Destination";
+  const showTransferAssetRelease = transferAssetRelease?.released && (timeline?.canRecover ?? step !== "Destination");
 
   const transferAssetReleaseAsset = useGetTransferAssetReleaseAsset(transferAssetRelease);
+  const releaseChain = skipChains.data?.find(chain => chain.chainId === transferAssetRelease?.chainId);
 
   const renderStatusBadge = useMemo(() => {
+    if (timeline && timeline.source !== "event" && status === undefined) return <Badge>{phaseLabels[timeline.phase]}</Badge>;
     if (stateAbandoned) {
       return (
         <Tooltip content="Transaction got stuck. Retry indexing">
@@ -101,54 +104,49 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         </Badge>
       )
     }
-  }, [stateAbandoned, stateLabelAndColor?.background, stateLabelAndColor?.color, stateLabelAndColor?.label, status, statusLabelAndColor?.background, statusLabelAndColor?.color, statusLabelAndColor?.label, step]);
+  }, [timeline, stateAbandoned, stateLabelAndColor?.background, stateLabelAndColor?.color, stateLabelAndColor?.label, status, statusLabelAndColor?.background, statusLabelAndColor?.color, statusLabelAndColor?.label, step]);
 
   const containerStatus = useMemo(() => {
     if (stateAbandoned) {
       return "warning";
     }
 
-    if (step === "Destination") {
-      return status;
-    }
+    if (timeline && (status === "failed" || (timeline.isTransactionEnd && timeline.phase === "failed"))) return "failed";
+    if (step === "Destination") return status;
 
-  }, [stateAbandoned, status, step]);
+  }, [timeline, stateAbandoned, status, step]);
 
   const currentAsset = useMemo(() => {
     const transferAssetReleaseAmount = convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount ?? '', transferAssetReleaseAsset?.decimals);
 
-    if (step === "Origin") {
+    if (timeline) {
+      const details = timeline.asset;
+      const asset = details && ((!details.estimated && transferAssetReleaseAsset) || skipAssets?.data?.find(asset => asset.chainId === details.chainId && asset.denom === details.denom));
       return {
-        asset: sourceAsset ?? transferAssetReleaseAsset,
-        amount: sourceAmount ?? transferAssetReleaseAmount,
-      };
-    } else if (step === "Destination") {
-      return {
-        asset: destAsset ?? transferAssetReleaseAsset,
-        amount: destAmount ?? transferAssetReleaseAmount,
-      };
-    } else {
-      const currentOperation = operations?.[index];
-      const asset = skipAssets?.data?.find((asset) => asset.chainId === currentOperation?.chainId && asset.denom === currentOperation?.denomIn);
-      
-      return {
-        asset: asset ?? transferAssetReleaseAsset,
-        amount: currentOperation?.amountIn && asset?.decimals ? convertTokenAmountToHumanReadableAmount(currentOperation?.amountIn, asset?.decimals) : transferAssetReleaseAmount,
+        asset,
+        amount: asset && details?.amount ? convertTokenAmountToHumanReadableAmount(details.amount, asset.decimals) : undefined,
       };
     }
-  }, [transferAssetRelease, transferAssetReleaseAsset, step, sourceAsset, sourceAmount, destAsset, destAmount, operations, index, skipAssets?.data]);
+    // Legacy links without a route still use the available source/destination metadata.
+    return {
+      asset: (step === "Origin" ? sourceAsset : destAsset) ?? transferAssetReleaseAsset,
+      amount: (step === "Origin" ? sourceAmount : destAmount) ?? transferAssetReleaseAmount,
+    };
+  }, [timeline, transferAssetRelease, transferAssetReleaseAsset, step, sourceAsset, sourceAmount, destAsset, destAmount, skipAssets?.data]);
 
   const renderTransferEventDetails = useMemo(() => {
 
     if (currentAsset?.asset) {
+      const assetChain = skipChains.data?.find(chain => chain.chainId === currentAsset.asset?.chainId);
+      const chainName = assetChain?.prettyName ?? assetChain?.chainName ?? currentAsset.asset.chainName;
       return (
         <Column gap={10} justify="center">
           <Row gap={5} align="center">
             {currentAsset?.asset?.logoUri && <Image src={currentAsset?.asset?.logoUri} alt={currentAsset?.asset?.symbol ?? ''} width={20} height={20} />}
-            <Text useWindowsTextHack>{formatDisplayAmount(currentAsset?.amount)} {currentAsset?.asset?.symbol}</Text>
+            <Text useWindowsTextHack>{timeline?.asset?.estimated && timeline.source !== "origin" && "Estimated: "}{timeline && currentAsset?.amount === undefined ? "--" : formatDisplayAmount(currentAsset?.amount)} {currentAsset?.asset?.symbol}</Text>
           </Row>
           <Row gap={5} align="center">
-            <SmallText normalTextColor>on {chain?.prettyName}</SmallText>
+            <SmallText normalTextColor>on {chainName}</SmallText>
             {
               userAddress && (
                 <SmallTextButton onClick={() => saveUserAddressToClipboard(userAddress)}>
@@ -172,13 +170,14 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         </Column>
       </>
     )
-  }, [currentAsset?.asset, currentAsset?.amount, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId, userAddress, isUserAddressCopied, saveUserAddressToClipboard]);
+  }, [timeline, skipChains.data, currentAsset?.asset, currentAsset?.amount, chain?.logoUri, chain?.chainName, chain?.prettyName, chainId, userAddress, isUserAddressCopied, saveUserAddressToClipboard]);
 
   const isLoading = useMemo(() => {
-    return status === "pending" && !stateAbandoned && step !== "Origin";
-  }, [status, stateAbandoned, step]);
+    return (status === "pending" || timeline?.phase === "pending") && !stateAbandoned && step !== "Origin";
+  }, [timeline?.phase, status, stateAbandoned, step]);
 
   const renderBottomButton = useMemo(() => {
+    if (timeline?.phase === "planned" || timeline?.phase === "loading") return null;
     const decimals = skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId)?.decimals;
     const skipGoLink = `https://go.skip.build/?src_asset=${transferAssetRelease?.denom}&src_chain=${transferAssetRelease?.chainId}&amount_in=${transferAssetRelease?.amount ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount, decimals) : undefined}`;
     if (stateAbandoned) {
@@ -209,7 +208,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       </SmallText>
     )
 
-  }, [skipAssets?.data, transferAssetRelease?.denom, transferAssetRelease?.chainId, transferAssetRelease?.amount, stateAbandoned, showTransferAssetRelease, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
+  }, [timeline?.phase, skipAssets?.data, transferAssetRelease?.denom, transferAssetRelease?.chainId, transferAssetRelease?.amount, stateAbandoned, showTransferAssetRelease, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
 
   return (
     <TransferEventContainer loading={isLoading} padding={15} width="100%" borderRadius={16} status={containerStatus}>
@@ -217,7 +216,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
         <Row gap={8} align="center" justify="center">
           <Badge> {step} </Badge>
           {showTransferAssetRelease && (
-            <Tooltip content={`Your assets were released as ${transferAssetReleaseAsset?.symbol} on ${transferAssetReleaseAsset?.chainName}`}>
+            <Tooltip content={`Your assets were released as ${transferAssetReleaseAsset?.symbol} on ${releaseChain?.prettyName ?? releaseChain?.chainName ?? transferAssetReleaseAsset?.chainName}`}>
               <Badge color={theme.brandColor} gap={5} align="center" justify="center">
                 Your tokens
                 <CoinsIcon />

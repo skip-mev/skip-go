@@ -1,8 +1,9 @@
 import { Container } from "@/components/Container";
 import { Row } from "@/components/Layout";
 import { SmallText } from '@/components/Typography';
-import { ReactNode, useMemo } from "react";
-import { TransactionState } from "@skip-go/client";
+import { useMemo } from "react";
+import type { ReactNode } from "react";
+import type { TransactionState } from "@skip-go/client";
 import { useAtomValue } from "@/jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { Button } from "@/components/Button";
@@ -17,9 +18,10 @@ export type TransactionDetailsProps = {
   txHash: string;
   state?: TransactionState;
   chainIds?: string[];
+  hasUntrackedSteps?: boolean;
 }
 
-export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetailsProps) => {
+export const TransactionDetails = ({ txHash, state, chainIds, hasUntrackedSteps }: TransactionDetailsProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
   const { saveToClipboard, isCopied } = useClipboard();
   const { sourceAsset, destAsset, sourceAmount, destAmount } = useTransactionHistoryItemFromUrlParams();
@@ -55,7 +57,11 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
       />
       <DetailsRow
         label="Status"
-        value={<SmallText color={statusLabelAndColor?.color}>{statusLabelAndColor?.label}</SmallText>}
+        value={hasUntrackedSteps && !state
+          ? <SmallText>Status unavailable</SmallText>
+          : hasUntrackedSteps && state === "STATE_COMPLETED_SUCCESS"
+          ? <SmallText>Partially tracked</SmallText>
+          : <SmallText color={statusLabelAndColor?.color}>{statusLabelAndColor?.label}</SmallText>}
       />
       <DetailsRow onClick={() => saveToClipboard(txHash)} label="Transaction Hash" value={isCopied ? "Copied!" : getTruncatedAddress(txHash)} />
       <DetailsRow

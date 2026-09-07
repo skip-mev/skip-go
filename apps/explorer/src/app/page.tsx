@@ -3,20 +3,13 @@ import React, { useCallback, useRef } from "react";
 import { Column, Row, Spacer } from "@/components/Layout";
 import {
   getTransferEventsFromTxStatusResponse,
-  getSimpleOverallStatus,
-  ClientTransferEvent,
-  TxStatusResponse,
-  TransactionDetails as TransactionDetailsType,
   waitForTransactionWithCancel,
   transactionStatus,
-  TransactionState,
   trackTransaction,
 } from "@skip-go/client";
+import type { TxStatusResponse, TransactionDetails as TransactionDetailsType } from "@skip-go/client";
 import { useEffect, useState, useMemo } from "react";
-import {
-  TransferEventCard,
-  TransferEventCardProps,
-} from "../components/TransferEventCard";
+import { TransferEventCard } from "../components/TransferEventCard";
 import {
   defaultSkipClientConfig,
   skipClientConfigAtom,
@@ -44,6 +37,7 @@ import { chainIdsSortedToTopAtom } from "@/state/chainIdsSortedToTop";
 import { CHAIN_IDS_SORTED_TO_TOP } from "../constants/chainIdsSortedToTop";
 import { isMac } from "@/utils/os";
 import { LoadingState } from "../components/LoadingState";
+import { buildRouteTransactions, getTimelineCards } from "../utils/routeTimeline";
 import { SKIP_API_URL } from "../utils/skipClientConfig";
 
 type ErrorWithCodeAndDetails = Error & {
@@ -70,17 +64,15 @@ export default function Home() {
   );
 
   const [data, setData] = useQueryState("data");
-  const [transferEvents, setTransferEvents] = useState<ClientTransferEvent[]>(
-    []
-  );
   const trackedTxHashes = useRef<string[]>([]);
+  const queriedTransactions = useRef<TransactionDetailsType[]>([]);
+  const statusRequestId = useRef<number>(0);
 
   const setChainIdsSortedToTop = useSetAtom(chainIdsSortedToTopAtom);
 
   const [transactionStatusResponse, setTransactionStatusResponse] =
     useState<TxStatusResponse | undefined>(undefined);
 
-  const [destinationNodeFailed, setDestinationNodeFailed] = useState<boolean>(false);
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
@@ -88,8 +80,9 @@ export default function Home() {
   const { transactionDetails: transactionDetailsFromUrlParams, operations, sourceAsset, destAsset } =
     useTransactionHistoryItemFromUrlParams();
   const [transactionStatuses, setTransactionStatuses] = useState<
-    TxStatusResponse[]
+    (TxStatusResponse | undefined)[]
   >([]);
+  const [failedStatusQueries, setFailedStatusQueries] = useState<boolean[]>([]);
   const [errorDetails, setErrorDetails] = useState<{
     errorMessage: ErrorMessages;
     error: ErrorWithCodeAndDetails;
@@ -125,113 +118,21 @@ export default function Home() {
     return () => window.removeEventListener('wheel', handleWheel);
   }, []);
 
-  const transfersToShow = useMemo(() => {
-    const transfers: TransferEventCardProps[] = [];
-    const eventsWithTxInfo = transactionStatuses.flatMap((status, txIndex) => {
-      const seq = status?.transferSequence ?? [];
-      const offset = transactionStatuses
-        .slice(0, txIndex)
-        .reduce((total, s) => total + (s?.transferSequence?.length ?? 0), 0);
-      return seq
-        .map((_, i) => {
-          const event = transferEvents[offset + i];
-          if (!event) return null;
-          return {
-            event,
-            txIndex,
-            isLastOfTx: i === seq.length - 1,
-            release: status?.transferAssetRelease,
-          };
-        })
-        .filter((e): e is NonNullable<typeof e> => e !== null);
-    });
-
-    const releasedTxIndex = eventsWithTxInfo.reduce(
-      (furthest, e) => (e.release?.released === true ? Math.max(furthest, e.txIndex) : furthest),
-      -1
-    );
-
-    const activeRelease =
-      releasedTxIndex >= 0
-        ? eventsWithTxInfo.find((e) => e.txIndex === releasedTxIndex)?.release
-        : undefined;
-
-    const releaseStuck =
-      releasedTxIndex >= 0 &&
-      transactionStatuses
-        .slice(releasedTxIndex)
-        .some((status) => status?.state && getSimpleOverallStatus(status.state) === "failed");
-
-    const releaseChainRendered =
-      !!activeRelease &&
-      eventsWithTxInfo.some((e, i) => {
-        if (e.txIndex !== releasedTxIndex) return false;
-        if (e.event.toChainId === activeRelease.chainId) return true;
-        return i === 0 && e.event.fromChainId === activeRelease.chainId;
-      });
-
-    const getStep = (index: number, fromOrTo: "from" | "to") => {
-      if (index === 0 && fromOrTo === "from") return "Origin";
-      if (index === eventsWithTxInfo.length - 1 && fromOrTo === "to") return "Destination";
-      return "Routed";
-    };
-
-    eventsWithTxInfo.forEach(({ event, txIndex, isLastOfTx }, index) => {
-      const addChain = (
-        chainId: string | undefined,
-        explorerLink: string | undefined,
-        fromOrTo: "from" | "to"
-      ) => {
-        const step = getStep(index, fromOrTo);
-
-        const getTransferAssetRelease = () => {
-          if (!activeRelease) return;
-          if (txIndex !== releasedTxIndex) return;
-          if (step !== "Destination" && !releaseStuck) return;
-          if (releaseChainRendered) {
-            if (chainId === activeRelease.chainId) return activeRelease;
-          } else if (isLastOfTx && fromOrTo === "to") {
-            return activeRelease;
-          }
-        };
-
-        if (chainId) {
-          transfers.push({
-            chainId,
-            explorerLink: explorerLink ?? "",
-            transferType: event.transferType ?? "",
-            status: event.status,
-            step,
-            durationInMs: event.durationInMs ?? 0,
-            index,
-            transferAssetRelease: getTransferAssetRelease(),
-          });
-        }
+  const routeTransactions = useMemo(() => buildRouteTransactions(
+    operations,
+    transactionDetailsFromUrlParams ?? [],
+    Array.from({ length: Math.max(transactionStatuses.length, failedStatusQueries.length) }, (_, index) => {
+      const status = transactionStatuses[index];
+      return {
+        status,
+        events: status ? getTransferEventsFromTxStatusResponse([status]) : [],
+        queryFailed: failedStatusQueries[index],
       };
+    }),
+  ), [operations, transactionDetailsFromUrlParams, transactionStatuses, failedStatusQueries]);
 
-      if (index === 0) {
-        addChain(event.fromChainId, event.fromExplorerLink, "from");
-      }
-      addChain(event.toChainId, event.toExplorerLink, "to");
-    });
-
-    if (destAsset && destinationNodeFailed) {
-      const lastTransfer = transfers.at(-1);
-      if (lastTransfer) {
-        lastTransfer.step = "Routed";
-      }
-      transfers.push({
-        chainId: destAsset.chainId,
-        transferType: "N/A",
-        status: "failed",
-        step: "Destination",
-        index: eventsWithTxInfo.length,
-        explorerLink: "",
-      });
-    }
-
-    return transfers;
-  }, [destAsset, destinationNodeFailed, transferEvents, transactionStatuses]);
+  const transferEvents = useMemo(() => routeTransactions.flatMap(tx => tx.events), [routeTransactions]);
+  const transfersToShow = useMemo(() => getTimelineCards(routeTransactions), [routeTransactions]);
 
   useEffect(() => {
     setSkipClientConfig({ ...defaultSkipClientConfig, apiUrl: SKIP_API_URL });
@@ -258,28 +159,33 @@ export default function Home() {
 
   const getTxStatus = useCallback(
     async (transactionDetails: TransactionDetailsType[] = []) => {
+      const requestId = ++statusRequestId.current;
+      const isCurrentRequest = () => requestId === statusRequestId.current;
+      queriedTransactions.current = transactionDetails;
+      setFailedStatusQueries([]);
       if (cancelStatusPolling.length > 0) {
         cancelStatusPolling.forEach(response => response.cancel());
         setCancelStatusPolling([]);
       }
 
-      const txsToQuery = transactionDetails?.filter(
-        (tx) => tx.txHash !== undefined && tx.chainId !== undefined
+      const txsToQuery = transactionDetails?.map((tx, index) => ({ tx, index })).filter(
+        ({ tx }) => tx.txHash !== undefined && tx.chainId !== undefined
       );
 
-      const responses = txsToQuery?.map((tx, index) =>
+      const responses = txsToQuery?.map(({ tx, index }) =>
         waitForTransactionWithCancel({
           txHash: tx.txHash ?? "",
           chainId: tx.chainId ?? "",
           doNotTrack: true,
           onStatusUpdated: (status) => {
+            if (!isCurrentRequest()) return;
+            setFailedStatusQueries(previous => isCurrentRequest()
+              ? previous.map((failed, txIndex) => txIndex === index ? false : failed)
+              : previous);
             setTransactionStatuses((prev) => {
+              if (!isCurrentRequest()) return prev;
               const newStatuses = [...prev];
               newStatuses[index] = status;
-
-              const allTransferEvents =
-                getTransferEventsFromTxStatusResponse(newStatuses);
-              setTransferEvents(allTransferEvents);
 
               setTransactionStatusResponse(newStatuses[0]);
 
@@ -287,6 +193,13 @@ export default function Home() {
             });
           },
           onError: async (error) => {
+            if (!isCurrentRequest()) return;
+            setFailedStatusQueries(previous => {
+              if (!isCurrentRequest()) return previous;
+              const next = [...previous];
+              next[index] = true;
+              return next;
+            });
             const errorWithCodeAndDetails = error as ErrorWithCodeAndDetails;
             const notFound = error.message === "tx not found";
             const abandoned = error.message === "Tracking for the transaction has been abandoned";
@@ -302,13 +215,11 @@ export default function Home() {
                 } else if (abandoned) {
                   await onReindex(tx.txHash, tx.chainId);
                 }
+                if (!isCurrentRequest()) return;
                 setErrorDetails(undefined);
                 setTransactionStatusResponse(undefined);
                 getTxStatus(transactionDetails);
               } else {
-                if (index !== 0 && destAsset) {
-                  setDestinationNodeFailed(true);
-                }
                 setErrorDetails({
                   errorMessage: ErrorMessages.TRANSACTION_NOT_FOUND,
                   error: errorWithCodeAndDetails,
@@ -316,9 +227,6 @@ export default function Home() {
               }
 
             } else {
-              if (index !== 0 && destAsset) {
-                setDestinationNodeFailed(true);
-              }
               setErrorDetails({
                 errorMessage: ErrorMessages.TRANSACTION_ERROR,
                 error: errorWithCodeAndDetails,
@@ -328,12 +236,15 @@ export default function Home() {
         })
       ) || [];
 
+      // onError updates the UI; consume rejections from failures and cancellations.
+      responses.forEach(({ promise }) => void promise.catch(() => undefined));
       setCancelStatusPolling(responses);
     },
-    [cancelStatusPolling, destAsset, onReindex]
+    [cancelStatusPolling, onReindex]
   );
 
   const resetState = useCallback(() => {
+    statusRequestId.current += 1;
     cancelStatusPolling.forEach(response => response.cancel());
     setCancelStatusPolling([]);
 
@@ -344,17 +255,18 @@ export default function Home() {
     setChainId("");
 
     setTransactionStatuses([]);
-    setTransferEvents([]);
+    setFailedStatusQueries([]);
     setErrorDetails(undefined);
     setTransactionStatusResponse(undefined);
-    setDestinationNodeFailed(false);
     trackedTxHashes.current = [];
+    queriedTransactions.current = [];
 
   }, [cancelStatusPolling, setTxHashes, setChainIds, setData]);
 
   const onSearch = useCallback((_txhash?: string, _chainId?:string) => {
+    statusRequestId.current += 1;
     setTransactionStatuses([]);
-    setTransferEvents([]);
+    setFailedStatusQueries([]);
     setErrorDetails(undefined);
     setTransactionStatusResponse(undefined);
     const hash = _txhash ?? txHash;
@@ -379,6 +291,7 @@ export default function Home() {
   }, [txHash, chainId, transactionDetailsFromUrlParams, setTxHashes, setChainIds, setData, getTxStatus]);
 
   useEffect(() => {
+    const requestId = ++statusRequestId.current;
     if (transactionDetailsFromUrlParams) {
       setChainId(transactionDetailsFromUrlParams[0]?.chainId);
       setTxHash(transactionDetailsFromUrlParams[0]?.txHash);
@@ -402,6 +315,7 @@ export default function Home() {
             chainId: nextChainId,
           });
 
+          if (requestId !== statusRequestId.current) return;
           transactionDetails.push({ txHash, chainId: nextChainId });
           nextChainId = response?.transferAssetRelease?.chainId || "";
         }
@@ -409,6 +323,7 @@ export default function Home() {
 
       if (txHashes.length > 1) {
         calculateMissingChainIds().then(() => {
+          if (requestId !== statusRequestId.current) return;
           getTxStatus(transactionDetails);
         });
       } else {
@@ -417,6 +332,9 @@ export default function Home() {
       }
 
     }
+    return () => {
+      statusRequestId.current += 1;
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -424,12 +342,20 @@ export default function Home() {
     const chainIds = transfersToShow?.map((event) => event.chainId);
     const chainIdsFromUrlParams = [sourceAsset?.chainId ?? "", destAsset?.chainId ?? ""]
 
+    const knownStatuses = transactionStatuses.filter((status): status is TxStatusResponse => Boolean(status?.state));
+    // Prefer failures and pending states over an earlier transaction's success.
+    const state = knownStatuses.find(status => status.state === "STATE_COMPLETED_ERROR" || status.state === "STATE_PENDING_ERROR")?.state
+      ?? knownStatuses.find(status => status.state === "STATE_ABANDONED")?.state
+      ?? knownStatuses.find(status => status.state !== "STATE_COMPLETED_SUCCESS")?.state
+      ?? knownStatuses[0]?.state;
+
     return {
       txHash: transferEvents?.[0]?.fromTxHash ?? transactionDetailsFromUrlParams?.[0]?.txHash ?? "",
-      state: destinationNodeFailed ? "STATE_COMPLETED_ERROR" as TransactionState : transactionStatusResponse?.state,
+      state,
       chainIds: chainIds.length > 0 ? chainIds : chainIdsFromUrlParams,
+      hasUntrackedSteps: routeTransactions.some(tx => tx.phase === "planned" || tx.phase === "loading" || tx.phase === "waiting"),
     };
-  }, [transfersToShow, sourceAsset?.chainId, destAsset?.chainId, transferEvents, transactionDetailsFromUrlParams, destinationNodeFailed, transactionStatusResponse?.state]);
+  }, [transfersToShow, sourceAsset?.chainId, destAsset?.chainId, transferEvents, transactionDetailsFromUrlParams, transactionStatuses, routeTransactions]);
 
   const showRawDataModal = useCallback(() => {
     if (transactionStatuses.length > 0) {
@@ -480,8 +406,10 @@ export default function Home() {
       transactionStatusResponse?.state === "STATE_SUBMITTED" &&
       transferEvents.length === 0;
 
-    return (hasQueryParams && hasNoData) || isStateSubmittedWithEmptyTransfers;
-  }, [txHashes, chainIds, data, transactionDetailsFromUrlParams, transfersToShow.length, errorDetails, transactionStatusResponse, transferEvents.length]);
+    const isAwaitingStatus = routeTransactions.some(tx => tx.phase === "loading");
+
+    return (hasQueryParams && (hasNoData || isAwaitingStatus)) || isStateSubmittedWithEmptyTransfers;
+  }, [txHashes, chainIds, data, transactionDetailsFromUrlParams, transfersToShow.length, errorDetails, transactionStatusResponse, transferEvents.length, routeTransactions]);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
@@ -563,7 +491,7 @@ export default function Home() {
             </Row>
             <Spacer height={10} />
             {transfersToShow.map((transfer) => (
-              <>
+              <React.Fragment key={transfer.id}>
                 {transfer.step !== "Origin" && (
                   <Bridge
                     transferType={transfer.transferType}
@@ -571,11 +499,10 @@ export default function Home() {
                   />
                 )}
                 <ErrorBoundary
-                  key={transfer.chainId}
                   fallback={
                     <ErrorCard
                       errorTitle={ErrorMessages.TRANSFER_EVENT_ERROR}
-                      errorMessage={transactionStatuses.map(status => status.error?.message).join("")}
+                      errorMessage={transactionStatuses.map(status => status?.error?.message).join("")}
                       padding="20px 45px"
                       onRetry={() => onSearch()}
                     />
@@ -583,14 +510,19 @@ export default function Home() {
                 >
                   <TransferEventCard
                     {...transfer}
-                    state={transactionStatusResponse?.state}
-                    onReindex={() => {
-                      onReindex();
-                      onSearch();
+                    onReindex={async () => {
+                      const requestId = statusRequestId.current;
+                      const transactions = queriedTransactions.current;
+                      const tx = transactions[transfer.txIndex];
+                      if (!tx?.txHash) return;
+                      await onReindex(tx.txHash, tx.chainId);
+                      if (requestId !== statusRequestId.current) return;
+                      setErrorDetails(undefined);
+                      await getTxStatus(transactions);
                     }}
                   />
                 </ErrorBoundary>
-              </>
+              </React.Fragment>
             ))}
           </StyledColumns>
         </StyledContentContainer>
@@ -604,7 +536,7 @@ export default function Home() {
           </GhostButton>
           <ErrorCard
             errorTitle={txNotFound ? ErrorMessages.TRANSACTION_NOT_FOUND : ErrorMessages.TRANSACTION_ERROR}
-            errorMessage={transactionStatuses.map(status => status.error?.message).join("")}
+            errorMessage={transactionStatuses.map(status => status?.error?.message).join("")}
             onRetry={() => onSearch()}
           />
         </StyledColumns>
@@ -656,7 +588,6 @@ export default function Home() {
                 transferType={operations[0]?.type}
                 explorerLink={transactionDetailsFromUrlParams?.[0]?.explorerLink ?? ''}
                 step="Origin"
-                index={0}
               />
 
               <Bridge
@@ -669,7 +600,6 @@ export default function Home() {
                 status="completed"
                 explorerLink={transactionDetailsFromUrlParams?.[0]?.explorerLink ?? ''}
                 step="Destination"
-                index={1}
               />
             </StyledColumns>
           </StyledContentContainer>
@@ -678,7 +608,7 @@ export default function Home() {
       return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
     }
     return;
-  }, [isLoading, showLoadingTimeout, transfersToShow, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, txNotFound, transactionStatuses, onSearch, onReindex, sourceAsset?.chainId, operations, destAsset?.chainId]);
+  }, [isLoading, showLoadingTimeout, transfersToShow, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, txNotFound, transactionStatuses, onSearch, onReindex, getTxStatus, sourceAsset?.chainId, operations, destAsset?.chainId]);
 
   return (
     <Column width="100%" align="center">
