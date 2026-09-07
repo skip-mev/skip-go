@@ -1,7 +1,8 @@
-import type { ClientTransferEvent, TransactionDetails, TransactionState, TransferAssetRelease, TransferEventStatus, TxStatusResponse } from "@skip-go/client";
+import { getSimpleOverallStatus } from "@skip-go/client";
+import type { OverallStatus, ClientTransferEvent, TransactionDetails, TransactionState, TransferAssetRelease, TransferEventStatus, TxStatusResponse } from "@skip-go/client";
 import type { ClientOperation } from "@/utils/clientType";
 
-export type TransactionPhase = "planned" | "loading" | "pending" | "completed" | "failed" | "abandoned";
+export type TransactionPhase = OverallStatus | "planned" | "loading" | "abandoned";
 export type TransactionObservation = { status?: TxStatusResponse; events: ClientTransferEvent[] };
 export type RouteTransaction = TransactionObservation & {
   txIndex: number;
@@ -34,15 +35,9 @@ export const operationFromChain = (op: ClientOperation): string | undefined => o
 export const operationToChain = (op: ClientOperation): string | undefined => op.toChainId || op.chainId || (op.isSwap ? op.fromChainId : undefined);
 
 function getPhase(transaction: TransactionDetails | undefined, status: TxStatusResponse | undefined): TransactionPhase {
-  switch (status?.state) {
-    case "STATE_COMPLETED_SUCCESS": return "completed";
-    case "STATE_COMPLETED_ERROR":
-    case "STATE_PENDING_ERROR": return "failed";
-    case "STATE_ABANDONED": return "abandoned";
-    case "STATE_SUBMITTED":
-    case "STATE_PENDING": return "pending";
-    default: return transaction?.txHash ? "loading" : "planned";
-  }
+  if (!status?.state) return transaction?.txHash ? "loading" : "planned";
+  if (status.state === "STATE_ABANDONED") return "abandoned";
+  return getSimpleOverallStatus(status.state);
 }
 
 /** Groups the entire plan and observations by txIndex; chain IDs never identify a transaction. */
@@ -60,8 +55,7 @@ export function buildRouteTransactions(
   }
   const indices = new Set<number>([
     ...grouped.keys(),
-    ...Array.from({ length: transactions.length }, (_, index) => index),
-    ...Array.from({ length: observations.length }, (_, index) => index),
+    ...Array.from({ length: Math.max(transactions.length, observations.length) }, (_, index) => index),
   ]);
   return [...indices].sort((a, b) => a - b).map(txIndex => ({
     txIndex,
@@ -137,10 +131,8 @@ export function getTimelineCards(route: RouteTransaction[]): TimelineCard[] {
   const finalTransaction = route.at(-1);
   const finalOperation = finalTransaction?.operations.at(-1);
   const destinationChain = finalOperation && operationToChain(finalOperation);
-  cards.forEach((card, index) => {
-    if (card.step !== "Origin") card.step = index === cards.length - 1
-      && card.txIndex === finalTransaction?.txIndex && (!destinationChain || card.chainId === destinationChain)
-      ? "Destination" : "Routed";
-  });
+  const lastCard = cards.at(-1);
+  if (lastCard && lastCard.step !== "Origin" && lastCard.txIndex === finalTransaction?.txIndex
+    && (!destinationChain || lastCard.chainId === destinationChain)) lastCard.step = "Destination";
   return cards;
 }

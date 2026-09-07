@@ -19,20 +19,11 @@ import { CoinsIcon } from "../icons/CoinsIcon";
 import { Tooltip } from "@/components/Tooltip";
 import { useClipboard } from "@/hooks/useClipboard";
 import { useGetTransferAssetReleaseAsset } from "../hooks/useGetTransferAssetReleaseAsset";
-import type { TimelineCard, TransactionPhase } from "../utils/routeTimeline";
+import type { TimelineCard } from "../utils/routeTimeline";
 
 export type TransferEventCardProps = Omit<TimelineCard, "id" | "txIndex" | "timeline"> & {
   timeline?: TimelineCard["timeline"];
   onReindex?: () => void;
-};
-
-const phaseLabels: Record<TransactionPhase, string> = {
-  planned: "Planned",
-  loading: "Loading",
-  pending: "Transaction pending",
-  completed: "Successful",
-  failed: "Transaction failed",
-  abandoned: "Abandoned",
 };
 
 const routedStatusMap: Record<TransferEventStatus, string> = {
@@ -66,7 +57,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const releaseChain = skipChains.data?.find(chain => chain.chainId === transferAssetRelease?.chainId);
 
   const renderStatusBadge = useMemo(() => {
-    if (timeline && timeline.source !== "event" && status === undefined) return <Badge>{phaseLabels[timeline.phase]}</Badge>;
+    if (timeline?.phase === "planned") return <Badge>Planned</Badge>;
     if (stateAbandoned) {
       return (
         <Tooltip content="Transaction got stuck. Retry indexing">
@@ -77,6 +68,13 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
           </Badge>
         </Tooltip>
       )
+    }
+    if (timeline && timeline.source !== "event" && status === undefined) {
+      return (
+        <Badge color={stateLabelAndColor?.color} background={stateLabelAndColor?.background}>
+          {stateLabelAndColor?.label}
+        </Badge>
+      );
     }
     if (step === "Origin") {
       return (
