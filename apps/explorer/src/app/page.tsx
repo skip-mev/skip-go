@@ -121,15 +121,11 @@ export default function Home() {
   const routeTransactions = useMemo(() => buildRouteTransactions(
     operations,
     transactionDetailsFromUrlParams ?? [],
-    Array.from({ length: Math.max(transactionStatuses.length, failedStatusQueries.length) }, (_, index) => {
-      const status = transactionStatuses[index];
-      return {
-        status,
-        events: status ? getTransferEventsFromTxStatusResponse([status]) : [],
-        queryFailed: failedStatusQueries[index],
-      };
-    }),
-  ), [operations, transactionDetailsFromUrlParams, transactionStatuses, failedStatusQueries]);
+    transactionStatuses.map(status => ({
+      status,
+      events: status ? getTransferEventsFromTxStatusResponse([status]) : [],
+    })),
+  ), [operations, transactionDetailsFromUrlParams, transactionStatuses]);
 
   const transferEvents = useMemo(() => routeTransactions.flatMap(tx => tx.events), [routeTransactions]);
   const transfersToShow = useMemo(() => getTimelineCards(routeTransactions), [routeTransactions]);
@@ -285,7 +281,10 @@ export default function Home() {
     }
 
     if (hash && id) {
-      getTxStatus([{ txHash: hash, chainId: id }]);
+      const transactions = transactionDetailsFromUrlParams;
+      getTxStatus(transactions?.[0]?.txHash === hash && transactions?.[0]?.chainId === id
+        ? transactions
+        : [{ txHash: hash, chainId: id }]);
     }
 
   }, [txHash, chainId, transactionDetailsFromUrlParams, setTxHashes, setChainIds, setData, getTxStatus]);
@@ -353,7 +352,7 @@ export default function Home() {
       txHash: transferEvents?.[0]?.fromTxHash ?? transactionDetailsFromUrlParams?.[0]?.txHash ?? "",
       state,
       chainIds: chainIds.length > 0 ? chainIds : chainIdsFromUrlParams,
-      hasUntrackedSteps: routeTransactions.some(tx => tx.phase === "planned" || tx.phase === "loading" || tx.phase === "waiting"),
+      hasUntrackedSteps: routeTransactions.some(tx => tx.phase === "planned" || tx.phase === "loading"),
     };
   }, [transfersToShow, sourceAsset?.chainId, destAsset?.chainId, transferEvents, transactionDetailsFromUrlParams, transactionStatuses, routeTransactions]);
 
@@ -391,7 +390,10 @@ export default function Home() {
     return Boolean(isTop && isLessThan1300);
   }, [isTop, isLessThan1300]);
 
+  const hasStatusQueryError = Boolean(errorDetails) && failedStatusQueries.some((failed, index) => failed && !transactionStatuses[index]);
+
   const isLoading = useMemo(() => {
+    if (hasStatusQueryError) return false;
     const hasQueryParams = Boolean(
       (txHashes && txHashes.length > 0 && chainIds && chainIds.length > 0) ||
       data ||
@@ -409,7 +411,7 @@ export default function Home() {
     const isAwaitingStatus = routeTransactions.some(tx => tx.phase === "loading");
 
     return (hasQueryParams && (hasNoData || isAwaitingStatus)) || isStateSubmittedWithEmptyTransfers;
-  }, [txHashes, chainIds, data, transactionDetailsFromUrlParams, transfersToShow.length, errorDetails, transactionStatusResponse, transferEvents.length, routeTransactions]);
+  }, [txHashes, chainIds, data, transactionDetailsFromUrlParams, transfersToShow.length, errorDetails, transactionStatusResponse, transferEvents.length, routeTransactions, hasStatusQueryError]);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
@@ -449,7 +451,7 @@ export default function Home() {
     if (isLoading) {
       return <LoadingState />;
     }
-    if (transfersToShow.length > 0) {
+    if (transfersToShow.length > 0 && !hasStatusQueryError) {
       return (
         <StyledContentContainer
           ref={contentContainerRef}
@@ -608,7 +610,7 @@ export default function Home() {
       return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
     }
     return;
-  }, [isLoading, showLoadingTimeout, transfersToShow, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, txNotFound, transactionStatuses, onSearch, onReindex, getTxStatus, sourceAsset?.chainId, operations, destAsset?.chainId]);
+  }, [isLoading, showLoadingTimeout, transfersToShow, hasStatusQueryError, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, txNotFound, transactionStatuses, onSearch, onReindex, getTxStatus, sourceAsset?.chainId, operations, destAsset?.chainId]);
 
   return (
     <Column width="100%" align="center">

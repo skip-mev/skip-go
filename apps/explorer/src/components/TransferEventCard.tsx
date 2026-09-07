@@ -29,7 +29,6 @@ export type TransferEventCardProps = Omit<TimelineCard, "id" | "txIndex" | "time
 const phaseLabels: Record<TransactionPhase, string> = {
   planned: "Planned",
   loading: "Loading",
-  waiting: "Status unavailable",
   pending: "Transaction pending",
   completed: "Successful",
   failed: "Transaction failed",

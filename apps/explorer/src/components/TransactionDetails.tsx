@@ -58,7 +58,7 @@ export const TransactionDetails = ({ txHash, state, chainIds, hasUntrackedSteps 
       <DetailsRow
         label="Status"
         value={hasUntrackedSteps && !state
-          ? <SmallText>Status unavailable</SmallText>
+          ? <SmallText>Planned</SmallText>
           : hasUntrackedSteps && state === "STATE_COMPLETED_SUCCESS"
           ? <SmallText>Partially tracked</SmallText>
           : <SmallText color={statusLabelAndColor?.color}>{statusLabelAndColor?.label}</SmallText>}

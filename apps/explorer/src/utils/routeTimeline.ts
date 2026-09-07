@@ -1,8 +1,8 @@
 import type { ClientTransferEvent, TransactionDetails, TransactionState, TransferAssetRelease, TransferEventStatus, TxStatusResponse } from "@skip-go/client";
 import type { ClientOperation } from "@/utils/clientType";
 
-export type TransactionPhase = "planned" | "loading" | "waiting" | "pending" | "completed" | "failed" | "abandoned";
-export type TransactionObservation = { status?: TxStatusResponse; events: ClientTransferEvent[]; queryFailed?: boolean };
+export type TransactionPhase = "planned" | "loading" | "pending" | "completed" | "failed" | "abandoned";
+export type TransactionObservation = { status?: TxStatusResponse; events: ClientTransferEvent[] };
 export type RouteTransaction = TransactionObservation & {
   txIndex: number;
   transaction?: TransactionDetails;
@@ -33,7 +33,7 @@ export type TimelineCard = {
 export const operationFromChain = (op: ClientOperation): string | undefined => op.fromChainId || op.chainId;
 export const operationToChain = (op: ClientOperation): string | undefined => op.toChainId || op.chainId || (op.isSwap ? op.fromChainId : undefined);
 
-function getPhase(transaction: TransactionDetails | undefined, status: TxStatusResponse | undefined, queryFailed = false): TransactionPhase {
+function getPhase(transaction: TransactionDetails | undefined, status: TxStatusResponse | undefined): TransactionPhase {
   switch (status?.state) {
     case "STATE_COMPLETED_SUCCESS": return "completed";
     case "STATE_COMPLETED_ERROR":
@@ -41,7 +41,7 @@ function getPhase(transaction: TransactionDetails | undefined, status: TxStatusR
     case "STATE_ABANDONED": return "abandoned";
     case "STATE_SUBMITTED":
     case "STATE_PENDING": return "pending";
-    default: return transaction?.txHash ? (queryFailed ? "waiting" : "loading") : "planned";
+    default: return transaction?.txHash ? "loading" : "planned";
   }
 }
 
@@ -69,7 +69,7 @@ export function buildRouteTransactions(
     operations: grouped.get(txIndex) ?? [],
     status: observations[txIndex]?.status,
     events: observations[txIndex]?.events ?? [],
-    phase: getPhase(transactions[txIndex], observations[txIndex]?.status, observations[txIndex]?.queryFailed),
+    phase: getPhase(transactions[txIndex], observations[txIndex]?.status),
   }));
 }
 
