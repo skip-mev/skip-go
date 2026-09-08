@@ -13,6 +13,7 @@ import Image from "next/image";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { formatDisplayAmount } from "@/utils/number";
 import { useOverallStatusLabelAndColor } from "../hooks/useOverallStatusLabelAndColor";
+import { styled } from "@/styled-components";
 
 export type TransactionDetailsProps = {
   txHash: string;
@@ -67,14 +68,14 @@ export const TransactionDetails = ({ txHash, state, chainIds, hasUntrackedSteps 
       <DetailsRow
         label="Route"
         value={
-          <Row gap={5}>
+          <RouteChains data-horizontal-scroll tabIndex={0} aria-label="Route" gap={5}>
             {chains?.map((chain, index) => (
-              <Row key={`${chain?.chainId}-${index}`} gap={8} align="center">
+              <Row key={`${chain?.chainId}-${index}`} gap={8} align="center" style={{ flexShrink: 0 }}>
                 {chain?.logoUri && <Image src={chain?.logoUri} alt={chain?.chainName} width={20} height={20} />}
                 <SmallText>{index < chains.length - 1 && "→"}</SmallText>
               </Row>
             ))}
-          </Row>
+          </RouteChains>
         }
       />
     </Container>
@@ -95,3 +96,14 @@ export const DetailsRow = ({ label, value, onClick }: { label: string, value: Re
     </Button>
   )
 }
+
+const RouteChains = styled(Row)`
+  min-width: 0;
+  margin-left: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;

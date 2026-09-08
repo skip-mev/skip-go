@@ -96,6 +96,14 @@ export default function Home() {
     let scrollTimeout: NodeJS.Timeout;
 
     const handleWheel = (event: WheelEvent) => {
+      const horizontalScroll = event.target instanceof Element
+        ? event.target.closest<HTMLElement>("[data-horizontal-scroll]")
+        : null;
+      if (horizontalScroll) {
+        event.preventDefault();
+        horizontalScroll.scrollLeft += event.deltaX || event.deltaY;
+        return;
+      }
       if (contentContainerRef.current) {
         event.preventDefault();
 
@@ -133,7 +141,7 @@ export default function Home() {
   useEffect(() => {
     setSkipClientConfig({ ...defaultSkipClientConfig, apiUrl: SKIP_API_URL });
     setOnlyTestnets(isTestnet);
-    setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP)
+    setChainIdsSortedToTop(CHAIN_IDS_SORTED_TO_TOP) 
   }, [setSkipClientConfig, setOnlyTestnets, setChainIdsSortedToTop, isTestnet]);
 
   const onReindex = useCallback(async (_txHash?: string, _chainId?: string) => {
@@ -454,8 +462,6 @@ export default function Home() {
     if (transfersToShow.length > 0 && !hasStatusQueryError) {
       return (
         <StyledContentContainer
-          ref={contentContainerRef}
-          showScrollbar={showScrollbar}
           gap={16}
           flexDirection={isMobileScreenSize ? "column" : "row"}
           align={isMobileScreenSize ? "center" : "flex-start"}
@@ -485,48 +491,50 @@ export default function Home() {
               )}
             </StyledColumns>
           </StyledColumns>
-          <StyledColumns align="center" justify="center">
+          <StyledTransferColumn>
             <Row width="100%" justify="flex-end">
               <GhostButton gap={5} onClick={showRawDataModal}>
                 View raw data <HamburgerIcon />
               </GhostButton>
             </Row>
             <Spacer height={10} />
-            {transfersToShow.map((transfer) => (
-              <React.Fragment key={transfer.id}>
-                {transfer.step !== "Origin" && (
-                  <Bridge
-                    transferType={transfer.transferType}
-                    durationInMs={transfer.durationInMs}
-                  />
-                )}
-                <ErrorBoundary
-                  fallback={
-                    <ErrorCard
-                      errorTitle={ErrorMessages.TRANSFER_EVENT_ERROR}
-                      errorMessage={transactionStatuses.map(status => status?.error?.message).join("")}
-                      padding="20px 45px"
-                      onRetry={() => onSearch()}
+            <StyledTransferList ref={contentContainerRef} showScrollbar={showScrollbar}>
+              {transfersToShow.map((transfer) => (
+                <React.Fragment key={transfer.id}>
+                  {transfer.step !== "Origin" && (
+                    <Bridge
+                      transferType={transfer.transferType}
+                      durationInMs={transfer.durationInMs}
                     />
-                  }
-                >
-                  <TransferEventCard
-                    {...transfer}
-                    onReindex={async () => {
-                      const requestId = statusRequestId.current;
-                      const transactions = queriedTransactions.current;
-                      const tx = transactions[transfer.txIndex];
-                      if (!tx?.txHash) return;
-                      await onReindex(tx.txHash, tx.chainId);
-                      if (requestId !== statusRequestId.current) return;
-                      setErrorDetails(undefined);
-                      await getTxStatus(transactions);
-                    }}
-                  />
-                </ErrorBoundary>
-              </React.Fragment>
-            ))}
-          </StyledColumns>
+                  )}
+                  <ErrorBoundary
+                    fallback={
+                      <ErrorCard
+                        errorTitle={ErrorMessages.TRANSFER_EVENT_ERROR}
+                        errorMessage={transactionStatuses.map(status => status?.error?.message).join("")}
+                        padding="20px 45px"
+                        onRetry={() => onSearch()}
+                      />
+                    }
+                  >
+                    <TransferEventCard
+                      {...transfer}
+                      onReindex={async () => {
+                        const requestId = statusRequestId.current;
+                        const transactions = queriedTransactions.current;
+                        const tx = transactions[transfer.txIndex];
+                        if (!tx?.txHash) return;
+                        await onReindex(tx.txHash, tx.chainId);
+                        if (requestId !== statusRequestId.current) return;
+                        setErrorDetails(undefined);
+                        await getTxStatus(transactions);
+                      }}
+                    />
+                  </ErrorBoundary>
+                </React.Fragment>
+              ))}
+            </StyledTransferList>
+          </StyledTransferColumn>
         </StyledContentContainer>
       )
     }
@@ -548,7 +556,6 @@ export default function Home() {
       if (transactionDetailsFromUrlParams) {
         return (
           <StyledContentContainer
-            showScrollbar={showScrollbar}
             gap={16}
             flexDirection={isMobileScreenSize ? "column" : "row"}
             align={isMobileScreenSize ? "center" : "flex-start"}
@@ -578,32 +585,34 @@ export default function Home() {
                 )}
               </StyledColumns>
             </StyledColumns>
-            <StyledColumns align="center" justify="center">
+            <StyledTransferColumn>
               <Row width="100%" justify="flex-end">
                 <GhostButton gap={5} onClick={showRawDataModal}>
                   View raw data <HamburgerIcon />
                 </GhostButton>
               </Row>
               <Spacer height={10} />
-              <TransferEventCard
-                chainId={sourceAsset?.chainId ?? ''}
-                transferType={operations[0]?.type}
-                explorerLink={transactionDetailsFromUrlParams?.[0]?.explorerLink ?? ''}
-                step="Origin"
-              />
+              <StyledTransferList ref={contentContainerRef} showScrollbar={showScrollbar}>
+                <TransferEventCard
+                  chainId={sourceAsset?.chainId ?? ''}
+                  transferType={operations[0]?.type}
+                  explorerLink={transactionDetailsFromUrlParams?.[0]?.explorerLink ?? ''}
+                  step="Origin"
+                />
 
-              <Bridge
-                transferType={operations[0]?.type}
-              />
+                <Bridge
+                  transferType={operations[0]?.type}
+                />
 
-              <TransferEventCard
-                chainId={destAsset?.chainId ?? ''}
-                transferType={operations[0]?.type}
-                status="completed"
-                explorerLink={transactionDetailsFromUrlParams?.[0]?.explorerLink ?? ''}
-                step="Destination"
-              />
-            </StyledColumns>
+                <TransferEventCard
+                  chainId={destAsset?.chainId ?? ''}
+                  transferType={operations[0]?.type}
+                  status="completed"
+                  explorerLink={transactionDetailsFromUrlParams?.[0]?.explorerLink ?? ''}
+                  step="Destination"
+                />
+              </StyledTransferList>
+            </StyledTransferColumn>
           </StyledContentContainer>
         )
       }
@@ -631,16 +640,14 @@ export default function Home() {
   );
 }
 
-const StyledContentContainer = styled(Row)<{ showScrollbar: boolean }>`
+const StyledContentContainer = styled(Row)`
   height: calc(100vh - 100px);
   @media (min-width: 1023px) {
     height: calc(100vh - 150px);
   }
-  overflow: auto;
-
-  ${isMac() ? "scroll-behavior: auto;" : "scroll-behavior: smooth;"}
-
-  ${({ showScrollbar }) => styledScrollbar(showScrollbar)};
+  > :first-child {
+    flex-shrink: 0;
+  }
 `;
 
 const StyledColumns = styled(Column)`
@@ -648,4 +655,29 @@ const StyledColumns = styled(Column)`
   @media (min-width: 767px) {
     width: 355px;
   }
+`;
+
+const StyledTransferColumn = styled(StyledColumns)`
+  height: 100%;
+  min-height: 0;
+
+  > :first-child {
+    flex-shrink: 0;
+  }
+`;
+
+const StyledTransferList = styled(Column)<{ showScrollbar: boolean }>`
+  flex: 1;
+  min-height: 0;
+  align-items: center;
+  width: calc(100% + 8px);
+  padding-right: 8px;
+  overflow: auto;
+
+  > * {
+    flex-shrink: 0;
+  }
+
+  ${isMac() ? "scroll-behavior: auto;" : "scroll-behavior: smooth;"}
+  ${({ showScrollbar }) => styledScrollbar(showScrollbar)};
 `;
