@@ -1,7 +1,7 @@
 import { Container } from "@/components/Container";
 import { Row } from "@/components/Layout";
 import { SmallText } from '@/components/Typography';
-import { useMemo } from "react";
+import { Fragment, useMemo } from "react";
 import type { ReactNode } from "react";
 import type { TransactionState } from "@skip-go/client";
 import { useAtomValue } from "@/jotai";
@@ -14,6 +14,7 @@ import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionH
 import { formatDisplayAmount } from "@/utils/number";
 import { useOverallStatusLabelAndColor } from "../hooks/useOverallStatusLabelAndColor";
 import { styled } from "@/styled-components";
+import { RightArrowIcon } from "../icons/RightArrowIcon";
 
 export type TransactionDetailsProps = {
   txHash: string;
@@ -68,12 +69,12 @@ export const TransactionDetails = ({ txHash, state, chainIds, hasUntrackedSteps 
       <DetailsRow
         label="Route"
         value={
-          <RouteChains data-horizontal-scroll tabIndex={0} aria-label="Route" gap={5}>
+          <RouteChains data-route-preview aria-label="Route">
             {chains?.map((chain, index) => (
-              <Row key={`${chain?.chainId}-${index}`} gap={8} align="center" style={{ flexShrink: 0 }}>
+              <Fragment key={`${chain?.chainId}-${index}`}>
                 {chain?.logoUri && <Image src={chain?.logoUri} alt={chain?.chainName} width={20} height={20} />}
-                <SmallText>{index < chains.length - 1 && "→"}</SmallText>
-              </Row>
+                {index < chains.length - 1 && <RouteArrow aria-hidden="true"><RightArrowIcon color="currentColor" /></RouteArrow>}
+              </Fragment>
             ))}
           </RouteChains>
         }
@@ -99,11 +100,27 @@ export const DetailsRow = ({ label, value, onClick }: { label: string, value: Re
 
 const RouteChains = styled(Row)`
   min-width: 0;
+  max-width: 220px;
   margin-left: 16px;
-  overflow-x: auto;
-  scrollbar-width: none;
+  align-items: center;
 
-  &::-webkit-scrollbar {
-    display: none;
+  > img {
+    flex: 0 1 20px;
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+`;
+
+const RouteArrow = styled(SmallText)`
+  flex: 0 1 25px;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+
+  > svg {
+    width: 50%;
+    height: auto;
   }
 `;

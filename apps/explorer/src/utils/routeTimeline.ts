@@ -40,6 +40,41 @@ function getPhase(transaction: TransactionDetails | undefined, status: TxStatusR
   return getSimpleOverallStatus(status.state);
 }
 
+/** Matches an ordered event prefix to transfers and their following same-chain operations. */
+function getEventPlannedOutputs(operations: ClientOperation[], events: ClientTransferEvent[]): (ClientOperation | undefined)[] {
+  const segments: { transfer: ClientOperation; output?: ClientOperation }[] = [];
+  let previousChain: string | undefined;
+  for (const operation of operations) {
+    const from = operationFromChain(operation);
+    const to = operationToChain(operation);
+    // Do not infer execution-environment aliases or reconnect a discontinuous plan.
+    if (!from || !to || (previousChain && from !== previousChain)) return [];
+    previousChain = to;
+    if (from !== to) {
+      segments.push({ transfer: operation, output: operation });
+    } else {
+      const segment = segments.at(-1);
+      if (segment) {
+        // Multiple local operations are usable only when their asset flow is explicit.
+        segment.output = segment.output?.denomOut && segment.output.denomOut === operation.denomIn
+          ? operation : undefined;
+      }
+    }
+  }
+
+  let aligned = true;
+  return events.map((event, index) => {
+    const segment = segments[index];
+    const transfer = segment?.transfer;
+    const transferType = transfer?.type === "transfer" ? "ibcTransfer" : transfer?.type;
+    // Refunds, missing hops and other mismatches keep their observed data without a guess.
+    aligned = aligned && !!transfer && !!event.fromChainId && !!event.toChainId && !!event.transferType &&
+      event.fromChainId === operationFromChain(transfer) && event.toChainId === operationToChain(transfer) &&
+      event.transferType === transferType;
+    return aligned ? segment.output : undefined;
+  });
+}
+
 /** Groups the entire plan and observations by txIndex; chain IDs never identify a transaction. */
 export function buildRouteTransactions(
   operations: ClientOperation[],
@@ -72,6 +107,7 @@ export function getTimelineCards(route: RouteTransaction[]): TimelineCard[] {
   const cards: TimelineCard[] = [];
   const latestRelease = route.findLast(tx => tx.status?.transferAssetRelease?.released);
   for (const tx of route) {
+    const plannedOutputs = getEventPlannedOutputs(tx.operations, tx.events);
     const firstOperation = tx.operations[0];
     const originChain = tx.events[0]?.fromChainId || (firstOperation && operationFromChain(firstOperation));
     const start = cards.length;
@@ -114,6 +150,16 @@ export function getTimelineCards(route: RouteTransaction[]): TimelineCard[] {
     if (!endpoint || cards.length === start) continue;
     endpoint.timeline.isTransactionEnd = true;
 
+    if (tx.phase === "failed" && endpoint.timeline.source === "event") {
+      const output = plannedOutputs[tx.events.findLastIndex(event => !!event.toChainId)];
+      // Display policy is separate from matching; actual releases below take precedence.
+      if (output?.denomOut && output.amountOut) {
+        endpoint.timeline.asset = {
+          chainId: endpoint.chainId, denom: output.denomOut, amount: output.amountOut, estimated: true,
+        };
+      }
+    }
+
     const release = tx.status?.transferAssetRelease;
     if (release?.released && release.chainId && release.denom) {
       // Keep the actual release's chain/denom, including EVM/Cosmos boundaries and refunds.
@@ -133,6 +179,6 @@ export function getTimelineCards(route: RouteTransaction[]): TimelineCard[] {
   const destinationChain = finalOperation && operationToChain(finalOperation);
   const lastCard = cards.at(-1);
   if (lastCard && lastCard.step !== "Origin" && lastCard.txIndex === finalTransaction?.txIndex
-    && (!destinationChain || lastCard.chainId === destinationChain)) lastCard.step = "Destination";
+    && (finalTransaction.phase === "failed" || !destinationChain || lastCard.chainId === destinationChain)) lastCard.step = "Destination";
   return cards;
 }

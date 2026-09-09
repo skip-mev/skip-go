@@ -1,4 +1,5 @@
 import { Container } from "@/components/Container";
+import { Column } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { BridgeIcon } from "../icons/BridgeIcon";
 import { ClockIcon } from "../icons/ClockIcon";
@@ -38,10 +39,10 @@ export const getTransferTypeLabel = (transferType: TransferType | OperationType 
   }
 }
 
-export const Bridge = ({ transferType, durationInMs }: { transferType: string, durationInMs?: number }) => {
+export const Bridge = ({ transferType, durationInMs, dimmed = false }: { transferType: string, durationInMs?: number, dimmed?: boolean }) => {
   const theme = useTheme();
   return (
-    <>
+    <Column align="center" gap={0} style={{ opacity: dimmed ? 0.5 : 1 }}>
       <BridgeIcon color={theme.primary.background.normal}/>
       <Container padding={12} width="auto" borderRadius={12} gap={5} flexDirection="row">
         <SmallText normalTextColor>{ getTransferTypeLabel(transferType) }</SmallText>
@@ -55,6 +56,6 @@ export const Bridge = ({ transferType, durationInMs }: { transferType: string, d
         }
       </Container>
       <BridgeIcon color={theme.primary.background.normal} />
-  </>
+    </Column>
   )
 }

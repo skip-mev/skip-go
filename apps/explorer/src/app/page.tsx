@@ -96,12 +96,8 @@ export default function Home() {
     let scrollTimeout: NodeJS.Timeout;
 
     const handleWheel = (event: WheelEvent) => {
-      const horizontalScroll = event.target instanceof Element
-        ? event.target.closest<HTMLElement>("[data-horizontal-scroll]")
-        : null;
-      if (horizontalScroll) {
+      if (event.target instanceof Element && event.target.closest("[data-route-preview]")) {
         event.preventDefault();
-        horizontalScroll.scrollLeft += event.deltaX || event.deltaY;
         return;
       }
       if (contentContainerRef.current) {
@@ -505,6 +501,7 @@ export default function Home() {
                     <Bridge
                       transferType={transfer.transferType}
                       durationInMs={transfer.durationInMs}
+                      dimmed={transfer.timeline.phase === "planned"}
                     />
                   )}
                   <ErrorBoundary
