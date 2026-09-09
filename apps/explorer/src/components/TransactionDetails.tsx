@@ -1,8 +1,9 @@
 import { Container } from "@/components/Container";
 import { Row } from "@/components/Layout";
 import { SmallText } from '@/components/Typography';
-import { ReactNode, useMemo } from "react";
-import { TransactionState } from "@skip-go/client";
+import { Fragment, useMemo } from "react";
+import type { ReactNode } from "react";
+import type { TransactionState } from "@skip-go/client";
 import { useAtomValue } from "@/jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { Button } from "@/components/Button";
@@ -12,14 +13,17 @@ import Image from "next/image";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { formatDisplayAmount } from "@/utils/number";
 import { useOverallStatusLabelAndColor } from "../hooks/useOverallStatusLabelAndColor";
+import { styled } from "@/styled-components";
+import { RightArrowIcon } from "../icons/RightArrowIcon";
 
 export type TransactionDetailsProps = {
   txHash: string;
   state?: TransactionState;
   chainIds?: string[];
+  hasUntrackedSteps?: boolean;
 }
 
-export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetailsProps) => {
+export const TransactionDetails = ({ txHash, state, chainIds, hasUntrackedSteps }: TransactionDetailsProps) => {
   const skipChains = useAtomValue(skipChainsAtom);
   const { saveToClipboard, isCopied } = useClipboard();
   const { sourceAsset, destAsset, sourceAmount, destAmount } = useTransactionHistoryItemFromUrlParams();
@@ -55,20 +59,22 @@ export const TransactionDetails = ({ txHash, state, chainIds }: TransactionDetai
       />
       <DetailsRow
         label="Status"
-        value={<SmallText color={statusLabelAndColor?.color}>{statusLabelAndColor?.label}</SmallText>}
+        value={hasUntrackedSteps && (!state || state === "STATE_COMPLETED_SUCCESS")
+          ? <SmallText>Canceled</SmallText>
+          : <SmallText color={statusLabelAndColor?.color}>{statusLabelAndColor?.label}</SmallText>}
       />
       <DetailsRow onClick={() => saveToClipboard(txHash)} label="Transaction Hash" value={isCopied ? "Copied!" : getTruncatedAddress(txHash)} />
       <DetailsRow
         label="Route"
         value={
-          <Row gap={5}>
+          <RouteChains data-route-preview aria-label="Route">
             {chains?.map((chain, index) => (
-              <Row key={`${chain?.chainId}-${index}`} gap={8} align="center">
+              <Fragment key={`${chain?.chainId}-${index}`}>
                 {chain?.logoUri && <Image src={chain?.logoUri} alt={chain?.chainName} width={20} height={20} />}
-                <SmallText>{index < chains.length - 1 && "→"}</SmallText>
-              </Row>
+                {index < chains.length - 1 && <RouteArrow aria-hidden="true"><RightArrowIcon color="currentColor" /></RouteArrow>}
+              </Fragment>
             ))}
-          </Row>
+          </RouteChains>
         }
       />
     </Container>
@@ -89,3 +95,30 @@ export const DetailsRow = ({ label, value, onClick }: { label: string, value: Re
     </Button>
   )
 }
+
+const RouteChains = styled(Row)`
+  min-width: 0;
+  max-width: 220px;
+  margin-left: 16px;
+  align-items: center;
+
+  > img {
+    flex: 0 1 20px;
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+`;
+
+const RouteArrow = styled(SmallText)`
+  flex: 0 1 25px;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+
+  > svg {
+    width: 50%;
+    height: auto;
+  }
+`;
