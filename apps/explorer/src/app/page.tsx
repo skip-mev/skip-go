@@ -1,8 +1,8 @@
 "use client";
 import React, { useCallback, useRef } from "react";
 import { Column, Row, Spacer } from "@/components/Layout";
+import { Container } from "@/components/Container";
 import {
-  getTransferEventsFromTxStatusResponse,
   waitForTransactionWithCancel,
   transactionStatus,
   trackTransaction,
@@ -20,6 +20,7 @@ import { TransactionDetails } from "../components/TransactionDetails";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { NiceModal } from "@/nice-modal";
 import { GhostButton } from "@/components/Button";
+import { ChevronIcon } from "@/icons/ChevronIcon";
 import { HamburgerIcon } from "@/icons/HamburgerIcon";
 import { TokenDetails } from "../components/TokenDetails";
 import { ExplorerModals } from "../constants/modal";
@@ -37,6 +38,7 @@ import { chainIdsSortedToTopAtom } from "@/state/chainIdsSortedToTop";
 import { CHAIN_IDS_SORTED_TO_TOP } from "../constants/chainIdsSortedToTop";
 import { isMac } from "@/utils/os";
 import { LoadingState } from "../components/LoadingState";
+import type { TimelineCard } from "../utils/routeTimeline";
 import { buildRouteTransactions, getTimelineCards } from "../utils/routeTimeline";
 import { SKIP_API_URL } from "../utils/skipClientConfig";
 
@@ -77,7 +79,7 @@ export default function Home() {
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
-  const { transactionDetails: transactionDetailsFromUrlParams, operations, sourceAsset, destAsset } =
+  const { transactionDetails: transactionDetailsFromUrlParams, operations, sourceAsset, destAsset, routeStatus } =
     useTransactionHistoryItemFromUrlParams();
   const [transactionStatuses, setTransactionStatuses] = useState<
     (TxStatusResponse | undefined)[]
@@ -125,14 +127,11 @@ export default function Home() {
   const routeTransactions = useMemo(() => buildRouteTransactions(
     operations,
     transactionDetailsFromUrlParams ?? [],
-    transactionStatuses.map(status => ({
-      status,
-      events: status ? getTransferEventsFromTxStatusResponse([status]) : [],
-    })),
+    transactionStatuses,
   ), [operations, transactionDetailsFromUrlParams, transactionStatuses]);
 
   const transferEvents = useMemo(() => routeTransactions.flatMap(tx => tx.events), [routeTransactions]);
-  const transfersToShow = useMemo(() => getTimelineCards(routeTransactions), [routeTransactions]);
+  const transfersToShow = useMemo(() => getTimelineCards(routeTransactions, routeStatus), [routeTransactions, routeStatus]);
 
   useEffect(() => {
     setSkipClientConfig({ ...defaultSkipClientConfig, apiUrl: SKIP_API_URL });
@@ -356,7 +355,7 @@ export default function Home() {
       txHash: transferEvents?.[0]?.fromTxHash ?? transactionDetailsFromUrlParams?.[0]?.txHash ?? "",
       state,
       chainIds: chainIds.length > 0 ? chainIds : chainIdsFromUrlParams,
-      hasUntrackedSteps: routeTransactions.some(tx => tx.phase === "planned" || tx.phase === "loading"),
+      hasUntrackedSteps: routeTransactions.some(tx => tx.phase === "canceled" || tx.phase === "loading"),
     };
   }, [transfersToShow, sourceAsset?.chainId, destAsset?.chainId, transferEvents, transactionDetailsFromUrlParams, transactionStatuses, routeTransactions]);
 
@@ -456,6 +455,42 @@ export default function Home() {
       return <LoadingState />;
     }
     if (transfersToShow.length > 0 && !hasStatusQueryError) {
+      const activeTransfers = transfersToShow.filter(transfer => transfer.timeline.phase !== "canceled");
+      const canceledTransfers = transfersToShow.filter(transfer => transfer.timeline.phase === "canceled");
+      const renderTransfer = (transfer: TimelineCard) => (
+        <React.Fragment key={transfer.id}>
+          {transfer.step !== "Origin" && (
+            <Bridge
+              transferType={transfer.transferType}
+              durationInMs={transfer.durationInMs}
+            />
+          )}
+          <ErrorBoundary
+            fallback={
+              <ErrorCard
+                errorTitle={ErrorMessages.TRANSFER_EVENT_ERROR}
+                errorMessage={transactionStatuses.map(status => status?.error?.message).join("")}
+                padding="20px 45px"
+                onRetry={() => onSearch()}
+              />
+            }
+          >
+            <TransferEventCard
+              {...transfer}
+              onReindex={async () => {
+                const requestId = statusRequestId.current;
+                const transactions = queriedTransactions.current;
+                const tx = transactions[transfer.txIndex];
+                if (!tx?.txHash) return;
+                await onReindex(tx.txHash, tx.chainId);
+                if (requestId !== statusRequestId.current) return;
+                setErrorDetails(undefined);
+                await getTxStatus(transactions);
+              }}
+            />
+          </ErrorBoundary>
+        </React.Fragment>
+      );
       return (
         <StyledContentContainer
           gap={16}
@@ -495,41 +530,19 @@ export default function Home() {
             </Row>
             <Spacer height={10} />
             <StyledTransferList ref={contentContainerRef} showScrollbar={showScrollbar}>
-              {transfersToShow.map((transfer) => (
-                <React.Fragment key={transfer.id}>
-                  {transfer.step !== "Origin" && (
-                    <Bridge
-                      transferType={transfer.transferType}
-                      durationInMs={transfer.durationInMs}
-                      dimmed={transfer.timeline.phase === "planned"}
-                    />
-                  )}
-                  <ErrorBoundary
-                    fallback={
-                      <ErrorCard
-                        errorTitle={ErrorMessages.TRANSFER_EVENT_ERROR}
-                        errorMessage={transactionStatuses.map(status => status?.error?.message).join("")}
-                        padding="20px 45px"
-                        onRetry={() => onSearch()}
-                      />
-                    }
-                  >
-                    <TransferEventCard
-                      {...transfer}
-                      onReindex={async () => {
-                        const requestId = statusRequestId.current;
-                        const transactions = queriedTransactions.current;
-                        const tx = transactions[transfer.txIndex];
-                        if (!tx?.txHash) return;
-                        await onReindex(tx.txHash, tx.chainId);
-                        if (requestId !== statusRequestId.current) return;
-                        setErrorDetails(undefined);
-                        await getTxStatus(transactions);
-                      }}
-                    />
-                  </ErrorBoundary>
-                </React.Fragment>
-              ))}
+              {activeTransfers.map(renderTransfer)}
+              {canceledTransfers.length > 0 && (
+                <StyledCanceledOperations key={data ?? `${chainIds}:${txHashes}`}>
+                  <summary>
+                    <Bridge transferType="Canceled operations">
+                      <ChevronIcon noBackground width={12} height={12} aria-hidden data-toggle-icon />
+                    </Bridge>
+                  </summary>
+                  <Column width="100%" align="center">
+                    {canceledTransfers.map(renderTransfer)}
+                  </Column>
+                </StyledCanceledOperations>
+              )}
             </StyledTransferList>
           </StyledTransferColumn>
         </StyledContentContainer>
@@ -616,7 +629,7 @@ export default function Home() {
       return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
     }
     return;
-  }, [isLoading, showLoadingTimeout, transfersToShow, hasStatusQueryError, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, txNotFound, transactionStatuses, onSearch, onReindex, getTxStatus, sourceAsset?.chainId, operations, destAsset?.chainId]);
+  }, [data, chainIds, txHashes, isLoading, showLoadingTimeout, transfersToShow, hasStatusQueryError, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, txNotFound, transactionStatuses, onSearch, onReindex, getTxStatus, sourceAsset?.chainId, operations, destAsset?.chainId]);
 
   return (
     <Column width="100%" align="center">
@@ -677,4 +690,50 @@ const StyledTransferList = styled(Column)<{ showScrollbar: boolean }>`
 
   ${isMac() ? "scroll-behavior: auto;" : "scroll-behavior: smooth;"}
   ${({ showScrollbar }) => styledScrollbar(showScrollbar)};
+`;
+
+const StyledCanceledOperations = styled.details`
+  width: 100%;
+
+  > summary {
+    width: fit-content;
+    margin: 0 auto;
+    list-style: none;
+    cursor: pointer;
+    border-radius: 12px;
+    color: ${({ theme }) => theme.primary.text.lowContrast};
+
+    ${Container} {
+      border: 1px solid transparent;
+    }
+
+    &:hover ${Container} {
+      border-color: ${({ theme }) => theme.primary.text.ultraLowContrast};
+    }
+
+    p {
+      color: inherit;
+    }
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid ${({ theme }) => theme.brandColor};
+      outline-offset: 2px;
+    }
+  }
+
+  > summary > div > svg:first-child {
+    visibility: hidden;
+  }
+
+  > summary > div > svg:last-child {
+    display: none;
+  }
+
+  &[open] > summary [data-toggle-icon] {
+    transform: rotate(180deg);
+  }
 `;

@@ -7,7 +7,7 @@ import { Text, SmallText, SmallTextButton } from "@/components/Typography";
 import type { TransferEventStatus } from "@skip-go/client";
 import Image from "next/image";
 import { formatDisplayAmount } from "@/utils/number";
-import { styled, useTheme } from "@/styled-components";
+import { css, styled, useTheme } from "@/styled-components";
 import { useTransactionHistoryItemFromUrlParams } from "../hooks/useTransactionHistoryItemFromUrlParams";
 import { convertTokenAmountToHumanReadableAmount, getTruncatedAddress } from "@/utils/crypto";
 import { useMemo } from "react";
@@ -62,7 +62,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const releaseChain = skipChains.data?.find(chain => chain.chainId === transferAssetRelease?.chainId);
 
   const renderStatusBadge = useMemo(() => {
-    if (timeline?.phase === "planned") {
+    if (timeline?.phase === "canceled") {
       return (
         <Badge flexDirection="row" gap={5} align="center">
           Canceled
@@ -196,7 +196,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   }, [timeline?.phase, status, stateAbandoned, stateFailed, step]);
 
   const renderBottomButton = useMemo(() => {
-    if (timeline?.phase === "planned" || timeline?.phase === "loading") return null;
+    if ((timeline?.phase === "canceled" || timeline?.phase === "loading") && !showTransferAssetRelease) return null;
     const decimals = skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId)?.decimals;
     const skipGoLink = new URL(`/?src_asset=${transferAssetRelease?.denom}&src_chain=${transferAssetRelease?.chainId}&amount_in=${transferAssetRelease?.amount ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount, decimals) : undefined}`, SKIP_GO_URL).href;
     if (stateAbandoned) {
@@ -230,7 +230,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   }, [timeline?.phase, skipAssets?.data, transferAssetRelease?.denom, transferAssetRelease?.chainId, transferAssetRelease?.amount, stateAbandoned, showTransferAssetRelease, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
 
   return (
-    <TransferEventContainer $dimmed={timeline?.phase === "planned"} loading={isLoading} padding={15} width="100%" borderRadius={16} status={containerStatus}>
+    <TransferEventContainer $canceled={timeline?.phase === "canceled"} loading={isLoading} padding={15} width="100%" borderRadius={16} status={containerStatus}>
       <Row align="center" justify="space-between">
         <Row gap={8} align="center" justify="center">
           <Badge> {step} </Badge>
@@ -275,9 +275,13 @@ const TransferEventDetailsCard = styled.div`
   border: ${({ theme }) => `1px solid ${theme.secondary.background.normal}`};
 `;
 
-export const TransferEventContainer = styled(Container) <{ status?: string, loading?: boolean, $dimmed?: boolean }>`
+export const TransferEventContainer = styled(Container) <{ status?: string, loading?: boolean, $canceled?: boolean }>`
   max-width: 100%;
-  opacity: ${({ $dimmed }) => $dimmed ? 0.5 : 1};
+  ${({ $canceled }) => $canceled && css`
+    > ${Row}, > ${TransferEventDetailsCard} {
+      pointer-events: none;
+    }
+  `}
   ${({ status, theme, loading }) => {
     if (loading) {
       return loadingPulseAnimation({

@@ -59,10 +59,8 @@ export const TransactionDetails = ({ txHash, state, chainIds, hasUntrackedSteps 
       />
       <DetailsRow
         label="Status"
-        value={hasUntrackedSteps && !state
-          ? <SmallText>Planned</SmallText>
-          : hasUntrackedSteps && state === "STATE_COMPLETED_SUCCESS"
-          ? <SmallText>Partially tracked</SmallText>
+        value={hasUntrackedSteps && (!state || state === "STATE_COMPLETED_SUCCESS")
+          ? <SmallText>Canceled</SmallText>
           : <SmallText color={statusLabelAndColor?.color}>{statusLabelAndColor?.label}</SmallText>}
       />
       <DetailsRow onClick={() => saveToClipboard(txHash)} label="Transaction Hash" value={isCopied ? "Copied!" : getTruncatedAddress(txHash)} />
