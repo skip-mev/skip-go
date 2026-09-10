@@ -20,12 +20,15 @@ import { Tooltip } from "@/components/Tooltip";
 import { useClipboard } from "@/hooks/useClipboard";
 import { useGetTransferAssetReleaseAsset } from "../hooks/useGetTransferAssetReleaseAsset";
 import type { TimelineCard } from "../utils/routeTimeline";
+import { operationFromChain, operationToChain } from "../utils/routeTimeline";
+import type { ClientOperation } from "@/utils/clientType";
 
 const SKIP_GO_URL = process.env.NEXT_PUBLIC_SKIP_GO_URL ||
   (process.env.NODE_ENV === "development" ? "https://dev.go.skip.build" : "https://go.skip.build");
 
 export type TransferEventCardProps = Omit<TimelineCard, "id" | "txIndex" | "timeline"> & {
   timeline?: TimelineCard["timeline"];
+  operations?: readonly ClientOperation[];
   onReindex?: () => void;
 };
 
@@ -39,7 +42,7 @@ const routedStatusMap: Record<TransferEventStatus, string> = {
   incomplete: "Incomplete",
 }
 
-export const TransferEventCard = ({ chainId, explorerLink, transferType, status, state, step, onReindex, transferAssetRelease, timeline }: TransferEventCardProps) => {
+export const TransferEventCard = ({ chainId, explorerLink, transferType, status, state, step, onReindex, transferAssetRelease, timeline, operations }: TransferEventCardProps) => {
   const theme = useTheme();
   const skipChains = useAtomValue(skipChainsAtom);
   const skipAssets = useAtomValue(skipAssetsAtom);
@@ -198,7 +201,29 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
   const renderBottomButton = useMemo(() => {
     if ((timeline?.phase === "canceled" || timeline?.phase === "loading") && !showTransferAssetRelease) return null;
     const decimals = skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId)?.decimals;
-    const skipGoLink = new URL(`/?src_asset=${transferAssetRelease?.denom}&src_chain=${transferAssetRelease?.chainId}&amount_in=${transferAssetRelease?.amount ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount, decimals) : undefined}`, SKIP_GO_URL).href;
+    const skipGoLink = new URL(`/?src_asset=${transferAssetRelease?.denom}&src_chain=${transferAssetRelease?.chainId}&amount_in=${transferAssetRelease?.amount ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount, decimals) : undefined}`, SKIP_GO_URL);
+    const firstOperation = operations?.[0];
+    const lastOperation = operations?.at(-1);
+    const sourceChainId = firstOperation && operationFromChain(firstOperation);
+    const destChainId = lastOperation && operationToChain(lastOperation);
+
+    if (sourceChainId && firstOperation?.denomIn && destChainId && lastOperation?.denomOut) {
+      const sourceDenom = firstOperation.denomIn;
+      skipGoLink.search = new URLSearchParams({
+        src_asset: sourceDenom,
+        src_chain: sourceChainId,
+        dest_asset: lastOperation.denomOut,
+        dest_chain: destChainId,
+      }).toString();
+      const retryAsset = skipAssets?.data?.find(asset => asset.chainId === sourceChainId &&
+        (asset.denom === sourceDenom ||
+          (/^0x[0-9a-f]{40}$/i.test(sourceDenom) && asset.denom.toLowerCase() === sourceDenom.toLowerCase())));
+      // Do not reuse the release amount or guess decimals for a different source asset.
+      if (retryAsset?.decimals != null && firstOperation.amountIn) {
+        skipGoLink.searchParams.set("amount_in", convertTokenAmountToHumanReadableAmount(firstOperation.amountIn, retryAsset.decimals));
+      }
+    }
+
     if (stateAbandoned) {
       return (
         <SmallTextButton onClick={onReindex} textAlign="center" color={stateLabelAndColor?.color}>Reindex →</SmallTextButton>
@@ -208,7 +233,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     if (showTransferAssetRelease) {
       return (
         <SmallText>
-          <Link href={skipGoLink} color={theme.brandColor} target="_blank" justify="center">
+          <Link href={skipGoLink.href} color={theme.brandColor} target="_blank" justify="center">
             Try again on Skip.go →
           </Link>
         </SmallText>
@@ -227,7 +252,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       </SmallText>
     )
 
-  }, [timeline?.phase, skipAssets?.data, transferAssetRelease?.denom, transferAssetRelease?.chainId, transferAssetRelease?.amount, stateAbandoned, showTransferAssetRelease, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
+  }, [timeline?.phase, skipAssets?.data, transferAssetRelease?.denom, transferAssetRelease?.chainId, transferAssetRelease?.amount, operations, stateAbandoned, showTransferAssetRelease, explorerLink, onReindex, stateLabelAndColor?.color, theme.brandColor]);
 
   return (
     <TransferEventContainer $canceled={timeline?.phase === "canceled"} loading={isLoading} padding={15} width="100%" borderRadius={16} status={containerStatus}>
