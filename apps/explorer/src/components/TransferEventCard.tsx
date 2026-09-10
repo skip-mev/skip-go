@@ -200,30 +200,6 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
 
   const renderBottomButton = useMemo(() => {
     if ((timeline?.phase === "canceled" || timeline?.phase === "loading") && !showTransferAssetRelease) return null;
-    const decimals = skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId)?.decimals;
-    const skipGoLink = new URL(`/?src_asset=${transferAssetRelease?.denom}&src_chain=${transferAssetRelease?.chainId}&amount_in=${transferAssetRelease?.amount ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount, decimals) : undefined}`, SKIP_GO_URL);
-    const firstOperation = operations?.[0];
-    const lastOperation = operations?.at(-1);
-    const sourceChainId = firstOperation && operationFromChain(firstOperation);
-    const destChainId = lastOperation && operationToChain(lastOperation);
-
-    if (sourceChainId && firstOperation?.denomIn && destChainId && lastOperation?.denomOut) {
-      const sourceDenom = firstOperation.denomIn;
-      skipGoLink.search = new URLSearchParams({
-        src_asset: sourceDenom,
-        src_chain: sourceChainId,
-        dest_asset: lastOperation.denomOut,
-        dest_chain: destChainId,
-      }).toString();
-      const retryAsset = skipAssets?.data?.find(asset => asset.chainId === sourceChainId &&
-        (asset.denom === sourceDenom ||
-          (/^0x[0-9a-f]{40}$/i.test(sourceDenom) && asset.denom.toLowerCase() === sourceDenom.toLowerCase())));
-      // Do not reuse the release amount or guess decimals for a different source asset.
-      if (retryAsset?.decimals != null && firstOperation.amountIn) {
-        skipGoLink.searchParams.set("amount_in", convertTokenAmountToHumanReadableAmount(firstOperation.amountIn, retryAsset.decimals));
-      }
-    }
-
     if (stateAbandoned) {
       return (
         <SmallTextButton onClick={onReindex} textAlign="center" color={stateLabelAndColor?.color}>Reindex →</SmallTextButton>
@@ -231,6 +207,31 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
     }
 
     if (showTransferAssetRelease) {
+      let skipGoLink: URL;
+      if (operations?.length) {
+        const firstOperation = operations[0];
+        const lastOperation = operations[operations.length - 1];
+        // Route operations supply the source and destination chain/asset fields.
+        const sourceChainId = operationFromChain(firstOperation)!;
+        const sourceDenom = firstOperation.denomIn!;
+        skipGoLink = new URL("/", SKIP_GO_URL);
+        skipGoLink.search = new URLSearchParams({
+          src_asset: sourceDenom,
+          src_chain: sourceChainId,
+          dest_asset: lastOperation.denomOut!,
+          dest_chain: operationToChain(lastOperation)!,
+        }).toString();
+        const retryAsset = skipAssets?.data?.find(asset => asset.chainId === sourceChainId &&
+          (asset.denom === sourceDenom ||
+            (/^0x[0-9a-f]{40}$/i.test(sourceDenom) && asset.denom.toLowerCase() === sourceDenom.toLowerCase())));
+        if (retryAsset?.decimals != null) {
+          skipGoLink.searchParams.set("amount_in", convertTokenAmountToHumanReadableAmount(firstOperation.amountIn, retryAsset.decimals));
+        }
+      } else {
+        const decimals = skipAssets?.data?.find(asset => asset.denom === transferAssetRelease?.denom && asset.chainId === transferAssetRelease?.chainId)?.decimals;
+        skipGoLink = new URL(`/?src_asset=${transferAssetRelease?.denom}&src_chain=${transferAssetRelease?.chainId}&amount_in=${transferAssetRelease?.amount ? convertTokenAmountToHumanReadableAmount(transferAssetRelease?.amount, decimals) : undefined}`, SKIP_GO_URL);
+      }
+
       return (
         <SmallText>
           <Link href={skipGoLink.href} color={theme.brandColor} target="_blank" justify="center">
