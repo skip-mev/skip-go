@@ -457,6 +457,7 @@ export default function Home() {
     if (transfersToShow.length > 0 && !hasStatusQueryError) {
       const activeTransfers = transfersToShow.filter(transfer => transfer.timeline.phase !== "canceled");
       const canceledTransfers = transfersToShow.filter(transfer => transfer.timeline.phase === "canceled");
+      const canceledOperations = routeTransactions.filter(tx => tx.phase === "canceled").flatMap(tx => tx.operations);
       const renderTransfer = (transfer: TimelineCard) => (
         <React.Fragment key={transfer.id}>
           {transfer.step !== "Origin" && (
@@ -477,6 +478,7 @@ export default function Home() {
           >
             <TransferEventCard
               {...transfer}
+              operations={canceledTransfers.length ? canceledOperations : undefined}
               onReindex={async () => {
                 const requestId = statusRequestId.current;
                 const transactions = queriedTransactions.current;
@@ -629,7 +631,7 @@ export default function Home() {
       return <SuccessfulTransactionCard showRawDataModal={showRawDataModal} />;
     }
     return;
-  }, [data, chainIds, txHashes, isLoading, showLoadingTimeout, transfersToShow, hasStatusQueryError, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, txNotFound, transactionStatuses, onSearch, onReindex, getTxStatus, sourceAsset?.chainId, operations, destAsset?.chainId]);
+  }, [data, chainIds, txHashes, isLoading, showLoadingTimeout, transfersToShow, routeTransactions, hasStatusQueryError, errorDetails, transactionStatusResponse, showScrollbar, isMobileScreenSize, transactionDetailsFromUrlParams, showTokenDetails, transactionDetails, showRawDataModal, txNotFound, transactionStatuses, onSearch, onReindex, getTxStatus, sourceAsset?.chainId, operations, destAsset?.chainId]);
 
   return (
     <Column width="100%" align="center">
