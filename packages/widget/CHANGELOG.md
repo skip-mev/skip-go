@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.18.3
+
+### Patch Changes
+
+- c245b99: Fix Keplr connection failures caused by missing Quicksilver chain information by removing Quicksilver from the default and fallback initial connection lists.
+
 ## 3.18.2
 
 ### Patch Changes
