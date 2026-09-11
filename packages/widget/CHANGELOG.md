@@ -1,5 +1,39 @@
 ## 0.0.15
 
+## 3.18.4
+
+### Patch Changes
+
+- 7060f8c: Increase the fixed Cosmos gas limit from 300,000 to 350,000 and remove the Evmos exception. Keep multi-transaction routes in progress while awaiting follow-up signing, and fix indefinite loading after continuing a reverted transaction by synchronizing the displayed source amount with the route query amount.
+- Updated dependencies [7060f8c]
+  - @skip-go/client@1.6.5
+
+## 3.18.3
+
+### Patch Changes
+
+- c245b99: Fix Keplr connection failures caused by missing Quicksilver chain information by removing Quicksilver from the default and fallback initial connection lists.
+
+## 3.18.2
+
+### Patch Changes
+
+- 9479788: Remove the warning icon from asset annotations. The swap page now shows only the `assetAnnotations` badge (no icon), and the token selector shows only the description line and border highlight. Badge/border/description colors and `selector.pinToTop` are unchanged.
+
+## 3.18.1
+
+### Patch Changes
+
+- f9ec9dd: Keep `pinToTop`-annotated assets at the top of the token selector even while the user is searching.
+
+## 3.18.0
+
+### Minor Changes
+
+- b2187de: Add an optional `assetAnnotations` prop (keyed by recommended symbol) that renders per-asset annotations. On the swap input it shows a badge and a warning icon for the selected asset; in the token selector it shows a border highlight and a detail line, and can pin the asset to the top. Supports `info` / `warning` / `error` variants.
+
+  BREAKING: the `ibcEurekaHighlightedAssets` prop is removed. Use `assetAnnotations` for per-asset highlighting instead.
+
 ## 3.17.5
 
 ### Patch Changes
