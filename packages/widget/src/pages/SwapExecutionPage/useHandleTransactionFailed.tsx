@@ -4,7 +4,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { track } from "@amplitude/analytics-browser";
 import { Routes, currentPageAtom } from "@/state/router";
-import { sourceAssetAtom } from "@/state/swapPage";
+import { sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
 import { skipAssetsAtom } from "@/state/skipClient";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { RouteDetails } from "@skip-go/client";
@@ -17,6 +17,7 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
   const setErrorWarning = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
+  const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
   const setCurrentTransactionId = useSetAtom(setCurrentTransactionIdAtom);
   const currentTransaction = useAtomValue(currentTransactionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
@@ -57,14 +58,15 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
       setErrorWarning({
         errorWarningType: ErrorWarningType.TransactionReverted,
         onClickContinueTransaction: () => {
+          const amount = convertTokenAmountToHumanReadableAmount(
+            statusData?.transferAssetRelease?.amount ?? "",
+            sourceClientAsset.decimals,
+          );
           setSourceAsset({
             ...sourceClientAsset,
-            amount: convertTokenAmountToHumanReadableAmount(
-              statusData?.transferAssetRelease?.amount ?? "",
-              sourceClientAsset.decimals,
-            ),
+            amount,
           });
-
+          setSourceAssetAmount(amount);
           setCurrentPage(Routes.SwapPage);
           setErrorWarning(undefined);
         },
@@ -100,6 +102,7 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
     setCurrentTransactionId,
     setErrorWarning,
     setSourceAsset,
+    setSourceAssetAmount,
     statusData?.transferAssetRelease,
   ]);
 
