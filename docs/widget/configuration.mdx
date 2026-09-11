@@ -279,7 +279,7 @@ Filters assets based on connected wallet types (currently only supports Sei Cosm
 
 ### `assetSymbolsSortedToTop`
 
-List of asset symbols to pin to the top of the token selector.
+Prioritizes assets by recommended symbol when their pinning, search-match, and balance priorities are equal. Symbols are ordered as listed. To pin an asset above search matches and balances, use [`assetAnnotations`](#assetannotations) with `selector.pinToTop` instead.
 
 ```ts
 assetSymbolsSortedToTop?: string[];
@@ -287,13 +287,13 @@ assetSymbolsSortedToTop?: string[];
 
 ### `assetAnnotations`
 
-Render a per-asset annotation (badge / warning icon / highlight / pin-to-top), keyed by recommended symbol.
+Render a per-asset annotation (badge / description / highlight / pin-to-top), keyed by recommended symbol.
 
 ```ts
 assetAnnotations?: Record<string, {
   variant?: "info" | "warning" | "error"; // color; defaults to "info"
   swapPage?: {
-    label: string;                         // badge + warning icon on the swap page asset rows
+    label: string;                         // badge on the swap page asset rows
   };
   selector?: {
     description?: string;                   // detail line under the asset name in the token selector
@@ -302,9 +302,9 @@ assetAnnotations?: Record<string, {
 }>;
 ```
 
-- `variant`: color of the badge / icon / highlight. `info` uses the brand color, `warning` and `error` use the theme's warning/error colors.
-- `swapPage.label`: renders a badge and a warning icon next to the asset name on the swap page (source and destination rows).
-- `selector.description`: detail line with a warning icon under the asset name in the token selector.
+- `variant`: color of the badge / description / highlight. `info` uses the brand color, `warning` and `error` use the theme's warning/error colors.
+- `swapPage.label`: renders a badge on the swap page (source and destination rows).
+- `selector.description`: detail line under the asset name in the token selector.
 - `selector.pinToTop`: pins the asset to the very top of the token selector (above balances, and above search matches).
 
 Example:

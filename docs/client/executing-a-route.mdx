@@ -36,7 +36,7 @@ async executeRoute(options: ExecuteRouteOptions): Promise<void>
 
 ```batchSignTxs``` If true, all transactions in a multi-transaction route will be signed upfront before broadcasting; if false, each transaction will be signed individually just before broadcasting. (defaults to true).
 
-```appendCosmosMsgs``` Optional Cosmos messages to append, keyed by chain ID (`Record<chainId, CosmosMsg[]>`). Each `CosmosMsg` is `{ msgTypeUrl, msg }`, where `msg` is the JSON-encoded message body.
+```appendCosmosMsgs``` Optional Cosmos messages, keyed by chain ID (`Record<chainId, CosmosMsg[]>`). These are inserted before the existing messages in the first Cosmos transaction matching each chain ID. Each `CosmosMsg` is `{ msgTypeUrl, msg }`, where `msg` is the JSON-encoded message body.
 
 ```useUnlimitedApproval``` If true, sets Evm token allowances to MAX_UINT256. (defaults to false).
 

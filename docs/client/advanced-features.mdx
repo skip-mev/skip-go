@@ -3,9 +3,9 @@ title: 'Advanced Features'
 description: 'This page details advanced features and utilities in the Skip Go client library.'
 ---
 
-## Appending custom Cosmos messages to route execution
+## Adding custom Cosmos messages to route execution
 
-The `executeRoute` method accepts an `appendCosmosMsgs` parameter to append custom Cosmos messages to the route's transactions, keyed by chain ID (`Record<chainId, CosmosMsg[]>`). This is useful for executing custom messages that are not part of the route definition.
+The `executeRoute` method accepts an `appendCosmosMsgs` parameter for custom Cosmos messages, keyed by chain ID (`Record<chainId, CosmosMsg[]>`). Despite its name, it inserts these messages **before** the existing messages in the first Cosmos transaction matching each chain ID. Custom messages execute before that transaction's route messages, so they cannot depend on their output.
 
 
 ```typescript

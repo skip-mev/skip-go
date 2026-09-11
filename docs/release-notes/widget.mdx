@@ -5,9 +5,17 @@ description: "Selected updates and improvements to the `@skip-go/widget` [npm pa
 
 ## September 2026
 
+### Keplr Connection Fix (v3.18.3)
+
+*   Removed Quicksilver from the default and fallback initial connection lists to fix Keplr connection failures caused by missing Quicksilver chain information.
+
+### Asset Annotation Display (v3.18.2)
+
+*   Removed warning icons from `assetAnnotations`. The swap page shows the badge, and the token selector shows the description line and border highlight. Colors and `selector.pinToTop` behavior are unchanged.
+
 ### Per-Asset Annotations (v3.18.0)
 
-*   **`assetAnnotations` prop:** Attach a per-asset notice (keyed by recommended symbol) to guide users. On the swap page it shows a badge and a warning icon next to the asset; in the token selector it shows a border highlight and a detail line, and can pin the asset to the top of the list. Supports `info` / `warning` / `error` variants. [See configuration](/widget/configuration#assetannotations).
+*   **`assetAnnotations` prop:** Added per-asset notices (keyed by recommended symbol) to guide users. At introduction, the swap page showed a badge and a warning icon next to the asset; the token selector showed a border highlight and a detail line, with optional pinning to the top of the list. Supports `info` / `warning` / `error` variants. [See configuration](/widget/configuration#assetannotations).
 *   **Breaking — `ibcEurekaHighlightedAssets` prop removed:** Use `assetAnnotations` for per-asset highlighting instead (`selector.description` + highlight, optionally `pinToTop`). The IBC Eureka transfer/protocol handling is unaffected — only the selector-highlighting prop was removed.
 *   **(v3.18.1)** Pinned (`pinToTop`) assets now stay at the top of the token selector even while searching.
 

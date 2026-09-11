@@ -346,7 +346,7 @@ import {
   balances,
   assets,
   getRouteWithGasOnReceive,
-  type RouteStatus
+  type RouteDetails
 } from "@skip-go/client";
 
 class GasOnReceiveManager {
@@ -481,7 +481,7 @@ class GasOnReceiveManager {
     }
   }
   
-  private handleRouteStatus(status: RouteStatus) {
+  private handleRouteStatus(status: RouteDetails) {
     if (status.status === "completed") {
       console.log("Swap completed successfully");
     }
