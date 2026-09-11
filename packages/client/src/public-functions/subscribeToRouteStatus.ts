@@ -249,6 +249,9 @@ export const executeAndSubscribeToRouteStatus = async ({
         routeId,
         routeDetails,
         transactionDetails,
+        // Tracking cannot continue without a hash. Active execution awaits the
+        // next transaction above instead of marking this transition incomplete.
+        status: transactionDetails.some(isSuccessState) ? "incomplete" : undefined,
         options: {
           onRouteStatusUpdated,
           ...options,
@@ -398,7 +401,6 @@ export const updateRouteDetails = ({
 
   const getRouteStatus = () => {
     if (status) return status;
-    if (someTxSucceeded && !allExpectedTxsStarted) return "incomplete";
     if (isAllSettled) {
       if (!someTxFailed) {
         return "completed";
