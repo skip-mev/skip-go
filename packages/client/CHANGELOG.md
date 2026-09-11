@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.6.5
+
+### Patch Changes
+
+- 7060f8c: Increase the fixed Cosmos gas limit from 300,000 to 350,000 and remove the Evmos exception. Keep multi-transaction routes in progress while awaiting follow-up signing, and fix indefinite loading after continuing a reverted transaction by synchronizing the displayed source amount with the route query amount.
+
 ## 1.6.4
 
 ### Patch Changes
