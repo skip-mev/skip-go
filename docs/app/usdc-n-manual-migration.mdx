@@ -225,11 +225,13 @@ Use only the official Skip:Go site at **go.skip.build**. Never share your seed o
   </Accordion>
 
   <Accordion title="Is USDC.n → USDC.inj a swap?">
-    For amounts **above 0.02 USDC**, Skip:Go uses **CCTP as part of the migration route**.
+    Not necessarily. Skip:Go automatically determines the **best route** based on the transfer amount and the source and destination chains.
 
-    For amounts of **0.02 USDC or less**, Skip:Go uses a **swap route instead of CCTP**, even when the From and To chains are the same.
+    When the source and destination chains are the **same**, amounts **above 250 USDC.n** use **CCTP as part of the migration route**.
 
-    The asset you receive is still **USDC.inj**. No additional conversion or migration is needed.
+    For other cases — including amounts of **250 USDC.n or less**, or transfers between **different source and destination chains** — Skip:Go automatically selects the best available route for the transfer.
+
+    Regardless of the route used, you will receive **USDC.inj** on the destination chain. **No additional conversion or migration is required** on your end.
 
   </Accordion>
 
