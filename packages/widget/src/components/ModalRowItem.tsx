@@ -9,7 +9,7 @@ export type ModalRowItemProps = {
   rightContent?: React.ReactNode;
   onClick?: () => void;
   style?: React.CSSProperties;
-  eureka?: boolean;
+  highlightColor?: string;
 };
 
 export const ModalRowItem = ({
@@ -17,7 +17,7 @@ export const ModalRowItem = ({
   rightContent,
   onClick,
   style,
-  eureka,
+  highlightColor,
 }: ModalRowItemProps) => {
   return (
     <StyledModalRowItemContainer
@@ -27,7 +27,7 @@ export const ModalRowItem = ({
       onClick={onClick}
       gap={16}
       style={style}
-      eureka={eureka}
+      highlightColor={highlightColor}
     >
       {typeof leftContent === "string" ? <Text fontSize={20}>{leftContent}</Text> : leftContent}
       {typeof rightContent === "string" ? <Text fontSize={20}>{rightContent}</Text> : rightContent}
@@ -35,7 +35,7 @@ export const ModalRowItem = ({
   );
 };
 
-const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void; eureka?: boolean }>`
+const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void; highlightColor?: string }>`
   ${removeButtonStyles};
   position: relative;
   height: 60px;
@@ -66,31 +66,9 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void; eureka?:
       }
     `};
 
-  --eureka-border: conic-gradient(
-    from 90deg at 50% 50%,
-    #49d6dd 0deg,
-    #ff663c 120.6000030040741deg,
-    #d466ff 251.99999570846558deg,
-    #49d6dd 360deg
-  );
-
-  ${({ eureka }) => {
-    return eureka
-      ? css`
-          &:before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            z-index: -2;
-            padding: 2px;
-            border-radius: 12px;
-            background: var(--eureka-border);
-            -webkit-mask:
-              linear-gradient(#fff 0 0) content-box,
-              linear-gradient(#fff 0 0);
-            mask-composite: exclude;
-          }
-        `
-      : "";
-  }}
+  ${({ highlightColor }) =>
+    highlightColor &&
+    css`
+      box-shadow: inset 0 0 0 1.5px ${highlightColor};
+    `}
 `;

@@ -4,6 +4,7 @@ import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { getClientOperations } from "@/utils/clientType";
 import { useQueryState } from "nuqs";
 import { useMemo } from "react";
+import type { RouteStatus } from "@skip-go/client";
 
 export const useTransactionHistoryItemFromUrlParams = () => {
   const [data] = useQueryState("data");
@@ -54,5 +55,6 @@ export const useTransactionHistoryItemFromUrlParams = () => {
     userAddresses: transactionHistoryItemFromUrlParams?.userAddresses as { chainId: string, address: string }[],
     operations: getClientOperations(transactionHistoryItemFromUrlParams?.route?.operations),
     transactionDetails: transactionHistoryItemFromUrlParams?.transactionDetails,
+    routeStatus: transactionHistoryItemFromUrlParams?.status as RouteStatus | undefined,
   };
 };
