@@ -7,6 +7,7 @@ import {
   connect,
   isWalletConnect,
   checkWallet,
+  useAccount,
 } from "graz";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { createPenumbraClient } from "@penumbra-zone/client";
@@ -37,6 +38,7 @@ export const useCreateCosmosWallets = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const { walletType: currentWallet } = useActiveWalletType();
+  const { data: accounts } = useAccount();
   const extraCosmosChainIdsToConnectPerWallet = useAtomValue(
     extraCosmosChainIdsToConnectPerWalletAtom,
   );
@@ -231,6 +233,13 @@ export const useCreateCosmosWallets = () => {
               return connectWallet({ chainIdToConnect: chainId });
             }
           },
+          ...(isWC
+            ? {
+                getConnectedAddress: async () => ({
+                  address: chainId ? accounts?.[chainId]?.bech32Address : undefined,
+                }),
+              }
+            : {}),
           isWalletConnected: currentWallet === wallet,
           isAvailable: (() => {
             if (mobile) return undefined;
@@ -251,6 +260,7 @@ export const useCreateCosmosWallets = () => {
       extraCosmosChainIdsToConnectPerWallet,
       chains,
       currentWallet,
+      accounts,
       sourceAsset,
       cosmosWallet,
       addExtraChainIdsToConnectForWalletType,

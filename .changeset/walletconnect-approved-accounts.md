@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-Fix Cosmos WalletConnect routes to use approved accounts and defer signer creation.
+Fix Cosmos WalletConnect routes to use approved accounts, avoid automatic connection prompts for missing destination addresses, and defer signer creation.
