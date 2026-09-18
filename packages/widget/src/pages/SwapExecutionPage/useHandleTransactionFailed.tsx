@@ -11,7 +11,7 @@ import { RouteDetails } from "@skip-go/client";
 import { currentTransactionAtom } from "@/state/history";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 
-const DELAY_EXPECTING_TRANSFER_ASSET_RELEASE = 15_000;
+const DELAY_EXPECTING_TRANSFER_ASSET_RELEASE = 120_000;
 
 export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetails) => {
   const setErrorWarning = useSetAtom(errorWarningAtom);
