@@ -17,6 +17,7 @@ export const SolanaProvider = ({ children }: { children: React.ReactNode }) => {
             network: WalletAdapterNetwork.Mainnet,
             options: {
               projectId: "ff1b9e9bd6329cfb07642bd7f4d11a8c",
+              customStoragePrefix: "skip-go-solana",
             },
           }),
         );
