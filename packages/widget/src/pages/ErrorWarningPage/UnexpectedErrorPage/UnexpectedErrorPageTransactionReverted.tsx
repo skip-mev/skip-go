@@ -60,7 +60,7 @@ export const UnexpectedErrorPageTransactionReverted = ({
               textAlign="center"
               textWrap="balance"
             >
-              This transaction reverted while trying to execute.
+              A signature may be pending in your wallet, or the transaction may have reverted.
               <br />
               You can continue executing this transaction now.
             </SmallText>
