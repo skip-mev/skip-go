@@ -50,11 +50,16 @@ import { callbacksAtom } from "@/state/callbacks";
 import { startAmplitudeSessionReplay } from "@/widget/initAmplitude";
 import { SmallText } from "@/components/Typography";
 
+const PreloadSigningStargateClient = () => {
+  useAtom(preloadSigningStargateClientEffect);
+  return null;
+};
+
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
   useAtom(onRouteUpdatedEffect);
-  useAtom(preloadSigningStargateClientEffect);
-  const { isAskingToApproveConnection } = useConnectToMissingCosmosChain();
+  const { hasApprovedSourceAccount, isAskingToApproveConnection } =
+    useConnectToMissingCosmosChain();
 
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
@@ -431,6 +436,7 @@ export const SwapPage = () => {
         opacity: drawerOpen ? 0.3 : 1,
       }}
     >
+      {hasApprovedSourceAccount && <PreloadSigningStargateClient />}
       <SwapPageHeader />
       <Column align="center">
         <SwapPageAssetChainInput

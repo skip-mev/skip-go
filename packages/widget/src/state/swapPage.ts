@@ -10,7 +10,7 @@ import { jotaiStore } from "@/widget/Widget";
 import { currentPageAtom, Routes } from "./router";
 import { errorWarningAtom } from "./errorWarning";
 import { getConnectedSignersAtom, walletsAtom } from "./wallets";
-import { getWallet, WalletType } from "graz";
+import { getWallet, isWalletConnect, WalletType } from "graz";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
 import {
   extraCosmosChainIdsToConnectPerWalletAtom,
@@ -64,6 +64,8 @@ export const preloadSigningStargateClientEffect: ReturnType<typeof atomEffect> =
       const extraChainIdsToConnect = get(extraCosmosChainIdsToConnectPerWalletAtom);
 
       const walletName = wallets?.cosmos?.walletName as WalletType | undefined;
+      if (walletName && isWalletConnect(walletName)) return;
+
       const signer = getSigners?.getCosmosSigner ?? (walletName && getWallet(walletName));
 
       if (!sourceAsset?.chainId || !wallets.cosmos || !signer || !walletName) return;
