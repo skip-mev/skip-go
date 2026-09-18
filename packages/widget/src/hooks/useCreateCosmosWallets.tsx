@@ -98,6 +98,9 @@ export const useCreateCosmosWallets = () => {
             if (!response?.accounts) {
               throw new Error("failed to get accounts from wallet");
             }
+            if (chainIdToConnect && !response.accounts[chainIdToConnect]) {
+              throw new Error(`Wallet did not approve ${chainIdToConnect}`);
+            }
 
             if (sourceAsset === undefined) {
               setDefaultSourceAsset(ChainType.Cosmos);
@@ -153,6 +156,9 @@ export const useCreateCosmosWallets = () => {
                 walletType: wallet,
                 autoReconnect: false,
               });
+              if (chainIdToConnect && !response.accounts[chainIdToConnect]) {
+                throw new Error(`Wallet did not approve ${chainIdToConnect}`);
+              }
               return {
                 address: chainIdToConnect
                   ? response?.accounts[chainIdToConnect].bech32Address
@@ -172,6 +178,9 @@ export const useCreateCosmosWallets = () => {
                 walletType: wallet,
                 autoReconnect: false,
               });
+              if (chainIdToConnect && !response.accounts[chainIdToConnect]) {
+                throw new Error(`Wallet did not approve ${chainIdToConnect}`);
+              }
               const address =
                 chainIdToConnect && response?.accounts[chainIdToConnect]?.bech32Address;
               return { address };
