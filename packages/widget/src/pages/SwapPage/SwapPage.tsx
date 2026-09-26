@@ -1,5 +1,5 @@
-import { startTransition, useCallback, useMemo } from "react";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { startTransition, useCallback, useEffect, useMemo } from "react";
+import { useAtom, useAtomValue, useSetAtom, useStore } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
@@ -50,16 +50,18 @@ import { callbacksAtom } from "@/state/callbacks";
 import { startAmplitudeSessionReplay } from "@/widget/initAmplitude";
 import { SmallText } from "@/components/Typography";
 
-const PreloadSigningStargateClient = () => {
-  useAtom(preloadSigningStargateClientEffect);
-  return null;
-};
-
 export const SwapPage = () => {
+  const store = useStore();
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
   useAtom(onRouteUpdatedEffect);
   const { hasApprovedSourceAccount, isAskingToApproveConnection } =
     useConnectToMissingCosmosChain();
+
+  useEffect(() => {
+    if (!hasApprovedSourceAccount) return;
+
+    return store.sub(preloadSigningStargateClientEffect, () => undefined);
+  }, [store, hasApprovedSourceAccount]);
 
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
@@ -436,7 +438,6 @@ export const SwapPage = () => {
         opacity: drawerOpen ? 0.3 : 1,
       }}
     >
-      {hasApprovedSourceAccount && <PreloadSigningStargateClient />}
       <SwapPageHeader />
       <Column align="center">
         <SwapPageAssetChainInput
