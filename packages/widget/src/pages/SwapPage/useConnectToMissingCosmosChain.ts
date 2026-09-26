@@ -16,9 +16,7 @@ export const useConnectToMissingCosmosChain = () => {
   const wallets = useAtomValue(walletsAtom);
   const extraChainIdsToConnect = useAtomValue(extraCosmosChainIdsToConnectPerWalletAtom);
   const { data: accounts } = useAccount();
-  const hasApprovedSourceAccount = Boolean(
-    sourceAsset?.chainId && accounts?.[sourceAsset.chainId],
-  );
+  const hasApprovedSourceAccount = Boolean(sourceAsset?.chainId && accounts?.[sourceAsset.chainId]);
 
   const [isAskingToApproveConnection, setIsAskingToApproveConnection] = useState(false);
   const previousSourceChainIdRef = useRef(sourceAsset?.chainId);
@@ -30,10 +28,12 @@ export const useConnectToMissingCosmosChain = () => {
   useEffect(() => {
     const connectToMissingCosmosChain = async () => {
       const walletName = wallets?.cosmos?.walletName as WalletType | undefined;
+      if (!walletName) return;
+
       const previousSourceChainId = previousSourceChainIdRef.current;
       previousSourceChainIdRef.current = sourceAsset?.chainId;
 
-      if (!sourceAsset?.chainId || !walletName || sourceAsset.isEvm || sourceAsset.isSvm) return;
+      if (!sourceAsset?.chainId || sourceAsset.isEvm || sourceAsset.isSvm) return;
 
       const wallet = getWallet(walletName);
       const additionalChainIds = extraChainIdsToConnect[walletName] ?? [];
@@ -46,7 +46,10 @@ export const useConnectToMissingCosmosChain = () => {
           : chainIdsToConnect.includes(sourceAsset.chainId)
       )
         return;
-      if (walletConnect && (!previousSourceChainId || previousSourceChainId === sourceAsset.chainId))
+      if (
+        walletConnect &&
+        (!previousSourceChainId || previousSourceChainId === sourceAsset.chainId)
+      )
         return;
 
       setIsAskingToApproveConnection(true);
