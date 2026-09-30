@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.6.6
+
+### Patch Changes
+
+- ab94d85: Restore the previous incomplete route status calculation instead of explicitly setting it when a transaction has no hash.
+
 ## 1.6.5
 
 ### Patch Changes
