@@ -3,6 +3,22 @@ title: "Client Library"
 description: "Selected updates and improvements to the `@skip-go/client` [npm package](https://www.npmjs.com/package/@skip-go/client)."
 ---
 
+## v1.6.0
+
+### Enhancements
+- **CCTP v2 Support:** Added support for CCTP v2 transfers and the CCTP relayed flow (v1.6.0–v1.6.4).
+- **Transaction Status Fix:** `cctp_transfer_v2` entries in transaction status responses are now handled correctly. Previously they fell through the transfer-type checks, leaving the event without a type, chain IDs, or explorer links, and reporting a `failed` status while the transfer was still pending.
+- Removed Lombard Ledger mainnet and testnet chain configuration.
+
+## v1.5.1 – v1.5.18
+
+### Enhancements
+- **`getRouteWithGasOnReceive` helper:** Added a higher-level helper that builds the main and gas routes for Gas on Receive (complements `executeMultipleRoutes`).
+- **Cosmos MEVM support.**
+- **Affiliate fees:** Fixed passing `affiliates` to the widget/client library via `setClientOptions`.
+- **Explorer links:** Added timeout-tx explorer links for timed-out IBC transfers, and fixed Axelar explorer links.
+- **Cleanup:** Removed the legacy gas-station logic.
+
 ## v1.5.0
 
 ### Major Features
