@@ -21,6 +21,7 @@ export const keplrMainnetChainIdsInitialConnect = [
   'cosmoshub-4',
   'crypto-org-chain-mainnet-1',
   'dydx-mainnet-1',
+  'dimension_37-1',
   'dymension_1100-1',
   'injective-1',
   'juno-1',
