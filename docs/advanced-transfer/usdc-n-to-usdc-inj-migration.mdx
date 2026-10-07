@@ -54,7 +54,7 @@ As of this writing, the chains that support same-chain migration are roughly as 
 | Neutron | Xpla | ZIGChain |
 
 <Warning>
-**New chains may keep being added, so don't hardcode this list; always confirm the current state with the two APIs above.** To target a new chain, always check `/v2/fungible/assets` first to confirm whether that chain supports USDC.n and USDC.inj respectively.
+**New chains may continue to be added, so don't hardcode this list; always confirm the current state with the two APIs above.** To target a new chain, always check `/v2/fungible/assets` first to confirm whether that chain supports USDC.n and USDC.inj respectively.
 </Warning>
 
 Noble is the issuer of USDC.n and does not support USDC.inj, so same-chain migration is not possible there — Noble can **only** be used via the Noble → Injective route.
@@ -185,7 +185,7 @@ const msgsRequest = {
 };
 ```
 
-**Don't reuse the original request values you sent to `/route`** — `/msgs` must match exactly the quote `/route` computed, so `source_asset_denom`/`source_asset_chain_id`/`dest_asset_denom`/`dest_asset_chain_id`/`amount_in`/`amount_out`/`operations` must **always** come from the `/route` response.
+**Don't reuse the original request values you sent to `/route`** — `/msgs` must match exactly the quote returned by `/route`, so `source_asset_denom`/`source_asset_chain_id`/`dest_asset_denom`/`dest_asset_chain_id`/`amount_in`/`amount_out`/`operations` must **always** come from the `/route` response.
 
 <Warning>
 **The two most important rules at this step:**
@@ -247,7 +247,7 @@ Don't convert this value to a JavaScript `Number` — it comfortably exceeds `Nu
 
 ## 4. Signing the transactions
 
-The `txs[]` you got from `/msgs` are not yet signed. How you sign is up to your own situation — this guide only gives an overview of the two perspectives below; the detailed implementation is out of scope.
+The `txs[]` you got from `/msgs` are not yet signed. How you sign them depends on your implementation — this guide only gives an overview of the two perspectives below; the detailed implementation is out of scope.
 
 For each transaction, pull out its Cosmos transaction.
 
@@ -308,7 +308,7 @@ const submitRequest = {
 <Warning>
 **Every transaction in this migration must be submitted through `/v2/tx/submit`. Do not broadcast directly through a chain's RPC/LCD.**
 
-**Why — this is the single most important point in this guide.** If you broadcast a signed tx directly through chain RPC/LCD, the tx lands on-chain just fine, but **Skip's relayer has no way of detecting that this tx exists.** Registering it via `/v2/tx/submit` is what makes the following possible: the Noble CCTP burn gets recognized, the relayer's next step (transit chain burn → Injective mint) gets triggered, and the tx becomes queryable via `/v2/tx/status`. Broadcasting directly leaves funds stuck at an intermediate chain with nothing to move them forward, and `/v2/tx/status` will report that it can't find the tx at all.
+**Why — this is the single most important point in this guide.** If you broadcast a signed tx directly through chain RPC/LCD, the transaction is successfully included on-chain, but **Skip's relayer has no way of detecting that this tx exists.** Registering it via `/v2/tx/submit` is what makes the following possible: the Noble CCTP burn gets recognized, the relayer's next step (transit chain burn → Injective mint) gets triggered, and the tx becomes queryable via `/v2/tx/status`. Broadcasting directly leaves funds stuck at an intermediate chain with nothing to move them forward, and `/v2/tx/status` will report that it can't find the tx at all.
 </Warning>
 
 Use the `tx_hash` from the response in the next step (status checking).
@@ -377,7 +377,7 @@ When a leg of the migration route needs signing on the Injective chain, if the u
 
 ## 8. Incomplete migration state
 
-If the first transaction and the automatic relay processing that follows it (CCTP burn/mint) have completed, but the second (final) transaction hasn't been executed yet, **USDC.inj is sitting on Injective**.
+If the first transaction and the automatic relay processing that follows it (CCTP burn/mint) have completed, but the second (final) transaction hasn't been executed yet, **USDC.inj remains on Injective**.
 
 The migration to the original destination chain is **incomplete**. This is a different situation from the first transaction **failing**, and should be handled separately — let the user know clearly that "your funds are safely on Injective, and only the last step remains."
 
