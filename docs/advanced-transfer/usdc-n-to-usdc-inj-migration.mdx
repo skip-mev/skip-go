@@ -68,7 +68,7 @@ The values below, used in every subsequent request, must **always come verbatim 
 
 `amount_in` is denominated in the asset's base unit (`1 USDC = 1000000`).
 
-The migration minimum is **more than 250 USDC**. The examples below use `amount_in = "251000000"`.
+The migration minimum is **more than 0.02 USDC** (because of the relayed flow fee explained in chapter 2). The examples below use `amount_in = "1000000"`.
 
 ## 2. Requesting a route — `POST /v2/fungible/route`
 
@@ -78,12 +78,13 @@ The `/route` API is **a quote request**: given a specific source/destination cha
 
 ```json
 {
-  "amount_in": "251000000",
+  "amount_in": "1000000",
   "source_asset_chain_id": "dydx-mainnet-1",
   "source_asset_denom": "ibc/8E27BA2D5493AF5636760E354E46004562C46AB7EC0CC4C1CA14E9E20E2545B5",
   "dest_asset_chain_id": "dydx-mainnet-1",
   "dest_asset_denom": "ibc/BDC8EC8C66D3D784B2DC7E8F7DAE93A49961AE747CEEBBC7DC4BAFF564E40BD3",
   "smart_relay": true,
+  "experimental_features": ["stargate", "eureka", "layer_zero"],
   "allow_multi_tx": true,
   "allow_unsafe": true,
   "smart_swap_options": {
@@ -91,6 +92,7 @@ The `/route` API is **a quote request**: given a specific source/destination cha
     "evm_swaps": true
   },
   "go_fast": true,
+  "bridges": ["CCTP_V2_MIGRATION", "IBC"],
   "fast_transfer": true
 }
 ```
@@ -101,14 +103,24 @@ Use this preset as-is for the migration flow.
 **`allow_multi_tx` must always be set to `true`.** Some migration routes (the "USDC.n → USDC.inj within the same chain" route from chapter 1) require 2 user-signed transactions. If this field is `false` or omitted, the router won't even consider routes that split into two transactions — for those chain combinations, the route request will either fail outright or fail to return the intended migration route.
 </Warning>
 
+<Info>
+**The `bridges` field deterministically makes the router use relayed flow (the CCTP migration route this guide covers).** Relayed flow can sometimes be selected even without specifying `bridges`, but depending on the source/destination asset combination, a swap (DEX conversion) route may also exist alongside it. In that case, if `bridges` isn't specified, the router may pick the swap route instead of relayed flow.
+
+Specifying the bridge types that make up relayed flow in `bridges` (e.g. `"CCTP_V2_MIGRATION"`, `"IBC"`) makes the router deterministically use the relayed flow route even when a swap route also exists. **This guide's main approach is to use the `bridges` field to deterministically use relayed flow.**
+</Info>
+
+<Warning>
+Relayed flow uses a fee worth roughly **0.02 USD**, so `amount_in` must always be **greater than 0.02 USDC** — anything smaller and the fee exceeds the transfer amount, or the quote itself stops making sense.
+</Warning>
+
 `fast_transfer: true` enables **CCTP v2 Fast Transfer** — if omitted or set to `false`, the CCTP v2 leg is processed via the standard (slower) path instead.
 
 ### Response example (abridged)
 
 ```json
 {
-  "amount_in": "251000000",
-  "amount_out": "250980000",
+  "amount_in": "1000000",
+  "amount_out": "999200",
   "source_asset_chain_id": "dydx-mainnet-1",
   "source_asset_denom": "ibc/8E27BA2D...",
   "dest_asset_chain_id": "dydx-mainnet-1",
@@ -133,7 +145,7 @@ The response also includes a `chain_ids` field (omitted from the abridged exampl
 </Info>
 
 <Warning>
-**When you receive `operations`, always confirm it actually contains a CCTP leg (a CCTP v1 burn, a CCTP v2 burn/mint).** If the request unexpectedly resolved to a different route (e.g. a plain IBC transfer or some other bridge) and you proceed without noticing, you'll end up executing the wrong transfer instead of the migration.
+**When you receive `operations`, always confirm it actually contains a CCTP leg (a CCTP v1 burn, a CCTP v2 burn/mint).** This is a final check that the response actually resolved to the expected route, even after specifying `bridges` to request relayed flow. If the request unexpectedly resolved to a different route (e.g. a plain IBC transfer or a swap route) and you proceed without noticing, you'll end up executing the wrong transfer instead of the migration.
 </Warning>
 
 ## 3. Generating the transactions to sign — `POST /v2/fungible/msgs`
@@ -462,16 +474,20 @@ const routeRes = await fetch(`${BASE_URL}/v2/fungible/route`, {
   method: 'POST',
   headers: { 'content-type': 'application/json' },
   body: JSON.stringify({
-    amount_in: '251000000',
+    amount_in: '1000000',
     source_asset_chain_id: sourceChainId,
     source_asset_denom: sourceDenom,
     dest_asset_chain_id: destChainId,
     dest_asset_denom: destDenom,
     smart_relay: true,
+    experimental_features: ['stargate', 'eureka', 'layer_zero'],
     allow_multi_tx: true,
     allow_unsafe: true,
     smart_swap_options: { split_routes: true, evm_swaps: true },
     go_fast: true,
+    // bridges must be specified so relayed flow is used deterministically even when a swap
+    // route also exists (chapter 2).
+    bridges: ['CCTP_V2_MIGRATION', 'IBC'],
     fast_transfer: true,
   }),
 });
