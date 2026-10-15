@@ -25,6 +25,7 @@ Chapter 4 (transaction signing) will cover both perspectives separately.
 
 - **How to sign transactions** — the Skip API never returns an already-signed transaction at any step. `/v2/fungible/msgs` always returns **unsigned** message payloads, and how you sign them (delegating to a wallet such as Keplr, or signing directly with your own keys) is something you implement according to your own situation.
 - **How to compute/derive per-chain user addresses** — this guide does not cover how you obtain the addresses that go into `address_list` for Noble, the transit EVM chain, Injective, etc. (derivation paths, wallet integration, etc.). It assumes the API caller (the dApp) already has these values on hand.
+- **The detailed execution steps when a regular swap route is selected** — a `/v2/fungible/route` request considers not only the migration (relayed flow) route this guide covers but also regular swap (DEX conversion) routes, and which one comes back in the response is not guaranteed (see chapter 2). When a swap route is selected, you sign and execute it **the same way as a regular swap integration** using the Skip API, so those details are not covered in this guide.
 </Note>
 
 ## 1. Checking chains and assets — `GET /v2/info/chains`, `GET /v2/fungible/assets`
@@ -42,7 +43,7 @@ Only two routes are possible for this migration.
 | Noble → Injective | The one exception where source and destination chains differ | 1 |
 
 <Info>
-The signed-tx count above is only a reference to help your understanding. The actual count is always determined by the `/route` response's `txs_required` (chapter 2).
+The signed-tx count above is only a reference to help your understanding. The actual count is always determined by the `/route` response's `txs_required` (chapter 2). **However, the same signature count doesn't mean you can assume the migration route was selected** — for example, 1 signature could be a Noble → Injective migration, but for some chain combinations a regular swap route can also come back with 1 signature. How to check which route was actually selected is covered in chapter 2, "Checking which route was selected".
 </Info>
 
 As of this writing, the chains that support same-chain migration are roughly as follows:
@@ -92,28 +93,25 @@ The `/route` API is **a quote request**: given a specific source/destination cha
     "evm_swaps": true
   },
   "go_fast": true,
-  "bridges": ["CCTP_V2_MIGRATION", "IBC"],
   "fast_transfer": true
 }
 ```
 
-Use this preset as-is for the migration flow.
+This payload isn't specially composed to force the migration route — it is **identical to the standard payload used by the regular swap UI that Skip provides**. Use this preset as-is for the migration flow.
 
 <Warning>
 **`allow_multi_tx` must always be set to `true`.** Some migration routes (the "USDC.n → USDC.inj within the same chain" route from chapter 1) require 2 user-signed transactions. If this field is `false` or omitted, the router won't even consider routes that split into two transactions — for those chain combinations, the route request will either fail outright or fail to return the intended migration route.
 </Warning>
 
-<Info>
-**The `bridges` field deterministically makes the router use relayed flow (the CCTP migration route this guide covers).** Relayed flow can sometimes be selected even without specifying `bridges`, but depending on the source/destination asset combination, a swap (DEX conversion) route may also exist alongside it. In that case, if `bridges` isn't specified, the router may pick the swap route instead of relayed flow.
-
-Specifying the bridge types that make up relayed flow in `bridges` (e.g. `"CCTP_V2_MIGRATION"`, `"IBC"`) makes the router deterministically use the relayed flow route even when a swap route also exists. **This guide's main approach is to use the `bridges` field to deterministically use relayed flow.**
-</Info>
-
 <Warning>
-Relayed flow uses a fee worth roughly **0.02 USD**, so `amount_in` must always be **greater than 0.02 USDC** — anything smaller and the fee exceeds the transfer amount, or the quote itself stops making sense.
+**This payload does not guarantee that the router will select the migration (relayed) route.** The router also considers other routes available for the same chain and asset combination (e.g. a regular swap route through a DEX), and which route ends up in the response is decided by **the routes' estimated output amounts (`amount_out`) competing, with the better quote being selected**. Therefore, check which route was selected in every `/route` response — the details are covered below in [Checking which route was selected](#checking-which-route-was-selected).
 </Warning>
 
-`fast_transfer: true` enables **CCTP v2 Fast Transfer** — if omitted or set to `false`, the CCTP v2 leg is processed via the standard (slower) path instead.
+<Warning>
+When the migration route (relayed flow) is actually selected, it uses a fee worth roughly **0.02 USD**, so `amount_in` must always be **greater than 0.02 USDC** — anything smaller and the fee exceeds the transfer amount, or the quote itself stops making sense.
+</Warning>
+
+`fast_transfer: true` enables **CCTP v2 Fast Transfer** — if omitted or set to `false`, the CCTP v2 leg is processed via the standard (slower) path instead. This field also only matters when the migration route is actually selected.
 
 ### Response example (abridged)
 
@@ -144,9 +142,47 @@ How the key fields are used in the next steps:
 The response also includes a `chain_ids` field (omitted from the abridged example above), but it's slated for deprecation. It's purely a reference list of the chains that appear in this route and is **not** the basis for building `address_list`. `address_list` is always built against the order of **`required_chain_addresses`** (don't confuse the two — `required_chain_addresses` can contain duplicate chain IDs, and you must match that exact length, duplicates included).
 </Info>
 
+### Checking which route was selected
+
 <Warning>
-**When you receive `operations`, always confirm it actually contains a CCTP leg (a CCTP v1 burn, a CCTP v2 burn/mint).** This is a final check that the response actually resolved to the expected route, even after specifying `bridges` to request relayed flow. If the request unexpectedly resolved to a different route (e.g. a plain IBC transfer or a swap route) and you proceed without noticing, you'll end up executing the wrong transfer instead of the migration.
+**This is the most important section of chapter 2.** Everything this guide explains from chapter 3 onward (message types, signing, `/v2/tx/submit`, status checking, etc.) assumes **`/route` selected the migration route (relayed flow)**. But the same request can also lead the router to **select a regular swap (DEX conversion) route.** Both routes end with the user receiving USDC.inj at the destination, but the kinds and number of messages to sign along the way are completely different.
 </Warning>
+
+**The number of signed transactions (`txs_required`) alone can't tell you which route was selected.** The same 1 signature could be a Noble → Injective migration, or, depending on the chain and asset combination, a regular swap route that also comes back with 1 signature. The only reliable method is **to inspect the contents of the `operations` array directly**.
+
+| `operations` contents | Selected route | What to do |
+| --- | --- | --- |
+| Contains **both the CCTP v1 burn and the CCTP v2 burn/mint steps** | The migration (relayed flow) route this guide covers | If only one of the two is present and the other is missing, it should not be treated as the migration route — check that both are present **together**. Follow the message types, signing, and execution flow from chapter 3 onward as-is. |
+| Has no CCTP steps, or only one of the two, and has swap/DEX steps | A **regular swap route was selected**, not the migration | The message types described from chapter 3 onward (IBC transfer, CCTP burn, etc.) don't apply as-is, but **the handling itself isn't anything special** — just like a regular Skip API swap integration, sign the messages in `operations`, submit them via `/v2/tx/submit`, and confirm completion with `/v2/tx/status`. However, since the message types and counts differ to fit the swap route, the specific message types and signing methods are not covered in this guide — see the general Skip swap integration guide. |
+
+Each item in `operations` contains **one** key indicating the step's type (`transfer`, `cctp_transfer`, `cctp_transfer_v2`, `swap`, `evm_swap`, etc.), alongside the common fields `tx_index` (which signed tx executes this step), `amount_in`, and `amount_out`. For the migration (relayed flow) route, `cctp_transfer` (CCTP v1 burn) and `cctp_transfer_v2` (CCTP v2 burn/mint) appear **as separate items, one right after the other in this order** (the values below are examples to show the structure, with some fields omitted):
+
+```json Migration (relayed flow) route
+{
+  "operations": [
+    { "transfer": { "from_chain_id": "dydx-mainnet-1", "to_chain_id": "noble-1", "bridge_id": "IBC", ... }, "tx_index": 0, ... },
+    { "cctp_transfer": { "from_chain_id": "noble-1", "to_chain_id": "<transit_evm_chain_id>", "bridge_id": "CCTP", ... }, "tx_index": 0, ... },
+    { "cctp_transfer_v2": { "from_chain_id": "<transit_evm_chain_id>", "to_chain_id": "1776", "bridge_id": "CCTP_V2", ... }, "tx_index": 0, ... },
+    { "transfer": { "from_chain_id": "injective-1", "to_chain_id": "dydx-mainnet-1", "bridge_id": "IBC", ... }, "tx_index": 1, ... }
+  ]
+}
+```
+
+Looking at `tx_index`, the first three steps (IBC → CCTP v1 → CCTP v2) are bundled into the first signature (`0`), and only the final IBC transfer is the second signature (`1`). The user doesn't sign the CCTP leg separately — the relayer continues it.
+
+For a regular swap route, on the other hand, there are no `cctp_transfer`/`cctp_transfer_v2` keys at all, and keys like `swap` or `evm_swap` appear instead:
+
+```json Regular swap route
+{
+  "operations": [
+    { "transfer": { "from_chain_id": "dydx-mainnet-1", "to_chain_id": "osmosis-1", "bridge_id": "IBC", ... }, "tx_index": 0, ... },
+    { "swap": { "chain_id": "osmosis-1", "swap_venues": [{ "chain_id": "osmosis-1", "name": "osmosis-poolmanager" }], ... }, "tx_index": 0, ... },
+    { "transfer": { "from_chain_id": "osmosis-1", "to_chain_id": "dydx-mainnet-1", "bridge_id": "IBC", ... }, "tx_index": 0, ... }
+  ]
+}
+```
+
+Either route is a normal result. However, the messages to sign and the handling afterward differ depending on the route type, so every time you receive a `/route` response, check `operations` first to tell which one it is, then proceed with the matching flow.
 
 ## 3. Generating the transactions to sign — `POST /v2/fungible/msgs`
 
@@ -154,7 +190,7 @@ The `/msgs` API takes the route data computed by `/route` and **generates the ac
 
 ### 3.1 Building `address_list`
 
-Walk `required_chain_addresses` (an order-fixed array) and fill in the user's address for each corresponding chain, **preserving that exact order**.
+Iterate over `required_chain_addresses` in order and fill in the user's address for each corresponding chain, **preserving that exact order**.
 
 | Index | `required_chain_addresses` | `address_list` |
 | --- | --- | --- |
@@ -202,7 +238,7 @@ const msgsRequest = {
 <Warning>
 **The two most important rules at this step:**
 
-1. Pass `operations` through exactly as received from `/route`, without touching a single field. Modifying it can cause the request to fail, or produce a transaction that doesn't match the quote `/route` calculated.
+1. Pass `operations` through exactly as received by `/route`. Do not modify any fields. Modifying it can cause the request to fail, or produce a transaction that doesn't match the quote `/route` calculated.
 2. Build `address_list` in the exact order `required_chain_addresses` specifies, with no slot left empty. A missing or misordered slot can cause the request to fail, or generate a message addressed to the wrong account.
 </Warning>
 
@@ -391,7 +427,7 @@ When a leg of the migration route needs signing on the Injective chain, if the u
 
 If the first transaction and the automatic relay processing that follows it (CCTP burn/mint) have completed, but the second (final) transaction hasn't been executed yet, **USDC.inj remains on Injective**.
 
-The migration to the original destination chain is **incomplete**. This is a different situation from the first transaction **failing**, and should be handled separately — let the user know clearly that "your funds are safely on Injective, and only the last step remains."
+The migration to the original destination chain is **incomplete**. This is a different situation from the first transaction **failing**, and should be handled separately. Inform the user that their funds remain on Injective and that the final transfer step is still pending.
 
 **If the second transaction step fails, don't reuse the existing tx payload or only call `/msgs` again — request a fresh quote from `/v2/fungible/route` from the start.** When doing so, don't resend the original request (e.g. dYdX USDC.n → dYdX USDC.inj) — the funds have already moved to USDC.inj on Injective, so **change the source to Injective USDC.inj** and request a new quote.
 
@@ -409,7 +445,7 @@ Reusing the original request leaves the source mismatched with where the funds a
     Confirm supported chains/assets, `chain_id`, `denom`.
   </Step>
   <Step title="POST /v2/fungible/route">
-    Get a route quote.
+    Get a route quote + check in `operations` that the migration route was actually selected.
   </Step>
   <Step title="Build address_list">
     Exactly in `required_chain_addresses` order.
@@ -485,16 +521,14 @@ const routeRes = await fetch(`${BASE_URL}/v2/fungible/route`, {
     allow_unsafe: true,
     smart_swap_options: { split_routes: true, evm_swaps: true },
     go_fast: true,
-    // bridges must be specified so relayed flow is used deterministically even when a swap
-    // route also exists (chapter 2).
-    bridges: ['CCTP_V2_MIGRATION', 'IBC'],
     fast_transfer: true,
   }),
 });
 // Error handling for routeRes.ok etc. is omitted here — a real implementation must handle it properly.
 const route = await routeRes.json();
-// Confirm operations actually contains a CCTP leg (chapter 2). assertRouteContainsCctp is out
-// of scope — implement it yourself.
+// Check whether operations actually contains a CCTP leg — a swap route can be selected even with
+// this payload, so this check is the only way to tell whether it's the migration route
+// (see chapter 2). assertRouteContainsCctp is out of scope — implement it yourself.
 assertRouteContainsCctp(route.operations);
 
 // 3) Build address_list — exactly in required_chain_addresses order, with no slot skipped.
