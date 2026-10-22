@@ -126,7 +126,7 @@
     "@walletconnect/solana-adapter": "^0.0.8",
     "bech32": "^2.0.0",
     "bignumber.js": "^9.1.2",
-    "graz": "0.7.0",
+    "graz": "0.7.1",
     "jotai": "^2.10.1",
     "jotai-effect": "^1.0.2",
     "jotai-tanstack-query": "^0.8.6",
