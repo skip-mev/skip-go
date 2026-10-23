@@ -25,7 +25,6 @@ export const keplrMainnetChainIdsInitialConnect = [
   'injective-1',
   'juno-1',
   'kava_2222-10',
-  'kyve-1',
   'noble-1',
   'osmosis-1',
   'passage-2',
@@ -36,7 +35,6 @@ export const keplrMainnetChainIdsInitialConnect = [
   'sentinelhub-2',
   'sommelier-3',
   'ssc-1',
-  'stride-1',
 ];
 
 // other wallets not the keplr wallet
@@ -72,7 +70,6 @@ export const keplrMainnetWithoutEthermintChainIdsInitialConnect = [
   'dydx-mainnet-1',
   'juno-1',
   'kava_2222-10',
-  'kyve-1',
   'lava-mainnet-1',
   'noble-1',
   'osmosis-1',
@@ -84,7 +81,6 @@ export const keplrMainnetWithoutEthermintChainIdsInitialConnect = [
   'sentinelhub-2',
   'sommelier-3',
   'ssc-1',
-  'stride-1',
   'wormchain',
 ];
 
