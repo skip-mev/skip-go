@@ -159,11 +159,8 @@ Update all instances of `chainID` to `chainId`, notably in the `defaultRoute` pr
 />
 ```
 ### 4. Temporarily Disabled Features
-The following props will be reintroduced in future versions of `Widget`.
 #### a. `connectedWallet` Prop
-The connectedWallet prop, which allowed passing a custom wallet provider, isn't currently supported.
-#### b. `CallbackStore` Callback Props
-The `onWalletConnected`, `onWalletDisconnected`, `onTransactionBroadcasted`, `onTransactionComplete`, and `onTransactionFailed` callback props aren't currently supported.
+The connectedWallet prop, which allowed passing a custom wallet provider, isn't currently supported. Use `connectedAddresses` with the signer functions instead (see [Connected Wallet](./connected-wallet)).
 
 ### 5. Removed Features
 #### a. `persistWidgetState`

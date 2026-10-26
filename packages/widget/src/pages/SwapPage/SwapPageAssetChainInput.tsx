@@ -21,6 +21,9 @@ import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelect
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { transition } from "@/utils/transitions";
 import { convertToPxValue } from "@/utils/style";
+import { useAtomValue } from "jotai";
+import { assetAnnotationsAtom } from "@/state/assetAnnotations";
+import { AssetAnnotationBadge } from "@/components/AssetAnnotationBadge";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -66,6 +69,12 @@ export const SwapPageAssetChainInput = ({
   const groupedAsset = groupedAssetsByRecommendedSymbol?.find(
     (group) => group.id === assetDetails.asset?.recommendedSymbol,
   );
+
+  const assetAnnotations = useAtomValue(assetAnnotationsAtom);
+  const annotation = assetDetails.asset?.recommendedSymbol
+    ? assetAnnotations?.[assetDetails.asset.recommendedSymbol]
+    : undefined;
+  const swapPageAnnotation = annotation?.swapPage;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!onChangeValue) return;
@@ -257,15 +266,23 @@ export const SwapPageAssetChainInput = ({
           )}
         </Row>
         {assetDetails?.chainName ? (
-          <StyledOnChainGhostButton
-            disabled={disabled}
-            onClick={handleChangeChain}
-            align="center"
-            secondary
-            gap={4}
-          >
-            <SmallText>on {assetDetails?.chainName}</SmallText>
-          </StyledOnChainGhostButton>
+          <Row align="center" gap={6}>
+            {swapPageAnnotation && (
+              <AssetAnnotationBadge
+                label={swapPageAnnotation.label}
+                variant={annotation?.variant}
+              />
+            )}
+            <StyledOnChainGhostButton
+              disabled={disabled}
+              onClick={handleChangeChain}
+              align="center"
+              secondary
+              gap={4}
+            >
+              <SmallText>on {assetDetails?.chainName}</SmallText>
+            </StyledOnChainGhostButton>
+          </Row>
         ) : (
           <Spacer />
         )}
@@ -275,8 +292,9 @@ export const SwapPageAssetChainInput = ({
 };
 
 const StyledOnChainGhostButton = styled(GhostButton)`
+  padding: 4px 8px;
   @media (max-width: 767px) {
-    padding: 0 5px;
+    padding: 2px 6px;
     height: 25px;
   }
   ${({ disabled }) => disabled && "cursor: not-allowed"};

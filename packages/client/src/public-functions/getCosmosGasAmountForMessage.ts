@@ -23,7 +23,6 @@ export async function getCosmosGasAmountForMessage(
     throw new Error("Either message or encodedMsg must be provided");
   }
   if (
-    chainId.includes("evmos") ||
     chainId.includes("injective") ||
     chainId.includes("dymension") ||
     chainId.includes("sunrise-1") ||
@@ -32,7 +31,7 @@ export async function getCosmosGasAmountForMessage(
     if (messages?.find((i) => i.msgTypeUrl === "/cosmwasm.wasm.v1.MsgExecuteContract")) {
       return "2400000";
     }
-    return "300000";
+    return "350000";
   }
 
   const estimatedGas = await client.simulate(signerAddress, encodedMsgs, "");

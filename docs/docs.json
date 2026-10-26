@@ -55,6 +55,12 @@
             ]
           },
           {
+            "group": "Skip Go App",
+            "pages": [
+              "app/usdc-n-manual-migration"
+            ]
+          },
+          {
             "group": "Advanced Transfer",
             "pages": [
               "advanced-transfer/handling-cross-chain-failure-cases",

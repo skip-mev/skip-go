@@ -1,0 +1,258 @@
+---
+title: 'Migrate your USDC.n to USDC.inj'
+description: 'Migrate USDC.n to USDC.inj manually with Skip:Go, before the one-step migration.'
+---
+
+Use this guide to migrate **USDC.n to USDC.inj** with [Skip:Go](https://go.skip.build/).
+
+## Why this migration is needed
+
+<Frame>
+  <img src="/images/usdc-migration-001.png" alt="USDC.n is being deprecated in favor of USDC.inj" />
+</Frame>
+
+**USDC.n is being deprecated** and will no longer be the supported on the chains covered by this guide. If you hold USDC.n on those mentioned chains, you should migrate it to **USDC.inj**, the version that will be supported going forward.
+
+### What are the differences between USDC.n and USDC.inj?
+
+Both are USDC, but they originate from different chains and are treated as separate assets on Cosmos chains.
+
+- **USDC.n:** USDC originating from Noble
+- **USDC.inj:** USDC originating from Injective
+
+---
+
+## What happens when you migrate
+
+After the migration, you will have **USDC.inj on the same chain where you started**.
+
+For example:
+
+`dYdX USDC.n → dYdX USDC.inj`
+
+If you start with USDC.n on dYdX, you finish with USDC.inj on dYdX.
+
+Skip:Go handles the intermediate steps automatically. You only need to sign **twice** during the migration.
+
+---
+
+## Who this guide applies to
+
+This guide applies to USDC.n held on:
+
+- dYdX
+- Cosmos Hub
+- Osmosis
+- Terra 2.0
+- Neutron
+- ZIGChain
+- Initia
+- Xpla
+
+<Warning>
+  **dYdX users**
+
+This guide applies only to USDC.n held in your **dYdX Chain wallet**.
+
+It does not apply to USDC in a **dydx.trade trading subaccount**.
+
+</Warning>
+
+---
+
+## What to do
+
+This **migration flow** enables you migrate USDC.n to USDC.inj on the same chain in one guided flow.
+
+|    Migration Details     |                            |
+| ------------------------ | -------------------------- |
+| **From**                | Source chain / USDC.n      |
+| **To**                  | Same chain / USDC.inj      |
+| **Wallet signatures**   | 2                          |
+| **Gas you prepare**     | Source chain only          |
+
+Skip:Go handles the rest automatically.
+
+---
+
+## Before you start
+
+Make sure you have:
+
+- Access to the wallet holding your **USDC.n**
+- Enough gas on the chain where your USDC.n is currently held to cover the first transaction
+
+You only need to prepare gas on your **source chain**.
+
+You do **not** need to prepare INJ in advance. If your INJ balance is insufficient to cover the second transaction, Skip:Go will automatically recharge the required amount of INJ for you.
+
+### Stay safe
+
+Use only the official Skip:Go site at **go.skip.build**. Never share your seed or recovery phrase.
+
+---
+
+## Migrate USDC.n to USDC.inj
+
+<Frame>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '.1rem' }}>
+    <img
+      src="/images/usdc-migration-002.png"
+      alt="Overview of the Migration Flow for migrating USDC.n to USDC.inj"
+    />
+    <img
+      src="/images/usdc-migration-003.png"
+      alt="Skip:Go processing the migration while waiting for the second signature"
+    />
+  </div>
+</Frame>
+
+<Steps>
+  <Step title="Select the USDC.n you would like to migrate">
+    Open [Skip:Go](https://go.skip.build/) and connect the wallet holding your USDC.n.
+
+    Select:
+
+    - **From:** The chain where your USDC.n is held / **USDC.n**
+    - **To:** The **same chain** / **USDC.inj**
+
+    For example:
+
+    **From:** `dYdX / USDC.n`
+
+    **To:** `dYdX / USDC.inj`
+
+    Enter the amount you want to migrate.
+
+    <Warning>
+      Make sure the **From and To chains are the same** and the destination asset is **USDC.inj**.
+    </Warning>
+
+  </Step>
+
+  <Step title="Sign the first transaction">
+    Review the migration details and approve the first transaction in your wallet.
+
+    **Signature 1 of 2**
+
+    Gas for this transaction is paid on your source chain.
+
+  </Step>
+
+  <Step title="Wait while Skip:Go processes the migration">
+    Skip:Go processes the migration automatically after your first signature.
+
+    The second signature is typically requested within about **3–5 minutes**.
+
+    No action is needed until Skip:Go prompts you to sign again.
+
+  </Step>
+
+  <Step title="Sign the second transaction">
+    When prompted, approve the second transaction in your wallet.
+
+    **Signature 2 of 2**
+
+    You do **not** need to prepare INJ in advance. If your INJ balance is insufficient to cover the second transaction, Skip:Go will automatically recharge the required amount of INJ for you.
+
+  </Step>
+
+  <Step title="Confirm the migration">
+    Once Skip:Go shows the migration as complete, confirm that you received **USDC.inj on the same chain where you started**.
+
+    For example:
+
+    `dYdX USDC.n → dYdX USDC.inj`
+
+    **Migration complete.**
+
+  </Step>
+</Steps>
+
+---
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="I use dydx.trade. Should I use this migration?">
+    Only if you also hold **USDC.n directly in your dYdX Chain wallet**.
+
+    Do not use this guide for USDC in a **dydx.trade trading subaccount**. Follow the official dYdX migration instructions for that balance when they become available.
+
+  </Accordion>
+
+  <Accordion title="Why do I need to sign twice if Skip:Go handles the migration automatically?">
+    **Signature 1** starts the migration from your source chain.
+
+    Skip:Go then handles the intermediate steps automatically until **USDC.inj arrives on Injective**.
+
+    **Signature 2** authorizes the final IBC transfer from Injective back to your **original source chain**.
+
+  </Accordion>
+
+  <Accordion title="I completed Signature 1, but Signature 2 hasn't appeared yet. Is something wrong?">
+    After Signature 1, Skip:Go completes the intermediate migration steps before requesting Signature 2.
+
+    This usually takes about **3–5 minutes**, but timing may vary depending on network conditions. Wait until Skip:Go prompts you to sign again.
+
+  </Accordion>
+
+  <Accordion title="I completed Signature 1 but not Signature 2. Where are my funds?">
+    Once the automated steps after Signature 1 are complete, your **USDC.inj is on Injective**.
+
+    If you do not complete Signature 2, your USDC.inj remains on Injective instead of being transferred back to your **original source chain**. **Your funds are not lost.**
+
+    To move the funds, transfer your USDC.inj from Injective to the supported chain where you want to receive it.
+
+  </Accordion>
+
+  <Accordion title="Signature 2 asks me to sign on Injective, but I don't have any INJ. Can I continue?">
+    Yes.
+
+    You do **not** need to prepare INJ in advance. If your INJ balance is insufficient, Skip:Go provides the INJ needed for Signature 2.
+
+    The only gas token you need to prepare is your **source chain's gas token for Signature 1**.
+
+  </Accordion>
+
+  <Accordion title="I selected the same chain for From and To. Why do I see Avalanche or another EVM network in the route?">
+    This is expected.
+
+    On the CCTP route, Skip:Go uses an EVM network as an **intermediate step in the background**.
+
+    You do not need to select, fund, or interact with that network, and you do not need to prepare its gas token. Your migration still ends with **USDC.inj on your original source chain**.
+
+  </Accordion>
+
+  <Accordion title="Is USDC.n → USDC.inj a swap?">
+    Not necessarily. Skip:Go automatically determines the **best route** based on the transfer amount and the source and destination chains.
+
+    When the source and destination chains are the **same**, amounts **above 250 USDC.n** use **CCTP as part of the migration route**.
+
+    For other cases — including amounts of **250 USDC.n or less**, or transfers between **different source and destination chains** — Skip:Go automatically selects the best available route for the transfer.
+
+    Regardless of the route used, you will receive **USDC.inj** on the destination chain. **No additional conversion or migration is required** on your end.
+
+  </Accordion>
+
+  <Accordion title="My USDC.n is on a chain that isn't supported by this migration. What should I do?">
+    If your USDC.n is on a chain not listed above, check whether **Skip:Go provides a route to transfer your USDC.n to one of the supported chains listed above**. If a route is available, transfer your USDC.n to that supported chain first, then follow this migration guide.
+
+    If no supported route is available, contact the team responsible for your chain.
+
+    **For chain teams:** A direct IBC path with Injective is required to support your chain as a USDC.inj destination, including **IBC light clients, an ICS-20 transfer channel, and at least one reliable relayer**.
+
+    If you need help meeting these requirements and already have a Skip contact, work with them for guidance and assistance.
+
+    Once the IBC connection and relaying are operational, use your existing contact with Skip or submit a **Chain Integration Request** to request support for your chain as a USDC.inj destination on Skip:Go.
+
+  </Accordion>
+</AccordionGroup>
+
+## Official references
+
+- [Circle: Now Available: USDC and CCTP on Injective](https://www.circle.com/blog/now-available-native-usdc-cctp-on-injective) — Circle's announcement of USDC and CCTP support on Injective.
+- [Injective: Injective USDC will be Adopted by Cosmos and dYdX as the Canonical Stablecoin Standard](https://injective.com/blog/inj-usdc-coming-soon-cosmos-dydx) — Background on the transition to Injective-origin USDC and Skip:Go's adoption of Injective USDC.
+- [Noble: A New Noble World](https://noble.xyz/blog/a-new-noble-world) — Noble's long-term plan for its existing Cosmos SDK chain.
+- [Skip:Go: Supported Ecosystems and Bridges](https://docs.skip.build/go/general/supported-ecosystems-and-bridges) — Supported ecosystems and cross-chain routing information.
+- [dYdX: Accounts and Subaccounts](https://docs.dydx.xyz/concepts/trading/accounts) — How dYdX separates on-chain accounts from subaccounts used for trading.

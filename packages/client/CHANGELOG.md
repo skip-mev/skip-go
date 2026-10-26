@@ -1,5 +1,35 @@
 # @skip-go/client
 
+## 1.6.6
+
+### Patch Changes
+
+- ab94d85: Restore the previous incomplete route status calculation instead of explicitly setting it when a transaction has no hash.
+
+## 1.6.5
+
+### Patch Changes
+
+- 7060f8c: Increase the fixed Cosmos gas limit from 300,000 to 350,000 and remove the Evmos exception. Keep multi-transaction routes in progress while awaiting follow-up signing, and fix indefinite loading after continuing a reverted transaction by synchronizing the displayed source amount with the route query amount.
+
+## 1.6.4
+
+### Patch Changes
+
+- aeb8ac5: Support CCTP relayed flow
+
+## 1.6.3
+
+### Patch Changes
+
+- 20b3b66: Support CCTP relayed flow
+
+## 1.6.2
+
+### Patch Changes
+
+- add84ba: Support cctp relayed flow
+
 ## 1.6.1
 
 ### Patch Changes

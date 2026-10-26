@@ -101,14 +101,14 @@ export const signCosmosTransaction = async ({
     chainId,
     txIndex: index,
     signerAddress: currentUserAddress,
-  })
+  });
 
   updateRouteDetails({
     status: "signing",
     routeId,
-    options
+    options,
   });
-  
+
   if (isOfflineDirectSigner(signer)) {
     rawTx = await signCosmosMessageDirect({
       ...commonRawTxBody,
@@ -125,10 +125,10 @@ export const signCosmosTransaction = async ({
   updateRouteDetails({
     status: "pending",
     routeId,
-    options
+    options,
   });
 
   const txBytes = TxRaw.encode(rawTx).finish();
   const rawTxBase64 = Buffer.from(txBytes).toString("base64");
-  return rawTxBase64
+  return rawTxBase64;
 };

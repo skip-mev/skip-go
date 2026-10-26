@@ -1,4 +1,5 @@
 import { Container } from "@/components/Container";
+import { Column } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { BridgeIcon } from "../icons/BridgeIcon";
 import { ClockIcon } from "../icons/ClockIcon";
@@ -6,6 +7,7 @@ import { useTheme } from "@/styled-components";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { TransferType } from "@skip-go/client";
 import { OperationType } from "@/utils/clientType";
+import type { ReactNode } from "react";
 
 export const getTransferTypeLabel = (transferType: TransferType | OperationType | string) => {
   switch (transferType) {
@@ -38,13 +40,14 @@ export const getTransferTypeLabel = (transferType: TransferType | OperationType 
   }
 }
 
-export const Bridge = ({ transferType, durationInMs }: { transferType: string, durationInMs?: number }) => {
+export const Bridge = ({ transferType, durationInMs, children }: { transferType: string, durationInMs?: number, children?: ReactNode }) => {
   const theme = useTheme();
   return (
-    <>
+    <Column align="center" gap={0}>
       <BridgeIcon color={theme.primary.background.normal}/>
-      <Container padding={12} width="auto" borderRadius={12} gap={5} flexDirection="row">
+      <Container padding={12} width="auto" borderRadius={12} gap={5} flexDirection="row" style={{ alignItems: "center" }}>
         <SmallText normalTextColor>{ getTransferTypeLabel(transferType) }</SmallText>
+        {children}
         {
           durationInMs ? (
             <>
@@ -55,6 +58,6 @@ export const Bridge = ({ transferType, durationInMs }: { transferType: string, d
         }
       </Container>
       <BridgeIcon color={theme.primary.background.normal} />
-  </>
+    </Column>
   )
 }

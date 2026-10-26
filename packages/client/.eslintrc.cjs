@@ -44,8 +44,6 @@ const eslintConfig = {
       disallowTypeAnnotations: false,
     }],
 
-    'import/no-unresolved': 'error',
-
     "@typescript-eslint/no-import-type-side-effects": "error",
 
   "import/extensions": ["error", "always", {
@@ -57,7 +55,6 @@ const eslintConfig = {
 
     "esm/no-commonjs": "warn",
     "import/no-unresolved": ["error", {
-      ignoreExtension: false,
       caseSensitive: true,
     }],
     "prettier/prettier": [

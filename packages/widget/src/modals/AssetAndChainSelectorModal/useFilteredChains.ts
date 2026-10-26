@@ -5,7 +5,6 @@ import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { EXCLUDED_TOKEN_COMBINATIONS } from "./useFilteredAssets";
 import { cosmosWalletAtom } from "@/state/wallets";
-import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
 import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
 import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
 import { chainIdsSortedToTopAtom } from "@/state/chainIdsSortedToTop";
@@ -32,8 +31,6 @@ export const useFilteredChains = ({
   const cosmosWalletConnected = cosmosWallet !== undefined;
   const filter = useAtomValue(filterAtom);
   const filterOut = useAtomValue(filterOutAtom);
-
-  const ibcEurekaHighlightedAssets = useAtomValue(ibcEurekaHighlightedAssetsAtom);
 
   const filteredChains = useMemo(() => {
     if (!selectedGroup || !chains) return;
@@ -118,21 +115,7 @@ export const useFilteredChains = ({
           return amountB - amountA;
         }
 
-        // 3. Sort by ibcEurekaHighlightedAssets index
-        const indexA = Object.keys(ibcEurekaHighlightedAssets).indexOf(
-          chainWithAssetA.asset.recommendedSymbol || "",
-        );
-        const indexB = Object.keys(ibcEurekaHighlightedAssets).indexOf(
-          chainWithAssetB.asset.recommendedSymbol || "",
-        );
-
-        const aIsHighlighted = indexA !== -1;
-        const bIsHighlighted = indexB !== -1;
-
-        if (aIsHighlighted && !bIsHighlighted) return -1;
-        if (bIsHighlighted && !aIsHighlighted) return 1;
-
-        // 4. Sort by privileged chainIds
+        // 3. Sort by privileged chainIds
         const privA = chainIdsSortedToTop.indexOf(chainWithAssetA.chainId);
         const privB = chainIdsSortedToTop.indexOf(chainWithAssetB.chainId);
 
@@ -197,7 +180,6 @@ export const useFilteredChains = ({
     filterOutUnlessUserHasBalance,
     getBalance,
     hideAssetsUnlessWalletTypeConnected,
-    ibcEurekaHighlightedAssets,
     searchQuery,
     selectedGroup,
   ]);
