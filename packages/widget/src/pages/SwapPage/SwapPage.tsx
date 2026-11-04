@@ -1,5 +1,5 @@
-import { startTransition, useCallback, useMemo } from "react";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { startTransition, useCallback, useEffect, useMemo } from "react";
+import { useAtom, useAtomValue, useSetAtom, useStore } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
@@ -51,10 +51,17 @@ import { startAmplitudeSessionReplay } from "@/widget/initAmplitude";
 import { SmallText } from "@/components/Typography";
 
 export const SwapPage = () => {
+  const store = useStore();
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
   useAtom(onRouteUpdatedEffect);
-  useAtom(preloadSigningStargateClientEffect);
-  const { isAskingToApproveConnection } = useConnectToMissingCosmosChain();
+  const { hasApprovedSourceAccount, isAskingToApproveConnection } =
+    useConnectToMissingCosmosChain();
+
+  useEffect(() => {
+    if (!hasApprovedSourceAccount) return;
+
+    return store.sub(preloadSigningStargateClientEffect, () => undefined);
+  }, [store, hasApprovedSourceAccount]);
 
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
