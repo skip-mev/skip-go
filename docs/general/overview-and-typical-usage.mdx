@@ -62,7 +62,11 @@ On a cross-chain swapping and transferring frontend, integrators typically:
 
    <Frame>![](/images/b42b522-CleanShot_2024-05-23_at_15.38.522x.png)</Frame>
 
-4. Use `/tx/track` (`trackTransaction()`) to register the transaction for tracking (or `/tx/submit` to register and submit it on-chain)
+4. Use `/tx/submit` (`submitTransaction()`) to submit the transaction on-chain and register it for tracking, or `/tx/track` (`trackTransaction()`) to register it if you broadcast it yourself
+
+   <Warning>
+   If [Smart Relay](/general/smart-relay#how-to-use-smart-relay) is enabled (`smart_relay=true`), always register the transaction with Skip Go API. We recommend submitting it through `/tx/submit` so it's broadcast and registered in one step. If you broadcast it yourself, call `/tx/track` right after. Otherwise, some routes will not complete and funds will remain at an intermediate address until the transaction is tracked.
+   </Warning>
 
 5. Use `/tx/status` (`transactionStatus()`) to get the real-time status of the transaction as it progresses across bridges and/or chains.
    <Frame>![](/images/FE_track_details.png)</Frame>
