@@ -3,8 +3,8 @@ import type { AccountParser } from "@cosmjs/stargate";
 import { assertDefinedAndNotNull } from "@cosmjs/utils";
 import { StridePeriodicVestingAccount } from "./stride";
 import { decodePubkey } from "@cosmjs/proto-signing";
-import { BaseAccount } from "cosmjs-types/cosmos/auth/v1beta1/auth.js";
-import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys.js";
+import { BaseAccount } from "cosmjs-types/cosmos/auth/v1beta1/auth";
+import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys";
 import { encodeSecp256k1Pubkey } from "@cosmjs/amino";
 import { EthAccount } from "src/codegen/injective/types/v1beta1/account";
 
@@ -18,7 +18,7 @@ export const accountParser: AccountParser = (acc) => {
       return {
         address: baseAccount.address,
         pubkey: baseAccount.pubKey ? decodePubkey(baseAccount.pubKey) : null,
-        accountNumber: Number(baseAccount.accountNumber),
+        accountNumber: baseAccount.accountNumber,
         sequence: Number(baseAccount.sequence),
       };
     }
@@ -43,7 +43,7 @@ export const accountParser: AccountParser = (acc) => {
             return {
               address,
               pubkey: pk,
-              accountNumber: Number(accountNumber),
+              accountNumber,
               sequence: Number(sequence),
             };
           }
@@ -72,7 +72,7 @@ const accountEthParser = <T>(
           value: Buffer.from(pubKey.value).toString('base64'),
         }
       : null,
-    accountNumber: parseInt(baseAccount.accountNumber.toString(), 10),
+    accountNumber: BigInt(baseAccount.accountNumber.toString()),
     sequence: parseInt(baseAccount.sequence.toString(), 10),
   } as T
 }

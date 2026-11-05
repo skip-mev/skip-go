@@ -16,7 +16,9 @@ export function isEthSecp256k1Pubkey(
   return (pubkey as EthSecp256k1Pubkey).type === "ethermint/PubKeyEthSecp256k1";
 }
 
+// cosmjs >= 0.38 defines its own `ethsecp256k1` ("os/PubKeyEthSecp256k1" for Cosmos EVM),
+// so ours must come after the spread to keep the ethermint type.
 export const pubkeyType = {
-  ethsecp256k1: "ethermint/PubKeyEthSecp256k1" as const,
   ...cosmPubkeyType,
+  ethsecp256k1: "ethermint/PubKeyEthSecp256k1" as const,
 };
