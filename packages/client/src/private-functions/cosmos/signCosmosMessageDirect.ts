@@ -1,5 +1,5 @@
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
-import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import type { TxBodyEncodeObject } from "@cosmjs/proto-signing";
 import { makeAuthInfoBytes, makeSignDoc } from "@cosmjs/proto-signing";
 import { makePubkeyAnyFromAccount } from "src/proto-signing/pubkey";
