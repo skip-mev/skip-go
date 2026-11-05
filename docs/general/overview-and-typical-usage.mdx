@@ -62,6 +62,10 @@ On a cross-chain swapping and transferring frontend, integrators typically:
 
    <Frame>![](/images/b42b522-CleanShot_2024-05-23_at_15.38.522x.png)</Frame>
 
+   <Warning>
+   We HIGHLY recommend using `/submit` to submit [Smart Relay](/general/smart-relay#how-to-use-smart-relay) transactions on chain to avoid issues incurred by submitting a transaction on chain but not sending it to the `/track` endpoint.
+   </Warning>
+
 4. Use `/tx/track` (`trackTransaction()`) to register the transaction for tracking (or `/tx/submit` to register and submit it on-chain)
 
 5. Use `/tx/status` (`transactionStatus()`) to get the real-time status of the transaction as it progresses across bridges and/or chains.
