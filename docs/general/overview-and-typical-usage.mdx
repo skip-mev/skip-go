@@ -62,9 +62,9 @@ On a cross-chain swapping and transferring frontend, integrators typically:
 
    <Frame>![](/images/b42b522-CleanShot_2024-05-23_at_15.38.522x.png)</Frame>
 
-   <Note>
-   If [Smart Relay](/general/smart-relay#how-to-use-smart-relay) is enabled (`smart_relay=true`), we recommend submitting the signed transaction through `/tx/submit` so it's broadcast and registered for tracking in one step. If you broadcast it yourself, make sure to register it with `/tx/track` so Smart Relay can relay it.
-   </Note>
+   <Warning>
+   We HIGHLY recommend using `/submit` to submit [Smart Relay](/general/smart-relay#how-to-use-smart-relay) transactions on chain to avoid issues incurred by submitting a transaction on chain but not sending it to the `/track` endpoint.
+   </Warning>
 
 4. Use `/tx/track` (`trackTransaction()`) to register the transaction for tracking (or `/tx/submit` to register and submit it on-chain)
 
