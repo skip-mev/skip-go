@@ -1,4 +1,4 @@
-import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { CosmWasmClient } from "@cosmjs/cosmwasm";
 import { ClientAsset, skipClientConfigAtom } from "@/state/skipClient";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { useQuery } from "@tanstack/react-query";
