@@ -1,5 +1,6 @@
 ---
 title: 'Migration Guide'
+description: 'Breaking changes in @skip-go/client by version, and how to migrate from the deprecated @skip-router/core and @skip-go/core'
 ---
 
 <Warning>
@@ -7,10 +8,33 @@ title: 'Migration Guide'
   are deprecated. Please migrate to Skip Go Client ([`@skip-go/client`](https://www.npmjs.com/package/@skip-go/client)), our actively maintained client package.
 </Warning>
 
-<Update label="@skip-go/client v1.0.0">
-## Breaking changes
+<Update label="@skip-go/client v1.5.3">
+## Breaking changes in v1.5.3
 
-This section details the migration from previous versions to the latest [`@skip-go/client`](https://www.npmjs.com/package/@skip-go/client).
+- In the result of Gas on Receive routes, `feeRoute` is renamed to `gasRoute`. See [Gas on Receive](/client/gas-on-receive).
+</Update>
+
+<Update label="@skip-go/client v1.5.0">
+## Breaking changes in v1.5.0
+
+- The `beforeMsg` and `afterMsg` options of `executeRoute` are removed. Use `appendCosmosMsgs` instead, keyed by chain ID. See [Advanced Features](/client/advanced-features#adding-custom-cosmos-messages-to-route-execution).
+
+```diff
+await executeRoute({
+  route,
+  userAddresses,
+- beforeMsg: { msgTypeUrl, msg },
++ appendCosmosMsgs: {
++   "cosmoshub-4": [{ msgTypeUrl, msg }],
++ },
+});
+```
+</Update>
+
+<Update label="@skip-go/client v1.0.0">
+## Breaking changes in v1.0.0
+
+This section covers migrating from `@skip-go/client` versions before v1.0.0 and from the deprecated packages above.
 
 ### No More SkipClient Class
 
@@ -62,7 +86,7 @@ import {
 
 ### Build Format Change
 
-The library build format has changed from CommonJS (CJS) to `ES Modules (ESM)`.
+The library now ships as ES Modules (ESM) by default. CommonJS (CJS) is still available from `@skip-go/client/cjs`.
 
 This change enables better tree-shaking, leading to significantly smaller bundle sizes for applications that don't use all the library's features.
 
@@ -175,70 +199,4 @@ The following functions that were previously exported are no longer available in
 
 If your application was using any of these functions directly, consider using `executeRoute` instead, which handles all transaction execution internally. If you have a specific use case that requires access to any of these functions, please open a ticket on our [Discord](https://discord.gg/skip).
 
-</Update>
-
-<Update label="@skip-router/core v4.0.0">
-
-### Breaking changes
-
-- Removed `clientID` param in `SkipClient`
-- Added `apiKey` param in `SkipClient`
-- Added `requiredChainAddresses` in `SkipClient.route` response
-- Added `smartSwapOptions` in `SkipClient.route`request
-
-```JavaScript Type signature
-smartSwapOptions: {
-	splitRoutes: boolean
-}
-```
-</Update>
-
-<Update label="@skip-router/core v3.0.0">
-## Breaking changes
-
-- Changed parameter type of `userAddresses` from a map of chainIDs to addresses to an array of `UserAddress` types
-
-```TypeScript Type signature
-export interface UserAddress {
-  chainID: string;
-  address: string;
-}
-```
-</Update>
-
-<Update label="@skip-router/core v2.0.0">
-### Breaking changes
-
-- Removed `SkipClient.executeMultiChainMessage` method
-- Renamed `SkipClient.getGasAmountForMessage` method to `SkipClient.getCosmosGasAmountForMessage`
-- Renamed `SkipClient.getFeeForMessage` to `SkipClient.getCosmosFeeForMe`
-- Renamed `MultiChainMsg` type to `CosmosMsg`
-- Renamed and changed parameters of `SkipClient.executeMultiChainMsgs` to `SkipClient.executeTxs`
-
-```Diff Diff
-const client = new SkipClient({
-  apiURL: SKIP_API_URL,
-// ... rest of your configs
-});
-- client.executeMultiChainMsgs({
-+ client.executeTxs({
-	...options
--	msgs: types.Msg[]
-+	txs: types.Tx[]
-})
-```
-
-- Param of `SkipClient.executeCosmosMessage` changed from `message:MultiChainMsg` to `messages: CosmosMsg[]`
-
-```Diff Diff
-const client = new SkipClient({
-  apiURL: SKIP_API_URL,
-// ... rest of your configs
-});
-client.executeCosmosMessage({
-	...options
--	message: MultiChainMsg
-+	messages: CosmosMsg[]
-})
-```
 </Update>
