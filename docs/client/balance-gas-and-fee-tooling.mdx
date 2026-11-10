@@ -86,48 +86,31 @@ type GasPrice = {
 This will return high, medium, and low gas prices for a particular chain, given by `chainId`, along with the default fee denom as a `FeeAsset` object:
 
 ```ts
-async getFeeInfoForChain({chainId, apiUrl, apiKey}: {chainId: string, apiUrl?:string, apiKey?: string}) -> FeeAsset
+async getFeeInfoForChain({chainId, apiUrl, apiKey}: {chainId: string, apiUrl?:string, apiKey?: string}) -> FeeAsset | undefined
 ```
 
 ```ts
 type FeeAsset = {
   denom: string;
-  gasPrice: GasPriceInfo;
+  gasPrice?: GasPriceInfo;
 };
 
 type GasPriceInfo = {
-  low: string;
-  average: string;
-  high: string;
+  low?: string;
+  average?: string;
+  high?: string;
 };
 ```
 
 An undefined response indicates that the API cannot find up-to-date gas price information for the chain.
 
-## Settings on `ExecuteRouteOptions` for customizing how gas & fees are set on transactions
+## How `executeRoute` sets gas and fees
 
-### `ExecuteRouteOptions.getGasPrice`
+For Cosmos transactions, `executeRoute` simulates each transaction and multiplies the simulated gas by 1.5. It sets the gas price from the chain's fee assets (the `average` price, or `high`, then `low` if that is missing).
 
-This field in `ExecuteRouteOptions` allows you to override our default gas price on a per chain basis for any transactions created in the router (e.g. in `executeRoute`):
+You can change this behavior with these `executeRoute` options:
 
-`getGasPrice?: (chainId: string) => Promise<GasPrice | undefined>;`
+- `getFallbackGasAmount`: Gas amount to use when simulation fails.
+- `getCosmosPriorityFeeDenom`: Denom to pay the fee in, per chain.
 
-The argument is a function that takes in a chain ID and returns a gas price for that chain as a `GasPrice` object from CosmJS
-
-```ts
-type GasPrice = {
-  denom: string;
-  amount: Decimal
-}
-```
-
-If you provide a function that only returns a price for a subset of chains, the router will use its default price in cases where yours is missing. If it can't find a default price for a chain, it will error.
-
-### `ExecuteRouteOptions.gasAmountMultiplier`
-
-This field in `ExecuteRouteOptions` allows you to override the default gas multiplier used by default in the SDK. The default value is 1.5. Increasing this value provides higher confidence that transactions will not run out of gas while executing, but increases the fee for the end user.
-
-The gas multiplier increases a transaction's `gasAmount` multiplicatively. To get a final gas amount, the router:
-
-- Simulates a transaction to get an initial gasAmount
-- Multiplies the gas consumed in the simulation by `gasAmountMultiplier`
+See [Executing a route](/client/executing-a-route#optional-options) for their types.
