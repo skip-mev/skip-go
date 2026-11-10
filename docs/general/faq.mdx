@@ -22,46 +22,49 @@ Many teams use Skip Go to make it easier for them to build multi-chain flows, in
 
 #### How many chains does Skip Go API support?
 
-More than 70+. We support: 
+More than 100. We support: 
 
 * Almost every IBC-enabled chain
-* Every EVM chain Axelar supports
-* Every EVM chain and rollup Hyperlane supports
-* Every chain CCTP supports
+* Major EVM chains, including Ethereum, Arbitrum, Avalanche, Base, Binance, Optimism, and Polygon
+* Solana
+
+Call `/v2/info/chains` with `include_evm=true` and `include_svm=true` for the current list.
 
 ...with more coming soon!
 
 #### Which bridges and message passing protocols does Skip Go support?
 
 * IBC
-* Hyperlane
 * Axelar
-* CCTP
-* Neutron's native bridge
-* Stargate
-* Layerzero
+* CCTP and CCTP V2
 * Eureka
-* GoFast
+* Go Fast
+* Stargate
+* LayerZero
+* OPinit
 
 ...with more coming soon!
 
 #### What DEXes does the Skip Go support?
 
 * Osmosis
-* Astroport across Terra, Neutron, Sei, and Injective
-* White Whale across Terra, Migaloo, and Chihuahua
+* Astroport across Injective, Sei, and Terra
+* White Whale across Chihuahua, Injective, Sei, and Terra
 * Uniswap v2/v3
 * Aerodrome
 * Velodrome
 * Tower
-* Elys
 * Dojoswap
+* Helix
+* InitiaDEX
+
+See [Supported Ecosystems](/general/supported-ecosystems-and-bridges) for the full list, or call `/v2/fungible/venues`.
 
 ...with many more coming soon
 
 #### What is the maximum transfer limit for CCTP?
 
-CCTP transfers have a maximum limit of 1,000,000 USDC per transfer. 
+CCTP V2 transfers have a maximum limit of 10,000,000 USDC per transfer. CCTP transfers that go through Noble have a maximum limit of 500,000 USDC per transfer. 
 
 #### How do I get Skip Go API to support my chain?
 
@@ -85,13 +88,11 @@ Please see the [Swap Venue Requirements](/support-requirements/swap-venue-requir
 
 #### Why do I keep getting rate limited?
 
-You need to request an API key from the core team to use Skip Go without limitations. 
-
-Pass your API key into all requests with the `client_id` parameter. 
+Rate limiting is normally off. It may be turned on temporarily for requests without an API key when API traffic is unusually high. Requests with a valid API key are never rate limited, so [request an API key](/general/api-keys) and pass it in the `authorization` header of every request.
 
 #### Does the Skip Go API cost anything?
 
-No, not at this time. We offer unlimited usage at zero cost. 
+There is no charge for using the API. If you charge affiliate fees, Skip receives a share of them (see [Affiliate Fees](/general/affiliate-fees)). Smart Relay and bridge fees are paid by the end user and shown in `estimated_fees`. 
 
 In the future we will introduce two pricing plans: 
 
@@ -160,7 +161,11 @@ Please get in touch with our team on [Discord](https://discord.gg/interchain) if
 
 #### What's the default IBC-Transfer timeout on the messages returned by `/fungible/msgs` and `/fungible/msgs_direct`?
 
-* 5 minutes
+* 5 minutes for routes that start on a Cosmos chain
+* 40 minutes for routes that start on an EVM chain and use Axelar or CCTP
+* 12 hours for routes that start on an EVM chain and use Eureka
+
+You can override the default with the `timeout_seconds` parameter.
 
 #### What technologies does Skip Go use under the hood?
 
@@ -201,7 +206,7 @@ _A common gotcha:_ `/assets_from_source` only returns assets reachable in a sing
 
 It depends on many factors, including how many relayers are covering a particular channel, block times, the time-to-finality of the source chain, whether relayers are live, how many packets relayers are waiting to batch together, and much more...
 
-**In short, it can range from several seconds to minutes (or never) in the worst case.** After a timeout window, a packet won't be valid on the destination chain when it gets relayed. This timeout is set to 5 minutes for all packets created via the Skip Go API. It's important to understand what happens to user tokens in the event of timeouts. You can read about that in [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases)
+**In short, it can range from several seconds to minutes (or never) in the worst case.** After a timeout window, a packet won't be valid on the destination chain when it gets relayed. By default this timeout is 5 minutes for routes that start on a Cosmos chain (see the timeout question above for other cases). It's important to understand what happens to user tokens in the event of timeouts. You can read about that in [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases)
 
 For now, we recommend making a small warning or disclaimer to users on your application, similar to the following: 
 
@@ -209,7 +214,7 @@ For now, we recommend making a small warning or disclaimer to users on your appl
 > 
 > IBC transfers usually take 10-30 seconds, depending on block times + how quickly relayers ferry packets. But relayers frequently crash or fail to relay packets for hours or days on some chains (especially chains with low IBC volume).
 > 
-> At this time, \[OUR APPLICATION\]does not relay packets itself, so your swap/transfer may hang in an incomplete state. If this happens, your funds are stuck, not lost. They will be returned to you once a relayer comes back online and informs the source chain that the packet has timed out. Timeouts are set to 5 minutes but relayers may take longer to come online and process the timeout.
+> At this time, \[OUR APPLICATION\]does not relay packets itself, so your swap/transfer may hang in an incomplete state. If this happens, your funds are stuck, not lost. They will be returned to you once a relayer comes back online and informs the source chain that the packet has timed out. Timeouts are set to 5 minutes by default but relayers may take longer to come online and process the timeout.
 
 #### Why is the time to relay a packet so variable? And why can IBC relaying be unreliable today?
 
@@ -219,7 +224,7 @@ IBC relayers do not receive payments for relaying user packets or for relaying l
 
 In general, transfers take as long as it takes for the source chain to "finalize". That means:
 
-* Transfers originating on EVM chains will take 30 minutes or more. The reason is that most EVM chains take a long time (30+ minutes) to finalize, which means the bridges we rely on do not register the tokens on the source chain as "locked" in the bridge for at least that long.
+* Transfers originating on EVM chains can take 30 minutes or more. The reason is that most EVM chains take a long time (30+ minutes) to finalize, which means the bridges we rely on do not register the tokens on the source chain as "locked" in the bridge for at least that long. [Go Fast](/advanced-transfer/go-fast) routes can complete before the source chain finalizes.
 * Transfers originating on Cosmos chains will finish in less than 30 seconds usually (barring IBC relayer failures) because Cosmos chains have "fast" or "single slot finality". Almost as soon as the block that contains your transfer gets created, its included irreversibly in the chain
 
 #### If Skip doesn't charge fees, how come some simple transfers seem to have a fee taken out of them?
@@ -338,7 +343,7 @@ We recommend setting Cosmos chain gas prices using the chainapsis keplr-chain-re
 * Transactions almost always make it on chain
 * Gas prices are very cheap -- so overestimation is not costly
 
-Soon, the Skip Go API will surface recommended gas price too, and we will release a client-side library that will abstract away this area of concern. 
+The Skip Go API also returns recommended gas prices (`low`, `average`, `high`) for each fee asset in the `fee_assets` field of `/v2/info/chains`. 
 
 #### How should I set gas amount for Cosmos transactions?
 
@@ -358,13 +363,13 @@ The testnet app runs at [https://testnet.go.skip.build](https://testnet.go.skip.
 
 The dev app runs at [https://dev.go.skip.build](https://dev.go.skip.build). It connects to mainnet chains but uses a development version of the API that hasn’t been released to production yet.
 
-#### What does `cumulative_fee_bps` in `/route` mean?
+#### What does `cumulative_affiliate_fee_bps` in `/route` mean?
 
 This is where you specify the fee amount in bps aka "bips". (1 bp = 1 / 100th of a percent; 100 bps = 1%)
 
 By specifying it in route, the Skip Go API can adjust the quote that it gives back to you, so that it shows output token estimate net of fees. This ensures the amount the end user gets out of the swap always aligns with their expectations. 
 
-The parameter uses the word "cumulative" (i.e. summing over a set) because the API supports multiple partners charging affiliate fees. This parameter should be set to the sum of all of those component fees. (For example, if a widget provider charges a 5 bp fee, and the frontend developer integrating that widget charges a 10 bp fee, `cumulative_fee_bps=15`)
+The parameter uses the word "cumulative" (i.e. summing over a set) because the API supports multiple partners charging affiliate fees. This parameter should be set to the sum of all of those component fees. (For example, if a widget provider charges a 5 bp fee, and the frontend developer integrating that widget charges a 10 bp fee, `cumulative_affiliate_fee_bps=15`)
 
 ### Misc
 
