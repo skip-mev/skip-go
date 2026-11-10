@@ -32,23 +32,13 @@ title: Transaction Support
 
 ## **Step 2: Transaction status**
 
-`state_completed_success`, `state_pending`, `state_abandoned`, etc. The explorer will tell you where your funds have been released if the transaction has failed, the swap failed and what asset has been released.
+`STATE_COMPLETED_SUCCESS`, `STATE_PENDING`, `STATE_ABANDONED`, etc. The explorer will tell you where your funds have been released if the transaction has failed, the swap failed and what asset has been released.
 
 <p align="center">
-  <img src="/images/explorer-cctp-successful-tx.png" alt="Explorer successful transaction" width="700"/>
+  <img src="/images/explorer-successful-tx.png" alt="Explorer successful transaction" width="700"/>
 </p>
 
-- If there is no state given, the explorer will ask to reindex/track your transaction:
-
-<p align="center">
-  <img src="/images/explorer-index-page.png" alt="Explorer asking to index" width="700"/>
-</p>
-
-- After indexing, the status of your transaction will be updated. Example of successful, failed and pending states:
-
-<p align="center">
-  <img src="/images/explorer-after-indexing-state.png" alt="Explorer after indexing result" width="700"/>
-</p>
+- If the transaction has not been tracked yet, the explorer starts tracking it automatically when you search for it. This can take a moment. If you see a "Loading Timeout" message, click **Retry**.
 
 - The explorer will show where your funds have been released on chain:
 
@@ -80,9 +70,9 @@ Learn more: [IBC Transfer Details](/general/multi-chain-realtime-transaction-and
   - `TRANSFER_RECEIVED`: Received, may still revert if multi-hop.
   - `TRANSFER_SUCCESS`: Completed successfully.
   - `TRANSFER_FAILURE`: Transfer failed.
-  - `TRANSFER_PENDING_ERROR`: Error occurred, refund pending.
 - **Transactions:**
   - `send_tx`, `receive_tx`, `timeout_tx`, `acknowledge_tx`
+- **Errors:** If a packet times out or its acknowledgement contains an error, `packet_txs.error` is set with type `PACKET_ERROR_TIMEOUT` or `PACKET_ERROR_ACKNOWLEDGEMENT`.
 
 ---
 
@@ -103,9 +93,11 @@ Learn more: [Axelar Transfer Details](/general/multi-chain-realtime-transaction-
 ### **CCTP Transfers**
 Learn more: [CCTP Transfer Details](/general/multi-chain-realtime-transaction-and-packet-tracking#cctp-transfer-data)
 
+CCTP V2 transfers (`cctp_transfer_v2`) use the same states and transactions.
+
 - **States:**
   - `CCTP_TRANSFER_SENT`: Burn submitted.
-  - 'CCTP_TRANSFER_PENDING_CONFIRMATION' - CCTP transfer is pending confirmation by the cctp attestation api
+  - `CCTP_TRANSFER_PENDING_CONFIRMATION`: Waiting for the attestation from Circle.
   - `CCTP_TRANSFER_CONFIRMED`: Confirmed by Circle.
   - `CCTP_TRANSFER_RECEIVED`: Received on destination chain.
 - **Transactions:**
@@ -120,8 +112,6 @@ Learn more: [Hyperlane Transfer Details](/general/multi-chain-realtime-transacti
   - `HYPERLANE_TRANSFER_SENT`: The transfer transaction on the source chain has executed.
   - `HYPERLANE_TRANSFER_RECEIVED`: The transfer has been received on the destination chain.
   - `HYPERLANE_TRANSFER_FAILED`: The transfer failed to complete.
-  - `PACKET_ERROR_TIMEOUT`: The packet timed out.
-  - `PACKET_ERROR_ACKNOWLEDGEMENT`: Error in packet acknowledgement.
 
 - **Transactions:**
   - `send_tx`, `receive_tx`
@@ -134,9 +124,6 @@ Learn more: [OPInit Transfer Details](/general/multi-chain-realtime-transaction-
 - **States:**
   - `OPINIT_TRANSFER_SENT`: The deposit transaction on the source chain has executed.
   - `OPINIT_TRANSFER_RECEIVED`: Received at the destination chain.
-  - `OPINIT_TRANSFER_FAILURE`: The transfer has failed.
-  - `PACKET_ERROR_TIMEOUT`: The packet timed out.
-  - `PACKET_ERROR_ACKNOWLEDGEMENT`: Error in packet acknowledgement.
 - **Transactions:**
   - `send_tx`, `receive_tx`
 
@@ -148,7 +135,9 @@ Learn more: [Go Fast Transfer Details](/general/multi-chain-realtime-transaction
 - **States:**
   - `GO_FAST_TRANSFER_SENT`: Intent submitted.
   - `GO_FAST_TRANSFER_FILLED`: Success.
-  - `GO_FAST_TRANSFER_TIMEOUT`, `REFUNDED`, `POST_ACTION_FAILED`
+  - `GO_FAST_TRANSFER_TIMEOUT`: The transfer did not complete within the expected time frame.
+  - `GO_FAST_TRANSFER_REFUNDED`: The user's assets have been refunded on the source chain.
+  - `GO_FAST_POST_ACTION_FAILED`: The transfer's post-intent action failed, for example a swap on the destination chain failed due to slippage.
 - **Transactions:**
   - `order_submitted_tx`, `order_filled_tx`, `order_timeout_tx`, `order_refunded_tx`
 
@@ -158,7 +147,7 @@ Learn more: [Go Fast Transfer Details](/general/multi-chain-realtime-transaction
 Learn more: [Stargate Transfer Details](/general/multi-chain-realtime-transaction-and-packet-tracking#stargate-transfer-data)
 
 - **States:**
-  - `STARGATE_TRANSFER_SENT`, `RECEIVED`, `FAILED`, `UNKNOWN`
+  - `STARGATE_TRANSFER_SENT`, `STARGATE_TRANSFER_RECEIVED`, `STARGATE_TRANSFER_FAILED`, `STARGATE_TRANSFER_UNKNOWN`
 - **Transactions:**
   - `send_tx`, `receive_tx`, `error_tx`
 
@@ -172,10 +161,9 @@ Learn more: [Eureka Transfer Details](/general/multi-chain-realtime-transaction-
   - `TRANSFER_RECEIVED`: The Eureka transfer has been received by the destination chain.
   - `TRANSFER_PENDING`: The Eureka transfer is in progress.
   - `TRANSFER_FAILURE`: The Eureka transfer has failed.
-  - `PACKET_ERROR_ACKNOWLEDGEMENT`: Error in packet acknowledgement
-  - `PACKET_ERROR_TIMEOUT`: The packet timed out before reaching the destination
 
-- **Transactions:** Typically includes `send_tx`, `receive_tx`
+- **Transactions:** `send_tx`, `receive_tx`, `acknowledge_tx`, `timeout_tx`
+- **Errors:** If a packet times out or its acknowledgement contains an error, `packet_txs.error` is set with type `PACKET_ERROR_TIMEOUT` or `PACKET_ERROR_ACKNOWLEDGEMENT`.
 
 ---
 
@@ -184,10 +172,11 @@ Learn more: [Eureka Transfer Details](/general/multi-chain-realtime-transaction-
 - **States:**
   - `LAYER_ZERO_TRANSFER_SENT`: Transfer initiated on the source chain
   - `LAYER_ZERO_TRANSFER_RECEIVED`: Assets received on the destination chain
+  - `LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE`: Assets received, waiting for the compose message to execute on the destination chain
   - `LAYER_ZERO_TRANSFER_FAILED`: Transfer failed
   - `LAYER_ZERO_TRANSFER_UNKNOWN`: Transfer state could not be determined
 
-- **Transactions:** Usually `send_tx`, `receive_tx`, and `ack_tx`
+- **Transactions:** `send_tx`, `receive_tx`, `compose_tx`, `error_tx`
 
 ---
 
