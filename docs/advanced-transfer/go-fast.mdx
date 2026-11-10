@@ -1,84 +1,65 @@
 ---
 title: 'Go Fast'
-description: 'A brief overview of the Go Fast Transfer system'
+description: 'Supported chains, transfer limits, fees, and how to enable Go Fast, plus how the protocol works'
 ---
 
-<Info>
-Read the whitepaper [here](https://skip-protocol.notion.site/EXT-Skip-Go-Fast-b30bc47ecc114871bc856184633b504b).
-Find integration details for Go Fast [here](../client/advanced-features#use-the-go-fast-transfer-system).
-</Info>
+Go Fast is a decentralized bridging protocol built by Skip. It moves assets from EVM chains to Cosmos in seconds instead of minutes. For example, a USDC transfer from Arbitrum to Osmosis takes about 10 seconds with Go Fast, compared with about 18 minutes over CCTP.
 
-# Overview
-Go Fast is a decentralized bridging protocol, built by Skip, designed to enable rapid and secure cross-chain transactions across major blockchain ecosystems such as Ethereum, Cosmos, and Solana. Go Fast accelerates cross-chain actions by up to 25 times, reducing onboarding times from 10+ minutes to seconds.
+Go Fast trades lower fees for speed. If cost matters more than speed for your users, leave it disabled.
 
-# How it Works
-The Go Fast Protocol lets you quickly move assets and execute smart contracts between two different blockchains: the source chain and the destination chain. Here's a simple breakdown of how it all happens.
+For the protocol design, see the [Go Fast design overview](https://github.com/skip-mev/go-fast-contracts#skip-go-fast-design-overview).
 
-To start, you—the user—initiate a transfer by calling the `submitOrder` function on the protocol contract on your current blockchain (source chain). In this step, you specify the assets, any message you want to send, and the address on the destination chain. This information is then broadcasted as an intent.
+## Enable Go Fast
 
-Permissionless participants called solvers, who watch for these intents, ingest the event emitted from the Go Fast contracts. When they see the intent submitted, they evaluate whether they can fulfill the intent based on their resources on the destination chain and the potential reward for fulfilling it. If a solver agrees to fulfill the intent, they call the `fillOrder` function on the protocol contract deployed on the destination chain. 
+Go Fast is used only when you turn it on:
 
-This step transfers the specified assets and processes any additional actions, like executing a contract call with the provided message payload. From your perspective, the assets or messages appear on the destination chain almost instantly, marking the transfer as complete.
+* **API:** Set `go_fast: true` in `/route` or `/msgs_direct`.
+* **Client Library:** See [Use the Go Fast Transfer System](/client/advanced-features#use-the-go-fast-transfer-system).
+* **Widget:** See [`routeConfig`](/widget/configuration#routeconfig).
 
-After fulfilling the transfer, the solver seeks to recover the assets they fronted, plus any earned fees. They do this by calling the `initiateSettlement` function on the destination chain's Go Fast smart contract, listing the intents they fulfilled. The protocol verifies the solver's actions, then sends a secure message back to the source chain through a cross-chain messaging system.
+Even when Go Fast is enabled, the API returns a Go Fast route only if the transfer is within the limits below.
 
-A relayer delivers this message to the source chain, where the settle function on the protocol contract verifies the solver's fulfillment of each intent. Once confirmed, the solver receives back the assets they provided and any earned fees on the source chain.
+## Supported Chains and Limits
 
-# Can I become a solver?
+Go Fast transfers USDC from these source chains:
 
-Yes! Go Fast is a permissionless protocol, so anybody can run a solver!
+| Source chain | Minimum transfer (USD) | Maximum transfer (USD) |
+|---|---|---|
+| Ethereum | 20 | 25,000 |
+| Arbitrum | 10 | 25,000 |
+| Avalanche | 10 | 25,000 |
+| Base | 10 | 25,000 |
+| Optimism | 10 | 25,000 |
+| Polygon | 10 | 25,000 |
 
-**Open-Source Reference Solver Implementation:** To help you get started quickly, we've open-sourced a reference implementation of a solver that handles everything—from monitoring events to filling orders, settling transactions, and rebalancing. All you need to do is set up the config with the chains you want to solve for, provide node endpoints to use, and customize your capital and rebalancing preferences. Check out the repo [here](https://github.com/skip-mev/skip-go-fast-solver).
+The destination can be any Cosmos chain that Skip Go reaches over IBC. Go Fast delivers the USDC to Osmosis, and the rest of the route continues over IBC. Go Fast doesn't support transfers between EVM chains.
 
-**Open-Source Protocol Contracts:** Although we recommend starting with the open-source solver, ambitious solvers are already modifying the reference implementation or developing their own solving systems. If you fall under this category, another useful resource will be our open-source Solidity and CosmWasm protocol contracts to integrate directly. You can find them [here](https://github.com/skip-mev/go-fast-contracts).
+If the user starts with an asset other than USDC, Skip Go first swaps it to USDC on the source chain. The limits apply to the amount after that swap.
 
-If you have any questions about setting up a solver, please don't hesitate to reach out to us! 
+## Fees
 
-# What chains are supported today?
+Solvers fill orders with their own capital and take on the risk of a reorg on the source chain. In return, the user pays a fee, which is the difference between the order's input and output amounts. The fee has three parts:
 
-Currently, Go Fast supports the following source chains:
-1. Ethereum Mainnet
-2. Arbitrum
-3. Avalanche
-4. Base
-5. Optimism
-6. Polygon
+* **Transfer fee:** 10 basis points of the transfer amount, on all source chains and transfer sizes
+* **Source chain fee:** a fixed amount set per source chain, to cover the solver's settlement costs
+* **Destination chain fee:** a fixed amount set per destination chain
 
-And the following destination chains:
-1. Any IBC-connected chain supported by Skip Go
+The route response shows the total in `estimated_fees` as a `BRIDGE` fee.
 
-# What are the minimum and maximum transfer sizes for Go Fast?
+## How It Works
 
-Below is a table summarizing the minimum and maximum transfer sizes for each chain currently supported by Go Fast. 
+1. **Submit an order:** The user calls `submitOrder` on the Go Fast contract on the source chain, with the assets, an optional message, and the destination address. The contract emits the order as an intent.
+2. **Fill the order:** Solvers, which anyone can run, watch for intents. A solver decides whether to fill an intent based on its funds on the destination chain and the fee. To fill it, the solver calls `fillOrder` on the Go Fast contract on the destination chain. This sends the assets to the user and runs any action in the message, such as a contract call. For the user, the transfer is now complete.
+3. **Settle:** The solver calls `initiateSettlement` on the destination chain's Go Fast contract, listing the orders it filled. The contract sends a message to the source chain over Hyperlane.
+4. **Repay the solver:** A relayer delivers the message to the source chain. The `settle` function checks each fill, then pays the solver back the assets it provided plus the fees.
 
-| Source Chain                                | Minimum Transfer Size (in USD) | Maximum Transfer Size (in USD)|
-| ------------------------------------------- | --------------------- | --------------------- |
-| **Ethereum Mainnet**                        | 20                    | 25,000                 |
-| **Arbitrum**                                | 10                    | 25,000                 |
-| **Avalanche**                               | 10                    | 25,000                 |
-| **Base**                                    | 10                    | 25,000                 |
-| **Optimism**                                | 10                    | 25,000                 |
-| **Polygon**                                 | 10                    | 25,000                 |
+If no solver fills an order in time, the user is refunded on the source chain. See [Go Fast failures](/advanced-transfer/handling-cross-chain-failure-cases#go-fast-failures).
 
+## Run a Solver
 
-Note: If a user is starting from an asset that is not USDC on the source chain, Skip Go will swap the asset to USDC on the source chain and the post-swap amount is used to see if it is within the min/max bounds of Go Fast transfer sizes.
+Go Fast is permissionless, so anyone can run a solver.
 
+* **Reference solver:** The [open-source reference solver](https://github.com/skip-mev/skip-go-fast-solver) monitors orders, fills them, settles, and rebalances funds. Configure the chains to solve for, your node endpoints, and your capital and rebalancing preferences.
+* **Protocol contracts:** To build your own solver, use the open-source [Solidity and CosmWasm contracts](https://github.com/skip-mev/go-fast-contracts) directly.
 
-### dYdX Volume Limits
-When transferring to dYdX via Go Fast, there is a $100,000 USD maximum transfer size.
-
-# What is the fee model for Go Fast?
-
-Go Fast works by having solvers use their own capital to fill orders as quickly as possible, where the solvers take on the re-org risk of the source chain. The Go Fast protocol compensates solvers by paying them a fee (denoted by the difference in the input and output amount of the user's order). The fee is composed of three parts, a basis points fee on the transfer size, a source gas fee, and a destination gas fee.
-
-Currently, the basis points fee on transfer size paid to solvers is 10 basis points across all transfer sizes. As the protocol evolves, the basis points fee charged is expected to decrease as transfer size increases.
-
-The source and destination gas fees are determined dynamically based on the source and destination chains and their current gas costs, optimized to minimize costs while covering settlement and rebalancing for solvers. 
-
-# How do I integrate Go Fast into my application?
-
-For instructions on integrating Go Fast using the `@skip-go/client`, see the [Advanced Features guide](../client/advanced-features#use-the-go-fast-transfer-system).
-
-If you're using the Widget, refer to the [Widget Configuration](../widget/configuration#routeconfig).
-
-Note that enabling Go Fast prioritizes speed over lower fees. For more cost-efficient routes, it's recommended to leave Go Fast disabled.
+If you have questions about running a solver, reach out to us on [Discord](https://discord.com/invite/interchain).
