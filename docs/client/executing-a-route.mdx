@@ -1,113 +1,106 @@
 ---
 title: 'Executing a route'
-description: 'This page documents the executeRoute function, used to execute a token transfer/swap using a route from /v2/fungible/route API'
+description: 'Options and callbacks of executeRoute, which signs and broadcasts the transactions for a route from /v2/fungible/route'
 ---
 
-## Executing a cross-chain route
-
-The executeRoute function is used to execute a route, including optional support for simulating transactions, injecting custom Cosmos messages, and tracking transaction status.
-You must provide a list of user addresses (one per chain in route.requiredChainAddresses), along with the route object returned from route (/v2/fungible/route).
-
-<Info> This function handles validation of addresses and gas balances, prepares the route messages, and executes transactions in order across Cosmos, Evm, and Svm chains. </Info>
+`executeRoute` executes a route returned by [`route`](/client/getting-started#route-examples). It validates addresses and gas balances, builds the messages, and signs and broadcasts each transaction in order across Cosmos, EVM, and SVM chains.
 
 ```ts
-async executeRoute(options: ExecuteRouteOptions): Promise<void>
+executeRoute(options: ExecuteRouteOptions): Promise<void>
 ```
 
-## Required fields
-```route``` A RouteResponse containing swap or transfer operations.
+## Required Options
 
-```userAddresses``` One user address per chain in the same order as route.requiredChainAddresses.
+| Option | Type | Description |
+|---|---|---|
+| `route` | `RouteResponse` | The route returned by `route`. |
+| `userAddresses` | `{ chainId: string; address: string }[]` | One address for each chain in `route.requiredChainAddresses`, in the same order. |
+| `getCosmosSigner` | `(chainId: string) => Promise<OfflineSigner>` | Returns a Cosmos signer. Required if the route has Cosmos transactions. |
+| `getEvmSigner` | `(chainId: string) => Promise<WalletClient>` | Returns a viem `WalletClient`. Required if the route has EVM transactions. |
+| `getSvmSigner` | `() => Promise<Adapter>` | Returns a Solana wallet adapter. Required if the route has Solana transactions. |
 
-<Warning> All user addresses must match the chain ids expected in the route, and must be valid for the corresponding chain type (Cosmos, Evm, or Svm). An error will be thrown if the addresses are mismatched or malformed. </Warning>
+<Warning>
+Each address must be valid for its chain. `executeRoute` throws an error if an address is missing or malformed.
+</Warning>
 
-```getCosmosSigner``` Function that takes a chainId and returns a ```Promise<OfflineSigner>```
+## Optional Options
 
-```getEvmSigner``` Function that takes a chainId and returns a ```Promise<WalletClient>```
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `slippageTolerancePercent` | `string` | `"1"` | Maximum slippage for swaps in the route. |
+| `simulate` | `boolean` | `true` | Simulate transactions before executing them. |
+| `batchSimulate` | `boolean` | `true` | Simulate all transactions before the first one runs. If `false`, simulate each transaction just before it runs. |
+| `batchSignTxs` | `boolean` | `true` | Ask for every signature upfront. If `false`, ask for each signature just before broadcasting that transaction. |
+| `timeoutSeconds` | `string` | API default (5 minutes for routes that start on Cosmos) | IBC transfer timeout, in seconds. |
+| `appendCosmosMsgs` | `Record<string, CosmosMsg[]>` | None | Extra Cosmos messages, keyed by chain ID. See [Advanced Features](/client/advanced-features#adding-custom-cosmos-messages-to-route-execution). |
+| `postRouteHandler` | `PostHandler` | None | An action to run after the route completes. See [Post-Route Actions](/general/post-route-actions). |
+| `useUnlimitedApproval` | `boolean` | `false` | Set EVM token allowances to the maximum amount. |
+| `bypassApprovalCheck` | `boolean` | `false` | Skip the EVM token allowance check. |
+| `getFallbackGasAmount` | `(chainId: string, chainType: ChainType) => Promise<number \| undefined>` | None | Gas amount to use when simulation fails. |
+| `getCosmosPriorityFeeDenom` | `(chainId: string) => Promise<string \| undefined>` | None | Denom to pay the Cosmos transaction fee in. |
+| `svmFeePayer` | `{ address: string; signTransaction: (data: Buffer) => Promise<Uint8Array> }` | None | A separate account that pays Solana fees. See [Advanced Features](/client/advanced-features#add-a-fee-payer-to-solana-transactions). |
+| `trackTxPollingOptions` | `{ maxRetries?, retryInterval?, backoffMultiplier? }` | `5`, `1000` ms, `2.5` | How often to poll transaction status. |
 
-```getSvmSigner``` Function that returns a ```Promise<Adapter>``` (Solana wallet-adapter)
+For routes that use both CCTP and CCTP V2, `executeRoute` turns off `batchSimulate` and `batchSignTxs` automatically, because those transactions must be signed in order.
 
-## Optional fields
-```slippageTolerancePercent``` Set the maximum slippage tolerance for the route (defaults to "1").
+The simulated Cosmos gas amount is multiplied by 1.5. Gas prices come from each chain's fee assets.
 
-```simulate``` Whether to simulate transactions before executing (defaults to true).
+Example of `getCosmosPriorityFeeDenom`:
 
-```batchSimulate``` If true, simulate all transactions in a batch before execution; if false, simulate each transaction individually. (defaults to true).
-
-```batchSignTxs``` If true, all transactions in a multi-transaction route will be signed upfront before broadcasting; if false, each transaction will be signed individually just before broadcasting. (defaults to true).
-
-```appendCosmosMsgs``` Optional Cosmos messages, keyed by chain ID (`Record<chainId, CosmosMsg[]>`). These are inserted before the existing messages in the first Cosmos transaction matching each chain ID. Each `CosmosMsg` is `{ msgTypeUrl, msg }`, where `msg` is the JSON-encoded message body.
-
-```useUnlimitedApproval``` If true, sets Evm token allowances to MAX_UINT256. (defaults to false).
-
-```bypassApprovalCheck``` If true, skips token approval checks on Evm. (defaults to false).
-
-```timeoutSeconds``` Time in seconds to wait for message preparation before timing out.
-
-```getGasPrice``` Override the gas price per chain.
-
-```getFallbackGasAmount``` Fallback gas to use if simulation fails.
-
-```gasAmountMultiplier``` Overrides the default simulation multiplier (default is 1.5).
-
-```getCosmosPriorityFeeDenom``` function that takes a chainId and returns a ```Promise<string | undefined>``` for the priority fee denom to use for Cosmos transactions.
-
-example:
 ```ts
 await executeRoute({
-  // ...executeRoute params
+  // ...other options
   getCosmosPriorityFeeDenom: async (chainId) => {
-      // this will set the priority fee as ATOM for noble-1 chain
-      if (chainId === "noble-1")
-        return "ibc/EF48E6B1A1A19F47ECAEA62F5670C37C0580E86A9E88498B7E393EB6F49F33C0";
-      return undefined;
-    },
+    // Pay fees in ATOM on noble-1
+    if (chainId === "noble-1") {
+      return "ibc/EF48E6B1A1A19F47ECAEA62F5670C37C0580E86A9E88498B7E393EB6F49F33C0";
+    }
+    return undefined;
+  },
 });
-  ```
-
+```
 
 ## Callbacks
-You can optionally provide the following callbacks:
 
-```onTransactionSignRequested``` Called when a transaction is ready to be signed on the wallet.
+All callbacks are optional. Except for `onRouteStatusUpdated`, each one returns a `Promise<void>`.
 
-```onTransactionBroadcast``` Called after each transaction is broadcasted.
+| Callback | Called when | Receives |
+|---|---|---|
+| `onValidateGasBalance` | Gas and balance validation starts or finishes | `{ chainId?, txIndex?, status }` |
+| `onApproveAllowance` | An EVM token approval runs | `{ allowance?, status }` |
+| `onTransactionSignRequested` | A transaction is ready to sign in the wallet | `{ chainId, txIndex, signerAddress? }` |
+| `onTransactionSigned` | A transaction is signed | `{ chainId }` |
+| `onTransactionBroadcast` | A transaction is broadcast | `{ txHash, chainId }` |
+| `onTransactionTracked` | The API starts tracking a transaction | `{ txHash, chainId, explorerLink }` |
+| `onTransactionCompleted` | A transaction is confirmed | `{ txHash, chainId, status? }` |
+| `onRouteStatusUpdated` | The status of the whole route changes | `RouteDetails` |
 
-```onTransactionCompleted``` Called after each transaction is confirmed.
+`status` in `onValidateGasBalance` and `onApproveAllowance` is `"pending"`, `"completed"`, or `"error"`. `status` in `onTransactionCompleted` is a transfer status object; read its `state` field.
 
-```onTransactionTracked``` Called during confirmation polling, useful for progress tracking uis.
-
-```onValidateGasBalance``` Called while the transaction is calculating the gas and balance validation
-
-```onApproveAllowance``` Called when the allowance tx is being executed (only in evm txs).
+## Example
 
 ```ts
+import { executeRoute } from '@skip-go/client';
+
 await executeRoute({
   route,
   userAddresses: [
-    { chainId: "osmosis-1", address: osmoAddress },
-    { chainId: "ethereum", address: evmAddress },
+    { chainId: "osmosis-1", address: osmosisAddress },
+    { chainId: "1", address: ethereumAddress },
   ],
-  simulate: true,
-  batchSignTxs: true,
   slippageTolerancePercent: "0.5",
-  appendCosmosMsgs: {
-    "osmosis-1": [{ msgTypeUrl: "/cosmos.bank.v1beta1.MsgSend", msg: cosmosMsgJson }],
+  getCosmosSigner: async (chainId) => window.keplr!.getOfflineSigner(chainId),
+  getEvmSigner: async (chainId) => getWalletClientForChain(chainId),
+  onTransactionBroadcast: async ({ chainId, txHash }) => {
+    console.log(`Broadcast on ${chainId}: ${txHash}`);
   },
-  getCosmosSigner: (chainId) => {},
-  getEvmSigner: (chainId) => {},
-  getSvmSigner: () => {},
-  onTransactionBroadcast: ({ chainId, txHash }) => {
-    console.log(`Broadcasted on ${chainId}: ${txHash}`);
+  onTransactionTracked: async ({ chainId, txHash, explorerLink }) => {
+    console.log(`Tracking ${chainId}: ${txHash} (${explorerLink})`);
   },
-  onTransactionCompleted: ({ chainId, txHash, status }) => {
-    console.log(`Completed on ${chainId}: ${txHash} (Status: ${status})`);
-  },
-  onTransactionTracked: ({ chainId, txHash, status }) => {
-    console.log(`Tracking ${chainId}: ${txHash} (Status: ${status})`);
-  },
-  onTransactionSignRequested: ({ chainId, signerAddress }) => {
-    console.log(`Sign requested for ${chainId}`, signerAddress);
+  onTransactionCompleted: async ({ chainId, txHash, status }) => {
+    console.log(`Completed on ${chainId}: ${txHash} (${status?.state})`);
   },
 });
 ```
+
+`osmosisAddress`, `ethereumAddress`, and `getWalletClientForChain` stand for your app's own addresses and EVM signer. See [Signer Setup](/client/getting-started#signer-setup) for complete signer examples.
