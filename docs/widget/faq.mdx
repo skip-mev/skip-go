@@ -1,34 +1,34 @@
 ---
 title: 'FAQ'
+description: 'Common questions about integrating the Skip Go Widget'
 ---
 
-## How do I fix the "Buffer is not defined" error?
+<AccordionGroup>
+  <Accordion title='How do I fix the "Buffer is not defined" error?'>
+    The widget depends on Node.js modules that aren't available in the browser. Add polyfills for those modules with the plugin for your build tool:
 
-If you see a 'Buffer is not defined' error when using @skip-go/widget, it's likely because the widget depends on Node.js modules that aren't available in the browser. To fix this, you'll need to add polyfills for those modules.
-Here are some polyfill plugins for common environments:
+    - [Webpack](https://www.npmjs.com/package/node-polyfill-webpack-plugin)
+    - [Rollup](https://www.npmjs.com/package/rollup-plugin-polyfill-node)
+    - [Vite](https://www.npmjs.com/package/vite-plugin-node-polyfills)
+    - [ESBuild](https://www.npmjs.com/package/esbuild-plugins-node-modules-polyfill)
+  </Accordion>
 
-- [Webpack](https://www.npmjs.com/package/node-polyfill-webpack-plugin)
-- [Rollup](https://www.npmjs.com/package/rollup-plugin-polyfill-node)
-- [Vite](https://www.npmjs.com/package/vite-plugin-node-polyfills)
-- [ESBuild](https://www.npmjs.com/package/esbuild-plugins-node-modules-polyfill)
+  <Accordion title="Should I put the widget inside a container with a fixed size?">
+    Yes. The widget uses shadow DOM, which renders on the client, so a fixed-size container prevents layout shift while it loads. We recommend a height of `640px` and a width of `500px`.
+  </Accordion>
 
-## Should I put the widget inside a container with a fixed size?
+  <Accordion title="Can I use Safe multisig wallets with the widget?">
+    Yes. [Safe](https://app.safe.global) wallets work through wallet providers that support Safe:
 
-It is recommended to wrap the widget with a container element that has a fixed size. This helps to prevent layout shifting as the widget uses the shadow-dom (which needs to be rendered client-side). We recommend a height of `640px` and a width of `500px`.
+    - **Rabby Wallet**: Import and use a Safe wallet.
+    - **WalletConnect**: Connect a Safe wallet over the WalletConnect protocol.
 
-## Can I use Safe Multisig wallets with the Skip Go widget?
+    <Warning>
+    Before a cross-chain transfer, make sure the Safe wallet is deployed on every destination chain. Safe addresses are deterministic, but the wallet contract must exist on each chain where you receive funds.
+    </Warning>
+  </Accordion>
 
-Yes! Safe wallets (the popular multisig wallet at https://app.safe.global) can be used with the Skip Go widget through wallet providers that support importing Safe wallets:
-
-* **Rabby Wallet**: Supports importing and using Safe wallets
-* **WalletConnect**: Supports connecting Safe wallets through WalletConnect protocol
-
-Both options allow you to use your Safe wallet for multi-chain swaps and transfers through the Skip Go widget.
-
-**Important:** When using Safe wallets for cross-chain transactions, ensure that your Safe wallet is deployed on all relevant destination chains before initiating transfers. Safe wallets use deterministic addresses, but the wallet contract must be deployed on each chain where you plan to receive funds.
-
-## Why am I getting a CORS error or blocked by CORS policy?
-
-If you're seeing CORS errors when using the Skip Go widget, it means your domain needs to be whitelisted to access Skip Go's API endpoints.
-
-To resolve this issue, please get your domain whitelisted by submitting a support ticket in our [Discord server](https://discord.gg/interchain). 
+  <Accordion title="Why am I getting a CORS error?">
+    Your domain needs to be whitelisted to use the widget's default Skip Go API endpoint. To get whitelisted, open a support ticket in our [Discord server](https://discord.gg/interchain).
+  </Accordion>
+</AccordionGroup>
