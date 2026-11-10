@@ -3,93 +3,106 @@ title: "Cross-chain Failure Cases"
 description: "This page covers the different ways our cross-chain swaps + transfers might fail to help identify failures and manage user expectations"
 ---
 
-## Failures during IBC Transfers and Swaps
+When a cross-chain transfer or swap fails, where the user's funds end up depends on where it failed. Find the case in the table below, then see its section for details.
 
-There are two types of IBC failures that may occur when a user attempts to traverse a swap / transfer route produced by the Skip Go API.
+## Where Funds End Up
 
-1. **Pre-Swap / swap failures**
-   * **What:**  These are failures in the sequence of ICS-20 transfers leading up to the swap or a failure in the swap itself (usually due to slippage).
-   * **Outcome / What to Expect:**  The users' original source tokens are returned their starting address on the source chain
-   * **Common causes:**
-         * Inactive relayers on a channel allow a packet to timeout
-         * Slippage (the amount out for the swap turns out to be less than the user's specified minimum, i.e. their slippage exceeds their tolerance)
-         * The user / frontend provides an invalid recovery address
-         * An IBC client on the destination chain has expired
-   * **Examples:** Consider a route where the source asset is ATOM on Neutron, the destination asset is STRIDE on Stride, and the swap takes place on Osmosis:
-         * The user's tokens transfer from Neutron to the Hub to Osmosis. The swap initiates but the price of STRIDE has gotten so high that the swap exceeds slippage tolerance and fails. A sequence of error acks is propagated back to the Hub then Neutron, releasing the user’s ATOM to their address on Neutron where they started
-         * The user attempts to transfer tokens from Neutron to the hub, but the packet isn't picked up by a relayer for more than 5 minutes (past the timeout\_timestamp). When a relayer finally comes online, it relays a timeout message to Neutron, releasing the user's ATOM back to their address on Neutron where they first had it.
-   * **For transfer-only routes:** This is the only kind of failure that may happen on a route that only contains transfers. Either the user's tokens will reach their destination chain as intended, or they will wind up with the same tokens, on the same chain where they started.
+| Failure | Where the user's funds end up |
+|---|---|
+| [IBC pre-swap or swap failure](#pre-swap-or-swap-failures) | The original tokens, back at the user's address on the source chain |
+| [IBC post-swap failure](#post-swap-failures) | The destination asset, at the user's address on the swap chain |
+| [Axelar swap failure](#axelar-failures) | The Axelar-transferred token, at the user's recovery address on the swap chain |
+| [CCTP attestation outage or blocklisted recipient](#cctp-failures) | Burned on the source chain and inaccessible until the issue is resolved |
+| [Hyperlane validator threshold not met](#hyperlane-failures) | Inaccessible on both chains until the threshold is met, then delivered on the destination chain |
+| [Go Fast timeout](#go-fast-failures) | Refunded in full, including fees, on the source chain |
 
-<Frame caption="In a pre-swap or swap related error, the user will end up with the same tokens they started with on their initial chain (e.g. ATOM on Neutron in this example)">![In a pre-swap or swap related error, the user will end up with the same tokens they started with on their initial chain (e.g. ATOM on Neutron in this example)](/images/6744b96-error-1-diagram.png)</Frame>
+## IBC Transfers and Swaps
 
+An IBC route can fail before or during the swap, or after the swap. The examples below use a route where the source asset is ATOM on Neutron, the destination asset is STRIDE on Stride, and the swap takes place on Osmosis.
 
-2. **Post-swap failures:**
-   * **Description**: These are failures that occur on the sequence of transfers between the swap venue chain and the user's destination chain, after the user's origin tokens have already been successfully swapped for their desired destination asset.
-   * **Outcome / What to Expect**: The user's newly purchased destination asset tokens will be transferred to their address on the swap chain. (This is the address passed to `chains_to_addresses` in `/fungible/msgs` for the chain where the swap takes place, which is given by `swap_venue.chain_id` in the response from `/fungible/route`)
-   * **Common failure sources:**
-         * Inactive relayers on a channel allow a packet to timeout
-         * The user / frontend provides an invalid address for the destination chain
-         * An IBC client on the destination chain has expired
-   * **Examples:** Consider a route where the source asset is ATOM on Neutron, the destination asset is STRIDE on Stride, and the swap takes place on Osmosis:
-         * Suppose the swap took place and the transfer to Stride has been initiated, but the Relayer between Osmosis and Stride is down. So the packet’s timeout occurs after 5 minutes. When the Relayer comes back online after 8 minutes, it relays a timeout message to Osmosis, releasing the user’s STRIDE, which gets forwarded to their Osmosis address
+### Pre-swap or swap failures
 
-<Frame caption="In a post-swap error, the user will end up with their destination asset tokens in their address on the chain where the swap took place (e.g. STRIDE on Osmosis in this example)">![In a post-swap error, the user will end up with their destination asset tokens in their address on the chain where the swap took place (e.g. STRIDE on Osmosis in this example)](/images/5c93590-error-type-2.png)</Frame>
+**What happens:** One of the ICS-20 transfers leading up to the swap fails, or the swap itself fails (usually due to slippage).
 
+**Where the funds end up:** The user's original source tokens are returned to their starting address on the source chain.
 
-## Axelar Failures
+**Common causes:**
+* Inactive relayers on a channel allow a packet to time out
+* Slippage: the amount out for the swap is less than the user's specified minimum
+* The user or frontend provides an invalid recovery address
+* An IBC client on the destination chain has expired
 
-Axelar transfers can be tracked on [Axelarscan](https://axelarscan.io/). Often, Axelar transfers are delayed by Axelar's relayer or execution services. If a transaction is taking longer than expected, users can visit Axelarscan, find their transaction, and manually execute the steps needed to get the transfer through. See the [Axelar docs](https://docs.axelar.dev/dev/general-message-passing/recovery) for details on how to use Axelarscan.
+**Examples:**
+* The tokens transfer from Neutron to the Hub to Osmosis. The swap starts, but the price of STRIDE has risen so much that the swap exceeds slippage tolerance and fails. Error acks propagate back to the Hub and then Neutron, releasing the user's ATOM to their address on Neutron.
+* The transfer from Neutron to the Hub isn't picked up by a relayer for more than 5 minutes (past the `timeout_timestamp`). When a relayer comes online, it relays a timeout message to Neutron, releasing the user's ATOM back to their address on Neutron.
 
-Internally, the Skip Go API may use Axelar's General Message Passing service to move assets between EVM and Cosmos. There are similar failure modes for Axelar as there are for IBC:
+This is the only kind of failure that can happen on a route that contains only transfers. Either the tokens reach the destination chain, or the user ends up with the same tokens on the chain where they started.
 
-1. **Swap failures**
-   * **What:**  Axelar GMP takes user assets from an EVM chain to the swap chain. The swap can still fail at this point due to a timeout or slippage.
-   * **Outcome / What to Expect:**  The user receives the Axelar-transferred token on the chain where the swap was supposed to take place at their recovery address. (Note this is different from the IBC swap failure case where the user receives the swap token back on the source chain)
-   * **Common failure sources:**
-         * Slow relaying from Axelar causes a timeout, and the swap is not attempted.
-         * Slippage (the amount out for the swap turns out to be less than the user's specified minimum, i.e. their slippage exceeds their tolerance)
-2. **Post-swap failures**
-   * Once the swap is executed, Axelar is no longer involved, and the same rules that apply to IBC post-swap failures apply here, so the **Post-swap failures** section above applies.
+<Frame caption="Pre-swap or swap failure: the user ends up with ATOM on Neutron">![In a pre-swap or swap related error, the user will end up with the same tokens they started with on their initial chain (e.g. ATOM on Neutron in this example)](/images/6744b96-error-1-diagram.png)</Frame>
 
-## CCTP Failures
+### Post-swap failures
 
-Routes that use CCTP transfers rely on Circle to produce attestations. The Circle attestation service waits for a specified number of on-chain block confirmations before producing an attestation. The number of block confirmations required is specified by Circle in their documentation [here](https://developers.circle.com/stablecoins/docs/required-block-confirmations).
+**What happens:** One of the transfers from the swap chain to the destination chain fails, after the user's tokens have already been swapped for the destination asset.
 
-If Circle's attestation service experiences an outage, malfunction, or otherwise becomes unresponsive, CCTP transfers will continue to burn assets on the source chain, but will not be able to mint assets on the destination chain. In this case, funds that have been burned to initiate a CCTP transfer will be inaccessible until the Circle attestation service recovers.
+**Where the funds end up:** The destination asset is sent to the user's address on the swap chain. This is the address you pass in `address_list` to `/v2/fungible/msgs` for the chain where the swap takes place. That chain is the `chain_id` of the venue in `swap_venues` in the `/v2/fungible/route` response.
 
-## Hyperlane Failures
+**Common causes:**
+* Inactive relayers on a channel allow a packet to time out
+* The user or frontend provides an invalid address for the destination chain
+* An IBC client on the destination chain has expired
 
-Each Hyperlane token transfer route is secured by an Interchain Security Module (ISM) designated by the deployer of the Hyperlane Warp Route Contracts (the interface to send tokens across chains using Hyperlane). The ISM defines the requirements for a message to be successfully processed on the destination chain.
+**Example:** The swap succeeds and the transfer to Stride starts, but the relayer between Osmosis and Stride is down, so the packet times out after 5 minutes. When the relayer comes back online 8 minutes later, it relays a timeout message to Osmosis, releasing the user's STRIDE to their Osmosis address.
 
-The most common ISM is a Multisig ISM where "Validators" of a specific Hyperlane route sign attestations that a specific message on an origin chain is a valid message to be processed on the destination chain. In the case where the set of Validators have not hit the required signature threshold to successfully process a Hyperlane message on the receiving chain, funds will not be accessible by the user on either chain until the threshold is met (once met, funds will be sent to the user on the destination chain). This generalizes to the different requirements for different ISMs. The Hyperlane documentation explains the different types of ISMs in more detail: [https://docs.hyperlane.xyz/docs/reference/ISM/specify-your-ISM](https://docs.hyperlane.xyz/docs/reference/ISM/specify-your-ISM)
-
-## Go Fast Failures
-
-If a transfer timeout occurs, meaning a user's intent does not receive a response from solvers within a predefined time frame, the solver initiates a refund process to ensure that users do not lose funds.
-
-Here's a breakdown of what happens in the event of a timeout:
-
-1. Intent Expiration: When a user initiates an intent by calling the `submitOrder` function on the source chain, a time limit is specified. Solvers monitor the intent and assess whether they can fulfill it within this period. If no solver fills the intent before the timeout, the refund process begins.
-
-2. Refunds: Once the timeout period is reached without fulfillment, the solver calls a function on the contract to trigger a refund process. This is handled on-chain, and includes any fees initially allocated from the user for solver compensation.
+<Frame caption="Post-swap failure: the user ends up with STRIDE on Osmosis">![In a post-swap error, the user will end up with their destination asset tokens in their address on the chain where the swap took place (e.g. STRIDE on Osmosis in this example)](/images/5c93590-error-type-2.png)</Frame>
 
 <Warning>
  **Failures might occur for each transaction in a multi-tx sequence**
 
- In the event of a multi-tx route, each transaction may suffer from the kinds of failures noted above. This means it's technically inaccurate to say that tokens will always end up on the initial chain or the chain where the swap takes place. More accurately, tokens may end up on each chain where a transaction is initiated or the chain where the swap takes place.
+ In a multi-tx route, each transaction can fail in the ways described on this page. So tokens may end up on any chain where a transaction starts, not only on the initial chain or the swap chain.
 
- For instance, if a pre-swap failure takes place on the second transaction in a sequence, the tokens will end up on the chain that transaction targeted. In our example above, if the transfer from Cosmos Hub to Osmosis required a separate user transaction and the Neutron to Hub leg of the route succeeded in the first transaction, the ATOM tokens would end up in the user's account on the Hub if the swap exceeds maximum slippage.
+ For example, if a pre-swap failure happens in the second transaction, the tokens end up on the chain that the second transaction started from. In the IBC example above, suppose the Neutron to Hub transfer and the Hub to Osmosis transfer are separate user transactions. If the first succeeds and the swap in the second exceeds maximum slippage, the ATOM ends up in the user's account on the Hub.
 </Warning>
 
+## Axelar Failures
 
-<Check>
-**We're working to make these failures even less common**
+Axelar transfers can be tracked on [Axelarscan](https://axelarscan.io/). Axelar's relayer or execution services often delay Axelar transfers. If a transaction is taking longer than expected, users can find it on Axelarscan and manually execute the steps needed to complete the transfer. See the [Axelar docs](https://docs.axelar.dev/gmp/track-and-recover/recover-transactions) for how to use Axelarscan.
 
- * In the short term, we're working to add packet tracking + live relayer + client status to the API to help identify when packets get stuck and prevent folks from using channels where they're likely to get stuck in the first place
- * In the medium term, we are working to add priority multi-hop relaying into the API.
- * In the long term, we're working to build better incentives for relaying, so relayers don't need to run as charities. (Relayers do not receive fees or payment of any kind today and subsidize gas for users cross-chain)
-</Check>
+The Skip Go API may use Axelar's General Message Passing (GMP) to move assets between EVM and Cosmos. Axelar has similar failure modes to IBC.
 
+### Swap failures
+
+**What happens:** Axelar GMP moves the user's assets from an EVM chain to the swap chain, and then the swap fails due to a timeout or slippage.
+
+**Where the funds end up:** The user receives the Axelar-transferred token at their recovery address on the swap chain. This is different from an IBC swap failure, where the user gets their tokens back on the source chain.
+
+**Common causes:**
+* Slow relaying from Axelar causes a timeout, so the swap is not attempted
+* Slippage: the amount out for the swap is less than the user's specified minimum
+
+### Post-swap failures
+
+Once the swap is executed, Axelar is no longer involved, so the [IBC post-swap failures](#post-swap-failures) section applies.
+
+## CCTP Failures
+
+Routes that use CCTP rely on Circle to produce attestations. Circle's attestation service waits for a number of block confirmations on the source chain before producing an attestation. See [Circle's documentation](https://developers.circle.com/cctp/concepts/finality-and-block-confirmations) for the number of confirmations required.
+
+**Attestation service outage:** If Circle's attestation service has an outage, malfunctions, or becomes unresponsive, CCTP transfers still burn assets on the source chain but cannot mint them on the destination chain. The burned funds are inaccessible until the attestation service recovers.
+
+**Blocklisted recipient:** If the recipient address on the destination chain is blocklisted by Circle, the burn on the source chain succeeds but the USDC mint on the destination chain fails. The funds stay inaccessible until Circle removes the address from the blocklist. After that, the mint can be completed. CCTP V2 attestations expire after 24 hours, so a new attestation must be requested from Circle first. If this happens, open a ticket in the [Interchain Discord](https://discord.com/invite/interchain).
+
+## Hyperlane Failures
+
+Each Hyperlane token transfer route is secured by an Interchain Security Module (ISM), chosen by the deployer of the route's Hyperlane Warp Route contracts (the interface for sending tokens across chains with Hyperlane). The ISM defines what a message needs in order to be processed on the destination chain.
+
+The most common ISM is a Multisig ISM, where the route's validators sign attestations that a message on the origin chain is valid. If not enough validators have signed to reach the threshold, the user cannot access the funds on either chain. Once enough validators sign, Hyperlane delivers the funds to the user on the destination chain. Other ISMs work the same way with their own requirements. See the [Hyperlane documentation](https://docs.hyperlane.xyz/docs/protocol/ISM/modular-security) for the types of ISMs.
+
+## Go Fast Failures
+
+If no solver fills a user's intent (a transfer order that solvers fill) within a set time, the transfer times out and the user is refunded, so they do not lose funds.
+
+1. **Intent expiration:** When a user submits an intent by calling `submitOrder` on the source chain, a time limit is set. Solvers monitor the intent and decide whether they can fill it within that time. If no solver fills it before the timeout, the refund process begins.
+2. **Refund:** After the timeout, the solver calls `initiateTimeout` on the Go Fast contract on the destination chain (anyone can call it). A Hyperlane message then refunds the user on the source chain. The refund is the full amount the user sent, including the fee for solver compensation.
 
 <Info>
  **Have questions or feedback? Help us get better!**
