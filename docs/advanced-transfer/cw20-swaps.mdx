@@ -1,82 +1,74 @@
 ---
-title: "CW20 Tokens & Their Limitations"
-description: "Information about performing CW20 swaps"
+title: "CW20 Tokens and Their Limitations"
+description: "How to use CW20 denoms in the Skip Go API, and which cross-chain actions with CW20 tokens need more than one transaction."
 ---
 
-This page covers the basics of CW20s and the limitations around performing cross-chain actions with CW20 tokens -- compared to tokenfactory and "native" Cosmos assets (aka Bank Module assets).
+This page shows how to specify CW20 tokens in Skip Go API requests and which cross-chain actions with CW20 tokens can't be done in one transaction. Tokenfactory and native (bank module) tokens don't have these limitations.
 
-## CW20 Token Denom Formatting In API Requests
+## Denom Format
 
-To use CW20 tokens in the Skip Go API, specify the denom as "cw20:" + the token contract address.
+To use a CW20 token in the Skip Go API, use `cw20:` followed by the token contract address.
 
 Example denom for ROAR on Terra2: `cw20:terra1lxx40s29qvkrcj8fsa3yzyehy7w50umdvvnls2r830rys6lu2zns63eelv`
 
-## Background
+## Limitations in the Skip Go API
 
-### What is a CW20 token?
+The following actions can't be done in one transaction:
 
-[CW20](https://github.com/CosmWasm/cw-plus/blob/main/packages/cw20/README.md) is the fungible token spec for the CosmWasm (i.e. CW) VM. CosmWasm is a widely used smart contract VM on Cosmos SDK chains. At a high-level, CW20 is very similar to ERC20 (the popular EVM fungible token standard).
-
-Contracts that comply with the standard implement the following functionalities:
-
-* Transferring tokens from one account to another
-* Sending tokens to a contract along with a message (similar to `callContractWithToken`)
-* Tracking balances
-* Delegating balance spending to other accounts and contracts
-
-For example, ROAR (Lion DAO's token) is a CW20 token issued on Terra2.
-
-### How do CW20 tokens interact with IBC?
-
-[CW20-ICS20](https://github.com/CosmWasm/cw-plus/tree/v0.6.0-beta1/contracts/cw20-ics20) converter contracts make a CW20 token compatible with the ICS20 token transfer standard, so they can be sent to other chains over normal ICS20 transfer channels. When they arrive on the destination chain, they're indistinguishable from bank module and tokenfactory tokens.
-
-These converter contracts are the source of much difficulty when attempting to perform cross-chain actions with CW20s:
-
-* Different converter contracts implement different versions of the ICS20 standard (e.g. Some don't support memos, which are required for post-transfer contract calls and multi-hop transfers)
-* On transfer failure, converter contracts just return assets to sender. That means if one of our contracts attempts to send tokens on your behalf unsuccessfully, it will receive the tokens. We can't atomically send them to you.
-
-### How do CW20 tokens compare to "native" (aka bank module) tokens?
-
-"Native" tokens are tokens where minting, burning, balances, and transfer functionality are managed by the [bank module](https://docs.cosmos.network/sdk/latest/modules/bank/README), instead of by contracts. Unlike CW20s, native tokens are directly compatible with ICS20 and IBC modules. One can send a native token to another chain over a transfer channel just using a `MsgTransfer` \-- no conversion contracts or anything of the sort required.
-
-The downside of native tokens is that they're permissioned and deeply ingrained into the chain's state machine. As a result, issuing a new native token requires a chain upgrade. Issuing a CW20 on the other hand, only requires deploying a new contract (just a transaction).
-
-### How do CW20 tokens compare to "tokenfactory" tokens?
-
-Tokenfactory tokens are created with the [tokenfactory](https://docs.osmosis.zone/osmosis-core/modules/tokenfactory/) module. They're designed to have the best of both worlds of CW20 and native tokens:
-
-* Like CW20s, they're permissionless and users can create new ones just by submitting transactions -- no need to modify the chain's state machine
-* Like native tokens, they're directly compatible with IBC out-of-the-box, and the bank module manages their balances and transfers.
-
-For these reasons, we recommend tokenfactory over CW20 for new tokens.
-
-Unlike CW20s, tokenfactory tokens have no limitations in the cross-chain functionality Skip Go API can offer for them.
-
-## What limitations do CW20 tokens have within the Skip Go API?
-
-Almost any multi-chain action that includes a step on the CW20's origin chain requires multiple transactions.
-
-In particular, this means you cannot perform the following actions in one transaction:
-
-* IBC transfer after purchasing a CW20 asset
+1. **Case 1:** IBC transfer after purchasing a CW20 asset.
 
 <Frame caption="Case 1: the CW20 can be swapped on its origin chain but not transferred in the same transaction">![Chain 1 is the origin chain where the cw20 token can be swapped freely, but it cannot be transferred to another chain in the same transaction.](/images/9afddc0-case1.jpg)</Frame>
 
-
-* Call a contract on a remote chain after purchasing a CW20 asset (this needs an IBC transfer under the hood)
+2. **Case 2:** Call a contract on a remote chain after purchasing a CW20 asset. This needs an IBC transfer under the hood.
 
 <Frame caption="Case 2: the CW20 can be used in post-route actions only on its origin chain">![Chain 1 is the origin chain, where the token can be used freely for post-route actions, but it cannot be used in post-route actions on other chains.](/images/568550d-case2.jpg)</Frame>
 
-
-* IBC transfer from a remote chain to the CW20's origin chain, then perform a swap or any other post-route action on that chain
+3. **Case 3:** IBC transfer from a remote chain to the CW20's origin chain, then a swap or any other post-route action on that chain.
 
 <Frame caption="Case 3: the CW20 can be transferred back to its origin chain but not used there in the same transaction">![Chain 2 is the origin chain. The token can be transferred back there, but it can't be used or swapped for anything in the same transaction.](/images/3dde446-case3.jpg)</Frame>
-
 
 The same limitation applies to an Axelar transfer to the CW20's origin chain followed by a swap there.
 
 You can still use the Skip Go API to build any of these action sequences across multiple transactions, but each extra transaction adds work for you and your users.
 
+## Why These Limitations Exist
+
+A CW20 token can't move over IBC on its own. A [CW20-ICS20](https://github.com/CosmWasm/cw-plus/tree/v0.6.0-beta1/contracts/cw20-ics20) converter contract makes it compatible with the ICS20 token transfer standard, so it can be sent over normal ICS20 transfer channels. Once it arrives on another chain, it behaves like any bank module or tokenfactory token.
+
+These converter contracts limit what Skip can do with CW20s in one transaction:
+
+* Different converter contracts implement different versions of the ICS20 standard. For example, some don't support memos, which multi-hop transfers and post-transfer contract calls need.
+* When a transfer fails, the converter contract returns the tokens to the sender. So if a Skip contract fails to send tokens on the user's behalf, the tokens return to that contract instead of the user, and Skip can't forward them in the same transaction.
+
+## Background
+
+### What Is a CW20 Token?
+
+[CW20](https://github.com/CosmWasm/cw-plus/blob/main/packages/cw20/README.md) is the fungible token standard for the CosmWasm VM, a widely used smart contract VM on Cosmos SDK chains. CW20 is similar to ERC-20, the EVM fungible token standard.
+
+CW20 contracts support:
+
+* Transferring tokens from one account to another
+* Sending tokens to a contract along with a message (similar to `callContractWithToken`)
+* Tracking balances
+* Letting other accounts and contracts spend a balance
+
+For example, ROAR (Lion DAO's token) is a CW20 token issued on Terra2.
+
+### CW20 vs. Native Tokens
+
+For native tokens, the [bank module](https://docs.cosmos.network/sdk/latest/modules/bank/README) manages minting, burning, balances, and transfers, instead of a contract. Native tokens work with IBC directly. You can send a native token to another chain with a single `MsgTransfer`. No converter contract is needed.
+
+The downside is that native tokens are permissioned and part of the chain's state machine, so issuing a new one requires a chain upgrade. Issuing a CW20 only requires deploying a new contract, which is a single transaction.
+
+### CW20 vs. Tokenfactory Tokens
+
+Tokenfactory tokens are created with the [tokenfactory](https://docs.osmosis.zone/osmosis-core/modules/tokenfactory/) module. They combine the strengths of CW20 and native tokens:
+
+* Like CW20s, they're permissionless. Anyone can create one with a transaction, without changing the chain's state machine.
+* Like native tokens, they work with IBC directly, and the bank module manages their balances and transfers.
+
+Tokenfactory tokens have none of the Skip Go API limitations above. For these reasons, we recommend tokenfactory over CW20 for new tokens.
 
 <Info>
  **Have questions or feedback? Help us get better!**
