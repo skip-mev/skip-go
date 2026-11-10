@@ -38,7 +38,7 @@ The library can be initialized using `setClientOptions` or `setApiOptions`. Both
 - **`setApiOptions(options)`:** Use this if you primarily need to configure API interaction (`apiUrl`, `apiKey`) or set up affiliate fees (`chainIdsToAffiliates`). This option does not configure `endpointOptions`, `aminoTypes`, or `registryTypes`.
 
 
-You typically call one of these functions once at application startup.
+Call one of these functions once at application startup, before any API call. They throw an error if an API call has already been made, unless you set `allowOptionsUpdateAfterApiCall: true`.
 
 ```ts Import and Initialize
 import {
@@ -56,7 +56,7 @@ setClientOptions({
   apiUrl: "YOUR_API_URL", // Optional: defaults to Skip API
   apiKey: "YOUR_API_KEY",   // Optional: required for certain features
   endpointOptions: { /* ... */ },
-  // ... other options like aminoTypes, registryTypes, cacheDurationMs
+  // ... other options like aminoTypes, registryTypes
 });
 
 // Example: Initialize for direct API calls (simpler, if not using executeRoute)
@@ -73,12 +73,14 @@ setApiOptions({
 
 Below are the common configuration parameters. Refer to the specific `options` type for `setClientOptions` or `setApiOptions` for full details.
 
-- `apiUrl?: string`: Override the default API URL. Can be passed to `setClientOptions` or `setApiOptions`, or directly to individual API functions if neither initialization function is called.
-- `apiKey?: string`: Your Skip API key. Can be passed to `setClientOptions` or `setApiOptions`, or directly to individual API functions if neither initialization function is called. Required for certain features.
+- `apiUrl?: string`: Override the default API URL (`https://api.skip.build`).
+- `apiKey?: string`: Your [Skip Go API key](/general/api-keys).
+- `apiHeaders?: HeadersInit`: Extra headers to send with every API request.
+
+You can also pass `apiUrl`, `apiKey`, or `apiHeaders` to an individual API function. Values passed to a function override the ones set at initialization for that call.
 - `endpointOptions?: EndpointOptions`: Provide RPC and REST endpoints for specific chains (used by `setClientOptions`).
 - `aminoTypes?: AminoConverters`: Additional amino types for message encoding (used by `setClientOptions`).
 - `registryTypes?: Iterable<[string, GeneratedType]>`: Additional registry types (used by `setClientOptions`).
-- `cacheDurationMs?: number`: Duration in milliseconds to cache responses for functions like `chains` and `assets` (used by `setClientOptions`).
 
 </Step> <Step title="Setup Signers">
 
@@ -90,12 +92,13 @@ To execute transactions, you need to set up signers for the ecosystems you plan 
 ```ts Cosmos Signer
 // For Cosmos transactions, we'll use Keplr wallet from the window object
 const getCosmosSigner = async (chainId: string) => {
-  const key = await window.keplr?.getKey(chainId);
-  if (!key) throw new Error("Keplr not installed or chain not added");
+  const keplr = window.keplr;
+  if (!keplr) throw new Error("Keplr not installed");
+  const key = await keplr.getKey(chainId);
 
   return key.isNanoLedger
-        ? window.keplr?.getOfflineSignerOnlyAmino(chainId)
-        : window.keplr?.getOfflineSigner(chainId);
+    ? keplr.getOfflineSignerOnlyAmino(chainId)
+    : keplr.getOfflineSigner(chainId);
 };
 
 ```
@@ -103,22 +106,17 @@ const getCosmosSigner = async (chainId: string) => {
 ```ts EVM Signer
 // For EVM transactions, we'll use MetaMask and viem
 // npm install viem
-import { createWalletClient, custom, Account } from "viem";
-import { mainnet } from 'viem/chains';
+import { createWalletClient, custom, type Chain } from "viem";
+import * as chains from "viem/chains";
 
 const getEvmSigner = async (chainId: string) => {
   const ethereum = window.ethereum;
   if (!ethereum) throw new Error("MetaMask not installed");
-  const accounts = await ethereum.request({ method: 'eth_requestAccounts' }) as Account[];
-  const account = accounts?.[0]
-  if (!account) throw new Error('No accounts found');
-  const client = createWalletClient({
-    account,
-    chain: mainnet,
-    transport: custom(window.ethereum),
-  });
-  return client;
-}
+  const [account] = (await ethereum.request({ method: "eth_requestAccounts" })) as `0x${string}`[];
+  if (!account) throw new Error("No accounts found");
+  const chain: Chain | undefined = Object.values(chains).find((c) => c.id === Number(chainId));
+  return createWalletClient({ account, chain, transport: custom(ethereum) });
+};
 ```
 
 ```ts Svm Signer
@@ -166,9 +164,9 @@ import { assets } from "@skip-go/client";
 // returns `Record<string, Asset[]>`
 const allAssets = await assets({ includeEvmAssets: true, includeSvmAssets: true, });
 
-// get assets filtered by chain ID
+// get assets on one chain, including CW20 tokens
 const cosmosHubAssets = await assets({
-  chainId: 'cosmoshub-4',
+  chainIds: ['cosmoshub-4'],
   includeCw20Assets: true,
 });
 
@@ -322,8 +320,7 @@ For routes that consist of multiple transactions, `executeRoute` will monitor ea
 Alternatively, you can handle message generation, signing, and submission manually using the individual functions:
 - `messages`: Generate transaction messages.
 - `messagesDirect`: A convenience function that combines the functionality of `/route` and `/msgs` into a single call. It returns the minimal number of messages required to execute a multi-chain swap or transfer.
-- `broadcastTx`: Broadcast transactions to the network.
-- `submitTransaction`: Submit and track transactions.
+- `submitTransaction`: Broadcast a signed transaction through the Skip Go API and register it for tracking.
 Refer to the API documentation for details on these lower-level functions.
 </Info>
 
@@ -339,8 +336,9 @@ After a transaction is registered for tracking (either via `executeRoute`, `subm
   // const statusResult = await transactionStatus({ txHash: "your_tx_hash", chainId: "your_chain_id" });
   // console.log("Transaction State:", statusResult.state);
   // console.log("Full Status Response:", statusResult);
-  // Possible states include: STATE_COMPLETED_SUCCESS, STATE_COMPLETED_ERROR, STATE_ABANDONED, STATE_PENDING_CONFIRMATION, STATE_PENDING_EXECUTION, etc.
-  // Refer to the TxStatusResponse type or API documentation for a complete list of states.
+  // Possible states: STATE_SUBMITTED, STATE_PENDING, STATE_RECEIVED, STATE_COMPLETED_SUCCESS,
+  // STATE_COMPLETED_ERROR, STATE_PENDING_ERROR, STATE_ABANDONED.
+  // See Interpreting Transaction & Transfer Status for how to read them.
   ```
 
 Remember, if you use `executeRoute` (Step 7), it automatically handles the transaction lifecycle, including waiting for completion. The manual tracking functions (`submitTransaction`, `trackTransaction`, `transactionStatus`) are primarily for scenarios where you are not using `executeRoute` for full execution (e.g., if you use `submitTransaction` directly) or if you need more granular control over the tracking and status polling process.
