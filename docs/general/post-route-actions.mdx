@@ -3,7 +3,7 @@ title: "Post-Route Actions"
 description: "How to specify actions to perform after a route of transfers/swaps is completed"
 ---
 
-Use the `post_route_handler` parameter of `/v2/fungible/msgs` endpoint to define actions that will be executed on the destination chain after a route transfer or swap is completed. These actions are executed within the same transaction as the original swap or transfer.
+Use the `post_route_handler` parameter of the `/v2/fungible/msgs` or `/v2/fungible/msgs_direct` endpoint to define actions that will be executed on the destination chain after a route transfer or swap is completed. These actions are executed within the same transaction as the original swap or transfer.
 
 This handler allows developers to build omni-chain and omni-token workflows where users can swap, liquid stake, deposit, buy an NFT, or take any other action starting from any chain or any token in Cosmos -- all in a single transaction.
 
@@ -40,7 +40,7 @@ To call a CosmWasm contract on the destination chain, the following requirements
 1. The destination chain supports CosmWasm & either `ibc-hooks` or `ibc-callbacks`.
 2. The chain in the route immediately before the destination chain supports IBC memos as well as `packet-forward-middleware`.
 
-To specify a CosmWasm contract call on the destination chain, pass a `wasm_msg` as the `post_route_handler` in the `/v2/fungible/msgs` call with:
+To specify a CosmWasm contract call on the destination chain, pass a `wasm_msg` as the `post_route_handler` in the `/v2/fungible/msgs` or `/v2/fungible/msgs_direct` call with:
 
 * `contract_address`: The target contract address
 * `msg`: JSON string of the message to pass to the contract
@@ -76,7 +76,7 @@ For example, this is a request for a transfer of USDC from Axelar to Neutron, wi
   "post_route_handler": {
     "wasm_msg": {
       "contract_address": "neutron1l3gtxnwjuy65rzk63k352d52ad0f2sh89kgrqwczgt56jc8nmc3qh5kag3",
-        "msg": "{\"swap\":{\"offer_asset\":{\"info\":{\"native_token\":{\"denom\":\"ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349\"}},\"amount\":\"10000\"},\"to\":\"neutron1x8ad0zyw52mvndh7hlnafrg0gt284ga7uqunnf\"}}"
+        "msg": "{\"swap\":{\"offer_asset\":{\"info\":{\"native_token\":{\"denom\":\"ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349\"}},\"amount\":\"1000000\"},\"to\":\"neutron1x8ad0zyw52mvndh7hlnafrg0gt284ga7uqunnf\"}}"
     }
   }
 }
@@ -94,7 +94,7 @@ To use Autopilot after route actions, the following requirements must be satisfi
 1. The destination chain supports the `autopilot` module. Currently, this means the destination chain must be `stride-1`.
 2. The chain in the route immediately before the destination chain supports IBC memos as well as `packet-forward-middleware`.
 
-To specify an Autopilot action on the destination chain, pass a `autopilot_msg` as the `post_route_handler` in the `/v2/fungible/msgs` call with:
+To specify an Autopilot action on the destination chain, pass a `autopilot_msg` as the `post_route_handler` in the `/v2/fungible/msgs` or `/v2/fungible/msgs_direct` call with:
 
 * `receiver`: Set to the address on behalf of which you're performing the action
 * `action`: An enum giving the action that you wish to execute
