@@ -4,11 +4,11 @@ title: "Supported Ecosystems"
 
 
 <Info>
- **Activate Smart Relay (`smart_relay=true`) for global coverage of all chains, bridges, and routes**
+ **Keep Smart Relay enabled for global coverage of all chains, bridges, and routes**
  
- There are many routes that will return a RouteNotFound error if `smart_relay=false` because there are not public relayers that support them. This includes all routes to and from Solana, as well as CCTP routes to and from Polygon, Base, and several other L2s. 
+ Smart Relay is enabled by default on `/route` and `/msgs_direct`. Many routes will return a RouteNotFound error if you set `smart_relay=false`, because there are no public relayers that support them. This includes all routes to and from Solana, as well as CCTP routes between EVM chains such as Arbitrum and Base.
  
- As a result, if you want your users to be able to transfer their tokens over all routes, we recommend using [Smart Relay](/general/smart-relay).
+ As a result, if you want your users to be able to transfer their tokens over all routes, do not turn off [Smart Relay](/general/smart-relay).
 </Info>
 
 Skip Go API is a universal interoperability platform. It can be used to swap and transfer tokens within and between all major ecosystems in crypto over many major bridges. We're constantly adding new bridges, new chains, new routes on already-supported bridges, and new multi-hop routes by composing multiple bridges together. 
@@ -23,29 +23,40 @@ For each major ecosystem, this document identifies:
 
 The very short summary is that our Cosmos ecosystem support is most mature, followed by Ethereum, followed by Solana. 
 
+<Note>
+Eureka, Stargate, and LayerZero routes are opt-in. To include them, add `"eureka"`, `"stargate"`, and/or `"layer_zero"` to the `experimental_features` array in your `/route` and `/msgs_direct` requests (or the `experimentalFeatures` option in the Widget and Client Library).
+</Note>
+
 ## Cosmos Support Details
 
 **Onboard and offboard via**: 
 
 * Axelar (Move major tokens to Ethereum, Polygon, Avalanche, and ETH L2s)
-* CCTP (Move USDC to all major Ethereum L2s, Polygon, Avalanche, and Solana)
-  - Maximum transfer limit: 1,000,000 USDC per transaction
+* CCTP via Noble (Move USDC to all major Ethereum L2s, Polygon, Avalanche, and Solana)
+  - Maximum transfer limit: 500,000 USDC per transfer
+* CCTP V2 via Injective (Move USDC between Injective EVM and Ethereum, its major L2s, Polygon, Avalanche, and Solana. Transfers to and from other Cosmos chains are forwarded over IBC through Injective)
+  - Maximum transfer limit: 10,000,000 USDC per transfer
 * Go Fast (Move assets at faster-than-finality speeds from EVM to Cosmos)
   - Currently, Go Fast supports the following source chains: Ethereum Mainnet, Arbitrum, Avalanche, Base, Optimism, Polygon.
 * Eureka (IBC v2 that enables seamless interoperability between Cosmos and Ethereum ecosystem)
+* LayerZero (Move supported OFT tokens between Initia and EVM chains)
 
 **Move within the ecosystem via:** 
 
 * IBC
+* OPinit (Move assets between Initia and its rollups)
 
 **Swap within the ecosystem on:**
 
 * Osmosis
-* Astroport (on 3+ chains)
+* Astroport (on Injective, Sei, and Terra)
 * InitiaDEX
-* Astrovault (on Archway)
+* White Whale (on Chihuahua, Injective, Sei, and Terra)
 * Dojoswap (on Injective)
 * Helix (on Injective)
+* Tower (on Babylon)
+* Dexter (on Persistence)
+* Nauticus, Phoenix, Terraswap, and Ura (on Terra)
 
 ## Ethereum Support Details
  <Warning>
@@ -60,19 +71,26 @@ The very short summary is that our Cosmos ecosystem support is most mature, foll
 
 **Onboard and offboard via:** 
 
-* CCTP (Move USDC to/from Cosmos and Solana)
-  - Maximum transfer limit: 1,000,000 USDC per transaction
-* Axelar (Move ETH, MATIC, ARB, and other major tokens to/from Cosmos)
+* CCTP (Move USDC to/from Cosmos via Noble)
+  - Maximum transfer limit: 500,000 USDC per transfer
+* CCTP V2 (Move USDC to/from Solana)
+  - Maximum transfer limit: 10,000,000 USDC per transfer
+* Axelar (Move ETH and other major tokens to/from Cosmos)
 * Go Fast (Move assets at faster-than-finality speeds)
 * Eureka (Seamless interoperability between Cosmos and Ethereum ecosystem)
+* LayerZero (Move supported OFT tokens to/from Initia)
 
 **Move within ecosystem via:** 
 
 * Axelar (Move major assets among all major ETH L2s, Polygon, and Avalanche)
+* CCTP V2 (Move USDC among Ethereum, Arbitrum, Avalanche, Base, Injective EVM, Optimism, and Polygon)
+  - Maximum transfer limit: 10,000,000 USDC per transfer
+* Stargate (Move supported assets among Ethereum, Arbitrum, Avalanche, Base, Binance, Linea, Optimism, Polygon, and Sei)
+* LayerZero (Move supported OFT tokens among Ethereum, Arbitrum, Avalanche, Base, Binance, Linea, Optimism, Polygon, and Sei)
 
 **Skip Go API supports swapping on DEXes within the Ethereum ecosystem**
 
-* Uniswap V2/v3 (on Optimism, Binance, Blast, Base, Avax, Eth, Polygon, Celo )
+* Uniswap V2/v3 (on Arbitrum, Avalanche, Base, Binance, Blast, Celo, Ethereum, Optimism, and Polygon)
 * Velodrome (Optimism)
 * Aerodrome (Base)
 
@@ -80,8 +98,10 @@ The very short summary is that our Cosmos ecosystem support is most mature, foll
 
 **Onboard and offboard via:**
 
-* CCTP (Move USDC to/from Cosmos, Ethereum/L2s and Solana)
-  - Maximum transfer limit: 1,000,000 USDC per transfer
+* CCTP V2 (Move USDC to/from Ethereum/L2s and Injective EVM)
+  - Maximum transfer limit: 10,000,000 USDC per transfer
+* CCTP (Move USDC to/from Cosmos via Noble)
+  - Maximum transfer limit: 500,000 USDC per transfer
 
 **Move within ecosystem via:** 
 

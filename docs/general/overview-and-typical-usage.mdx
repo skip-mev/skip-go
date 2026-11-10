@@ -15,7 +15,7 @@ The `/info` endpoints & their corresponding functions in `@skip-go/client` provi
 
 The most important `info` methods include:
 
-- `/v2/info/chains` (`chains()`): Get info about all supported chains, including capabilities, address type, logo, etc...
+- `/v2/info/chains` (`chains()`): Get info about all supported chains, including capabilities, address type, logo, etc... By default only Cosmos chains are returned. Set `include_evm` and `include_svm` to also include EVM and SVM chains.
 - `/v2/info/bridges` (`bridges()`): Get basic info about all supported bridges, including logo and name
 
 
@@ -30,6 +30,7 @@ The most important `fungible` methods include :
 - `/v2/fungible/route` (`route()`): Get a swap/transfer route and quote between a pair of tokens & chains. You can customize this request significantly to only consider particular DEXes, bridges; to add route splitting for better prices; and much more.
 - `/v2/fungible/msgs` (`messages()`): Generates the transaction data for the transaction(s) the user must sign to execute a given route
 - `/v2/fungible/msgs_direct` (`messagesDirect()`): Generates a route, quote, and associated transaction data at the same time
+- `/v2/fungible/assets` (`assets()`): Get all supported assets, grouped by chain. By default only Cosmos assets are returned. Set `include_evm_assets` and `include_svm_assets` to also include EVM and SVM assets.
 - `/v2/fungible/venues` (`venues()`): Get metadata for all supported swapping venues (DEXes, liquid staking protocols, etc...), including name and logo.
 
 (There are many other providing more specific functionality for power users. See API docs for more details.)
@@ -50,7 +51,7 @@ The most important `tx` methods include:
 
 On a cross-chain swapping and transferring frontend, integrators typically:
 
-1. Use the `info` methods to populate the list of potential starting & ending chains & assets
+1. Use `/info/chains` (`chains()`) and `/fungible/assets` (`assets()`) to populate the list of potential starting & ending chains & assets
 
    <Frame>![](/images/41254route.png)</Frame>
 
