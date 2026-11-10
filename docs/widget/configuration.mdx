@@ -1,19 +1,48 @@
 ---
 title: "Configuration"
-description: "This page details your widget configuration options. Tweak it to fit your exact user experience needs!"
+description: "All props of the Skip Go Widget, grouped by what they control, with types and defaults"
 ---
 
 <Note>
-**Visual Configuration Tool:** Want to see how your configuration options look before implementing them? Try [studio.skip.build](https://studio.skip.build) - our interactive widget builder that lets you customize themes, assets, routes, and more with a live preview.
+**Visual Configuration Tool:** Want to see how your configuration options look before implementing them? Try [studio.skip.build](https://studio.skip.build), our interactive widget builder with a live preview of themes, assets, routes, and more.
 </Note>
 
-# Component Props
+The `Widget` component takes the props below. All props are optional.
 
-The `Widget` component accepts the following props.
+## Props at a Glance
+
+| Prop | What it controls | Default |
+|---|---|---|
+| [`defaultRoute`](#defaultroute) | Route shown when the widget loads | None |
+| [`routeConfig`](#routeconfig) | Which bridges, venues, and route types are allowed | See [`routeConfig`](#routeconfig) |
+| [`settings`](#settings) | Default slippage and EVM approval amount | Slippage `1`, limited approval |
+| [`batchSignTxs`](#batchsigntxs) | Sign all transactions upfront or one by one | `true` |
+| [`simulate`](#simulate) | Simulate transactions before executing | `true` |
+| [`filter`](#filter) | Chains and assets to show | All |
+| [`filterOut`](#filterout) | Chains and assets to hide | None |
+| [`filterOutUnlessUserHasBalance`](#filteroutunlessuserhasbalance) | Chains and assets to hide unless the user holds them | None |
+| [`assetSymbolsSortedToTop`](#assetsymbolssortedtotop) | Asset order in the selector | None |
+| [`assetAnnotations`](#assetannotations) | Badges, descriptions, and pinning per asset | None |
+| [`hideAssetsUnlessWalletTypeConnected`](#hideassetsunlesswallettypeconnected) | Hide Sei assets for wallet types that aren't connected | `false` |
+| [`theme`](#theme) | Colors and corner radius | Dark theme |
+| [`brandColor`](#brandcolor) | Main highlight color | Theme default |
+| [`disableShadowDom`](#disableshadowdom) | Render without shadow DOM | `false` |
+| [`rootId`](#rootid) | `data-root-id` on root elements | None |
+| [`modalZIndex`](#modalzindex) | `z-index` of modals | `10` |
+| [`chainIdsToAffiliates`](#chainidstoaffiliates) | Affiliate fees per chain | None |
+| [`connectedAddresses` and signers](#connectedaddresses-and-signers) | Use wallets your app already connected | None |
+| [`walletConnect`](#walletconnect) | WalletConnect setup | None |
+| [`onlyTestnet`](#onlytestnet) | Show testnet chains only | `false` |
+| [`apiUrl`, `apiKey`, `endpointOptions`](#apiurl) | API and RPC endpoints | Skip proxied endpoints |
+| [`skipExplorerUrl`](#skipexplorerurl) | Explorer used for history links | `https://explorer.skip.build` |
+| [Callbacks](#callbacks) | Functions called on widget events | None |
+| [`enableAmplitudeAnalytics`](#enableamplitudeanalytics) | Amplitude analytics | `false` |
+
+## Routes
 
 ### `defaultRoute`
 
-Customizes the initial route displayed on widget load. Query supported assets using the Skip Go API [/assets](https://docs.skip.build/go/api-reference/prod/fungible/get-v2fungibleassets) endpoint. Setting this triggers a route request on render.
+Sets the route shown when the widget loads, and requests a route on render. Find supported assets with the [/assets](/api-reference/prod/fungible/get-v2fungibleassets) endpoint.
 
 ```ts
 defaultRoute?: {
@@ -23,23 +52,24 @@ defaultRoute?: {
   srcAssetDenom?: string;
   destChainId?: string;
   destAssetDenom?: string;
+  srcLocked?: boolean;
+  destLocked?: boolean;
 };
 ```
 
-- `amountIn`: Preset input amount for exact amount in request.
-- `amountOut`: Preset output amount for exact amount out request. If both specified, only `amountIn` is used.
-- `srcChainId` : Source chain ID.
-- `srcAssetDenom`: Source asset denomination.
-- `destChainId`: Destination chain ID.
-- `destAssetDenom`: Destination asset denomination.
+- `amountIn`: Preset input amount. If both `amountIn` and `amountOut` are set, only `amountIn` is used.
+- `amountOut`: Preset output amount.
+- `srcChainId`, `srcAssetDenom`: Source chain ID and asset denom.
+- `destChainId`, `destAssetDenom`: Destination chain ID and asset denom.
+- `srcLocked`, `destLocked`: Prevent the user from changing the source or destination asset. Either one also disables the button that swaps source and destination.
 
 ### `routeConfig`
 
-Customizes enabled route types.
+Sets which routes the widget can use. Fields you don't set keep their defaults.
 
 ```ts
 routeConfig?: {
-  experimentalFeatures?: string[]; // e.g. ['stargate', 'eureka']
+  experimentalFeatures?: string[];
   allowMultiTx?: boolean;
   allowUnsafe?: boolean;
   bridges?: ('IBC' | 'AXELAR' | 'CCTP' | 'CCTP_V2' | 'HYPERLANE' | 'OPINIT' | 'GO_FAST' | 'STARGATE' | 'LAYER_ZERO' | 'EUREKA')[];
@@ -49,49 +79,74 @@ routeConfig?: {
   }[];
   goFast?: boolean;
   smartSwapOptions?: SmartSwapOptions;
-  timeoutSeconds?: string; // Number of seconds for the IBC transfer timeout, defaults to 5 minutes
+  timeoutSeconds?: string;
 };
 ```
 
-- `allowMultiTx`: Allow multi-transaction routes. Default: true.
-- `allowUnsafe`: Allow unsafe routes. Default: false. [More info](../advanced-swapping/allow_unsafe-preventing-handling-bad-execution).
-- `bridges`: Restrict routing to specific bridges. Default: empty (all bridges).
-- `swapVenues`: Restrict routing to specific swap venues. Default: empty (all venues).
-- `goFast`: Enable Go Fast transfers. Default: false. [More info](../advanced-transfer/go-fast).
-- `experimentalFeatures`: Array of experimental features to enable. Include `'eureka'` to enable routing with Eureka assets.
-- `smartSwapOptions`: Advanced swapping features like EVM Swaps and split trade routes. [More info](../advanced-swapping/smart-swap-options).
+| Field | Description | Default |
+|---|---|---|
+| `experimentalFeatures` | [Experimental features](/advanced-transfer/experimental-features) to enable | `["stargate", "eureka", "layer_zero"]` |
+| `allowMultiTx` | Allow routes that need more than one transaction | `true` |
+| `allowUnsafe` | Allow routes with high price impact or poor execution. [More info](/advanced-swapping/allow_unsafe-preventing-handling-bad-execution) | `true` |
+| `bridges` | Only use these bridges | All bridges |
+| `swapVenues` | Only use these swap venues | All venues |
+| `goFast` | Use [Go Fast](/advanced-transfer/go-fast) when available | `true` |
+| `smartSwapOptions` | Advanced swapping, such as EVM swaps and split routes. [More info](/advanced-swapping/smart-swap-options) | `{ splitRoutes: true, evmSwaps: true }` |
+| `timeoutSeconds` | IBC transfer timeout, in seconds | API default (5 minutes for routes that start on Cosmos) |
+
+### `settings`
+
+Sets defaults for settings the user can change.
+
+```ts
+settings?: {
+  slippage?: number;
+  useUnlimitedApproval?: boolean;
+};
+```
+
+- `slippage`: Default slippage percentage (0-100) for Cosmos SDK chain swaps. Default: `1`.
+- `useUnlimitedApproval`: Set the EVM allowance to the maximum amount when an approval is required. Default: `false`.
 
 ### `batchSignTxs`
 
-Controls whether all transactions in a multi-transaction route should be signed upfront or individually as they are executed.
+Whether all transactions in a multi-transaction route are signed upfront or one at a time.
 
 ```ts
 batchSignTxs?: boolean;
 ```
 
 - **Default:** `true`
-- When enabled, all transactions in the route will be requested for signature at the beginning of the execution. They will then be broadcast one by one in sequence.
-- When disabled, each transaction will be signed individually just before it is broadcast.
+- When `true`, the widget asks the user to sign every transaction at the start, then broadcasts them one by one in order.
+- When `false`, the widget asks for each signature just before broadcasting that transaction.
 
-**Example scenario with `batchSignTxs: true`:**
-For a route: Solana → Noble → Cosmos (3 transactions requiring signatures)
-- All 3 transactions will be prompted for signature upfront
-- After signing, they will be broadcast sequentially: Solana first, then Noble, then Cosmos
+For example, for a route from Solana to Noble to Cosmos with three transactions, `true` asks for all three signatures upfront, then broadcasts Solana, Noble, and Cosmos in order.
 
 <Note>
-**EVM Transaction Limitation:** If an EVM transaction appears as the second or later transaction in a route, batch signing cannot be performed upfront. In such cases, the EVM transaction and any subsequent transactions will need to be signed individually when they are ready to be executed.
+**EVM transaction limitation:** If an EVM transaction is the second or a later transaction in a route, it can't be signed upfront. That transaction and every transaction after it are signed one at a time when they are ready to run.
 </Note>
+
+### `simulate`
+
+Whether the widget simulates transactions before executing the route, to check gas and balances.
+
+```ts
+simulate?: boolean;
+```
+
+- **Default:** `true`
+
+## Assets
 
 ### `filter`
 
-Key value pair of chainIds or specific asset denoms allowed
-on source and destination assets
+Chains and assets to show. Keys are chain IDs. A value of `undefined` allows every asset on that chain, and an array allows only those denoms.
 
 ```ts
-  filter?: {
-    source?: Record<string, string[] | undefined>;
-    destination?: Record<string, string[] | undefined>;
-  };
+filter?: {
+  source?: Record<string, string[] | undefined>;
+  destination?: Record<string, string[] | undefined>;
+};
 ```
 
 Example:
@@ -99,15 +154,14 @@ Example:
 ```ts
 {
   source: {
-    // only assets on this chainId is allowed
+    // any asset on this chain
     'noble-1': undefined,
   },
   destination: {
-    // these assets on this chainId are allowed
+    // only these assets on this chain
     'cosmoshub-4': ['uatom', 'ibc/2181AAB0218EAC24BC9F86BD1364FBBFA3E6E3FCC25E88E3E68C15DC6E752D86'],
-    // these assets on this chainId are allowed
     'agoric-3': ['ibc/FE98AAD68F02F03565E9FA39A5E627946699B2B07115889ED812D8BA639576A9'],
-    // any asset on this chainId are allowed
+    // any asset on this chain
     'osmosis-1': undefined,
   }
 }
@@ -115,14 +169,13 @@ Example:
 
 ### `filterOut`
 
-Opposite of filter.
-Key value pair of chainIds not allowed or specific asset denoms not allowed
+Chains and assets to hide. Uses the same format as [`filter`](#filter): `undefined` hides every asset on the chain, and an array hides only those denoms.
 
 ```ts
-  filterOut?: {
-    source?: Record<string, string[] | undefined>;
-    destination?: Record<string, string[] | undefined>;
-  };
+filterOut?: {
+  source?: Record<string, string[] | undefined>;
+  destination?: Record<string, string[] | undefined>;
+};
 ```
 
 Example:
@@ -130,156 +183,30 @@ Example:
 ```ts
 {
   source: {
-    // only assets on this chainId is not allowed
+    // every asset on this chain
     'noble-1': undefined,
   },
   destination: {
-    // these assets on this chainId are not allowed
+    // only these assets on this chain
     'cosmoshub-4': ['uatom', 'ibc/2181AAB0218EAC24BC9F86BD1364FBBFA3E6E3FCC25E88E3E68C15DC6E752D86'],
   }
 }
 ```
 
-### `settings`
+### `filterOutUnlessUserHasBalance`
 
-Sets defaults for user-customizable settings.
+Like [`filterOut`](#filterout), but a chain or asset stays visible if the user holds a balance of it.
 
 ```ts
-settings?: {
-  slippage?: number;
-  useUnlimitedApproval?: boolean; // Set allowance amount to max if EVM transaction requires allowance approval
+filterOutUnlessUserHasBalance?: {
+  source?: Record<string, string[] | undefined>;
+  destination?: Record<string, string[] | undefined>;
 };
 ```
 
-- `slippage`: Default slippage percentage (0-100) for CosmosSDK chain swaps. Default: `1`.
-- `useUnlimitedApproval`: Set the EVM allowance to the max amount when an approval is required. Default: `false`.
-
-### `onlyTestnet`
-
-`onlyTestnet`: Boolean to show only testnet data. Default: false (mainnet data only).
-
-### `endpointOptions`
-
-Override default Skip proxied endpoints. Whitelisting required, reach out [here](https://discord.com/invite/interchain).
-
-```ts
-endpointOptions?: {
-    endpoints?: Record<string, EndpointOptions>;
-    getRpcEndpointForChain?: (chainID: string) => Promise<string>;
-    getRestEndpointForChain?: (chainID: string) => Promise<string>;
-  };
-```
-
-### `apiUrl`
-
-String to override default Skip Go API proxied endpoints. Whitelisting required, reach out [here](https://discord.com/invite/interchain).
-
-### `brandColor`
-
-Customizes the main highlight color of the widget
-
-### `borderRadius`
-
-Controls the corner roundness of cards and buttons in the widget. This is not a top-level prop — set it under [`theme`](#theme) via `theme.borderRadius`.
-
-### `theme`
-
-Advanced widget appearance customization options
-
-```tsx
-  theme? = {
-    brandColor: string;
-    borderRadius: {
-      main?: string | number;
-      selectionButton?: string | number;
-      ghostButton?: string | number;
-      modalContainer?: string | number;
-      rowItem?: string | number;
-    };
-    primary: {
-      background: {
-        normal: string;
-      };
-      text: {
-        normal: string;
-        lowContrast: string;
-        ultraLowContrast: string;
-      };
-      ghostButtonHover: string;
-    };
-    secondary: {
-      background: {
-        normal: string;
-        transparent: string;
-        hover: string;
-      };
-    };
-    success: {
-      background: string;
-      text: string;
-    };
-    warning: {
-      background: string;
-      text: string;
-    };
-    error: {
-      background: string;
-      text: string;
-    };
-  };
-```
-
-
-### `chainIdsToAffiliates`
-
-Define fees per chain and recipient addresses.
-
-<Info>
-Total basisPointsFee must be consistent across chains. Addresses must be valid for respective chains.
-</Info>
-
-```ts
-chainIdsToAffiliates: {
-  'noble-1': {
-    affiliates: [{
-      basisPointsFee: '100', // 1% fee
-      address: 'noble..1', // address to receive fee
-    },
-    {
-      basisPointsFee: '100', // 1% fee
-      address: 'noble...2', // address to receive fee
-    }]
-  },
-  'osmosis-1': {
-    affiliates: [{
-      basisPointsFee: '200', // 2% fee
-      address: 'osmo...1', // address to receive fee
-    },]
-  }
-}
-```
-
-
-### `enableSentrySessionReplays`
-
-Enables sentry session replays on the widget to help with troubleshooting errors. Default: false.
-
-### `enableAmplitudeAnalytics`
-
-Enable Amplitude analytics for the widget to improve user experience. Default: false.
-
-### `disableShadowDom`
-
-Disables shadow dom, useful if there are issues with libraries not supporting shadow-dom or for enabling server side rendering
-Default: false. (shadow dom is enabled by default to avoid styling conflicts/issues)
-
-### `hideAssetsUnlessWalletTypeConnected`
-
-Filters assets based on connected wallet types (currently only supports Sei Cosmos/EVM). Added in v3.7.3. Default: false.
-
 ### `assetSymbolsSortedToTop`
 
-Prioritizes assets by recommended symbol when their pinning, search-match, and balance priorities are equal. Symbols are ordered as listed. To pin an asset above search matches and balances, use [`assetAnnotations`](#assetannotations) with `selector.pinToTop` instead.
+Orders assets by recommended symbol, in the order listed, when their pinning, search match, and balance priority are equal. To pin an asset above search matches and balances, use [`assetAnnotations`](#assetannotations) with `selector.pinToTop`.
 
 ```ts
 assetSymbolsSortedToTop?: string[];
@@ -287,25 +214,25 @@ assetSymbolsSortedToTop?: string[];
 
 ### `assetAnnotations`
 
-Render a per-asset annotation (badge / description / highlight / pin-to-top), keyed by recommended symbol.
+Adds a badge, description, highlight, or pin to an asset, keyed by recommended symbol.
 
 ```ts
 assetAnnotations?: Record<string, {
-  variant?: "info" | "warning" | "error"; // color; defaults to "info"
+  variant?: "info" | "warning" | "error";
   swapPage?: {
-    label: string;                         // badge on the swap page asset rows
+    label: string;
   };
   selector?: {
-    description?: string;                   // detail line under the asset name in the token selector
-    pinToTop?: boolean;                     // pin the asset to the top of the selector, above balances
+    description?: string;
+    pinToTop?: boolean;
   };
 }>;
 ```
 
-- `variant`: color of the badge / description / highlight. `info` uses the brand color, `warning` and `error` use the theme's warning/error colors.
-- `swapPage.label`: renders a badge on the swap page (source and destination rows).
-- `selector.description`: detail line under the asset name in the token selector.
-- `selector.pinToTop`: pins the asset to the very top of the token selector (above balances, and above search matches).
+- `variant`: Color of the badge, description, and highlight. `info` uses the brand color. `warning` and `error` use the theme's warning and error colors. Default: `info`.
+- `swapPage.label`: Badge on the swap page, on both source and destination rows.
+- `selector.description`: Detail line under the asset name in the token selector.
+- `selector.pinToTop`: Pins the asset to the very top of the token selector, above balances and search matches.
 
 Example:
 
@@ -322,20 +249,152 @@ assetAnnotations={{
 }}
 ```
 
-### `filterOutUnlessUserHasBalance`
+### `hideAssetsUnlessWalletTypeConnected`
 
-Like `filterOut`, but the assets/chains are only hidden unless the user holds a balance of them.
+Hides assets whose wallet type isn't connected. Currently only Sei Cosmos and Sei EVM assets are supported. Added in v3.7.3. Default: `false`.
+
+## Appearance
+
+### `theme`
+
+Customizes colors and corner radius. Pass `"light"` or `"dark"` to use a built-in theme, or an object to override parts of the default dark theme. Fields you don't set keep their default values.
+
+```tsx
+theme?: "light" | "dark" | {
+  brandColor: string;
+  borderRadius?: {
+    main?: string | number;
+    selectionButton?: string | number;
+    ghostButton?: string | number;
+    modalContainer?: string | number;
+    rowItem?: string | number;
+  };
+  primary: {
+    background: {
+      normal: string;
+    };
+    text: {
+      normal: string;
+      lowContrast: string;
+      ultraLowContrast: string;
+    };
+    ghostButtonHover: string;
+  };
+  secondary: {
+    background: {
+      normal: string;
+      transparent: string;
+      hover: string;
+    };
+  };
+  success: {
+    background: string;
+    text: string;
+  };
+  warning: {
+    background: string;
+    text: string;
+  };
+  error: {
+    background: string;
+    text: string;
+  };
+};
+```
+
+To change corner roundness, set `theme.borderRadius`. There is no top-level `borderRadius` prop.
+
+### `brandColor`
+
+The main highlight color of the widget.
+
+### `disableShadowDom`
+
+Renders the widget without shadow DOM. Use it if a library doesn't support shadow DOM, or for server-side rendering. Default: `false`. Shadow DOM is on by default to avoid style conflicts.
+
+### `rootId`
+
+Adds a `data-root-id` attribute to every root element of the widget, including portals. Useful for `document.querySelector` or scoped styling.
 
 ```ts
-filterOutUnlessUserHasBalance?: {
-  source?: Record<string, string[] | undefined>;
-  destination?: Record<string, string[] | undefined>;
+rootId?: string;
+```
+
+### `modalZIndex`
+
+`z-index` for the widget's modals.
+
+```ts
+modalZIndex?: number;
+```
+
+- **Default:** `10`
+
+## Fees
+
+### `chainIdsToAffiliates`
+
+Affiliate fees per chain, and the addresses that receive them. See [Affiliate Fees](/general/affiliate-fees).
+
+<Info>
+The total `basisPointsFee` must be the same on every chain. Each address must be valid for its chain.
+</Info>
+
+```ts
+chainIdsToAffiliates: {
+  'noble-1': {
+    affiliates: [{
+      basisPointsFee: '100', // 1% fee
+      address: 'noble...1', // address to receive fee
+    },
+    {
+      basisPointsFee: '100', // 1% fee
+      address: 'noble...2', // address to receive fee
+    }]
+  },
+  'osmosis-1': {
+    affiliates: [{
+      basisPointsFee: '200', // 2% fee
+      address: 'osmo...1', // address to receive fee
+    }]
+  }
+}
+```
+
+## Wallets
+
+### `connectedAddresses` and signers
+
+If your app has already connected the user's wallets (for example MetaMask for EVM, Phantom for Solana, or Keplr for Cosmos), pass both `connectedAddresses` and the signer functions below. The widget then uses those wallets instead of asking the user to connect again. See the [example implementation](https://github.com/skip-mev/skip-go/tree/staging/examples/nextjs/src/app/injected/page.tsx).
+
+`connectedAddresses` maps chain IDs to addresses:
+
+```typescript
+const connectedAddresses: Record<string, string> = {
+  "1": "0x123...abc",          // Ethereum mainnet address
+  "cosmoshub-4": "cosmos1...", // Cosmos Hub address
+  "solana": "3n9...xyz",       // Solana address
 };
+```
+
+Signer functions:
+
+- **`getCosmosSigner(chainId: string): Promise<OfflineSigner>`**: Returns a Cosmos signer from [`@cosmjs`](https://docs.keplr.app/api/cosmjs.html).
+- **`getEvmSigner(chainId: string): Promise<WalletClient>`**: Returns an EVM `WalletClient` from [`viem`](https://viem.sh/docs/clients/wallet.html).
+- **`getSvmSigner(): Promise<Adapter>`**: Returns a Solana wallet `Adapter` from [`@solana/wallet-adapter-base`](https://solana.com/developers/cookbook/wallets/connect-wallet-react).
+
+```jsx
+<Widget
+  connectedAddresses={connectedAddresses}
+  getCosmosSigner={getCosmosSigner}
+  getEvmSigner={getEvmSigner}
+  getSvmSigner={getSvmSigner}
+/>
 ```
 
 ### `walletConnect`
 
-WalletConnect configuration used for wallet connections.
+WalletConnect configuration for wallet connections.
 
 ```ts
 walletConnect?: {
@@ -352,33 +411,27 @@ walletConnect?: {
 };
 ```
 
-### `simulate`
+## Network
 
-Whether the widget simulates transactions before executing the route to validate gas and balances.
+### `onlyTestnet`
 
-```ts
-simulate?: boolean;
-```
+Shows only testnet chains. Default: `false`.
 
-- **Default:** `true`
+### `apiUrl`
 
-### `rootId`
+Overrides the default Skip proxied API endpoint. Your domain must be whitelisted; reach out on [Discord](https://discord.com/invite/interchain). You can also pass `apiKey` to send your [Skip Go API key](/general/api-keys).
 
-If specified, adds a `data-root-id` attribute to all root elements of the widget (including portals), useful for `document.querySelector` or scoped styling.
+### `endpointOptions`
 
-```ts
-rootId?: string;
-```
-
-### `modalZIndex`
-
-Custom `z-index` for the widget's modals.
+Overrides the default Skip proxied RPC and REST endpoints. Your domain must be whitelisted; reach out on [Discord](https://discord.com/invite/interchain).
 
 ```ts
-modalZIndex?: number;
+endpointOptions?: {
+  endpoints?: Record<string, EndpointOptions>;
+  getRpcEndpointForChain?: (chainId: string) => Promise<string>;
+  getRestEndpointForChain?: (chainId: string) => Promise<string>;
+};
 ```
-
-- **Default:** `10`
 
 ### `skipExplorerUrl`
 
@@ -390,118 +443,27 @@ skipExplorerUrl?: string;
 
 - **Default:** `https://explorer.skip.build`
 
-### `callbacks`
+## Events
 
-Event handling functions.
+### Callbacks
 
-```ts
-onWalletConnected?: (params: {
-  walletName?: string;
-  chainIdToAddressMap: Record<string, string>;
-  address?: string;
-}) => void;
+Pass these functions as top-level props to react to widget events.
 
-onWalletDisconnected?: (params: {
-  walletName?: string;
-  chainType?: string;
-}) => void;
+| Prop | Called when | Receives |
+|---|---|---|
+| `onWalletConnected` | A wallet connects | `{ walletName, chainIdToAddressMap?, chainId?, address? }` |
+| `onWalletDisconnected` | A wallet disconnects | `{ walletName, chainType? }` |
+| `onTransactionSignRequested` | The widget asks the user to sign a transaction | `{ chainId, signerAddress?, txIndex }` |
+| `onTransactionBroadcasted` | A transaction is broadcast. Called once per transaction in multi-transaction routes | `{ txHash, chainId, explorerLink, sourceAddress, destinationAddress, sourceAssetDenom, sourceAssetChainId, destAssetDenom, destAssetChainId }` |
+| `onTransactionComplete` | The route completes | Same fields as `onTransactionBroadcasted` |
+| `onTransactionFailed` | A transaction fails | `{ error: string }` |
+| `onRouteUpdated` | The route changes | `{ srcChainId?, srcAssetDenom?, destChainId?, destAssetDenom?, amountIn?, amountOut?, requiredChainAddresses? }` |
+| `onSourceAndDestinationSwapped` | The user swaps source and destination | `{ srcChainId?, srcAssetDenom?, destChainId?, destAssetDenom?, amountIn?, amountOut? }` |
+| `onSourceAssetUpdated` | The source asset changes | `{ chainId?, denom? }` |
+| `onDestinationAssetUpdated` | The destination asset changes | `{ chainId?, denom? }` |
 
-onTransactionSignRequested?: (props: onTransactionSignRequestedProps) => void;
+## Analytics
 
-onTransactionBroadcasted?: (params: {
-  chainId: string;
-  signerAddress?: string;
-  txIndex: number;
-}) => void;
+### `enableAmplitudeAnalytics`
 
-onTransactionComplete?: (params: {
-  txHash: string;
-  chainId: string;
-  explorerLink?: string;
-  sourceAddress: string;
-  destinationAddress: string;
-  sourceAssetDenom: string;
-  sourceAssetChainID: string;
-  destAssetDenom: string;
-  destAssetChainID: string;
-}) => void;
-
-onTransactionFailed?: (params: { error: Error }) => void;
-
-onRouteUpdated?: (props: {
-  srcChainId?: string;
-  srcAssetDenom?: string;
-  destChainId?: string;
-  destAssetDenom?: string;
-  amountIn?: string;
-  amountOut?: string;
-  requiredChainAddresses?: string[];
-}) => void;
-
-onSourceAndDestinationSwapped?: (props: {
-  srcChainId?: string;
-  srcAssetDenom?: string;
-  destChainId?: string;
-  destAssetDenom?: string;
-  amountIn?: string;
-  amountOut?: string;
-}) => void;
-
-onSourceAssetUpdated?: (props: {
-  chainId?: string;
-  denom?: string;
-}) => void;
-
-onDestinationAssetUpdated?: (props: {
-  chainId?: string;
-  denom?: string;
-}) => void;
-```
-
-- `onWalletConnected`: Called when a wallet is connected.
-- `onWalletDisconnected`: Called when a wallet is disconnected.
-- `onTransactionBroadcasted`: Called when a transaction is broadcasted. This is called multiple times for multi-transaction routes.
-- `onTransactionComplete`: Triggered when a transaction is completed.
-- `onTransactionFailed`: Triggered when a transaction fails.
-
-### `connectedAddresses` & `signers`
-
-If your application has already connected to a user's wallet (e.g., via MetaMask for EVM networks, Phantom for Solana, or Keplr for Cosmos), you **must provide both** the `connectedAddresses` and corresponding signer functions in order to enable the widget's injected wallet functionality.
-See an implementation example [here](https://github.com/skip-mev/skip-go/tree/staging/examples/nextjs/src/app/injected/page.tsx).
-
-`WalletClient` comes from the [`viem` package](https://viem.sh/docs/clients/wallet.html). `Adapter` comes from the [`@solana/wallet-adapter-base` package](https://solana.com/developers/cookbook/wallets/connect-wallet-react). And `OfflineSigner` comes from the [`@cosmjs` package](https://docs.keplr.app/api/cosmjs.html).
-
-- **Type:** `Record<ChainId, Address>`
-
-**Example:**
-```typescript
-const connectedAddresses: Record<string, string> = {
-  "1": "0x123...abc",          // Ethereum mainnet address
-  "cosmoshub-4": "cosmos1...", // Cosmos Hub address
-  "solana": "3n9...xyz",       // Solana address
-  // ... add more chain IDs and addresses as needed
-};
-```
-
-### Signer Functions
-
-Each signer function below must be implemented to fully leverage the injected wallet capabilities:
-
-- **`getCosmosSigner(): Promise<OfflineSigner>`**
-  Returns a Cosmos-compatible signer.
-
-- **`getEvmSigner(): Promise<WalletClient>`**
-  Returns an EVM-compatible signer (e.g., from `viem`).
-
-- **`getSvmSigner(): Promise<PhantomWalletAdapter>`**
-  Returns a Solana-compatible signer, such as a `PhantomWalletAdapter`.
-
-**Complete Example for injected wallet functionality:**
-```jsx
-<Widget
-  connectedAddresses={connectedAddresses}
-  getCosmosSigner={getCosmosSigner}
-  getEvmSigner={getEvmSigner}
-  getSvmSigner={getSvmSigner}
-/>
-```
+Enables Amplitude analytics for the widget. Default: `false`.
