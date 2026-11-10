@@ -1,6 +1,6 @@
 ---
-title: "IBC Token Routing: Problem + Skip Go API Routing Algorithm"
-description: "This page describes the IBC token routing problem and the algorithm Skip Go API uses to select / recommend token denoms and IBC paths"
+title: "IBC Token Routing: The Problem and the Skip Go API Routing Algorithm"
+description: "This page describes the IBC token routing problem and the algorithm Skip Go API uses to select and recommend token denoms and IBC paths"
 ---
 
 
@@ -10,13 +10,13 @@ description: "This page describes the IBC token routing problem and the algorith
  The routing problem: 
  
  1. IBC tags assets based on the sequence of IBC channels they have been transferred over, so the same asset transferred over two different paths will have two different denoms
- 2. Usually, there's only 1 "correct" (i.e. highly liquid) version of each asset on each chain (and frequently there are none)
+ 2. Usually, there's only one "correct" (i.e. highly liquid) version of each asset on each chain (and frequently there are none)
  
  Skip Go API solves this problem by: 
  
  1. Sending assets to their origin chain
- 2. Find the shortest path from the origin chain to the destination chain, and using the most liquid path when there are multiple distinct shortest paths.
- 3. Plus, staying flexible to unusual exceptions
+ 2. Recommending the most liquid version of the asset that was transferred directly from the origin chain to the destination chain
+ 3. Allowing indirect paths for some chains and assets
 </Info>
 
 ## Routing Problem
@@ -29,15 +29,15 @@ IBC transfers data over "channels" that connect two chains. Channels are identif
 
 _Notice that both chains maintain their own channel IDs for the channel, which might not be the same. As an analogy, you might think of the different chains as cities and the channel as a road connecting them. IBC packets are cars driving across the road_
 
-When transferring a fungible token from one chain to another over a channel, the denomination of the token on the destination chain is uniquely and predictably determined by the source denomination + the channel(s) over which the token was transferred. Specifically the denomination algorithm is: 
+When transferring a fungible token from one chain to another over a channel, the denomination of the token on the destination chain is uniquely and predictably determined by the source denomination and the channel(s) over which the token was transferred. Specifically the denomination algorithm is: 
 
 
 
 ```text Naming Algorithm 
-ibc_denom = 'ibc/' + hash('path' + 'base_denom')
+ibc_denom = 'ibc/' + hash(path + '/' + base_denom)
 ```
 
-_`hash` is typically the sha256 hash function_
+_`hash` is the SHA-256 hash function, written in uppercase hex_
 
 Continuing the example from above, the denom of this version of WETH.axl on Terra2 is:
 
@@ -56,7 +56,7 @@ Continuing the example from above, WETH.axl transferred directly from Axelar to 
 
 <Frame>![](/images/2477aba-Screen_Shot_2023-07-25_at_3.48.15_PM.png)</Frame>
 
-To make matters worse, multiple channels can exist between the same two chains (IBC is permissionless afterall), and IBC uses channel identifiers--not chain identifiers--to construct denoms. That means two different versions of the same asset will exist on the destination chain even when tokens are transferred from the same source chain, if they're transferred over two different channels: 
+To make matters worse, multiple channels can exist between the same two chains (IBC is permissionless after all). IBC builds denoms from channel identifiers, not chain identifiers. So tokens sent from the same source chain over two different channels become two different versions of the same asset on the destination chain: 
 
 <Frame>![](/images/eb72804-Screen_Shot_2023-07-25_at_3.59.53_PM.png)</Frame>
 
@@ -64,18 +64,18 @@ To make matters worse, multiple channels can exist between the same two chains (
  <Warning>
  **Why don't we just consider them equivalent anyway and move on?**
  
- Some folks who don’t work with bridges on a regular basis view this path tagging as a bug, or might think we should just consider these different versions of the same asset as fungible anyway. But that's not advisable! 
+ Path tagging can look like a bug, and it is tempting to treat these versions as the same asset. They are not. 
  
- The route-based denom construction is a critical security feature because the chain where the token has been transferred to is effectively trusting the validator set of the chain from which the token was transferred. 
+ The route-based denom construction is a critical security feature. A chain that receives a token effectively trusts the validator set of the chain that sent it. 
  
- Applied to the example here, this trust model means using the purple version of WETH.axl implies trusting the Osmosis validator set AND the Axelar validator set, while using the blue version of WETH.axl only requires trusting the Axelar validator set.
+ Applied to the example here, this trust model means using the purple version of WETH.axl implies trusting the Osmosis validator set and the Axelar validator set, while using the blue version of WETH.axl only requires trusting the Axelar validator set.
 </Warning>
 
-### There are many paths between two chains, but usually only 1 useful version of each asset
+### There are many paths between two chains, but usually only one useful version of each asset
 
-Right now, there are about 70 IBC-enabled chains. At least one channel exists between almost every pair in this set. This dense graph of channels contains a very large number of different paths between almost any two chains, which creates many opportunities for "token winding" or "mis-pathing", where a user sends an asset through a suboptimal path of channels from one chain to another and ends up with an illiquid / unusable version of their token. 
+Right now, there are dozens of IBC-enabled chains. At least one channel exists between almost every pair in this set. This dense graph of channels contains a very large number of different paths between almost any two chains. That creates many opportunities for "token winding" or "mis-pathing", where a user sends an asset through a suboptimal path of channels from one chain to another and ends up with an illiquid or unusable version of their token. 
 
-Mis-pathing almost always produces a practically useless + illiquid version of their token on the destination chain because there's usually only 1 useful version of a given asset on a given destination chain (if that). (There are over 50 versions of ATOM on JUNO!)
+Mis-pathing almost always produces a practically useless and illiquid version of their token on the destination chain because there's usually only one useful version of a given asset on a given destination chain (if that). (There are over 30 versions of ATOM on JUNO!)
 
 As a result, we need to be very careful to send the user through the correct sequence of channels. The next section explains our token routing algorithm. 
 
@@ -83,27 +83,29 @@ As a result, we need to be very careful to send the user through the correct seq
 
 
  <Info>
- **Insight about routing: The correct route depends on the chains + the asset in question**
+ **Insight about routing: The correct route depends on the chains and the asset in question**
  
- Notice that the correct route for a particular asset A on a particular chain Chain-1 to another chain Chain-2 depends not only on the channels that exist between chain-1 and chain-2, but also on what asset-A is. 
- 
- This is because asset A is defined by its path from its origin. Consider the following two cases: 
- 
- * If asset-A is native to Chain-1, perhaps it can be routed directly over a channel to Chain-2\. This would yield a simple asset given by path of Chain-1->Chain-2
- * If asset-A originated on another chain (e.g. Chain-3), it's very unlikely that transferring directly over a channel to Chain-2 would give the correct version of asset A on Chain-2\. This would yield a more complex denom given by path of Chain-3->Chain-1->Chain-2, which is probably wrong if Chain-3 and Chain-2 are directly connected.  
-   * Instead, the asset should probably be routed back through the channel that connects Chain-1 to Chain-3 first, then sent over the channel to Chain-2\. This yields a path of Chain-1->Chain-3->Chain-2, and a final denom given by the path Chain-3->Chain-2
+ The correct route from one chain to another depends not only on the channels between the two chains, but also on where the asset came from. That's because an asset is defined by its path from its origin chain.
+
+ Take WETH.axl on Osmosis, which came from Axelar, and suppose the user wants it on Terra2:
+
+ * Sending it directly from Osmosis to Terra2 gives a version with the path Axelar → Osmosis → Terra2. This is the purple version above, which also requires trusting Osmosis.
+ * Sending it back to Axelar first, then from Axelar to Terra2, gives the version with the path Axelar → Terra2. This is the blue version, the one that is usually liquid.
+
+ In general, an asset that is native to the source chain can often go directly to the destination chain. An asset that came from another chain should usually go back to its origin chain first.
 </Info>
 
-Ultimately, we use a very simple routing algorithm: 
+Our routing algorithm works as follows: 
 
-1. Route the given asset back to origin chain (i.e. "unwind" it)
-2. Check whether any _high-priority_ manual overrides exist for the given asset on the given destination chain. If so, recommend the path from the source that produces this _high-priority_ version of the asset
-3. If no _high priority_ manual overrides exist:  
-   1. If at least 1 single-hop path to the destination chain exists (i.e. if origin chain and destination chain are directly connected over IBC), recommend the most liquid direct path.  
-   2. If no direct path exists (or if the client on the direct path is expired, or none of the asset has been transferred over the direct path), do not recommend any asset
+1. Route the asset back to its origin chain ("unwind" it).
+2. If a high-priority manual override exists for this asset on the destination chain, recommend the path that produces that version of the asset.
+3. Otherwise, if the origin chain and the destination chain are directly connected over IBC, recommend the most liquid direct path.
+4. Otherwise (there is no direct path, the client on the direct path has expired, or none of the asset has been transferred over the direct path), recommend nothing.
+
+Some chains and assets are allowed to use indirect paths. For these, the recommended version may come through another chain instead of directly from the origin chain.
 
 A few notes about our data collection:
 
 * We run nodes for every supported chain to ensure we always have low-latency access to high quality data
-* We index client + channel status of every channel + client on all the chains we support every couple of hours to ensure we never recommend a path that relayers have abandoned or forgotten about.
+* We index the status of every client and channel on all the chains we support every couple of hours to ensure we never recommend a path that relayers have abandoned or forgotten about.
 * We index the liquidity of every token transferred over every channel on every Cosmos chain every few hours to ensure our liquidity data is up to date. And we closely monitor anomalous, short-term liquidity movements to prevent attacks
