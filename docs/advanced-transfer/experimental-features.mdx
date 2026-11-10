@@ -1,46 +1,32 @@
 ---
 title: "Experimental Features"
-description: "This page provides a living record of the features that can be turned on with the experimental_features flag"
+description: "The features you can turn on with the experimental_features parameter, and their identifiers"
 ---
 
-### Background
+Some newer routing features are opt-in. To use them, list their identifiers in the `experimental_features` parameter. This lets integrators adopt new features early without changing behavior for integrators who haven't opted in.
 
-The `experimental_features` parameter on `/route` and `/msgs_direct` gives us a consistent mechanism for rolling out new features to the folks who want to adopt them ASAP in an "opt-in" fashion, without threatening to destabilize power users who might want the new hottness. 
+## How to Use
 
-_(Of course, we avoid shipping changes that are technically breaking no matter what. But we've found that even additive changes can break some integrators)._
+Pass an array of feature identifiers in `experimental_features` on `/route` and `/msgs_direct`:
 
-We will probably auto-activate most features that we soft launch in `experimental_features` within a few weeks or months of the initial launch -- especially when the feature makes a strict improvement to end user UX (e.g. adding a new DEX or bridge). 
+```json
+"experimental_features": ["eureka", "stargate", "layer_zero"]
+```
 
-The `experimental_features` parameter accepts an array of strings, where each string identifies a feature. The rest of this doc describes each experimental feature currently in prod, when the feature will become opt-out (rather than opt-in), and gives the feature's identifier. 
+In the Client Library, pass `experimentalFeatures` to `route`. In the Widget, set `routeConfig.experimentalFeatures`. The Widget enables all three features below by default.
 
-### Stargate ("stargate")
+## Available Features
 
-**Description:** Support for routing over the Stargate V2 bridge on EVM chains incl. Sei EVM
+| Identifier | Feature | Status |
+|---|---|---|
+| `eureka` | Routes over the IBC Eureka bridge between Cosmos and Ethereum | Opt-in |
+| `stargate` | Routes over the Stargate V2 bridge on EVM chains, including Sei EVM | Opt-in |
+| `layer_zero` | Routes that move supported OFT tokens between Initia and EVM chains over LayerZero | Opt-in |
 
-**Opt-out switch**: Stargate routing will auto-activate on March 1 2025
-
-**Identifier:** "stargate"
-
-### Eureka ("eureka")
-
-**Description:** Support for routing over the IBC Eureka bridge, starting with a connection between Cosmos and Ethereum Mainnet.
-
-**Opt-out switch**: Eureka routing will auto-activate on May 1 2025
-
-**Identifier:** "eureka"
-
-### Layerzero (`"layer_zero"`)
-
-**Description:**  
-Improves cross-chain capabilities to support more assets such as USDT.
-
-**Opt-out switch:**  
-Layerzero routing was auto-activated on **March 1, 2025**.
-
-**Identifier:** `"layer_zero"`
+Without the identifier in the request, routes that need the feature are not returned.
 
 <Info>
  **Have questions or feedback? Help us get better!**
- 
+
  Join [our Discord](https://discord.gg/interchain) and select the "Skip Go Developer" role to share your questions and feedback.
 </Info>
