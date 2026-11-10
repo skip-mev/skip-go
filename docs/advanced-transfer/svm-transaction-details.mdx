@@ -1,78 +1,71 @@
 ---
 title: 'SVM Transactions'
-description: 'This document explains how to use Skip Go API and Client TypeScript Package to construct SVM transactions.'
+description: 'How to read the SvmTx object returned by the Skip Go API, and how to sign and execute a Solana route with @skip-go/client'
 ---
 
-## Intro
+This page is for Cosmos SDK and EVM developers who are new to Solana transactions. When a route starts on an SVM chain such as Solana, the Skip Go API returns an `SvmTx` object for the user to sign. This page describes its fields and shows how to sign and execute it with `@skip-go/client`.
 
-- When a user needs to transfer or swap from an SVM chain (e.g. Solana), the Skip Go API will return an `SvmTx` type for the developer to pass to the user for signing
-- This doc is intended for CosmosSDK and EVM developers who aren't already familiar with the concepts of transaction construction in the SVM and need to use `SvmTx` to help their users move from/to Solana and other SVM chains.
-- **Due to the difficult nature of including Solana transactions on chain during times of high network congestion, we HIGHLY recommend using the `/submit` endpoint to avoid dealing with complex retry logic and/or multiple RPC providers for submission reliability. Skip Go API's `/submit` endpoint implements best practices for Solana transactions submission for you!**
+## `SvmTx` Fields
 
-## Interact with Solana Wallets
+| Field | Description |
+|---|---|
+| `chain_id` | The ID of the chain to submit the transaction to (for example `solana`). |
+| `tx` | The unsigned transaction, as base64-encoded bytes. |
+| `signer_address` | The address that must sign the transaction, which is the user's address on this chain. |
 
-We recommend using [@solana/wallet-adapter](https://github.com/anza-xyz/wallet-adapter#readme) to interact with Solana wallets and build transactions. It provides a standardized `Adapter` object that wraps all major Solana wallets (e.g. Phantom, Backpack, etc...), as well as visual React components for wallet selection. See [here](https://github.com/anza-xyz/wallet-adapter/blob/master/PACKAGES.md) for all the supported wallets.
+`tx` is a complete transaction. Don't change or add anything before signing. It already includes:
 
-## Set up the `SkipClient` to use a Solana wallet
+* A recent blockhash, which Solana uses in place of a nonce
+* The instructions (Solana's equivalent of messages)
+* A priority fee. See [How Priority Fees Are Set](#how-priority-fees-are-set).
 
-All you need to do is initialize the `getSVMSigner` method in `SkipClient.options` to extract the `@solana/wallet-adapter-base` from the user's connected wallet of choice:
+The recent blockhash expires after about a minute, so the user must sign and submit the transaction within that time. For more on Solana transactions, see [Solana's documentation](https://solana.com/docs/core/transactions).
 
-```TypeScript TypeScript
-import { useWallet } from "@solana/wallet-adapter-react";
-import { PhantomWalletName } from "@solana/wallet-adapter-phantom"
-import { SkipClient } from '@skip-go/client';
+## Execute a Solana Route with `@skip-go/client`
 
-const { wallets } = useWallet();
+`executeRoute` signs `tx` with the user's wallet and submits it through the Skip Go API's `/submit` endpoint. `/submit` handles retries and multiple RPC providers, so transactions still land when Solana is congested. If you call the REST API directly, submit signed Solana transactions through `/submit` as well.
 
-const skipClient = new SkipClient({
-  getSVMSigner: async (chainID) => {
-		const { svm } = trackWallet.get();
-		const solanaWallet = wallets.find((w) => w.adapter.name === PhantomWalletName);
-    return solanaWallet
-  }
+### 1. Install a Solana wallet library
+
+We recommend [@solana/wallet-adapter](https://github.com/anza-xyz/wallet-adapter#readme). It wraps all major Solana wallets, such as Phantom and Backpack, in a standard `Adapter` object, and provides React components for choosing a wallet. See the [list of supported wallets](https://github.com/anza-xyz/wallet-adapter/blob/master/PACKAGES.md).
+
+```shell
+npm i @solana/wallet-adapter-react @skip-go/client
+```
+
+### 2. Provide the wallet adapter and execute the route
+
+Pass a `getSvmSigner` function to `executeRoute`. It returns the `Adapter` of the wallet the user connected.
+
+```typescript
+import { useWallet } from '@solana/wallet-adapter-react';
+import { executeRoute } from '@skip-go/client';
+
+// Inside a React component
+const { wallet } = useWallet();
+
+await executeRoute({
+  route,
+  userAddresses,
+  getSvmSigner: async () => {
+    if (!wallet) throw new Error('No Solana wallet connected');
+    return wallet.adapter;
+  },
 });
 ```
 
-After this point, you can use `route`, `executeRoute`, and the other methods of `SkipClient` as you normally would.
+For how to get `route` and `userAddresses`, see [EVM Transactions](/advanced-transfer/evm-transactions).
 
-The rest of these docs cover the underlying details of the data structures, in case you need them.
+## How Priority Fees Are Set
 
-## Understand `SvmTx` Data Structure
+A Solana priority fee affects how likely a transaction is to be included in a block. Unlike on most other major networks, Solana evaluates priority fees locally: a transaction's fee is compared only with other transactions that access the same state, such as the same DEX pool or token contract.
 
-The `SvmTx` has 2 fields that the developer needs to understand:
+* If the fee is low compared with those transactions, the transaction is unlikely to be included.
+* If the fee is high compared with those transactions, the transaction is likely to be included.
 
-- `chain_id`: The ID of the chain that this transaction should be submitted to
-- `tx`: This is the base64 encoded bytes of the transaction you should have the end user sign.
+So transactions that touch congested state cost the most.
 
-### Info on `SvmTx.tx`
-
-This is a fully constructed transaction. You don't need to change it or add anything to it to prepare it for signing. You just need to sign it and have the user submit it on chain within about 1 minute (or the nonce will expire).
-
-For more detail, the transaction already includes:
-
-- User's nonce (In Solana, this is actually a recent blockhash by default)
-- Instructions (Solana's equivalent to messages)
-- Base transaction fees (Set to the default of 500 lamports per signature)
-- Priority fees (More info on how we set these below)
-
-For more information on transactions, check out the Solana's official [docs](https://solana.com/docs/core/transactions)
-
-#### Signing `tx`
-
-[Skip Go Client](https://www.npmjs.com/package/@skip-go/client) takes care of all of the complexity of signing the transaction that gets returned in `SvmTx.tx`.
-
-You just need to have set the `getSVMSigner` method in the `SkipClientOptions` object in the `SkipClient` constructor then use `executeRoute` or `executeTxs`.
-
-#### How Priority Fees are Set
-
-Solana "priority fees" affect how likely it is a transaction gets included in a block. Unlike for many other major blockchain networks, Solana's priority fees are evaluated "locally". In other words, the size of the fee is compared to other transactions that access the same pieces of state (e.g. the same DEX pool, the same token contract etc...):
-
-- If the fee is low relative to other transactions that access the same state, the transaction is unlikely to get included.
-- If its high relative to these other transactions accessing similar state, its likely to be included
-
-As a result, transactions that touch "congested" or "popular" state will be the most expensive.
-
-At this time, we are setting priority fees to match the 90% percentile of priority fees for the "wif" pool state on Jupiter, which we believe is highly congested state. This is a very conservative setting, but it even with these "high amounts", fees are still fractions of a cent.
+For each transaction, Skip Go requests a recommended priority fee estimate for that transaction from its Solana RPC provider and sets the fee to match.
 
 <Info>
  **Have questions or feedback? Help us get better!**
