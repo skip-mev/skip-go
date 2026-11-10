@@ -1,26 +1,26 @@
 ---
 title: 'Web Component'
+description: 'Use the Skip Go Widget in non-React apps as a web component'
 ---
 
 For non-React applications, the Skip Go `Widget` is available as a web component.
 
-
-# Installation
+## Installation
 
 You can import the web component in two ways:
 
-## 1. NPM
+### 1. NPM
 
 ```ts
 import('@skip-go/widget-web-component');
 ```
 
 <Info>
-Note: Ensure Node has sufficient memory allocated: `CopyNODE_OPTIONS=--max-old-space-size=32384`
+Note: Ensure Node has sufficient memory allocated: `NODE_OPTIONS=--max-old-space-size=32384`
 This can be added to npm scripts in `package.json`, a `.env file`, or used when running Node directly.
 </Info>
 
-## 2. Script Tag or CDN (Recommended)
+### 2. Script Tag or CDN (Recommended)
 ```html
 <body>
   <script
@@ -33,7 +33,7 @@ This can be added to npm scripts in `package.json`, a `.env file`, or used when 
 
 ## Usage
 
-Props are the exact same as [`WidgetProps`](./configuration) but you are required to pass them to the element via javascript/typescript.
+The web component takes the same props as the React [`Widget`](/widget/configuration). Set them on the element with JavaScript or TypeScript.
 
 ```tsx
 <div style="width:100%; max-width:500px; padding:0 10px;">
