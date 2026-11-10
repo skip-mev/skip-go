@@ -13,11 +13,11 @@ This doc describes functionality in Skip Go for accessing standardized informati
 * Gas fees
 
 ### How Bridging Fees Are Applied
-The method for applying bridging fees depends on the source chain of the transfer:
+Each fee in `estimated_fees` has a `fee_behavior` that tells you how it is charged:
 
-*   **EVM-Source Transfers**: When a bridge transfer originates from an EVM-based chain (e.g., Ethereum), and the fee is paid in the native token of that chain (like ETH), the fee is typically an *additional charge* on top of the amount being transferred. This approach is common among underlying bridge providers, and we maintain this behavior for consistency across all EVM-source transfers, whether for ERC20 tokens or native assets.
+*   **`FEE_BEHAVIOR_DEDUCTED`**: The fee is taken out of the transferred amount, so the user receives less on the destination chain. This is the case for most fees, including transfers from Cosmos chains and many transfers from EVM chains (e.g. CCTP, Go Fast, Stargate).
 
-*   **Cosmos-Source Transfers**: For transfers originating from Cosmos-based chains, bridging fees are *deducted directly* from the transferred asset amount. Consequently, the amount received on the destination chain will reflect this deduction.
+*   **`FEE_BEHAVIOR_ADDITIONAL`**: The fee is charged on top of the transferred amount, usually in the source chain's native token (e.g. ETH for Axelar and LayerZero transfers from EVM chains). Make sure the user has enough balance to cover both the amount and the fee.
 
 ## Understanding incurred fees from all sources: `estimated_fees`
 
@@ -25,13 +25,13 @@ The method for applying bridging fees depends on the source chain of the transfe
 
 Each `Fee` object in the array will have the following attributes:
 
-* `fee_type`: Enum giving the kind of fee — `SMART_RELAY` , `SWAP` , `BRIDGE`, `RELAY` , `GAS`
-* `bridge_id` : If the fee is a relayer fee (`RELAY`) or a bridge fee (`BRIDGE`), this gives the ID of the bridge charging the fee (or the bridge where the relayer is providing a service)
+* `fee_type`: Enum giving the kind of fee — `SMART_RELAY` or `BRIDGE`
+* `bridge_id` : The ID of the bridge charging the fee (`BRIDGE`), or the bridge where Smart Relay is providing a service (`SMART_RELAY`)
 * `amount` : The amount of the fee (expressed in the token the fee will be charged in)
 * `usd_amount`: Estimated USD value of the fee
-* `origin_asset` : An `Asset` object containing useful metadata for displaying and identifying the token in which the fee is denominated
+* `origin_asset` : An `Asset` object containing useful metadata for displaying and identifying the token in which the fee is denominated (its `denom` field gives the fee token's denom)
 * `chain_id` : Chain ID where the fee will be collected
-* `denom` : Denom of the token in which the fee is denominated
+* `fee_behavior` : How the fee is charged — `FEE_BEHAVIOR_DEDUCTED` (deducted from the transferred amount) or `FEE_BEHAVIOR_ADDITIONAL` (charged on top of the transferred amount, e.g. a fee paid in the native token on an EVM source chain). See [How Bridging Fees Are Applied](#how-bridging-fees-are-applied)
 * `tx_index`: The zero-indexed identifier of the transaction where the user will incur this fee (For multi-transaction routes, fees may be incurred after the first transaction)
 * `operation_index`: The zero-indexed entry in the operations array where the user will incur this fee
 
@@ -39,10 +39,10 @@ Each `Fee` object in the array will have the following attributes:
  **Included Fees & Current Limitations**
 
  The `estimated_fees` array consolidates certain fees for easier display. Currently, it includes:
- * `FeeType: SMART_RELAY` for CCTP bridge transfers.
- * `FeeType: BRIDGE` fees for the following specific bridges: `AXELAR`, `HYPERLANE`, and `GO_FAST`.
+ * `FeeType: SMART_RELAY` for `CCTP`, `CCTP_V2`, and `EUREKA` transfers.
+ * `FeeType: BRIDGE` fees for the following bridges: `AXELAR`, `GO_FAST`, `LAYER_ZERO`, `STARGATE`, and `CCTP_V2` (Circle's fast transfer fee, when `fast_transfer` is set to `true`).
 
- Please note that fees for other bridges (`IBC`, `Stargate`, `LayerZero`, etc.) and other fee types like `Swap` or `Gas` are not yet included here and the steps where these fees occur are detailed in the `operations` array. We plan to expand the coverage of `estimated_fees` in the future.
+ Please note that fees for other bridges (e.g. `IBC`) and other costs like swap fees or gas are not yet included here and the steps where these fees occur are detailed in the `operations` array. We plan to expand the coverage of `estimated_fees` in the future.
  </Warning>
 
 

@@ -16,9 +16,11 @@ Skip Go's affiliate fee functionality is simple but flexible -- supporting a lar
 ### Affiliate Fees Work
 
 1. **At this time, affiliate fees can only be collected on swaps**. We do not support collecting affiliate fees on routes that only consist of transfers (e.g. CCTP transfers, IBC transfers, etc...) even when there are multi-hop transfers. Please contact us if charging fees on transfers is important to you
-2. **Affiliate fees are collected on the chain where the last swap takes place**: Skip Go aggregates over swap venues (DEXes, orderbooks, liquid staking protocols, etc...) on many different chains. Some routes even contain multiple swaps. For each individual cross-chain or single chain swap where you collect a fee, the fee is applied on the last swap and sent to an address you specify on the chain where the last swap takes place
-3. **Affiliate fees are collected/denominated in the output token of each swap**: For example, if a user swaps OSMO to ATOM, your fee collection address will earn a fee in ATOM
-4. **Affiliate fees are calculated using the minimum output amount, which is set based on our estimated execution price after accounting for the user's slippage tolerance** : For example, consider an ATOM to OSMO swap where min amount out is 10 uosmo and the cumulative fees are 1000 bps or 10%. If the swap successfully executes, the affiliate fee will be 1 uosmo. It will be 1 uosmo regardless of whether the user actually gets 10, 11, or 12 uosmo out of the swap
+2. **Affiliate fees are not applied to swaps on EVM chains**. If the swap in a route takes place on an EVM chain, the affiliate fee is ignored and no error is returned.
+3. **Skip receives a share of your affiliate fees**: A portion of the affiliate fee you set goes to Skip, so the amount sent to your addresses is smaller than `cumulative_affiliate_fee_bps`. The share is lower if you use an API key. See [Requesting & Using API Keys](/general/api-keys) for the current rates. The total fee the user pays does not change.
+4. **Affiliate fees are collected on the chain where the last swap takes place**: Skip Go aggregates over swap venues (DEXes, orderbooks, liquid staking protocols, etc...) on many different chains. Some routes even contain multiple swaps. For each individual cross-chain or single chain swap where you collect a fee, the fee is applied on the last swap and sent to an address you specify on the chain where the last swap takes place
+5. **Affiliate fees are collected/denominated in the output token of each swap**: For example, if a user swaps OSMO to ATOM, your fee collection address will earn a fee in ATOM
+6. **Affiliate fees are calculated using the minimum output amount, which is set based on our estimated execution price after accounting for the user's slippage tolerance** : For example, consider an ATOM to OSMO swap where min amount out is 10 uosmo and the cumulative fees are 1000 bps or 10%. If the swap successfully executes, the affiliate fee will be 1 uosmo. It will be 1 uosmo regardless of whether the user actually gets 10, 11, or 12 uosmo out of the swap
 
 ### How to Use Affiliate Fees
 
@@ -89,7 +91,7 @@ In your `/msgs` request, define the `chainIdsToAffiliates` object to allocate fe
         },
         {
           "basisPointsFee": "100", // 1% fee
-          "address": "noble2..."
+          "address": "noble1..."
         }
       ]
     },
@@ -108,7 +110,7 @@ In your `/msgs` request, define the `chainIdsToAffiliates` object to allocate fe
 **Notes:**
 
 - The **sum** of `basisPointsFee` values across all affiliates **on the swap chain** must equal the `cumulative_affiliate_fee_bps` set in the `/route` request.
-- All addresses must be **valid on the chain where the swap will take place**. Invalid addresses will result in a `400` error.
+- All addresses must be **valid on the chain where the swap will take place**. The API does not validate affiliate addresses, so validate them yourself before sending the request. An invalid address can cause the fee to be lost or the transaction to fail on chain.
 - If using `@skip-go/client`, remember to use camelCase (e.g., `basisPointsFee`) in the config.
 
 
@@ -130,7 +132,7 @@ When using the `/msgs_direct` endpoint, you need to specify affiliate fees for *
 
 2. **Include Entries for Every Possible Chain**
 
-   - Retrieve all potential swap chains by querying the `/v2/fungible/swap_venues` endpoint.
+   - Retrieve all potential swap chains by querying the `/v2/fungible/venues` endpoint.
    - Include an entry in `chainIdsToAffiliates` for each `chain_id` from the list.
 
 3. **Ensure Fee Consistency Across Chains**
@@ -154,7 +156,7 @@ When using the `/msgs_direct` endpoint, you need to specify affiliate fees for *
         },
         {
           "basisPointsFee": "100", // 1% fee
-          "address": "noble2..."
+          "address": "noble1..."
         }
       ]
     },
