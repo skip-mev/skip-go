@@ -50,26 +50,40 @@ https://explorer.skip.build/?data=eyJyb3V0ZSI6ey4uLn0sInVzZXJBZGRyZXNzZXMiOnsuLi
 
 #### Required Data Structure
 
-The base64-encoded data must contain a JSON object with this structure:
+The base64-encoded data must contain a JSON object with this structure. The fields match the `RouteDetails` object from `@skip-go/client`, so all keys use camelCase (for example `sourceAssetChainId`, `amountIn`). Raw REST API responses use snake_case, so convert them first (see [Using the REST API directly](#using-the-rest-api-directly)).
 
 ```typescript
 {
-  route: SimpleRoute,                    // Route from /v2/fungible/route API response
-  userAddresses: UserAddress[],          // User wallet addresses for each chain
-  transactionDetails: TransactionDetails[] // Transaction details from /v2/tx/status
+  route: RouteDetails["route"],             // Route returned by route() in @skip-go/client
+  userAddresses: UserAddress[],             // User wallet addresses for each chain
+  transactionDetails: TransactionDetails[], // Per-transaction details tracked by executeRoute()
+  status?: RouteStatus                      // Overall route status
 }
 ```
 
 #### Implementation
 
-```typescript
-import { SimpleRoute, UserAddress, TransactionDetails } from '@skip-go/client';
+The simplest way to get these values is the `RouteDetails` object passed to the `onRouteStatusUpdated` callback of `executeRoute()`.
 
-// Collect your data from Skip Go APIs
+```typescript
+import { executeRoute, type RouteDetails } from '@skip-go/client';
+
+let routeDetails: RouteDetails | undefined;
+
+await executeRoute({
+  route,
+  userAddresses,
+  onRouteStatusUpdated: (details) => {
+    routeDetails = details;
+  },
+  // ...other options
+});
+
 const routeData = {
-  route: simpleRoute,              // From your /v2/fungible/route call
-  userAddresses: userAddresses,    // Your user's addresses per chain  
-  transactionDetails: txDetails    // From your /v2/tx/status polling
+  route: routeDetails?.route,
+  userAddresses: routeDetails?.userAddresses,
+  transactionDetails: routeDetails?.transactionDetails,
+  status: routeDetails?.status,
 };
 
 // Encode for the explorer
@@ -81,6 +95,44 @@ const explorerUrl = `https://explorer.skip.build/?data=${base64Encoded}`;
 
 // Redirect user or open in new tab
 window.open(explorerUrl, '_blank');
+```
+
+#### Using the REST API directly
+
+If you call the REST API without the client library, build the same object yourself:
+
+- `route`: the `/v2/fungible/route` response with every key converted from snake_case to camelCase, recursively (including nested `operations`). Values stay unchanged. This is exactly what the client library's `route()` returns.
+- `userAddresses`: an array of `{ chainId, address }` for each chain in the route.
+- `transactionDetails`: an array of `{ chainId, txHash }` for each transaction the user signed, in order. The explorer fetches the latest status for each transaction itself.
+- `status`: omit it. It is a client library value and does not map to the `/v2/tx/status` states.
+
+The client library does this with the helper below, from [`packages/client/src/utils/convert.ts`](https://github.com/skip-mev/skip-go/blob/staging/packages/client/src/utils/convert.ts). It is not exported from `@skip-go/client`, so copy it into your project:
+
+```typescript
+export function toCamel<T extends object>(obj: T): any {
+  return convertKeys(obj, (key) => key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase()));
+}
+
+export function convertKeys<T extends object>(obj: T, convertKey: (key: string) => string): any {
+  if (Array.isArray(obj)) {
+    return obj.map((item) => convertKeys(item, convertKey));
+  } else if (obj !== null && typeof obj === "object") {
+    return Object.keys(obj).reduce((acc, key) => {
+      acc[convertKey(key)] = convertKeys((obj as any)[key], convertKey);
+      return acc;
+    }, {} as any);
+  } else {
+    return obj;
+  }
+}
+```
+
+```typescript
+const routeData = {
+  route: toCamel(routeResponse), // response body of POST /v2/fungible/route
+  userAddresses: [{ chainId: 'osmosis-1', address: 'osmo1...' }],
+  transactionDetails: [{ chainId: 'osmosis-1', txHash: 'ABC123...' }],
+};
 ```
 
 ## Benefits for Your Users
