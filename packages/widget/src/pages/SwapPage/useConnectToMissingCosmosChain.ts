@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useEffect } from "react";
+import { atom, useAtomValue, useSetAtom, useStore } from "jotai";
 import { track } from "@amplitude/analytics-browser";
 import { ChainType } from "@skip-go/client";
 import {
@@ -11,15 +11,36 @@ import { sourceAssetAtom } from "@/state/swapPage";
 import { walletsAtom } from "@/state/wallets";
 import { WalletType, getWallet, connect, getChainInfo, isWalletConnect, useAccount } from "graz";
 
+type SourceSelection = {
+  chainId?: string;
+  walletName?: WalletType;
+  sourceChanged: boolean;
+  approvalRequested: boolean;
+};
+
+// Keep attempts and pending requests across page remounts within the widget store.
+const connectionAtom = atom<{
+  selection?: SourceSelection;
+  pending?: SourceSelection;
+  signal?: AbortSignal;
+}>({});
+
+connectionAtom.onMount = (setConnection) => {
+  const controller = new AbortController();
+  setConnection((current) => ({ ...current, signal: controller.signal }));
+  // Stop follow-up work on unmount, but retain the lock until the request settles.
+  return () => controller.abort();
+};
+
 export const useConnectToMissingCosmosChain = () => {
+  const store = useStore();
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const wallets = useAtomValue(walletsAtom);
   const extraChainIdsToConnect = useAtomValue(extraCosmosChainIdsToConnectPerWalletAtom);
   const { data: accounts } = useAccount();
   const hasApprovedSourceAccount = Boolean(sourceAsset?.chainId && accounts?.[sourceAsset.chainId]);
-
-  const [isAskingToApproveConnection, setIsAskingToApproveConnection] = useState(false);
-  const previousSourceChainIdRef = useRef(sourceAsset?.chainId);
+  const { pending, signal } = useAtomValue(connectionAtom);
+  const isAskingToApproveConnection = pending !== undefined;
 
   const addExtraChainIdsToConnectForWalletType = useSetAtom(
     addExtraChainIdsToConnectForWalletTypeAtom,
@@ -27,64 +48,104 @@ export const useConnectToMissingCosmosChain = () => {
 
   useEffect(() => {
     const connectToMissingCosmosChain = async () => {
+      const chainId = sourceAsset?.chainId;
       const walletName = wallets?.cosmos?.walletName as WalletType | undefined;
-      if (!walletName) return;
+      if (!signal || signal.aborted) return;
+      const previousSelection = store.get(connectionAtom).selection;
+      const selection =
+        previousSelection &&
+        previousSelection.chainId === chainId &&
+        previousSelection.walletName === walletName
+          ? previousSelection
+          : {
+              chainId,
+              walletName,
+              sourceChanged: Boolean(
+                previousSelection?.chainId && previousSelection.chainId !== chainId,
+              ),
+              approvalRequested: false,
+            };
 
-      const previousSourceChainId = previousSourceChainIdRef.current;
-      previousSourceChainIdRef.current = sourceAsset?.chainId;
+      if (selection !== previousSelection) {
+        store.set(connectionAtom, (current) => ({ ...current, selection }));
+      }
 
-      if (!sourceAsset?.chainId || sourceAsset.isEvm || sourceAsset.isSvm) return;
+      if (!chainId || !walletName || sourceAsset?.isEvm || sourceAsset?.isSvm) return;
 
       const wallet = getWallet(walletName);
       const additionalChainIds = extraChainIdsToConnect[walletName] ?? [];
       const chainIdsToConnect = [...getInitialChainIds(walletName), ...additionalChainIds];
       const walletConnect = isWalletConnect(walletName);
 
-      if (
-        walletConnect
-          ? accounts?.[sourceAsset.chainId]
-          : chainIdsToConnect.includes(sourceAsset.chainId)
-      )
-        return;
-      if (
-        walletConnect &&
-        (!previousSourceChainId || previousSourceChainId === sourceAsset.chainId)
-      )
-        return;
+      if (walletConnect ? hasApprovedSourceAccount : chainIdsToConnect.includes(chainId)) return;
+      if (walletConnect && !selection.sourceChanged) return;
+      if (selection.approvalRequested || store.get(connectionAtom).pending) return;
 
-      setIsAskingToApproveConnection(true);
-
+      const requestedSelection = { ...selection, approvalRequested: true };
       try {
-        const chainInfo = getChainInfo({ chainId: sourceAsset.chainId });
+        const chainInfo = getChainInfo({ chainId });
         if (chainInfo) {
+          // Let StrictMode subscription cleanup finish before opening a wallet request.
+          await Promise.resolve();
+          if (
+            signal.aborted ||
+            store.get(connectionAtom).selection !== selection ||
+            store.get(connectionAtom).pending ||
+            store.get(sourceAssetAtom)?.chainId !== chainId ||
+            store.get(walletsAtom).cosmos?.walletName !== walletName
+          )
+            return;
+
+          store.set(connectionAtom, (current) => ({
+            ...current,
+            selection: requestedSelection,
+            pending: requestedSelection,
+          }));
+
           if (!walletConnect) {
             await wallet.experimentalSuggestChain(chainInfo);
           }
+          if (
+            signal.aborted ||
+            store.get(connectionAtom).selection !== requestedSelection ||
+            store.get(sourceAssetAtom)?.chainId !== chainId ||
+            store.get(walletsAtom).cosmos?.walletName !== walletName
+          )
+            return;
 
           const response = await connect({
-            chainId: sourceAsset.chainId,
+            chainId,
             walletType: walletName,
             autoReconnect: false,
           });
+          if (
+            signal.aborted ||
+            store.get(connectionAtom).selection !== requestedSelection ||
+            store.get(sourceAssetAtom)?.chainId !== chainId ||
+            store.get(walletsAtom).cosmos?.walletName !== walletName
+          )
+            return;
 
-          if (!response.accounts[sourceAsset.chainId]) {
-            throw new Error(`Wallet did not approve ${sourceAsset.chainId}`);
+          if (!response.accounts[chainId]) {
+            throw new Error(`Wallet did not approve ${chainId}`);
           }
 
           addExtraChainIdsToConnectForWalletType({
             walletName,
-            chainId: sourceAsset.chainId,
+            chainId,
           });
         }
       } catch (error) {
         track("connect wallet error", {
           walletName,
-          chainId: sourceAsset.chainId,
+          chainId,
           ChainType: ChainType.Cosmos,
           errorMessage: error instanceof Error ? error.message : String(error),
         });
       } finally {
-        setIsAskingToApproveConnection(false);
+        if (store.get(connectionAtom).pending === requestedSelection) {
+          store.set(connectionAtom, (current) => ({ ...current, pending: undefined }));
+        }
       }
     };
 
@@ -93,7 +154,10 @@ export const useConnectToMissingCosmosChain = () => {
     sourceAsset,
     wallets,
     extraChainIdsToConnect,
-    accounts,
+    hasApprovedSourceAccount,
+    isAskingToApproveConnection,
+    signal,
+    store,
     addExtraChainIdsToConnectForWalletType,
   ]);
 
