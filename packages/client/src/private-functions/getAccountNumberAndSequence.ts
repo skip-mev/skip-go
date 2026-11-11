@@ -71,7 +71,8 @@ const getAccountNumberAndSequenceFromDymension = async (address: string, chainId
   }
 
   return {
-    accountNumber,
+    // REST returns uint64 as a string; BigInt keeps precision above 2^53
+    accountNumber: BigInt(accountNumber),
     sequence,
   };
 };

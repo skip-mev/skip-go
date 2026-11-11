@@ -1,5 +1,18 @@
 ## 0.0.15
 
+## 3.19.0
+
+### Minor Changes
+
+- b8317ff: Fix Cosmos transactions failing with "Number can only safely store up to 53 bits" for new accounts on Cosmos SDK v0.54+ chains (e.g. Xion, Stride, Chihuahua), which are assigned account numbers above 2^53.
+
+  Upgrades CosmJS to 0.39.0, which requires Node.js 22 or newer.
+
+### Patch Changes
+
+- Updated dependencies [b8317ff]
+  - @skip-go/client@1.7.0
+
 ## 3.18.6
 
 ### Patch Changes
