@@ -58,7 +58,9 @@ export const connectToMissingCosmosChainAtom = atom(
             chainId,
             walletName,
             sourceChanged: Boolean(
-              previousSelection?.chainId && previousSelection.chainId !== chainId,
+              previousSelection?.chainId &&
+                previousSelection.chainId !== chainId &&
+                !account.hasApprovedSourceAccount,
             ),
             approvalRequested: false,
           };
