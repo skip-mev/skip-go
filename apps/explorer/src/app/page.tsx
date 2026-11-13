@@ -352,12 +352,12 @@ export default function Home() {
       ?? knownStatuses[0]?.state;
 
     return {
-      txHash: transferEvents?.[0]?.fromTxHash ?? transactionDetailsFromUrlParams?.[0]?.txHash ?? "",
+      txHash: transferEvents?.[0]?.fromTxHash ?? transactionDetailsFromUrlParams?.[0]?.txHash ?? txHash ?? "",
       state,
       chainIds: chainIds.length > 0 ? chainIds : chainIdsFromUrlParams,
       hasUntrackedSteps: routeTransactions.some(tx => tx.phase === "canceled" || tx.phase === "loading"),
     };
-  }, [transfersToShow, sourceAsset?.chainId, destAsset?.chainId, transferEvents, transactionDetailsFromUrlParams, transactionStatuses, routeTransactions]);
+  }, [transfersToShow, sourceAsset?.chainId, destAsset?.chainId, transferEvents, transactionDetailsFromUrlParams, transactionStatuses, routeTransactions, txHash]);
 
   const showRawDataModal = useCallback(() => {
     if (transactionStatuses.length > 0) {
@@ -460,7 +460,7 @@ export default function Home() {
       const canceledOperations = routeTransactions.filter(tx => tx.phase === "canceled").flatMap(tx => tx.operations);
       const renderTransfer = (transfer: TimelineCard) => (
         <React.Fragment key={transfer.id}>
-          {transfer.step !== "Origin" && (
+          {transfer.step !== "Origin" && transfer !== activeTransfers[0] && (
             <Bridge
               transferType={transfer.transferType}
               durationInMs={transfer.durationInMs}
