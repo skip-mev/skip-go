@@ -26,6 +26,7 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({ children }) => {
           options: {
             projectId: walletConnect.options?.projectId,
             name: walletConnect.options?.name,
+            customStoragePrefix: "skip-go-cosmos",
           },
           walletConnectModal: walletConnect?.walletConnectModal,
         },

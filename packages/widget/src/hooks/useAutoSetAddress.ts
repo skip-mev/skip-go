@@ -59,6 +59,7 @@ export const useAutoSetAddress = () => {
       };
 
       if (!requiredChainAddresses) return;
+      let hasOpenedModal = false;
       requiredChainAddresses.forEach(async (chainId, index) => {
         const chain = chains?.find((c) => c.chainId === chainId);
         if (!chain) return;
@@ -106,9 +107,11 @@ export const useAutoSetAddress = () => {
           const wallet = wallets.find((w) => w.walletName === walletName);
           const isSignRequired = signRequiredChains?.includes(chainId);
 
-          const response = await wallet?.getAddress?.({
-            signRequired: isSignRequired,
-          });
+          const response = wallet?.getConnectedAddress
+            ? await wallet.getConnectedAddress()
+            : await wallet?.getAddress?.({
+                signRequired: isSignRequired,
+              });
 
           const isInjectedWallet = connectedAddress?.[chainId];
 
@@ -157,7 +160,8 @@ export const useAutoSetAddress = () => {
           });
         } catch (_error) {
           console.error(_error);
-          if (!openModal) return;
+          if (!openModal || hasOpenedModal) return;
+          hasOpenedModal = true;
           showSetAddressModal();
         } finally {
           setIsLoading(false);

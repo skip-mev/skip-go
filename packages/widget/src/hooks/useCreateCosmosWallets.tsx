@@ -7,6 +7,7 @@ import {
   connect,
   isWalletConnect,
   checkWallet,
+  useAccount,
 } from "graz";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { createPenumbraClient } from "@penumbra-zone/client";
@@ -37,6 +38,7 @@ export const useCreateCosmosWallets = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const { walletType: currentWallet } = useActiveWalletType();
+  const { data: accounts } = useAccount();
   const extraCosmosChainIdsToConnectPerWallet = useAtomValue(
     extraCosmosChainIdsToConnectPerWalletAtom,
   );
@@ -98,6 +100,9 @@ export const useCreateCosmosWallets = () => {
             if (!response?.accounts) {
               throw new Error("failed to get accounts from wallet");
             }
+            if (chainIdToConnect && !response.accounts[chainIdToConnect]) {
+              throw new Error(`Wallet did not approve ${chainIdToConnect}`);
+            }
 
             if (sourceAsset === undefined) {
               setDefaultSourceAsset(ChainType.Cosmos);
@@ -153,6 +158,9 @@ export const useCreateCosmosWallets = () => {
                 walletType: wallet,
                 autoReconnect: false,
               });
+              if (chainIdToConnect && !response.accounts[chainIdToConnect]) {
+                throw new Error(`Wallet did not approve ${chainIdToConnect}`);
+              }
               return {
                 address: chainIdToConnect
                   ? response?.accounts[chainIdToConnect].bech32Address
@@ -172,6 +180,9 @@ export const useCreateCosmosWallets = () => {
                 walletType: wallet,
                 autoReconnect: false,
               });
+              if (chainIdToConnect && !response.accounts[chainIdToConnect]) {
+                throw new Error(`Wallet did not approve ${chainIdToConnect}`);
+              }
               const address =
                 chainIdToConnect && response?.accounts[chainIdToConnect]?.bech32Address;
               return { address };
@@ -222,6 +233,13 @@ export const useCreateCosmosWallets = () => {
               return connectWallet({ chainIdToConnect: chainId });
             }
           },
+          ...(isWC
+            ? {
+                getConnectedAddress: async () => ({
+                  address: chainId ? accounts?.[chainId]?.bech32Address : undefined,
+                }),
+              }
+            : {}),
           isWalletConnected: currentWallet === wallet,
           isAvailable: (() => {
             if (mobile) return undefined;
@@ -242,6 +260,7 @@ export const useCreateCosmosWallets = () => {
       extraCosmosChainIdsToConnectPerWallet,
       chains,
       currentWallet,
+      accounts,
       sourceAsset,
       cosmosWallet,
       addExtraChainIdsToConnectForWalletType,
