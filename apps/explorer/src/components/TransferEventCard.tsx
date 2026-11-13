@@ -110,11 +110,13 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
       )
     }
     if (step === "Destination") {
+      // Release-only cards have no transfer event status; fall back to the tx state.
+      const labelAndColor = status ? statusLabelAndColor : stateLabelAndColor;
       return (
         <Badge
-          color={status !== "pending" ? statusLabelAndColor?.color : undefined}
-          background={status !== "pending" ? statusLabelAndColor?.background : undefined}>
-          {statusLabelAndColor?.label}
+          color={status !== "pending" ? labelAndColor?.color : undefined}
+          background={status !== "pending" ? labelAndColor?.background : undefined}>
+          {labelAndColor?.label}
         </Badge>
       )
     }
@@ -276,7 +278,7 @@ export const TransferEventCard = ({ chainId, explorerLink, transferType, status,
           <Row gap={15}>
             {renderTransferEventDetails}
           </Row>
-          <Badge> {getTransferTypeLabel(transferType)} </Badge>
+          {transferType && <Badge> {getTransferTypeLabel(transferType)} </Badge>}
         </Row>
       </TransferEventDetailsCard>
       {renderBottomButton}
