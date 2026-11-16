@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.19.1
+
+### Patch Changes
+
+- 6dd2826: Add ZIGChain EVM mainnet (944) and testnet (2061) chain definitions so the widget can connect and sign on these chains. They are defined manually until viem ships them.
+- Updated dependencies [6dd2826]
+  - @skip-go/client@1.7.1
+
 ## 3.19.0
 
 ### Minor Changes
