@@ -37,6 +37,59 @@ async function handleOptionalUIElements(page: Page) {
   }
 }
 
+// Run before swaps: the Keplr helper uses a fixed CDP port.
+test("Cosmos approval requests once while pending and after rejection", async () => {
+  test.setTimeout(90_000);
+  const page = await setupBrowserContext();
+  try {
+    await selectAsset({ page, asset: "ATOM", chain: "Cosmos Hub" });
+    await page.getByText("Connect Wallet", { exact: true }).click();
+    await page.getByText("Keplr", { exact: true }).click();
+    await approveInKeplr();
+    await expect(page.getByText("Connect Wallet", { exact: true })).toBeHidden();
+
+    // Count approval attempts even when Keplr coalesces them into one popup.
+    const approvals = await page.evaluateHandle(() => {
+      const state = { count: 0 };
+      const keplr = window.keplr;
+      if (!keplr) throw new Error("Keplr extension is not available");
+      const suggestChain = keplr.experimentalSuggestChain.bind(keplr);
+      keplr.experimentalSuggestChain = async (chainInfo) => {
+        if (chainInfo.chainId === "bbn-1") state.count++;
+        return suggestChain(chainInfo);
+      };
+      return state;
+    });
+    const popupOpened = page.context().waitForEvent("page");
+    await page.evaluate(async () => {
+      const modulePath = "/src/state/swapPage.ts";
+      const { setAsset } = await import(modulePath);
+      setAsset({ type: "source", chainId: "bbn-1", denom: "ubbn" });
+    });
+    const popup = await popupOpened;
+    const reject = popup.getByRole("button", { name: /reject/i });
+    await expect(reject).toBeVisible();
+    await expect.poll(() => approvals.evaluate((state) => state.count)).toBe(1);
+
+    const amount = page.getByRole("textbox").first();
+    await amount.fill("1");
+    await amount.pressSequentially("23", { delay: 100 });
+    await page.waitForTimeout(500);
+    expect(await approvals.evaluate((state) => state.count)).toBe(1);
+    await expect(page.getByText("Approving connection...", { exact: true })).toBeVisible();
+
+    await reject.click();
+    await expect(page.getByText("Connect Wallet", { exact: true })).toBeVisible();
+    await amount.fill("4");
+    await amount.pressSequentially("56", { delay: 100 });
+    await page.waitForTimeout(500);
+    expect(await approvals.evaluate((state) => state.count)).toBe(1);
+    await expect(page.getByText("Connect Wallet", { exact: true })).toBeVisible();
+  } finally {
+    await page.context().close();
+  }
+});
+
 /**
  * E2E tests for the Skip Go Widget with Keplr wallet integration
  * These tests verify cross-chain swap functionality using real blockchain interactions

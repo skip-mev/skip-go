@@ -35,6 +35,7 @@ export type MinimalWallet = {
       sourceChainID?: string;
     };
   }) => Promise<{ address: string | undefined; logo?: string }>;
+  getConnectedAddress?: () => Promise<{ address: string | undefined; logo?: string }>;
 };
 
 type WalletState = {

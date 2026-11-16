@@ -68,7 +68,9 @@ export const useGasRouteAutoSetAddress = () => {
               const wallets = createWallets[chainAddress.chainType](chainAddress.chainId);
               const walletName = sourceWallet[chainAddress.chainType]?.walletName;
               const wallet = wallets.find((w) => w.walletName === walletName);
-              const response = await wallet?.getAddress?.({});
+              const response = wallet?.getConnectedAddress
+                ? await wallet.getConnectedAddress()
+                : await wallet?.getAddress?.({});
               const getLogo = () => {
                 if (wallet?.walletChainType === "evm" && wallet?.walletName === "app.keplr") {
                   return getCosmosWalletInfo(WalletType.KEPLR).imgSrc;
