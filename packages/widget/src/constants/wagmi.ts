@@ -61,6 +61,31 @@ export const formaTestnet = defineChain({
   testnet: true,
 });
 
+export const zigchain = defineChain({
+  id: 944,
+  name: "ZIGChain",
+  nativeCurrency: { name: "ZIG", symbol: "ZIG", decimals: 18 },
+  rpcUrls: {
+    default: { http: ["https://public-zigchain-evm-rpc.numia.xyz"] },
+  },
+  blockExplorers: {
+    default: { name: "ZIGScan", url: "https://zigscan.org" },
+  },
+});
+
+export const zigchainTestnet = defineChain({
+  id: 2061,
+  name: "ZIGChain Testnet",
+  nativeCurrency: { name: "ZIG", symbol: "ZIG", decimals: 18 },
+  rpcUrls: {
+    default: { http: ["https://public-zigchain-testnet-evm-rpc.numia.xyz"] },
+  },
+  blockExplorers: {
+    default: { name: "ZIGScan", url: "https://testnet.zigscan.org" },
+  },
+  testnet: true,
+});
+
 export const config: Config = createConfig({
   chains: [
     arbitrum,
@@ -96,6 +121,8 @@ export const config: Config = createConfig({
     mantaSepoliaTestnet,
     injective,
     injectiveTestnet,
+    zigchain,
+    zigchainTestnet,
   ],
   transports: {
     [arbitrum.id]: http(),
@@ -131,6 +158,8 @@ export const config: Config = createConfig({
     [mantaSepoliaTestnet.id]: http(),
     [injective.id]: http(),
     [injectiveTestnet.id]: http(),
+    [zigchain.id]: http(),
+    [zigchainTestnet.id]: http(),
   },
   ssr: false,
   storage: createStorage({
