@@ -52,7 +52,7 @@
   "devDependencies": {
     "@cosmjs/faucet": "0.39.0",
     "@cosmjs/faucet-client": "0.39.0",
-    "@cosmology/telescope": "1.8.3",
+    "@cosmology/telescope": "2.1.0",
     "@initia/initia-registry": "^1.0.6",
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",
