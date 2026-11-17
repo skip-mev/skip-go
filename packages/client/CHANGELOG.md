@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.7.2
+
+### Patch Changes
+
+- f1b7c85: Fix SDK initialization failing with a Buffer error in Vite applications using Node polyfills by updating Telescope's generated helpers.
+
 ## 1.7.1
 
 ### Patch Changes
