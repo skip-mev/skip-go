@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.19.2
+
+### Patch Changes
+
+- 5d574b9: Add XPLA (dimension_37-1) to the chains requested on the initial Keplr connection.
+- Updated dependencies [f1b7c85]
+  - @skip-go/client@1.7.2
+
 ## 3.19.1
 
 ### Patch Changes
