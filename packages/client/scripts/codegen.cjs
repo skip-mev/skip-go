@@ -48,6 +48,22 @@ async function genTelescope() {
       protoDirs,
       outPath,
       options: {
+        // Keep the existing CosmJS/protobufjs output when using Telescope v2.
+        env: "default",
+        useInterchainJs: false,
+        helperFunctions: {
+          enabled: false,
+        },
+        // Keep the global RPC flag for Amino converters, but skip RPC clients.
+        packages: {
+          circle: { rpcClients: { enabled: false } },
+          cosmos: { rpcClients: { enabled: false } },
+          ethermint: { rpcClients: { enabled: false } },
+          evmos: { rpcClients: { enabled: false } },
+          initia: { rpcClients: { enabled: false } },
+          injective: { rpcClients: { enabled: false } },
+          opinit: { rpcClients: { enabled: false } },
+        },
         aminoEncoding: {
           customTypes: {
             useCosmosSDKDec: true,
@@ -149,13 +165,16 @@ async function genTelescope() {
             timestamp: "date",
             useDeepPartial: false,
             useExact: false,
+            useTelescopeGeneratedType: false,
           },
         },
         rpcClients: {
-          enabled: false,
+          // Telescope v2 also gates Amino converter generation on this option.
+          enabled: true,
+          bundle: false,
         },
         stargateClients: {
-          enabled: false,
+          enabled: true,
         },
         tsDisable: {
           disableAll: true,

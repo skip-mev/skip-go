@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/client",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "repository": "https://github.com/skip-mev/skip-go",
   "type": "module",
   "main": "./dist/cjs/index.cjs",
@@ -52,7 +52,7 @@
   "devDependencies": {
     "@cosmjs/faucet": "0.39.0",
     "@cosmjs/faucet-client": "0.39.0",
-    "@cosmology/telescope": "1.8.3",
+    "@cosmology/telescope": "2.1.0",
     "@initia/initia-registry": "^1.0.6",
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",

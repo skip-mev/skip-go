@@ -22,6 +22,7 @@ export const keplrMainnetChainIdsInitialConnect = [
   'crypto-org-chain-mainnet-1',
   'dydx-mainnet-1',
   'dymension_1100-1',
+  'dimension_37-1',
   'injective-1',
   'juno-1',
   'kava_2222-10',
