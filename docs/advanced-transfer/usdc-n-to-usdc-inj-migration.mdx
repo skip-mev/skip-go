@@ -92,7 +92,6 @@ The `/route` API is **a quote request**: given a specific source/destination cha
     "split_routes": true,
     "evm_swaps": true
   },
-  "go_fast": true,
   "fast_transfer": true
 }
 ```
@@ -520,7 +519,6 @@ const routeRes = await fetch(`${BASE_URL}/v2/fungible/route`, {
     allow_multi_tx: true,
     allow_unsafe: true,
     smart_swap_options: { split_routes: true, evm_swaps: true },
-    go_fast: true,
     fast_transfer: true,
   }),
 });
