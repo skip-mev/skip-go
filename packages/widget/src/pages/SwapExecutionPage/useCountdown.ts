@@ -1,5 +1,4 @@
-import { createCountdownTimer } from "@/utils/countdownTimer";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export const useCountdown = ({
   estimatedRouteDurationSeconds,
@@ -9,25 +8,30 @@ export const useCountdown = ({
   enabled?: boolean;
 }) => {
   const [countdown, setCountdown] = useState<number | undefined>(estimatedRouteDurationSeconds);
-  const [timer, setTimer] = useState<ReturnType<typeof createCountdownTimer> | undefined>();
+  const deadlineRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    const estimatedDurationSeconds = estimatedRouteDurationSeconds;
-    if (!timer && estimatedDurationSeconds && enabled) {
-      const countdownTimer = createCountdownTimer({
-        duration: estimatedDurationSeconds * 1_000,
-        onUpdate: (remainingTime) => {
-          setCountdown(parseInt((remainingTime / 1_000).toString()));
-        },
-      });
-      setTimer(countdownTimer);
-      countdownTimer.startCountdown();
-    }
+    if (!enabled || !estimatedRouteDurationSeconds) return;
 
-    return () => {
-      timer?.stopCountdown();
-    };
-  }, [estimatedRouteDurationSeconds, enabled, timer]);
+    if (deadlineRef.current === undefined) {
+      deadlineRef.current = Date.now() + estimatedRouteDurationSeconds * 1_000;
+    }
+    const deadline = deadlineRef.current;
+
+    const tick = () => {
+      const remaining = Math.max(Math.ceil((deadline - Date.now()) / 1_000), 0);
+      setCountdown(remaining);
+      return remaining;
+  };
+
+    if (tick() === 0) return;
+
+    const intervalId = setInterval(() => {
+      if (tick() === 0) clearInterval(intervalId);
+    }, 1_000);
+
+    return () => clearInterval(intervalId);
+  }, [enabled, estimatedRouteDurationSeconds]);
 
   return countdown;
 };
