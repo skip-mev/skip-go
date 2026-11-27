@@ -42,7 +42,7 @@ routeConfig?: {
   experimentalFeatures?: string[]; // e.g. ['stargate', 'eureka']
   allowMultiTx?: boolean;
   allowUnsafe?: boolean;
-  bridges?: ('IBC' | 'AXELAR' | 'CCTP' | 'CCTP_V2' | 'HYPERLANE' | 'OPINIT' | 'GO_FAST' | 'STARGATE' | 'LAYER_ZERO' | 'EUREKA')[];
+  bridges?: ('IBC' | 'AXELAR' | 'CCTP' | 'CCTP_V2' | 'HYPERLANE' | 'OPINIT' | 'STARGATE' | 'LAYER_ZERO' | 'EUREKA')[];
   swapVenues?: {
     name: string;
     chainId: string;
@@ -57,7 +57,7 @@ routeConfig?: {
 - `allowUnsafe`: Allow unsafe routes. Default: false. [More info](../advanced-swapping/allow_unsafe-preventing-handling-bad-execution).
 - `bridges`: Restrict routing to specific bridges. Default: empty (all bridges).
 - `swapVenues`: Restrict routing to specific swap venues. Default: empty (all venues).
-- `goFast`: Enable Go Fast transfers. Default: false. [More info](../advanced-transfer/go-fast).
+- `goFast`: Show the Fastest/Cheapest route preference in the widget's settings. Default: true. With `false`, the preference is hidden, and it is set to Cheapest only if you also pass `settings`.
 - `experimentalFeatures`: Array of experimental features to enable. Include `'eureka'` to enable routing with Eureka assets.
 - `smartSwapOptions`: Advanced swapping features like EVM Swaps and split trade routes. [More info](../advanced-swapping/smart-swap-options).
 
