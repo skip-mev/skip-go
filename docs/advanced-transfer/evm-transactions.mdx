@@ -13,7 +13,7 @@ description: 'This doc covers how to interact with the EvmTx type returned by th
 
 The EvmTx has 4 fields that the developer needs to understand:
 
-- `to`: The address of the smart contract or externally owned account (EOA) with which this transaction interacts, as a hex-string prefixed with 0x (e.g. 0xfc05aD74C6FE2e7046E091D6Ad4F660D2A159762)
+- `to`: The address of the smart contract or externally owned account (EOA) with which this transaction interacts, as a hex-string prefixed with 0x (e.g. 0x965540fd2232b7798A795BFF93833B2a5fEed2E5)
 - `value`: The amount of `wei` this transaction sends to the contract its interacting with (1 ETH = 1^18 WEI)
 - `data`: The calldata this transaction uses to call the smart contract it interacts with, as a hex string. The data bytes will be interpreted according to the application-binary-interface (ABI) of the contract that's being interacted with. If this field is empty, it means the transaction is sending funds to an address, rather than calling a contract.
 - `required_erc20_approvals`: The permissions that must be granted to a specific smart contract to spend or transfer a certain amount of their ERC-20 tokens on behalf of the end user. This allows smart contracts to execute expressive flows that may involve moving some amount of the user's ERC-20 tokens

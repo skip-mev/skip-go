@@ -2532,7 +2532,7 @@ components:
         * `CCTP` - CCTP Bridge
         * `HYPERLANE` - Hyperlane Bridge
         * `OPINIT` - Opinit Bridge
-        * `GO_FAST` - Go Fast Bridge
+        * `GO_FAST` - Go Fast Bridge (deprecated, no longer available)
         * `STARGATE` - Stargate Bridge
         * `LAYER_ZERO` - Layerzero Bridge
         * `EUREKA` - IBC Eureka Bridge
@@ -4077,7 +4077,8 @@ components:
           description: Whether to allow swaps in the route
         go_fast:
           type: boolean
-          description: Whether to enable Go Fast routes
+          deprecated: true
+          description: Deprecated. Go Fast is no longer available.
 
     MsgsRequest:
       type: object
@@ -4210,7 +4211,8 @@ components:
           default: false
         go_fast:
           type: boolean
-          description: Whether to enable Go Fast routes
+          deprecated: true
+          description: Deprecated. Go Fast is no longer available.
         fee_payer_address:
           type: string
           description: Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format.

@@ -6,7 +6,7 @@ title: Transaction Support
 
 - This guide outlines how to troubleshoot and escalate issues related to Skip Go transactions.
 - The Skip Go Explorer should be used when troubleshooting
-- Types of transactions supported (CCTP, Eureka, Layerzero, Stargate, Opinit, Axelar, IBC, Go Fast)
+- Types of transactions supported (CCTP, Eureka, Layerzero, Stargate, Opinit, Axelar, IBC)
 - Tools: [Explorer](https://explorer.skip.build/), Skip API
 
 ---
@@ -139,18 +139,6 @@ Learn more: [OPInit Transfer Details](/general/multi-chain-realtime-transaction-
   - `PACKET_ERROR_ACKNOWLEDGEMENT`: Error in packet acknowledgement.
 - **Transactions:**
   - `send_tx`, `receive_tx`
-
----
-
-### **Go Fast Transfers**
-Learn more: [Go Fast Transfer Details](/general/multi-chain-realtime-transaction-and-packet-tracking#go-fast-transfer-data)
-
-- **States:**
-  - `GO_FAST_TRANSFER_SENT`: Intent submitted.
-  - `GO_FAST_TRANSFER_FILLED`: Success.
-  - `GO_FAST_TRANSFER_TIMEOUT`, `REFUNDED`, `POST_ACTION_FAILED`
-- **Transactions:**
-  - `order_submitted_tx`, `order_filled_tx`, `order_timeout_tx`, `order_refunded_tx`
 
 ---
 

@@ -26,23 +26,6 @@ await executeRoute({
   }
 });
 ```
-## Use the Go Fast Transfer system
-
-The `route` function accepts a `goFast` parameter to enable the Go Fast Transfers. Then pass this route to the `executeRoute` method to execute.
-```typescript
-import { executeRoute, route } from '@skip-go/client';
-
-const route = await route({
-  goFast: true
-  ...otherParams,
-});
-
-await executeRoute({
-  route,
-  ...otherParams,
-});
-```
-
 ## Add a fee payer in solana transaction
 
 The `executeRoute` method accepts a `svmFeePayer` parameter to specify a fee payer for Solana transactions. This is useful when you want to have a different account pay the transaction fees.
